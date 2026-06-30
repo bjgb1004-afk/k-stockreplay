@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -54,6 +55,22 @@ export default function App() {
     } catch (e) {}
     return true;
   });
+
+  // Rotating Tips / Notices State
+  const [noticeIndex, setNoticeIndex] = useState<number>(0);
+  const notices = [
+    "[스페이스바(Spacebar)] 키를 누르면 다음 일봉 캔들로 빠르게 넘어갑니다.",
+    "5일 이동평균선(노란선)이 20일 이동평균선(자홍선)을 상향 돌파(골든크로스)할 때 주목해보세요.",
+    "효과음 소리가 크다면 우측 버튼(ON/OFF)을 통해 효과음을 간편하게 끌 수 있습니다.",
+    "거래량(Volume) 막대의 색상이 빨간색이면 상승 마감, 파란색이면 하락 마감을 의미합니다."
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNoticeIndex((prev) => (prev + 1) % notices.length);
+    }, 5000); // 5 seconds
+    return () => clearInterval(timer);
+  }, [notices.length]);
 
   // Dynamic Data Loading States
   const [stockData, setStockData] = useState<Candle[]>([]);
@@ -300,6 +317,27 @@ export default function App() {
   const holdingReturnRate = holdings > 0 ? ((currentPrice - averagePrice) / averagePrice) * 100 : 0;
   const holdingReturnAmount = holdings > 0 ? (currentPrice - averagePrice) * holdings : 0;
 
+  // Completed trades metrics (for summary modal)
+  const sellTrades = trades.filter(t => t.type === 'SELL');
+  const completedCount = sellTrades.length;
+  const winTrades = sellTrades.filter(t => (t.realizedPnL || 0) > 0);
+  const loseTrades = sellTrades.filter(t => (t.realizedPnL || 0) < 0);
+  const winCount = winTrades.length;
+  const loseCount = loseTrades.length;
+  const winRate = completedCount > 0 ? (winCount / completedCount) * 100 : 0;
+  const avgWinPct = winCount > 0 ? winTrades.reduce((sum, t) => sum + (t.realizedPnLPct || 0), 0) / winCount : 0;
+  const avgLossPct = loseCount > 0 ? Math.abs(loseTrades.reduce((sum, t) => sum + (t.realizedPnLPct || 0), 0) / loseCount) : 0;
+  
+  let profitLossRatioStr = '-';
+  if (completedCount > 0) {
+    if (loseCount === 0) {
+      profitLossRatioStr = winCount > 0 ? '무제한 (손실 없음) 🚀' : '0.00';
+    } else {
+      const ratio = avgLossPct > 0 ? avgWinPct / avgLossPct : 0;
+      profitLossRatioStr = ratio.toFixed(2);
+    }
+  }
+
   // Current daily candle fluctuation
   const dailyChange = currentCandle ? currentCandle.close - currentCandle.open : 0;
   const dailyChangePct = currentCandle ? (dailyChange / currentCandle.open) * 100 : 0;
@@ -437,6 +475,9 @@ export default function App() {
 
     const sellProceeds = holdings * currentPrice;
     const balanceAfter = balance + sellProceeds;
+    const costBasis = holdings * averagePrice;
+    const realizedPnL = sellProceeds - costBasis;
+    const realizedPnLPct = averagePrice > 0 ? ((currentPrice - averagePrice) / averagePrice) * 100 : 0;
 
     const newTrade: Trade = {
       id: Math.random().toString(36).substring(2, 9),
@@ -445,7 +486,10 @@ export default function App() {
       price: currentPrice,
       quantity: holdings,
       amount: sellProceeds,
-      balanceAfter: balanceAfter
+      balanceAfter: balanceAfter,
+      entryPrice: averagePrice,
+      realizedPnL,
+      realizedPnLPct
     };
 
     setHoldings(0);
@@ -632,19 +676,32 @@ export default function App() {
             <ReplayChart candles={visibleCandles} trades={trades} averagePrice={averagePrice} />
           </div>
 
-          {/* 단축키 정보바 */}
-          <div className="bg-slate-900/60 border border-slate-800/80 rounded-lg px-4 py-3 flex items-center justify-between text-[11px] text-slate-400">
-            <div className="flex items-center gap-2">
-              <Info className="w-4 h-4 text-blue-400 flex-shrink-0" />
-              <span>
-                <strong className="text-blue-400 font-semibold">[스페이스바(Spacebar)]</strong> 키를 누르면 다음 일봉 캔들로 빠르게 넘어갑니다.
+          {/* 단축키 및 정보 롤링 배너 */}
+          <div className="bg-slate-900/60 border border-slate-800/80 rounded-lg px-4 py-2.5 flex items-center justify-between text-[11px] text-slate-400 gap-4 overflow-hidden">
+            <div className="flex items-center gap-2.5 flex-grow min-w-0">
+              <span className="flex-shrink-0 bg-blue-500/10 border border-blue-500/30 text-blue-400 font-bold px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider">
+                TIP / 안내
               </span>
+              <div className="relative flex-grow h-5 overflow-hidden cursor-pointer select-none" onClick={() => setNoticeIndex((prev) => (prev + 1) % notices.length)} title="클릭하여 다음 팁 보기">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={noticeIndex}
+                    initial={{ y: 15, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -15, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className="absolute inset-x-0 top-0 bottom-0 flex items-center text-slate-300 font-medium truncate"
+                  >
+                    {notices[noticeIndex]}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             </div>
             
             {/* Audio Toggle in HUD */}
             <button 
               onClick={() => setSoundEnabled(!soundEnabled)} 
-              className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 bg-slate-800 px-2 py-1 rounded border border-slate-700/50"
+              className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 bg-slate-800 px-2 py-1 rounded border border-slate-700/50 flex-shrink-0"
               title={soundEnabled ? "효과음 끄기" : "효과음 켜기"}
             >
               {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-blue-400" /> : <VolumeX className="w-3.5 h-3.5 text-slate-500" />}
@@ -891,6 +948,34 @@ export default function App() {
                   본 리플레이 엔진은 과거 수개월간 축적된 실제 역사적 일봉 거래 데이터를 단 몇 분 만에 완벽하게 시뮬레이션할 수 있도록 설계되었습니다. 사용자는 다음 캔들 버튼을 클릭할 때마다 하루치의 피튀기는 세력 공방이 끝난 마감 데이터를 단 0.1초 만에 확인하며 빠르게 결정을 내릴 수 있습니다. 본 시뮬레이터를 200% 활용하기 위해서는 매매 일지를 정독하듯, 자신이 어떤 이동평균선 배열에서 매수를 들어갔는지, 손절선(예: -3% 또는 20일선 이탈)을 정확히 지켰는지 스스로 되물어보며 <strong>'나만의 매매 일관성(Consistency)'</strong>을 구축하는 것에 집중해야 합니다.
                 </p>
               </div>
+
+              {/* 주식 차트 복기 시뮬레이터 사용설명서 */}
+              <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4 mt-6 space-y-3 shadow-lg shadow-black/20">
+                <h4 className="text-xs font-black text-blue-400 flex items-center gap-1.5 uppercase tracking-wide">
+                  📖 주식 차트 복기 시뮬레이터 사용설명서 (How To Play)
+                </h4>
+                <p className="text-[11px] text-slate-400 leading-normal">
+                  본 시뮬레이터의 매커니즘은 매우 쉽고 단순하게 구성되어 있어 처음 접하시는 분들도 직관적으로 실전 차트 트레이딩을 연습해 보실 수 있습니다.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-slate-400 leading-relaxed font-mono mt-2">
+                  <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
+                    <span className="text-slate-200 font-bold block mb-1">① 종목 선택 및 데이터 초기화</span>
+                    화면 좌측 상단(모바일은 상단) 종목 검색창을 통해 삼성전자, 카카오, 네이버, 에코프로 등 원하는 주도 종목을 골라 즉시 120일간의 복기 캔들 데이터셋을 가동시킵니다.
+                  </div>
+                  <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
+                    <span className="text-slate-200 font-bold block mb-1">② 캔들 순차 전개 (Spacebar)</span>
+                    [다음 일봉(+1일)] 버튼을 누르거나 차트 창에 포커스를 둔 뒤 키보드의 <strong className="text-blue-400 font-semibold">[스페이스바(Spacebar)]</strong> 키를 누르면 다음 날 일봉 캔들이 1개씩 순차적으로 차트에 추가로 형성됩니다.
+                  </div>
+                  <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
+                    <span className="text-slate-200 font-bold block mb-1">③ 가상 주문 집행 (매수/매도)</span>
+                    하단 컨트롤러의 [시장가 매수 (100%)] 버튼을 클릭하여 보유 예수금 전체로 현재 주가에 즉시 풀 매수 진입하며, 평균 단가는 초록색 점선으로 표시됩니다. 청산 시에는 [시장가 매도 (100%)]를 사용하여 포지션을 전부 실현시킵니다.
+                  </div>
+                  <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
+                    <span className="text-slate-200 font-bold block mb-1">④ 최종 결과 보고서 & 실시간 랭킹</span>
+                    120영업일이 전부 경과하여 훈련이 끝나면 실시간 트레이더 리더보드 랭킹 등록과 함께, 이번 연습 세션 동안 매수한 거래의 <strong>평균 승률 및 평균 손익비(Profit-Loss Ratio)</strong>를 정량적으로 도출해 줍니다.
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* 세션 2 */}
@@ -1031,6 +1116,37 @@ export default function App() {
                 <span className="text-slate-400">최종 청산 자산:</span>
                 <span className="text-white font-bold">{Math.round(totalAssets).toLocaleString()} 원</span>
               </div>
+
+              {/* 실전 매매 통계 (승률, 수익률, 손익비) */}
+              <div className="border-t border-b border-slate-800/80 py-3.5 space-y-3 font-sans">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 text-center">📊 실전 트레이딩 성과 지표</div>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-slate-900/80 border border-slate-800/60 rounded-xl p-2.5 flex flex-col justify-between">
+                    <span className="text-slate-500 text-[10px] font-medium">총 실현 거래</span>
+                    <span className="text-slate-200 font-bold text-sm mt-1">{completedCount} 건</span>
+                  </div>
+                  <div className="bg-slate-900/80 border border-slate-800/60 rounded-xl p-2.5 flex flex-col justify-between">
+                    <span className="text-slate-500 text-[10px] font-medium">평균 승률</span>
+                    <span className="text-emerald-400 font-black text-sm mt-1">{winRate.toFixed(1)}%</span>
+                  </div>
+                  
+                  <div className="bg-slate-900/80 border border-slate-800/60 rounded-xl p-2.5 flex flex-col justify-between">
+                    <span className="text-slate-500 text-[10px] font-medium">평균 수익/손실률</span>
+                    <div className="text-slate-200 font-bold text-[11px] mt-1 flex items-center gap-1">
+                      <span className="text-red-400">+{avgWinPct.toFixed(1)}%</span>
+                      <span className="text-slate-600">/</span>
+                      <span className="text-blue-400">-{avgLossPct.toFixed(1)}%</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-amber-500/5 border border-amber-500/25 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+                    <span className="text-amber-500/90 text-[10px] font-bold">평균 손익비 (P/L)</span>
+                    <span className="text-amber-400 font-black text-sm mt-1">{profitLossRatioStr}</span>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex justify-between items-center pt-1">
                 <span className="text-slate-400 text-xs">최종 누적 수익률:</span>
                 <span className={`text-md font-black ${sessionReturnRate >= 0 ? 'text-red-500' : 'text-blue-500'}`}>
@@ -1284,133 +1400,88 @@ export default function App() {
 
             <div className="flex-1 overflow-y-auto pr-2 mt-4 space-y-6 text-xs text-slate-300 leading-relaxed scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
               
-              <div className="bg-blue-950/20 border border-blue-900/30 p-4 rounded-xl">
-                <p className="font-semibold text-blue-400 text-center text-xs">
-                  💡 본 가이드는 사이트의 학술적 가치 제고와 사용자의 올바른 금융 지식 배양, 그리고 투명한 면책 조항 안내를 위해 제공되는 고품질 교육 자료입니다.
+              <div className="bg-gradient-to-r from-blue-950/40 to-indigo-950/40 border border-blue-900/30 p-5 rounded-2xl">
+                <p className="font-bold text-blue-400 text-center text-xs md:text-sm leading-relaxed">
+                  "투자는 단순한 예측의 영역이 아닌, 통제와 대응의 과학입니다."<br />
+                  <span className="text-slate-300 text-xs font-normal mt-1 block">본 복기 시뮬레이터는 반복 훈련을 통해 실전에서 흔들리지 않는 최상의 매매 감각을 이끌어 냅니다.</span>
                 </p>
               </div>
 
-              {/* 1. 최근 3개월간의 시장 주도주(삼성전자, SK하이닉스) 타점 복기 방법 */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-1">
+              {/* 1. 기획 의도 */}
+              <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
                   <div className="w-1.5 h-4 bg-blue-500 rounded-full" />
-                  <h4 className="text-white font-bold text-sm">1. 시장 주도주(삼성전자, SK하이닉스) 실전 타점 복기 요령</h4>
+                  <h4 className="text-white font-bold text-xs md:text-sm">1. 시뮬레이터 기획 의도: 이성적 프로세스의 정밀한 훈련</h4>
                 </div>
-                <p>
-                  종합주가지수(KOSPI)를 견인하는 초대형 시장 주도주인 <strong>삼성전자</strong>와 <strong>SK하이닉스</strong>는 풍부한 유동성과 정밀한 기술적 신뢰도로 인해 개인 투자자들의 훌륭한 교과서 역할을 합니다. 최근 3개월간의 반도체 고대역폭메모리(HBM) 이슈 및 인공지능(AI) 사이클 흐름을 본 리플레이 시뮬레이터로 복기할 때 최우선적으로 관찰해야 할 세 가지 핵심 타점 추출 공식은 다음과 같습니다.
+                <p className="text-slate-300 leading-relaxed text-xs">
+                  개인 투자자가 금융 시장에서 실패하는 가장 큰 요인은 <strong>정보의 격차</strong>가 아니라, 상승장에서의 <strong>탐욕적 추격 매수(뇌동매매)</strong>와 하락장에서의 <strong>감정적 패닉 셀링(공포 투매)</strong>에 따른 자금 관리 실패입니다.
                 </p>
-                <ul className="list-decimal pl-5 space-y-2 text-slate-400">
-                  <li>
-                    <strong className="text-slate-200">주도봉 몸통의 50% 눌림목 추적:</strong> SK하이닉스와 같이 강력한 실적 가이던스를 바탕으로 52주 신고가 영역을 거래 대금과 함께 상방 돌파할 때, 당일 형성된 가장 큰 거래량의 양봉(주도봉)을 확인하십시오. 이 주도봉 몸통의 중간 영역(50% 값)은 강한 메이저 세력의 평균 단가 역할을 합니다. 캔들을 하루씩 넘기면서 주가가 이 50% 지점까지 하락하되, 거래량이 전일 대비 1/3 이하로 숨이 죽는 순간을 감지하는 것이 정석적인 분할 매수 타점입니다.
-                  </li>
-                  <li>
-                    <strong className="text-slate-200">옵션 연계 라운드 피겨(Round Figure) 저항 판별:</strong> 삼성전자는 시가총액 비중이 막대하여 외국인 및 기관의 파생상품 옵션 행사가격대와 긴밀히 연계되어 있습니다. 예를 들어 75,000원, 80,000원처럼 딱 떨어지는 앞자리 라운드 피겨 가격대는 강력한 매도 매물이 쌓여 있는 매물 저항 벽입니다. 리플레이 시뮬레이터 훈련 중 이 저항대를 거래량 없이 단순히 캔들의 윗꼬리로 뚫는 휩소(속임수)가 출현하는지 면밀히 확인하십시오. 거래량을 수반하지 않은 가짜 돌파는 100% 장대음봉 낙폭으로 직행하는 지름길입니다.
-                  </li>
-                  <li>
-                    <strong className="text-slate-200">20일 이평선의 지지 탄력 회복 복기:</strong> 주가가 우상향 추세를 유지하고 있을 때 가장 중요한 생명선은 '황금선'이라고 불리는 20일 이동평균선입니다. 리플레이 기능으로 이전 과거 캔들을 백테스팅하며, 삼성전자가 20일 이동평균선 밑으로 고의로 주가를 일시적으로 떨어뜨렸다가(소위 개미 털기 지점) 하루 혹은 사흘 만에 대량 거래량과 함께 20일선 위로 다시 우뚝 일어서는 지점을 추적하십시오. 그 우뚝 일어선 장대양봉의 종가 부근이 안전한 스윙 및 단타 진입 타점입니다.
-                  </li>
-                </ul>
+                <p className="text-slate-300 leading-relaxed text-xs">
+                  이러한 고질적인 한계를 기술과 과학적 훈련을 통해 극복하고자 본 <strong>K-주식 리플레이 시뮬레이터</strong>를 기획하였습니다. 역사적으로 검증된 실제 시장 데이터(Historical Data)를 바탕으로, 불필요한 감정 개입을 완벽히 필터링하고 오직 <strong>정량적 통계, 지지와 저항, 거래량 패턴</strong>에 근거하여 냉정하게 대응할 수 있는 전문적인 트레이딩 트레이닝 환경을 구성하는 것에 초점을 맞추었습니다.
+                </p>
               </div>
 
-              {/* 2. 시가/고가/저가/종가 및 거래량 캔들 리플레이 훈련 팁 */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-1">
+              {/* 2. 차트 복기 훈련의 압도적 중요성 */}
+              <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
                   <div className="w-1.5 h-4 bg-red-500 rounded-full" />
-                  <h4 className="text-white font-bold text-sm">2. 시가 · 고가 · 저가 · 종가(OHLC) 및 거래량 캔들 트레이닝 팁</h4>
+                  <h4 className="text-white font-bold text-xs md:text-sm">2. 차트 복기(Replay)의 절대적 가치: 압축 성장과 일관성</h4>
                 </div>
-                <p>
-                  단순히 버튼을 연타하며 기계적으로 지나치는 훈련은 무의미합니다. 하나의 봉에 함축된 네 가지 데이터(OHLC)와 거래량의 절대적 비율 관계를 뇌리에 각인하기 위한 고도의 트레이닝 기법을 전수합니다.
+                <p className="text-slate-300 leading-relaxed text-xs">
+                  실제 라이브 시장에서 매매를 통해 경험치를 쌓는 것은 최소 수개월에서 수년의 절대적 시간이 소요됩니다. 하루에 단 하나의 일봉 캔들만 생성되기 때문입니다. 
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/40 p-4 rounded-xl border border-slate-800/60">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/60 my-1">
                   <div>
-                    <h5 className="font-bold text-white mb-1.5">💡 장중 아래꼬리-몸통 균형 독해법</h5>
-                    <p className="text-[11px] text-slate-400">
-                      당일 시가(O)가 전일 종가와 비교하여 마이너스로 시작했으나, 장중에 세력의 대량 지지 수급이 들어와 저가(L)를 찍은 뒤 아래꼬리를 길게 달고 양봉 몸통으로 종가(C) 마감했다면 최상급 방어력의 징표입니다. 다음 날 거래일의 강한 반등을 직관적으로 예측하는 리플레이 피드백 훈련을 지속하십시오.
+                    <h5 className="font-bold text-white mb-1.5 text-xs flex items-center gap-1">
+                      <span className="w-1 h-3 bg-red-500 rounded-full" />
+                      압도적인 경험치 시간 압축
+                    </h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      본 시뮬레이터는 피튀기는 장중 120거래일 동안의 치열했던 주도 세력과 시장 수급의 마감 데이터를 단 몇 분 만에 완벽하게 순차 전개합니다. 수개월 동안 고생하며 겪어야 할 파동의 사이클을 단 5분으로 압축하여 훈련할 수 있어 성장 효율성이 극대화됩니다.
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-bold text-white mb-1.5">💡 윗꼬리 이탈 및 거래 대금 탈출 판별법</h5>
-                    <p className="text-[11px] text-slate-400">
-                      당일 고가(H)가 전일 대비 폭등했으나 장 마감 시간(오후 3시 30분)이 임박할수록 윗꼬리가 하염없이 길어지며 종가(C)가 주저앉았다면 이는 개인 투자자에게 물량을 전가하고 탈출한 흔적입니다. 윗꼬리가 몸통 대비 1.5배를 초과하는 음봉은 즉각적인 포지션 청산 및 손절 신호로 대응해야 계좌를 살릴 수 있습니다.
+                    <h5 className="font-bold text-white mb-1.5 text-xs flex items-center gap-1">
+                      <span className="w-1 h-3 bg-blue-500 rounded-full" />
+                      차트 유형의 시각 인지 지각(지각 패턴)
+                    </h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      주가 흐름에서 반복적으로 포착되는 5일 이평선 골든크로스, 거래량 급감 시점의 거래량 눌림목, 강력한 전고점 돌파와 뒤이은 되돌림 지지 현상(Role Reversal) 등 고확률 매매 타점을 뇌와 안구에 그대로 입력시켜 실전 장세에서 망설임 없이 기계적으로 대응하도록 돕습니다.
                     </p>
                   </div>
                 </div>
-                <p className="text-[11px]">
-                  <strong>거래량 가속도 기법:</strong> 차트 상에서 주가가 완만하게 하강 추세를 그릴 때 거래량이 이전의 20% 미만으로 바짝 마른다면, 이는 투매가 진정되고 바닥 다지기에 들어간 시그널입니다. 이러한 바닥 국면에서 일봉 거래량이 직전 평균치의 최소 300% 이상 순증하며 작은 망치형 양봉(Doji) 캔들이 연속 생성되는 구간이야말로, 단타 트레이더들이 추세 반전을 믿고 1차 선취매 분할 매수로 진입해야 하는 핵심 맥점 영역입니다.
+              </div>
+
+              {/* 3. 연습하면 누구나 할 수 있다는 자신감 */}
+              <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
+                  <div className="w-1.5 h-4 bg-yellow-500 rounded-full" />
+                  <h4 className="text-white font-bold text-xs md:text-sm">3. 연습하면 할 수 있습니다: 트레이딩은 배울 수 있는 과학적 수련입니다</h4>
+                </div>
+                <p className="text-slate-300 leading-relaxed text-xs">
+                  세계적으로 명성이 자자한 전설의 트레이더 모임 '터틀 트레이더(Turtle Traders)' 실험은 <strong>"트레이딩은 타고난 재능이 아니라 철저하게 교육되고 연습을 통해 훈련될 수 있는 영역"</strong>임을 영구히 증명하였습니다. 
+                </p>
+                <p className="text-slate-300 leading-relaxed text-xs">
+                  바둑 기사들이 평생 끊임없이 수십만 판의 기보를 세심하게 복기(復棋)하며 최선의 수를 완성해 가듯, 주식 트레이더 또한 과거의 역사를 철저하게 역추적하고 복기하는 반복 숙련을 거치면 누구나 안정적인 우상향 성과를 내는 프로의 길로 진입할 수 있습니다. 
+                </p>
+                <p className="text-slate-200 font-medium leading-relaxed text-xs bg-slate-950/50 p-3.5 rounded-lg border border-slate-800/80 text-center">
+                  ✨ 처음에는 손실이 발생하거나 매도 타점을 놓칠지라도 낙담하지 마십시오. 5번, 20번, 100번 시뮬레이터로 타점을 연마하고 자신만의 리스크 관리 원칙(자금 관리 철칙)을 수립하면 차트판은 투기장이 아닌 고도의 과학적이고 안전한 확률 게임으로 변모할 것입니다. 당신은 연습을 통해 반드시 스스로 성공적인 의사결정을 내리는 자립형 주도적 트레이더가 될 수 있습니다!
                 </p>
               </div>
 
-              {/* 3. 상세 면책고지 (법조문 및 가이드라인 - 1,500자 이상 구성) */}
-              <div className="space-y-3 bg-slate-950/80 border border-slate-800 rounded-xl p-4 md:p-5">
-                <div className="flex items-center gap-2 border-b border-slate-700 pb-1.5">
-                  <AlertCircle className="w-4 h-4 text-yellow-500" />
-                  <h4 className="text-yellow-500 font-bold text-sm">3. 법적 책임 면책고지 규정 (Legal Disclaimer Guidelines)</h4>
+              {/* 4. 법적 책임 면책고지 */}
+              <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
+                  <div className="w-1.5 h-4 bg-amber-500 rounded-full" />
+                  <h4 className="text-white font-bold text-xs md:text-sm">4. 교육 목적 및 법적 책임 면책안내 (Disclaimer)</h4>
                 </div>
-                
-                <div className="space-y-3.5 text-[10px] text-slate-400 leading-relaxed max-h-[250px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-800">
-                  <p className="text-slate-300 font-semibold">
-                    [중요 선언] 본 "K-주식 리플레이 시뮬레이터" 서비스 및 모의 훈련 시스템(이하 "본 사이트" 혹은 "서비스")을 이용하기에 앞서, 아래 명시된 모든 법적 면책 사항 및 서비스 이용 한계 규정을 충분히 인지하고 완전하게 숙지하였음을 법률상 전제로 합니다. 본 사이트의 어떠한 데이터나 교육 콘텐츠도 실제 투자를 권유하는 투자 조언 또는 재무 자문으로 해석될 수 없습니다.
+                <div className="text-xs text-slate-300 leading-relaxed space-y-2.5 max-h-[140px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+                  <p>
+                    본 서비스는 과거 실제 발생하였던 종가 수치 데이터셋에 기반하여 시뮬레이션을 제공하는 금융 학습 교육용 시뮬레이터입니다. 본 서비스가 수록하고 있는 기술적 분석 요령, 설명문, 팁 등 모든 콘텐츠는 일반 금융 지식 증진을 위한 교육 자료에 불과하며, 실제 특정 금융 투자 상품의 매수, 매도, 리스크 자문, 혹은 추천 행위를 제공하지 않습니다.
                   </p>
-                  
-                  <div>
-                    <strong className="text-slate-200">제1조 (과거 데이터의 시뮬레이션 한계 및 비보증)</strong>
-                    <p>
-                      1. 본 서비스에서 노출하는 주가 정보, 이동평균선, 보조 지표, 거래량 차트 등은 과거 실제 발생하였던 역사적 장 마감 가격 데이터(Historical Data)에 기반한 모의 훈련 데이터셋입니다. 이는 과거의 시각적 흐름을 빠르게 복기하여 학습 효과를 극대화하려는 목적에 국한되며, 과거의 데이터 흐름 및 모의 훈련 수익률 성과가 향후 미래 시장의 주가 움직임이나 실제 투자 수익률을 보증, 예측, 혹은 보장하지 않습니다.
-                    </p>
-                    <p>
-                      2. 미래의 주식 시장은 거시 경제 환경, 기업 실적의 변동, 정치적 변수, 예기치 못한 시장 뉴스, 유동성 변화 등 수많은 복합 요소로 작동하므로, 과거의 차트 유형이 동일하게 반복되지 않습니다. 따라서 시뮬레이터상에서의 모의 수익 발생 여부와 상관없이 실제 주식 시장에서의 거래는 원금의 전액 혹은 상당 부분의 손실 위험을 상시 내포하고 있습니다.
-                    </p>
-                  </div>
-
-                  <div>
-                    <strong className="text-slate-200">제2조 (실제 투자 의사결정 책임의 귀속 및 귀책사유의 부존재)</strong>
-                    <p>
-                      1. 본 서비스가 제공하는 메인 화면 하단의 '주식 리플레이 시뮬레이터 탄생 배경 및 활용 가이드', '단타 매매 꿀팁', '시가, 고가, 저가, 종가(OHLC)를 지배하는 캔들 독해 비책' 및 본 팝업 내 가이드를 포함하여, 사이트상에 수록된 모든 분석 텍스트, 차트 해석 방법, 설명문, 교육 자료 등은 정보 제공과 자가 학습 지원 목적에 한정됩니다. 
-                    </p>
-                    <p>
-                      2. 사용자는 본 서비스 내의 교육용 콘텐츠나 가상 매매 테스트 결과를 기반으로 하여 실제 주식 시장, 선물, 옵션, 해외 주식, 암호화폐 등 어떠한 실제 유가증권 거래도 직접 수행하여서는 안 됩니다. 만일 사용자가 본 사이트의 정보 또는 시뮬레이션 결과를 참고, 신용, 유추하여 실제 매매를 진행할 경우, 그로 인해 발생할 수 있는 모든 직접적, 간접적, 우발적, 특수적, 결과적 경제적 손실, 채무 불이행, 파산, 정신적 고통 등 어떠한 부정적 결과에 대해서도 본 서비스 운영자, 개발자, 및 관계자는 일체의 민형사상 손해배상 책임, 보상 책임, 사후 수습 의무를 부담하지 아니함을 엄숙히 규정합니다. 
-                    </p>
-                    <p>
-                      3. 실제 금융 시장에서의 모든 거래는 전적으로 사용자 본인의 고유한 주관적 투자 철학과 지식 하에 행해지는 독립적인 행위이며, 그에 따르는 이익뿐 아니라 모든 손실 책임 또한 100% 온전히 투자자 본인(사용자)에게 전속됩니다.
-                    </p>
-                  </div>
-
-                  <div>
-                    <strong className="text-slate-200">제3조 (금융업 및 법률 중개 행위 불이행 고지)</strong>
-                    <p>
-                      1. 본 사이트와 서비스 운영자는 자본시장과 금융투자업에 관한 법률(자본시장법)상 인가 또는 등록을 필한 전문 금융투자업자, 자문업자, 일임업자, 유사투자자문업자가 아닙니다. 당사는 주식 시장의 특정 종목에 대한 시세 조종, 리딩, 주식 추천, 매수/매도 신호의 실시간 송출 및 개별 금융 컨설팅을 일체 수행하지 않습니다. 
-                    </p>
-                    <p>
-                      2. 당사는 특정 유가증권의 매입이나 매도를 알선, 주선, 대행, 혹은 청약 중개하지 않으며, 투자자 소유 자산을 예치하거나 대신 운용하는 상사 행위를 원천적으로 금지 및 차단하고 있습니다.
-                    </p>
-                  </div>
-
-                  <div>
-                    <strong className="text-slate-200">제4조 (데이터 신뢰성 및 무중단 서비스의 한계 고지)</strong>
-                    <p>
-                      1. 본 서비스의 차트 캔들 데이터는 공신력 있는 금융 소스 API(예: Yahoo Finance 등)로부터 후행적으로 전송받아 정렬한 자료입니다. 당사는 데이터의 정밀함과 고유 완성도를 유지하기 위해 최선의 기술적 노력을 다하고 있으나, 원천 API 제공처의 오류, 정정 공시의 누락, 통신 인프라 지연, 데이터 정합성 왜곡 등으로 인하여 일부 캔들이 실제 과거 역사적 수치와 일치하지 않거나 누락될 가능성이 존재합니다. 
-                    </p>
-                    <p>
-                      2. 당사는 데이터의 완전무결성, 최신성, 정확성, 적합성 여부에 대해 명시적 혹은 묵시적인 보증을 제공하지 않습니다. 아울러 서버 점검, 네트워크 중단, 천재지변, 브라우저 로컬 저장소 캐시 유실 등 불가항력적인 시스템 고장으로 인하여 사용자의 훈련 누적 데이터가 임시 소실되는 경우에 대해서도 당사는 면책됩니다.
-                    </p>
-                  </div>
-
-                  <div>
-                    <strong className="text-slate-200">제5조 (구글 애드센스 등 외부 광고 매체 정책 준수 및 수익 고지)</strong>
-                    <p>
-                      1. 본 사이트는 완전 익명 기반의 비로그인 가상 학습 서비스로서, 일체의 회원 가입 정보나 민감한 개인 신원 식별 정보를 수집하지 않습니다.
-                    </p>
-                    <p>
-                      2. 다만 서비스 인프라 및 서버 가동 자금 보충을 목적으로 구글 애드센스(Google AdSense) 등 서드파티 광고 네트워크 플랫폼을 활용하고 있습니다. 본 서비스 내에서 표출되는 광고물 및 이와 연계된 쿠키(Cookie) 수집 활동 등은 구글 사의 자체 개인정보 보호정책 및 사용 기록 추적 원리에 근거하여 독립적으로 실행되며, 본 서비스 운영자가 임의로 개입하거나 그 내용을 직접 수집 및 열람할 수 없음을 명백히 합니다.
-                    </p>
-                  </div>
-
-                  <div>
-                    <strong className="text-slate-200">제6조 (관할 법원의 지정)</strong>
-                    <p>
-                      본 서비스 이용 및 본 면책 사항의 해석과 관련하여 분쟁이 발생할 경우, 서비스 운영자의 소재지 관할 법원을 전속 합의 관할 법원으로 지정하여 해결할 것을 명시합니다.
-                    </p>
-                  </div>
+                  <p>
+                    실제 금융 시장에서의 모든 투자는 거시경제 환경, 유동성 변화, 정치적 변수 등 복합적 요소로 가동되므로 본 시뮬레이터에서의 가상 투자 수익률 성과가 실제 시장에서의 성과를 보증하거나 예측하지 아니하며, 실제 매매에 따른 모든 수익과 손실 책임은 전적으로 투자자 본인(사용자)에게 전속되고 운영자 및 관계자는 일체의 법적 책임을 지지 않음을 알려드립니다.
+                  </p>
                 </div>
               </div>
 

@@ -22,6 +22,9 @@ export interface Trade {
   quantity: number;
   amount: number;
   balanceAfter: number;
+  entryPrice?: number;
+  realizedPnL?: number;
+  realizedPnLPct?: number;
 }
 
 export interface SimulationState {
