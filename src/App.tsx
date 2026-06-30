@@ -715,7 +715,6 @@ export default function App() {
           
           {/* 종목 선택 및 데이터 연결 상태 바 - 데스크탑용 (차트 옆칸 우측 사이드바 상단) */}
           <div className="hidden lg:flex flex-col gap-3 bg-slate-850/50 border border-slate-800/80 rounded-xl p-4" id="stock-selector-bar-desktop">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">종목 선택</span>
             <div className="relative w-full">
               <select 
                 value={symbol}
@@ -930,117 +929,251 @@ export default function App() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* 세션 1 */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
-                <h3 className="text-md font-bold text-slate-100">1. 시뮬레이터 개발 배경 및 200% 활용 가이드</h3>
-              </div>
-              <div className="text-xs text-slate-400 leading-relaxed space-y-3">
-                <p>
-                  실전 주식 매매는 소중한 자산이 직접 거래되는 극도의 심리전이자 냉혹한 전장입니다. 대다수의 입문 투자자들은 주식 시장의 구조적 메커니즘을 제대로 체득하지 못한 채, 상승하는 종목에 흥분하여 매수하고 하락하는 종목에 공포를 느껴 매도하는 이른바 <strong>'뇌동매수'</strong>와 <strong>'공포 손절'</strong>을 무한 반복하게 됩니다. 이는 결국 치명적인 원금 손실로 이어지는 지름길이 됩니다.
-                </p>
-                <p>
-                  가상투자나 모의투자가 대안으로 거론되기도 하지만, 장중에 실시간으로 흘러가는 모의투자는 호흡이 너무 길어서 초보자가 의미 있는 양의 매매 데이터를 빠르게 누적하기 어렵습니다. 하루에 단 한 두 번의 판단 흐름밖에 겪어보지 못하기 때문입니다. 이러한 문제의식을 바탕으로 우리는 <strong>'투자 경험치의 압축 복기'</strong>와 <strong>'시간 효율성 극대화'</strong>라는 두 가지 절대적 기치 아래 본 <span className="text-blue-400 font-semibold">K-Stock Replay Simulator</span>를 개발 및 출시하게 되었습니다.
-                </p>
-                <p>
-                  본 리플레이 엔진은 과거 수개월간 축적된 실제 역사적 일봉 거래 데이터를 단 몇 분 만에 완벽하게 시뮬레이션할 수 있도록 설계되었습니다. 사용자는 다음 캔들 버튼을 클릭할 때마다 하루치의 피튀기는 세력 공방이 끝난 마감 데이터를 단 0.1초 만에 확인하며 빠르게 결정을 내릴 수 있습니다. 본 시뮬레이터를 200% 활용하기 위해서는 매매 일지를 정독하듯, 자신이 어떤 이동평균선 배열에서 매수를 들어갔는지, 손절선(예: -3% 또는 20일선 이탈)을 정확히 지켰는지 스스로 되물어보며 <strong>'나만의 매매 일관성(Consistency)'</strong>을 구축하는 것에 집중해야 합니다.
-                </p>
-              </div>
-
-              {/* 주식 차트 복기 시뮬레이터 사용설명서 */}
-              <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4 mt-6 space-y-3 shadow-lg shadow-black/20">
-                <h4 className="text-xs font-black text-blue-400 flex items-center gap-1.5 uppercase tracking-wide">
-                  📖 주식 차트 복기 시뮬레이터 사용설명서 (How To Play)
-                </h4>
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  본 시뮬레이터의 매커니즘은 매우 쉽고 단순하게 구성되어 있어 처음 접하시는 분들도 직관적으로 실전 차트 트레이딩을 연습해 보실 수 있습니다.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-slate-400 leading-relaxed font-mono mt-2">
-                  <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
-                    <span className="text-slate-200 font-bold block mb-1">① 종목 선택 및 데이터 초기화</span>
-                    화면 좌측 상단(모바일은 상단) 종목 검색창을 통해 삼성전자, 카카오, 네이버, 에코프로 등 원하는 주도 종목을 골라 즉시 120일간의 복기 캔들 데이터셋을 가동시킵니다.
-                  </div>
-                  <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
-                    <span className="text-slate-200 font-bold block mb-1">② 캔들 순차 전개 (Spacebar)</span>
-                    [다음 일봉(+1일)] 버튼을 누르거나 차트 창에 포커스를 둔 뒤 키보드의 <strong className="text-blue-400 font-semibold">[스페이스바(Spacebar)]</strong> 키를 누르면 다음 날 일봉 캔들이 1개씩 순차적으로 차트에 추가로 형성됩니다.
-                  </div>
-                  <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
-                    <span className="text-slate-200 font-bold block mb-1">③ 가상 주문 집행 (매수/매도)</span>
-                    하단 컨트롤러의 [시장가 매수 (100%)] 버튼을 클릭하여 보유 예수금 전체로 현재 주가에 즉시 풀 매수 진입하며, 평균 단가는 초록색 점선으로 표시됩니다. 청산 시에는 [시장가 매도 (100%)]를 사용하여 포지션을 전부 실현시킵니다.
-                  </div>
-                  <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
-                    <span className="text-slate-200 font-bold block mb-1">④ 최종 결과 보고서 & 실시간 랭킹</span>
-                    120영업일이 전부 경과하여 훈련이 끝나면 실시간 트레이더 리더보드 랭킹 등록과 함께, 이번 연습 세션 동안 매수한 거래의 <strong>평균 승률 및 평균 손익비(Profit-Loss Ratio)</strong>를 정량적으로 도출해 줍니다.
-                  </div>
-                </div>
-              </div>
+          {/* 1. 시뮬레이터 개발 배경 및 기획 의도 (상단 인트로 섹션으로 독립 분리) */}
+          <div className="bg-slate-950/40 border border-slate-800 p-5 md:p-6 rounded-2xl space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
+              <h3 className="text-base font-bold text-slate-100">시뮬레이터 개발 배경 및 200% 활용 가이드</h3>
+            </div>
+            <div className="text-xs text-slate-300 leading-relaxed space-y-3">
+              <p>
+                실전 주식 매매는 소중한 자산이 직접 거래되는 극도의 심리전이자 냉혹한 전장입니다. 대다수의 입문 투자자들은 주식 시장의 구조적 메커니즘을 제대로 체득하지 못한 채, 상승하는 종목에 흥분하여 매수하고 하락하는 종목에 공포를 느껴 매도하는 이른바 <strong>'뇌동매수'</strong>와 <strong>'공포 손절'</strong>을 무한 반복하게 됩니다. 이는 결국 치명적인 원금 손실로 이어지는 지름길이 됩니다.
+              </p>
+              <p>
+                가상투자나 모의투자가 대안으로 거론되기도 하지만, 장중에 실시간으로 흘러가는 모의투자는 호흡이 너무 길어서 초보자가 의미 있는 양의 매매 데이터를 빠르게 누적하기 어렵습니다. 하루에 단 한 두 번의 판단 흐름밖에 겪어보지 못하기 때문입니다. 이러한 문제의식을 바탕으로 우리는 <strong>'투자 경험치의 압축 복기'</strong>와 <strong>'시간 효율성 극대화'</strong>라는 두 가지 절대적 기치 아래 본 <span className="text-blue-400 font-semibold">K-Stock Replay Simulator</span>를 개발 및 출시하게 되었습니다.
+              </p>
+              <p>
+                본 리플레이 엔진은 과거 수개월간 축적된 실제 역사적 일봉 거래 데이터를 단 몇 분 만에 완벽하게 시뮬레이션할 수 있도록 설계되었습니다. 사용자는 다음 캔들 버튼을 클릭할 때마다 하루치의 피튀기는 세력 공방이 끝난 마감 데이터를 단 0.1초 만에 확인하며 빠르게 결정을 내릴 수 있습니다. 본 시뮬레이터를 200% 활용하기 위해서는 매매 일지를 정독하듯, 자신이 어떤 이동평균선 배열에서 매수를 들어갔는지, 손절선(예: -3% 또는 20일선 이탈)을 정확히 지켰는지 스스로 되물어보며 <strong>'나만의 매매 일관성(Consistency)'</strong>을 구축하는 것에 집중해야 합니다.
+              </p>
             </div>
 
-            {/* 세션 2 */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-6 bg-red-500 rounded-full" />
-                <h3 className="text-md font-bold text-slate-100">2. 시가, 고가, 저가, 종가(OHLC)를 지배하는 캔들 독해 비책</h3>
-              </div>
-              <div className="text-xs text-slate-400 leading-relaxed space-y-3">
-                <p>
-                  기술적 분석의 가장 위대한 첫 단추는 캔들스틱(봉차트)의 구조를 정교하게 독해하는 능력입니다. 하나의 캔들은 당일 시장의 시작부터 마감까지 발생한 모든 투자자의 탐욕, 공포, 주도 세력의 의도와 대중 심리의 결과물을 압축적으로 보여주는 힘의 지도입니다. 캔들은 <strong>시가(Open), 고가(High), 저가(Low), 종가(Close)</strong>의 네 가지 핵심 수치로 완성됩니다.
-                </p>
-                <p>
-                  <strong>시가(Open):</strong> 오전 9시 정각, 전날 장 마감 이후 야간에 누적된 호재와 악재, 글로벌 증시의 움직임 등이 일시에 반영되어 탄생하는 첫 거래가입니다. 시가가 전일 마감 가격(종가)보다 3% 이상 높게 시작하는 것을 '갭 상승(Gap Up)'이라고 하며, 이는 밤사이 매수 대기 에너지가 매우 강했음을 시사합니다. 반대로 시가가 갭 하락으로 시작된다면 이는 강력한 공포 매물이 시장을 지배한 것입니다.
-                </p>
-                <p>
-                  <strong>고가(High)와 저가(Low):</strong> 당일 장중에 도달한 극한의 정점들을 의미합니다. 고가는 탐욕의 최대치이며, 저가는 공포의 바닥선입니다. 캔들의 몸통 위로 길게 솟아오른 <strong>'윗꼬리(Upper Shadow)'</strong>는 고점 도달 후 대량의 차익 실현 물량과 매도 저항에 부딪혀 밀려 내려왔음을 뜻하는 부정적 신호입니다. 반면 아래로 깊게 내려앉은 <strong>'아래꼬리(Lower Shadow)'</strong>는 바닥에서 세력 또는 기관의 견고한 방어 매수세가 가동되었음을 알리는 매우 긍정적인 지지 신호입니다.
-                </p>
-                <p>
-                  <strong>종가(Close):</strong> 오후 3시 30분, 하루 동안의 치열했던 공방이 최종 타협을 이뤄 확정된 마지막 가격입니다. 주식 바닥의 오랜 격언 중 하나는 <strong>"시가는 아마추어와 세력의 의도가 만들고, 종가는 진정한 프로와 시장 전체의 합의가 만든다"</strong>는 것입니다. 종가가 시가보다 높게 끝나면 붉은색의 양봉이 되고, 낮게 끝나면 푸른색의 음봉이 됩니다. 특히 장 막판까지 매수세를 길게 유지하며 윗꼬리 없는 장대양봉으로 종가를 형성하는 경우, 다음 거래일에도 강한 추가 상승 추세를 예고하는 중요한 전조가 됩니다.
-                </p>
+            {/* 주식 차트 복기 시뮬레이터 사용설명서 (글자 크기를 text-xs로 완벽하게 통일 및 가독성 업그레이드) */}
+            <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4 md:p-5 mt-4 space-y-3 shadow-lg shadow-black/20">
+              <h4 className="text-xs font-black text-blue-400 flex items-center gap-1.5 uppercase tracking-wide">
+                📖 주식 차트 복기 시뮬레이터 사용설명서 (How To Play)
+              </h4>
+              <p className="text-xs text-slate-300 leading-normal">
+                본 시뮬레이터의 매커니즘은 매우 쉽고 단순하게 구성되어 있어 처음 접하시는 분들도 직관적으로 실전 차트 트레이딩을 연습해 보실 수 있습니다.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs text-slate-300 leading-relaxed font-sans mt-2">
+                <div className="bg-slate-900/40 p-3.5 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
+                  <span className="text-slate-100 font-bold block mb-1">① 종목 선택 및 데이터 초기화</span>
+                  화면 좌측 상단(모바일은 상단) 종목 검색창을 통해 삼성전자, 카카오, 네이버, 에코프로 등 원하는 주도 종목을 골라 즉시 120일간의 복기 캔들 데이터셋을 가동시킵니다.
+                </div>
+                <div className="bg-slate-900/40 p-3.5 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
+                  <span className="text-slate-100 font-bold block mb-1">② 캔들 순차 전개 (Spacebar)</span>
+                  [다음 일봉(+1일)] 버튼을 누르거나 차트 창에 포커스를 둔 뒤 키보드의 <strong className="text-blue-400 font-semibold">[스페이스바(Spacebar)]</strong> 키를 누르면 다음 날 일봉 캔들이 1개씩 순차적으로 차트에 추가로 형성됩니다.
+                </div>
+                <div className="bg-slate-900/40 p-3.5 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
+                  <span className="text-slate-100 font-bold block mb-1">③ 가상 주문 집행 (매수/매도)</span>
+                  하단 컨트롤러의 [시장가 매수 (100%)] 버튼을 클릭하여 보유 예수금 전체로 현재 주가에 즉시 풀 매수 진입하며, 평균 단가는 초록색 점선으로 표시됩니다. 청산 시에는 [시장가 매도 (100%)]를 사용하여 포지션을 전부 실현시킵니다.
+                </div>
+                <div className="bg-slate-900/40 p-3.5 rounded-xl border border-slate-800/50 hover:border-slate-700/60 transition-colors">
+                  <span className="text-slate-100 font-bold block mb-1">④ 최종 결과 보고서 & 실시간 랭킹</span>
+                  120영업일이 전부 경과하여 훈련이 끝나면 실시간 트레이더 리더보드 랭킹 등록과 함께, 이번 연습 세션 동안 매수한 거래의 <strong>평균 승률 및 평균 손익비(Profit-Loss Ratio)</strong>를 정량적으로 도출해 줍니다.
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6 border-t border-slate-800">
-            {/* 세션 3 */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-6 bg-yellow-500 rounded-full" />
-                <h3 className="text-md font-bold text-slate-100">3. 거래량(Volume): 영혼을 흔드는 시장의 진실 지표</h3>
+          {/* 2. 실전 차트 분석 및 트레이딩 핵심 마스터 전략 (독립 타이틀 및 2x2 그리드 배치) */}
+          <div className="border-t border-slate-800 pt-8 space-y-6">
+            <div className="flex items-center gap-2">
+              <span className="bg-gradient-to-r from-red-500 to-amber-500 text-white px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">STRATEGY</span>
+              <h3 className="text-md md:text-lg font-black text-slate-100">📈 실전 차트 분석 및 매매 핵심 전략</h3>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* 전략 1 */}
+              <div className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+                  <div className="w-1.5 h-4 bg-red-500 rounded-full" />
+                  <h4 className="text-sm font-bold text-slate-100">1. 시가, 고가, 저가, 종가(OHLC)를 지배하는 캔들 독해 비책</h4>
+                </div>
+                <div className="text-xs text-slate-400 leading-relaxed space-y-3">
+                  <p>
+                    기술적 분석의 가장 위대한 첫 단추는 캔들스틱(봉차트)의 구조를 정교하게 독해하는 능력입니다. 하나의 캔들은 당일 시장의 시작부터 마감까지 발생한 모든 투자자의 탐욕, 공포, 주도 세력의 의도와 대중 심리의 결과물을 압축적으로 보여주는 힘의 지도입니다. 캔들은 <strong>시가(Open), 고가(High), 저가(Low), 종가(Close)</strong>의 네 가지 핵심 수치로 완성됩니다.
+                  </p>
+                  <p>
+                    <strong>시가(Open):</strong> 오전 9시 정각, 전날 장 마감 이후 야간에 누적된 호재와 악재, 글로벌 증시의 움직임 등이 일시에 반영되어 탄생하는 첫 거래가입니다. 시가가 전일 마감 가격(종가)보다 3% 이상 높게 시작하는 것을 '갭 상승(Gap Up)'이라고 하며, 이는 밤사이 매수 대기 에너지가 매우 강했음을 시사합니다. 반대로 시가가 갭 하락으로 시작된다면 이는 강력한 공포 매물이 시장을 지배한 것입니다.
+                  </p>
+                  <p>
+                    <strong>고가(High)와 저가(Low):</strong> 당일 장중에 도달한 극한의 정점들을 의미합니다. 고가는 탐욕의 최대치이며, 저가는 공포의 바닥선입니다. 캔들의 몸통 위로 길게 솟아오른 <strong>'윗꼬리(Upper Shadow)'</strong>는 고점 도달 후 대량의 차익 실현 물량과 매도 저항에 부딪혀 밀려 내려왔음을 뜻하는 부정적 신호입니다. 반면 아래로 깊게 내려앉은 <strong>'아래꼬리(Lower Shadow)'</strong>는 바닥에서 세력 또는 기관의 견고한 방어 매수세가 가동되었음을 알리는 매우 긍정적인 지지 신호입니다.
+                  </p>
+                  <p>
+                    <strong>종가(Close):</strong> 오후 3시 30분, 하루 동안의 치열했던 공방이 최종 타협을 이뤄 확정된 마지막 가격입니다. 주식 바닥의 오랜 격언 중 하나는 <strong>"시가는 아마추어와 세력의 의도가 만들고, 종가는 진정한 프로와 시장 전체의 합의가 만든다"</strong>는 것입니다. 종가가 시가보다 높게 끝나면 붉은색의 양봉이 되고, 낮게 끝나면 푸른색의 음봉이 됩니다. 특히 장 막판까지 매수세를 길게 유지하며 윗꼬리 없는 장대양봉으로 종가를 형성하는 경우, 다음 거래일에도 강한 추가 상승 추세를 예고하는 중요한 전조가 됩니다.
+                  </p>
+                </div>
               </div>
-              <div className="text-xs text-slate-400 leading-relaxed space-y-3">
-                <p>
-                  초보 투자자들은 차트의 캔들 형상과 보조지표(RSI, MACD 등)에만 목을 매는 경향이 있습니다. 그러나 이 지표들은 후행성 성격이 강하며, 주도 세력의 페이크(속임수) 패턴에 쉽게 무력화되곤 합니다. 이때 세력이 절대로 조작하거나 숨길 수 없는 유일한 기록이 바로 <strong>'거래량(Volume)'</strong>입니다. 거래량은 주식이 체결된 총량으로, 돈의 실시간 유입 크기를 직접적으로 대변합니다.
-                </p>
-                <p>
-                  거래량이 평소 평균치의 500%를 초과하며 이전 매물대를 관통하는 장대양봉은, 강력한 주도 세력이 마침내 개입하여 시세를 상방으로 발산하기 시작했다는 확실한 <strong>추세 전환 신호</strong>입니다. 반대로 전고점 돌파를 시도하고 있음에도 거래량이 이전 거래량에 미치지 못한다면, 그것은 '가짜 돌파(Fake Breakout)'일 가능성이 다분합니다. 이 경우 돌파 직후 순식간에 매수세가 바닥나며 제자리로 고꾸라지기 십상입니다.
-                </p>
-                <p>
-                  또한, 급격하게 상승한 주가가 단기 과열로 인해 횡보하거나 조정을 받는 국면에서도 거래량의 분석은 중요합니다. 조정을 받는 하락 음봉에서 거래량이 눈에 띄게 격감(예: 거래대금이 이전 상승 거래일의 1/5 수준으로 축소)한다면, 상승을 견인했던 중심 주체(스마트 머니)가 아직 주식을 팔지 않고 매집한 채 쥐고 있음을 반증합니다. 이러한 거래량 격감 시점이 바로 5일선이나 10일 이동평균선과 맞닿는 <strong>황금 눌림목 매수 타점</strong>이 되는 것입니다.
-                </p>
+
+              {/* 전략 2 */}
+              <div className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+                  <div className="w-1.5 h-4 bg-yellow-500 rounded-full" />
+                  <h4 className="text-sm font-bold text-slate-100">2. 거래량(Volume): 영혼을 흔드는 시장의 진실 지표</h4>
+                </div>
+                <div className="text-xs text-slate-400 leading-relaxed space-y-3">
+                  <p>
+                    초보 투자자들은 차트의 캔들 형상과 보조지표(RSI, MACD 등)에만 목을 매는 경향이 있습니다. 그러나 이 지표들은 후행성 성격이 강하며, 주도 세력의 페이크(속임수) 패턴에 쉽게 무력화되곤 합니다. 이때 세력이 절대로 조작하거나 숨길 수 없는 유일한 기록이 바로 <strong>'거래량(Volume)'</strong>입니다. 거래량은 주식이 체결된 총량으로, 돈의 실시간 유입 크기를 직접적으로 대변합니다.
+                  </p>
+                  <p>
+                    거래량이 평소 평균치의 500%를 초과하며 이전 매물대를 관통하는 장대양봉은, 강력한 주도 세력이 마침내 개입하여 시세를 상방으로 발산하기 시작했다는 확실한 <strong>추세 전환 신호</strong>입니다. 반대로 전고점 돌파를 시도하고 있음에도 거래량이 이전 거래량에 미치지 못한다면, 그것은 '가짜 돌파(Fake Breakout)'일 가능성이 다분합니다. 이 경우 돌파 직후 순식간에 매수세가 바닥나며 제자리로 고꾸라지기 십상입니다.
+                  </p>
+                  <p>
+                    또한, 급격하게 상승한 주가가 단기 과열로 인해 횡보하거나 조정을 받는 국면에서도 거래량의 분석은 중요합니다. 조정을 받는 하락 음봉에서 거래량이 눈에 띄게 격감(예: 거래대금이 이전 상승 거래일의 1/5 수준으로 축소)한다면, 상승을 견인했던 중심 주체(스마트 머니)가 아직 주식을 팔지 않고 매집한 채 쥐고 있음을 반증합니다. 이러한 거래량 격감 시점이 바로 5일선이나 10일 이동평균선과 맞닿는 <strong>황금 눌림목 매수 타점</strong>이 되는 것입니다.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* 세션 4 */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-6 bg-green-500 rounded-full" />
-                <h3 className="text-md font-bold text-slate-100">4. 지지와 저항(S&R)을 응용한 실전 단타 매매 절대 타점</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
+              {/* 전략 3 */}
+              <div className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+                  <div className="w-1.5 h-4 bg-green-500 rounded-full" />
+                  <h4 className="text-sm font-bold text-slate-100">3. 지지와 저항(S&R)을 응용한 실전 단타 매매 절대 타점</h4>
+                </div>
+                <div className="text-xs text-slate-400 leading-relaxed space-y-3">
+                  <p>
+                    데이트레이딩(단타 매매)에서 수익을 꾸준히 내기 위한 열쇠는 복잡한 수식이 아니라 단순한 <strong>'지지와 저항(Support and Resistance)'</strong>에 기반한 일관된 타점입니다. 손실은 가혹할 정도로 짧게 잡고, 이익은 넉넉하게 극대화하는 손익비 우위를 점해야 장기적으로 우상향 계좌를 만들 수 있습니다.
+                  </p>
+                  <p>
+                    <strong>지지선(Support Zone):</strong> 하락하던 주가가 특정 가격대만 되면 하락세를 멈추고 하방 압력을 밀어내는 매수 지탱 구간입니다. 지지선은 대개 전저점, 심리적으로 중요하게 여겨지는 라운드 피겨(예: 50,000원, 100,000원처럼 자릿수가 바뀔 때의 정수 가격), 혹은 중기 이동평균선(20일선, 60일선)으로 형성됩니다. 지지선 바로 위에 매수 주문을 분할로 걸어두고, 지지선 붕괴 시 즉시 손절하는 전략은 안전하면서도 강력한 타점 기법입니다.
+                  </p>
+                  <p>
+                    <strong>저항선(Resistance Zone):</strong> 주가가 우상향하며 탄력을 받다가도 특정 가격대 부근만 이르면 차익 실현 및 매물 매도 폭탄이 집중되어 위로 돌파하지 못하는 가격대입니다. 전고점과 장기 매물대가 대표적인 저항선입니다. 저항선을 돌파하기 위해서는 반드시 기존의 모든 악성 대기 매물을 전부 쓸어담는 엄청난 양의 거래량이 수반되어야 합니다. 흥미로운 사실은 저항선을 폭발적인 힘으로 마침내 넘어서게 되면, 기존의 저항선이 이제는 강력한 하방 방어벽인 <strong>'지지선'으로 성격이 반전(Role Reversal)</strong>된다는 점입니다. 이 돌파 직후 첫 되돌림 지지 현상(Re-test)을 확인하며 진입하는 것이 전설적인 돌파 눌림목 전략입니다.
+                  </p>
+                  <p>
+                    <strong>핵심 자금 관리 철칙:</strong> 주식 매매에서 100% 성공을 담보하는 비책은 존재하지 않습니다. 프로 투자자들은 매수에 들어가기 전 "내가 틀렸을 때 어디서 손절할 것인가?"를 먼저 결정합니다. 손절 기준선을 타이트하게(보통 -1.5% ~ -3% 이내) 설정하고, 매매 대상 종목에 한 번에 모든 시드를 진입하기보다 3단계에 걸친 분할 진입 전략을 철저히 집행하십시오. 무모한 뇌동 매수를 제어하고, 본 리플레이 시뮬레이터에서 수없이 반복 연습한 '나의 필살 패턴'이 출현할 때까지 사냥꾼처럼 기다리는 인내심이야말로 투자자로 살아남는 마지막 승부수입니다.
+                  </p>
+                </div>
               </div>
-              <div className="text-xs text-slate-400 leading-relaxed space-y-3">
+
+              {/* 전략 4: 종가 베팅 (신규 추가된 섹션) */}
+              <div className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+                  <div className="w-1.5 h-4 bg-purple-500 rounded-full" />
+                  <h4 className="text-sm font-bold text-slate-100">4. 종가 베팅(Closing Price Betting): 시간 효율과 리스크의 최고 균형</h4>
+                </div>
+                <div className="text-xs text-slate-400 leading-relaxed space-y-3">
+                  <p>
+                    <strong>종가 베팅(EOD Betting)</strong>은 직장인이나 장중 실시간 대응이 불가능한 전업 투자자 모두에게 매우 큰 시간 효율성과 확고한 기대수익률을 주는 기술적 매매 기법입니다. 이는 주식 시장 마감 직전(보통 15시 15분 ~ 15시 30분 동시호가)에 매수하여 익일 장 초반 갭 상승이나 추가 시세 분출 시 매도하는 전략입니다. 밤사이 발생할 수 있는 대외적 불확실성을 짧게 견디며, 장 시작과 동시에 이득을 확정 짓는 것이 이 기법의 정수입니다.
+                  </p>
+                  <p>
+                    <strong>종목 선정 3대 원칙:</strong>
+                    첫째, 당일 <strong>거래대금 및 거래량이 압도적</strong>으로 폭발한 시장 주도 테마의 대장주여야 합니다. 거래가 실리지 않은 무색무취한 종목은 마감 후 추가 에너지가 존재하지 않습니다. 
+                    둘째, <strong>종가 최고가 패턴</strong>이 매우 유리합니다. 캔들의 윗꼬리가 매우 짧거나 거의 없는 꽉 찬 장대양봉으로 마감된다는 것은, 매도하려는 자들보다 내일 당장 더 비싸게 사서라도 넘기겠다는 세력의 의도가 종가 동시호가 끝까지 지배했음을 증명합니다.
+                    셋째, 강력한 호재 재료(실적 발표, 정책 발표, 독점 계약 등)가 여전히 시장에서 소멸하지 않고 살아 숨 쉬는 유효 상태여야 합니다.
+                  </p>
+                  <p>
+                    <strong>매수 진입 및 실전 청산 요령:</strong>
+                    진입은 오후 3시 이후 일봉 상 분봉 흐름이 당일 고점 대비 무너지지 않고 특정 지지대(예: 당일 피봇 2차 저항선 위 또는 분봉상 20선)를 지탱하고 있는지 확인한 후, 동시호가 진입 전이나 호가 마감 직전에 계획된 비중으로 신중하게 매수합니다.
+                    청산은 익일 오전 9시 장이 개시된 후, 시초가 갭이 2% 이상 우호적으로 형성된다면 장 개시 후 5~10분 이내 분출하는 첫 양봉 고점에서 즉시 전량 또는 분할 매도하여 이익을 기계적으로 실현합니다. 만약 시초가가 악재나 수급 부족으로 인해 약세 출발한다면, 5분봉 기준 시초가를 이탈하거나 본인의 정량적 손절선(-2% 내외)을 위반할 시 지체하지 않고 물량을 던져 리스크를 엄격하게 제어해야 장기적 우위를 유지할 수 있습니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. 구글 애드센스 승인용 정보성 특별 가이드 (인기 종목 기술적 복기 비책) */}
+          <div className="border-t border-slate-800 pt-8 space-y-6">
+            <div className="flex items-center gap-2">
+              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">SPECIAL ARTICLE</span>
+              <h3 className="text-md md:text-lg font-black text-slate-100">💡 대한민국 대표 주도주 10대 인기 종목 기술적 분석 및 리플레이 복기 비책</h3>
+            </div>
+
+            <div className="bg-slate-950/40 border border-slate-800/60 p-6 md:p-8 rounded-2xl space-y-6 text-xs md:text-sm text-slate-300 leading-relaxed font-sans">
+              
+              {/* 도입부 */}
+              <div className="space-y-3">
+                <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                  <span className="w-1 h-3.5 bg-emerald-500 rounded-full" />
+                  들어가며: 단기 트레이딩(Short-term Trading)에서 과거 차트 복기의 절대적 중요성
+                </h4>
                 <p>
-                  데이트레이딩(단타 매매)에서 수익을 꾸준히 내기 위한 열쇠는 복잡한 수식이 아니라 단순한 <strong>'지지와 저항(Support and Resistance)'</strong>에 기반한 일관된 타점입니다. 손실은 가혹할 정도로 짧게 잡고, 이익은 넉넉하게 극대화하는 손익비 우위를 점해야 장기적으로 우상향 계좌를 만들 수 있습니다.
+                  주식 단기 트레이딩(Short-term Trading) 영역에서 시장의 변동성을 이겨내고 누적 수익을 꾸준히 쌓아 올리는 프로 트레이더들은 단 하나의 강력한 무기를 가지고 있습니다. 그것은 바로 <strong>'통계적 우위에 기반한 기계적 대응'</strong>입니다. 대다수 개인 투자자들은 장중에 요동치는 실시간 호가창과 1분봉, 3분봉의 화려한 움직임에 정신을 빼앗겨 뇌동매매를 거듭하고 치명적인 손실을 입곤 합니다. 급변하는 시장 분위기 속에서 감정을 완전히 배제하고 이성적인 원칙을 관철하기란 인간의 심리 구조상 대단히 어렵기 때문입니다.
                 </p>
                 <p>
-                  <strong>지지선(Support Zone):</strong> 하락하던 주가가 특정 가격대만 되면 하락세를 멈추고 하방 압력을 밀어내는 매수 지탱 구간입니다. 지지선은 대개 전저점, 심리적으로 중요하게 여겨지는 라운드 피겨(예: 50,000원, 100,000원처럼 자릿수가 바뀔 때의 정수 가격), 혹은 중기 이동평균선(20일선, 60일선)으로 형성됩니다. 지지선 바로 위에 매수 주문을 분할로 걸어두고, 지지선 붕괴 시 즉시 손절하는 전략은 안전하면서도 강력한 타점 기법입니다.
-                </p>
-                <p>
-                  <strong>저항선(Resistance Zone):</strong> 주가가 우상향하며 탄력을 받다가도 특정 가격대 부근만 이르면 차익 실현 및 매물 매도 폭탄이 집중되어 위로 돌파하지 못하는 가격대입니다. 전고점과 장기 매물대가 대표적인 저항선입니다. 저항선을 돌파하기 위해서는 반드시 기존의 모든 악성 대기 매물을 전부 쓸어담는 엄청난 양의 거래량이 수반되어야 합니다. 흥미로운 사실은 저항선을 폭발적인 힘으로 마침내 넘어서게 되면, 기존의 저항선이 이제는 강력한 하방 방어벽인 <strong>'지지선'으로 성격이 반전(Role Reversal)</strong>된다는 점입니다. 이 돌파 직후 첫 되돌림 지지 현상(Re-test)을 확인하며 진입하는 것이 전설적인 돌파 눌림목 전략입니다.
-                </p>
-                <p>
-                  <strong>핵심 자금 관리 철칙:</strong> 주식 매매에서 100% 성공을 담보하는 비책은 존재하지 않습니다. 프로 투자자들은 매수에 들어가기 전 "내가 틀렸을 때 어디서 손절할 것인가?"를 먼저 결정합니다. 손절 기준선을 타이트하게(보통 -1.5% ~ -3% 이내) 설정하고, 매매 대상 종목에 한 번에 모든 시드를 진입하기보다 3단계에 걸친 분할 진입 전략을 철저히 집행하십시오. 무모한 뇌동 매수를 제어하고, 본 리플레이 시뮬레이터에서 수없이 반복 연습한 '나의 필살 패턴'이 출현할 때까지 사냥꾼처럼 기다리는 인내심이야말로 투자자로 살아남는 마지막 승부수입니다.
+                  이러한 감정적 한계를 무력화하고 완벽한 기계적 매매 감각을 체득하는 가장 확실하고 유일한 방법이 바로 <strong>'과거 차트 복기(Chart Replay)'</strong>입니다. 바둑 기사들이 실전 대국이 끝난 후 바둑돌을 하나씩 놓아보며 최선의 수를 치열하게 복기하듯, 주식 트레이더 역시 역사적으로 검증된 주가 데이터(Historical Data)의 캔들을 하루씩 전개하며 매수와 매도 타점을 검토하는 정밀한 훈련을 거쳐야 합니다. 이를 통해 뇌와 안구에 고확률 주가 패턴을 깊이 각인시키고, 실전 상황에서 망설임 없이 원칙대로 주문을 실행하는 트레이더로 거듭날 수 있습니다. 본 리플레이 시뮬레이터는 이러한 수련 과정을 최단 시간에 압축적으로 수행하도록 돕기 위해 개발되었습니다.
                 </p>
               </div>
+
+              {/* 반도체 테마 */}
+              <div className="space-y-3 pt-4 border-t border-slate-800/60">
+                <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                  <span className="w-1 h-3.5 bg-blue-500 rounded-full" />
+                  1. 반도체 테마 대표 종목 기술적 분석 및 복기 노하우 (삼성전자, SK하이닉스, 한미반도체)
+                </h4>
+                <p>
+                  대한민국 증시를 견인하는 최고 핵심 산업인 반도체 섹터의 대장주 <strong>삼성전자</strong>, <strong>SK하이닉스</strong>, 그리고 고대역폭메모리(HBM) 핵심 장비주인 <strong>한미반도체</strong> 등은 주로 거대 수급 주체(외국인 및 기관)의 자금력에 의해 매우 굵직하고 강력한 추세를 그리는 대표적인 수급 주도주입니다. 이러한 반도체 주도 종목들을 차트 복기할 때 최우선적으로 주목해야 할 핵심 분석 비책은 <strong>'강력한 저항대 돌파 시의 대량 거래량'</strong>과 <strong>'20일 이동평균선의 추세 지지'</strong>입니다.
+                </p>
+                <p>
+                  일반적으로 강력한 상승 시세가 가동되는 초입에는 오랫동안 쌓여 있던 고점의 매물대(저항선)를 강하게 관통하는 '역대급 대량 거래량을 동반한 장대양봉'이 출현합니다. 이 장대양봉은 거대 세력이 대규모 매수 자금을 투입하여 매물을 전부 소화했음을 뜻하는 확실한 추세 전환의 이정표입니다. 장대양봉이 탄생한 직후의 눌림목 조정을 복기할 때는 다음 두 가지 원칙을 관찰하셔야 합니다.
+                </p>
+                <ul className="list-disc pl-5 space-y-2 mt-2">
+                  <li>
+                    <strong>장대양봉 중심선 및 시가 지지력 확인:</strong> 주가는 급등한 후 단기 차익 실현 매물로 인해 필연적으로 조정을 받게 됩니다. 이때 거래량이 직전 상승일 대비 5분의 1 이하로 급격히 줄어들면서(거래량 격감), 장대양봉 몸통의 중심선(50% 구간)이나 시가 부근을 훼손하지 않고 지지해 주는 도지형(Doji) 혹은 아래꼬리 음봉 캔들이 형성되는 시점이 리스크 대비 기대 수익이 가장 높은 1차 눌림목 매수 급소입니다.
+                  </li>
+                  <li>
+                    <strong>생명선(20일 이동평균선) 매매 타이밍:</strong> 20일 이동평균선은 단기 트레이딩에서 추세의 살아있음을 판가름하는 가장 신뢰도 높은 생명선입니다. 주가가 조정을 받아 20일선 근처까지 우하향할 때, 20일선을 종가 기준으로 확실히 지탱하며 양봉 흐름을 돌려세우는 확인 매매를 진행합니다. 만약 종가 기준으로 20일선을 대량 거래량과 함께 강하게 하향 돌파(이탈)한다면, 이는 강력한 매도 수급이 발생한 것으로 판단하고 즉시 포지션을 전량 청산(손절)하여 원금을 철저히 보전해야 합니다.
+                  </li>
+                </ul>
+              </div>
+
+              {/* 바이오/제약 테마 */}
+              <div className="space-y-3 pt-4 border-t border-slate-800/60">
+                <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                  <span className="w-1 h-3.5 bg-red-500 rounded-full" />
+                  2. 바이오 및 제약 테마 고변동성 종목 기술적 대응 가이드 (알테오젠, 셀트리온, HLB)
+                </h4>
+                <p>
+                  임상 결과 발표, 글로벌 거대 제약사로의 기술 수출(L/O) 계약, 대형 면역학회 모멘텀 등 눈에 보이지 않는 무형의 재료 가치에 극단적으로 반응하는 <strong>알테오젠</strong>, <strong>셀트리온</strong>, <strong>HLB</strong> 등의 바이오 종목들은 변동성이 일반 제조주에 비해 수배 이상 달하는 초고위험·초고수익 테마군입니다. 바이오 종목을 복기하며 수익 기회를 포착하기 위해 가장 집중해야 할 기술적 신호는 <strong>'이동평균선의 역배열에서 정배열로의 전환(골든크로스)'</strong>과 <strong>'급락 흐름에서의 비타협적 리스크 관리'</strong>입니다.
+                </p>
+                <p>
+                  수개월 동안 장기 하향 곡선을 그리던 바이오 종목들은 재료가 부각되기 전, 이동평균선들이 조밀하게 수렴하는 바닥 다지기 패턴을 보여줍니다. 이후 바닥권에서 5일 이동평균선이 20일선과 60일선을 연이어 상향 돌파하는 <strong>'골든크로스(Golden Cross)'</strong>가 폭발적인 거래량 증가와 함께 출현한다면, 이는 오랜 기간의 매집이 완료되고 주포 세력의 시세 발산 준비가 끝났음을 선언하는 강력한 시그널입니다. 복기 과정에서 골든크로스가 포착된 캔들을 발견하면, 즉시 정배열 초입 단계로 인지하고 적극적인 분할 매수 시나리오를 수립합니다.
+                </p>
+                <p>
+                  그러나 바이오 섹터는 '재료의 소멸'이나 예기치 못한 '임상 실패 루머'가 발생할 경우 하한가를 비롯한 무자비한 수급 붕괴 현상이 발생합니다. 따라서 바이오 트레이딩에서는 리스크 관리 원칙을 신성 불가침한 법률처럼 고수해야 합니다.
+                </p>
+                <ul className="list-disc pl-5 space-y-2 mt-2">
+                  <li>
+                    <strong>정량적 손절 제한선 수립:</strong> 주가가 본인의 매입 단가 대비 사전에 정의한 정량적 손절선(보통 단기 -3%에서 최대 -5%)을 위반하여 하락할 때는, 기업 가치나 전망에 대한 주관적 기대를 배제하고 시장가 매도를 통해 신속하게 포지션을 청산해야 합니다.
+                  </li>
+                  <li>
+                    <strong>추세 훼손 종가 청산 기법:</strong> 바이오의 강한 추세 랠리 도중 일봉 캔들의 종가가 5일선 혹은 10일 이동평균선을 하향 돌파하여 이탈 마감할 시에는 단기 시세 동력이 현저히 상실된 것으로 판정하여 포지션을 일차적으로 최소 50% 이상 분할 청산하며 이익을 안전하게 확보해 가는 지혜가 요구됩니다.
+                  </li>
+                </ul>
+              </div>
+
+              {/* 시뮬레이터 활용법 */}
+              <div className="space-y-3 pt-4 border-t border-slate-800/60">
+                <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                  <span className="w-1 h-3.5 bg-purple-500 rounded-full" />
+                  3. K-Stock Replay Simulator를 활용한 고효율 차트 복기 및 실전 가상 훈련법
+                </h4>
+                <p>
+                  이러한 반도체 및 바이오 종목의 극적인 추세 전환과 지지, 저항, 눌림목 패턴들을 라이브 장세에서 직접 돈을 투입하여 체득하려면 수많은 시간과 고통스러운 금전적 대가가 소요됩니다. 라이브 주식 시장에서는 오직 하루에 단 하나의 일봉만이 형성되기 때문에 충분한 경험치를 쌓을 때까지의 도제 기간이 너무나 깁니다. 본 무료 주식 차트 복기 시뮬레이터는 이러한 시장의 시간 제약을 완전히 철폐하고, 수개월간의 치열했던 주도 세력 간의 마감 공방을 단 몇 분 만에 압축하여 온전히 본인의 경험치로 흡수할 수 있도록 설계되었습니다. 시뮬레이터를 통해 가장 효율적으로 실력을 성장시키는 단계별 가이드라인은 다음과 같습니다.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 text-xs">
+                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/60">
+                    <span className="text-emerald-400 font-bold block mb-1">STEP 1. 타겟 주도 종목 선정 및 데이터 로드</span>
+                    차트 옆의 종목 선택 도구에서 삼성전자, SK하이닉스, 한미반도체, 알테오젠, 셀트리온 등 실전 분석 가이드에서 설명한 대한민국 대표 인기 종목 중 트레이닝하고 싶은 대상을 지정합니다. 그러면 과거 120일 동안의 종가 기반 일봉 데이터셋이 백그라운드에 세팅되고 차트가 초기 1일 차 상태로 동기화됩니다.
+                  </div>
+                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/60">
+                    <span className="text-emerald-400 font-bold block mb-1">STEP 2. 스페이스바(Spacebar)로 캔들 순차 전개</span>
+                    마우스를 이용해 [다음 일봉(+1일)] 버튼을 순차적으로 클릭하거나, 편리한 키보드 핫키인 <strong>[스페이스바(Spacebar)]</strong> 키를 가볍게 눌러가며 캔들을 한 개씩 정밀하게 전개해 나갑니다. 이 과정을 진행할 때 단순히 차트만 넘기는 것이 아니라, 이동평균선의 수렴도, 대량 거래량이 터진 돌파 캔들, 그리고 고점 대비 하락 시의 거래량 감소 형태를 매의 눈으로 관찰합니다.
+                  </div>
+                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/60">
+                    <span className="text-emerald-400 font-bold block mb-1">STEP 3. 확실한 통계적 타점에서의 가상 주문 집행</span>
+                    미리 학습한 '20일선 눌림목 지지' 혹은 '역배열 돌파 골든크로스' 타점에 이봉이 맞닿았다고 판단되는 극적인 시점이 포착되면, 망설임 없이 예수금 조절을 통해 <strong>[시장가 매수]</strong>를 집행합니다. 매수 즉시 차트상에는 본인의 매입 평균단가가 녹색 점선으로 뚜렷하게 가이드 라인을 형성하며 진행 상황을 안내하게 됩니다.
+                  </div>
+                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/60">
+                    <span className="text-emerald-400 font-bold block mb-1">STEP 4. 원칙에 의거한 포지션 청산 및 종합 보고서 분석</span>
+                    매입이 완료된 후에는 미리 도출해 둔 청산 가이드라인(예: 5일선 붕괴 시 전량 매도 등)에 맞춰 캔들을 넘깁니다. 도달 시 지체 없이 <strong>[시장가 매도]</strong>로 대응합니다. 120일의 순차 전개가 모두 종료되면, 본인의 최종 손익 결과 보고서와 함께 평균 승률 및 평균 손익비 지표가 정밀 분석되어 리더보드에 기재됩니다. 이 수치들을 근거로 자신만의 정량적 트레이딩 알고리즘을 부단히 수정 및 발달시켜 가기 바랍니다.
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
