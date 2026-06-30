@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Sitemap: https://k-stockreplay.pe.kr/sitemap.xml
 
 # Daum Webmaster Tool Verification
 #DaumWebMasterTool:f9b4db43cd28a54a1a4b4fd5e8faa78b23da88d6dfaf8a319af7dd313780a38f:2Wt1IlppU2Sk9kz+Yoxcqw==
