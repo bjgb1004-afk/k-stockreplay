@@ -34,6 +34,7 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
 
     let chart: any = null;
     let resizeObserver: ResizeObserver | null = null;
+    let resizeAnimationFrameId: number | null = null;
 
     try {
       // 1. Create Chart
@@ -213,9 +214,9 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
           return {
             time: trade.date,
             position: isBuy ? 'belowBar' : 'aboveBar' as any,
-            color: isBuy ? '#22c55e' : '#eab308',
+            color: isBuy ? '#22c55e' : (trade.isAutoLiquidated ? '#38bdf8' : '#eab308'),
             shape: isBuy ? 'arrowUp' : 'arrowDown' as any,
-            text: isBuy ? '매수' : '매도',
+            text: isBuy ? '매수' : (trade.isAutoLiquidated ? '자동청산' : '매도'),
             size: 1.2,
           };
         })
@@ -241,16 +242,25 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
       // 8. Fit Content
       chart.timeScale().fitContent();
 
-      // 9. Resize Observer
+      // 9. Resize Observer (Check width deviation > 1px to prevent any potential infinite resizing loop)
+      let lastWidth = container.clientWidth;
       resizeObserver = new ResizeObserver((entries) => {
         for (let entry of entries) {
           const { width } = entry.contentRect;
-          if (width && width > 0 && chart) {
-            try {
-              const currentHeight = window.innerWidth < 640 ? 280 : 420;
-              chart.resize(width, currentHeight);
-              chart.timeScale().fitContent();
-            } catch (err) {}
+          if (width && Math.abs(width - lastWidth) > 1 && chart) {
+            lastWidth = width;
+            if (resizeAnimationFrameId !== null) {
+              cancelAnimationFrame(resizeAnimationFrameId);
+            }
+            resizeAnimationFrameId = requestAnimationFrame(() => {
+              try {
+                if (chart) {
+                  const currentHeight = window.innerWidth < 640 ? 280 : 420;
+                  chart.resize(width, currentHeight);
+                  chart.timeScale().fitContent();
+                }
+              } catch (err) {}
+            });
           }
         }
       });
@@ -263,6 +273,9 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
     // Cleanup
     return () => {
       if (resizeObserver) resizeObserver.disconnect();
+      if (resizeAnimationFrameId !== null) {
+        cancelAnimationFrame(resizeAnimationFrameId);
+      }
       if (chart) {
         try {
           chart.remove();

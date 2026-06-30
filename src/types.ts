@@ -25,6 +25,7 @@ export interface Trade {
   entryPrice?: number;
   realizedPnL?: number;
   realizedPnLPct?: number;
+  isAutoLiquidated?: boolean;
 }
 
 export interface SimulationState {

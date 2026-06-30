@@ -32,9 +32,19 @@ import { ReplayChart } from './components/ReplayChart';
 
 const INITIAL_BALANCE = 10000000; // 10,000,000 KRW
 
+const NOTICES = [
+  "[스페이스바(Spacebar)] 키를 누르면 다음 일봉 캔들로 빠르게 넘어갑니다.",
+  "5일 이동평균선(노란선)이 20일 이동평균선(자홍선)을 상향 돌파(골든크로스)할 때 주목해보세요.",
+  "효과음 소리가 크다면 우측 버튼(ON/OFF)을 통해 효과음을 간편하게 끌 수 있습니다.",
+  "거래량(Volume) 막대의 색상이 빨간색이면 상승 마감, 파란색이면 하락 마감을 의미합니다."
+];
+
+const RANDOM_TEST_SYMBOLS: StockSymbol[] = ['삼성전자', 'SK하이닉스', 'NAVER', '카카오', '현대차', '에코프로비엠', '알테오젠', '한화에어로스페이스', '셀트리온', '에코프로'];
+const INITIAL_RANDOM_SYMBOL = RANDOM_TEST_SYMBOLS[Math.floor(Math.random() * RANDOM_TEST_SYMBOLS.length)];
+
 export default function App() {
   // Simulator State
-  const [symbol, setSymbol] = useState<StockSymbol>('삼성전자');
+  const [symbol, setSymbol] = useState<StockSymbol>(INITIAL_RANDOM_SYMBOL);
   const [currentIndex, setCurrentIndex] = useState<number>(9); // Start with 10 candles (index 0 to 9)
   const [balance, setBalance] = useState<number>(INITIAL_BALANCE);
   const [holdings, setHoldings] = useState<number>(0);
@@ -58,19 +68,14 @@ export default function App() {
 
   // Rotating Tips / Notices State
   const [noticeIndex, setNoticeIndex] = useState<number>(0);
-  const notices = [
-    "[스페이스바(Spacebar)] 키를 누르면 다음 일봉 캔들로 빠르게 넘어갑니다.",
-    "5일 이동평균선(노란선)이 20일 이동평균선(자홍선)을 상향 돌파(골든크로스)할 때 주목해보세요.",
-    "효과음 소리가 크다면 우측 버튼(ON/OFF)을 통해 효과음을 간편하게 끌 수 있습니다.",
-    "거래량(Volume) 막대의 색상이 빨간색이면 상승 마감, 파란색이면 하락 마감을 의미합니다."
-  ];
+  const notices = NOTICES;
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setNoticeIndex((prev) => (prev + 1) % notices.length);
+      setNoticeIndex((prev) => (prev + 1) % NOTICES.length);
     }, 5000); // 5 seconds
     return () => clearInterval(timer);
-  }, [notices.length]);
+  }, []);
 
   // Dynamic Data Loading States
   const [stockData, setStockData] = useState<Candle[]>([]);
@@ -82,8 +87,8 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Blind Test Mode States
-  const [isBlindMode, setIsBlindMode] = useState<boolean>(false);
-  const [blindRealName, setBlindRealName] = useState<string>('');
+  const [isBlindMode, setIsBlindMode] = useState<boolean>(true);
+  const [blindRealName, setBlindRealName] = useState<string>(INITIAL_RANDOM_SYMBOL);
 
   // Autocomplete & Search States
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -182,7 +187,10 @@ export default function App() {
       setIsLoading(true);
       setErrorMsg(null);
       try {
-        const result = await fetchRealStockData(symbol, symbol === '사용자정의' ? activeCustomTicker : undefined);
+        const [result] = await Promise.all([
+          fetchRealStockData(symbol, symbol === '사용자정의' ? activeCustomTicker : undefined),
+          new Promise((resolve) => setTimeout(resolve, 400)), // minimum 400ms delay for premium loading experience
+        ]);
         if (active) {
           setStockData(result.candles);
           setIsRealData(true);
@@ -194,6 +202,8 @@ export default function App() {
         }
       } catch (err: any) {
         console.error('API load failed, using fallback mock data:', err);
+        // Ensure consistent 400ms transition time on error/fallback paths as well
+        await new Promise((resolve) => setTimeout(resolve, 400));
         if (active) {
           if (symbol === '사용자정의') {
             setErrorMsg(err.message || '데이터를 불러오는 데 실패했습니다.');
@@ -439,6 +449,35 @@ export default function App() {
       setCurrentIndex(prev => prev + 1);
       playSound('tick');
     } else {
+      // 매수 후 매도하지 않고 시뮬레이션 종료 시, 마지막 날 종가 기준으로 자동 매도 처리하여 수익률 반영
+      if (holdings > 0 && currentCandle) {
+        const sellProceeds = holdings * currentPrice;
+        const balanceAfter = balance + sellProceeds;
+        const costBasis = holdings * averagePrice;
+        const realizedPnL = sellProceeds - costBasis;
+        const realizedPnLPct = averagePrice > 0 ? ((currentPrice - averagePrice) / averagePrice) * 100 : 0;
+
+        const autoTrade: Trade = {
+          id: 'auto-' + Math.random().toString(36).substring(2, 9),
+          type: 'SELL',
+          date: currentCandle.date,
+          price: currentPrice,
+          quantity: holdings,
+          amount: sellProceeds,
+          balanceAfter: balanceAfter,
+          entryPrice: averagePrice,
+          realizedPnL,
+          realizedPnLPct,
+          isAutoLiquidated: true
+        };
+
+        setHoldings(0);
+        setAveragePrice(0);
+        setBalance(balanceAfter);
+        setTrades(prev => [autoTrade, ...prev]);
+        playSound('sell');
+      }
+
       playSound('complete');
       setShowResultModal(true);
     }
@@ -524,10 +563,12 @@ export default function App() {
   // Start Random Blind Test
   const handleStartRandomBlindTest = () => {
     const symbols: StockSymbol[] = ['삼성전자', 'SK하이닉스', 'NAVER', '카카오', '현대차', '에코프로비엠', '알테오젠', '한화에어로스페이스', '셀트리온', '에코프로'];
-    // Filter out the current symbol if possible to ensure variety, otherwise choose randomly from all
-    const filteredSymbols = symbols.filter(s => s !== symbol);
+    // Filter out both the current symbol AND the current revealed blind name to guarantee consecutive variety
+    const filteredSymbols = symbols.filter(s => s !== symbol && s !== blindRealName);
     const pool = filteredSymbols.length > 0 ? filteredSymbols : symbols;
     const randomSymbol = pool[Math.floor(Math.random() * pool.length)];
+
+    console.log(`[Random Blind Test] Prev Symbol: ${symbol}, Prev BlindRealName: ${blindRealName}, Chosen: ${randomSymbol}`);
 
     setIsBlindMode(true);
     setBlindRealName(randomSymbol);
@@ -565,54 +606,56 @@ export default function App() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between font-sans overflow-x-hidden border border-slate-800 shadow-2xl pb-24 lg:pb-0 select-none" id="root-container">
       
       {/* 1. 상단 대시보드 바 (가로형 고정 헤더) */}
-      <header className="h-auto md:h-16 flex flex-col md:flex-row items-center justify-between px-6 py-4 md:py-0 bg-slate-900 border-b border-slate-800 gap-4" id="top-navbar">
-        <div className="flex items-center gap-3">
-          <h1 className="text-md md:text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
+      <header className="h-auto lg:h-16 flex flex-col lg:flex-row items-center justify-between px-6 py-4 lg:py-0 bg-slate-900 border-b border-slate-800 gap-4" id="top-navbar">
+        <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start flex-wrap sm:flex-nowrap">
+          <h1 className="text-sm sm:text-md md:text-lg font-black tracking-tight text-white flex items-center gap-1.5 whitespace-nowrap flex-shrink-0">
             K-Stock Replay 
             <span className="text-blue-400 font-normal">Simulator</span> 
           </h1>
-          <a 
-            href="https://forms.gle/5P3dUTEda5kA3me8A"
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1 text-[11px] bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold px-3 py-1.5 rounded-full border border-red-500/30 transition-all hover:scale-105 ml-2 shadow-sm"
-          >
-            <MessageSquare className="w-3 h-3 text-red-400" />
-            <span>고객 건의함 📩</span>
-          </a>
-          <button 
-            onClick={() => setShowGuideModal(true)}
-            className="flex items-center gap-1 text-[11px] bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-bold px-3 py-1.5 rounded-full border border-blue-500/30 transition-all hover:scale-105 ml-1.5 shadow-sm cursor-pointer whitespace-nowrap"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
-            <span className="whitespace-nowrap">활용 가이드</span>
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <a 
+              href="https://forms.gle/5P3dUTEda5kA3me8A"
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[11px] bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold px-3 py-1.5 rounded-full border border-red-500/30 transition-all hover:scale-105 shadow-sm whitespace-nowrap flex-shrink-0"
+            >
+              <MessageSquare className="w-3 h-3 text-red-400 flex-shrink-0" />
+              <span className="whitespace-nowrap">트레이더 피드백 📩</span>
+            </a>
+            <button 
+              onClick={() => setShowGuideModal(true)}
+              className="flex items-center gap-1 text-[11px] bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-bold px-3 py-1.5 rounded-full border border-blue-500/30 transition-all hover:scale-105 shadow-sm cursor-pointer whitespace-nowrap flex-shrink-0"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+              <span className="whitespace-nowrap">활용 가이드</span>
+            </button>
+          </div>
         </div>
 
         {/* 트레이딩 성적표 */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm w-full md:w-auto" id="trading-scoreboard">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 text-sm w-full lg:w-auto" id="trading-scoreboard">
           <div className="flex flex-col">
             <span className="text-slate-500 text-[10px] uppercase font-semibold tracking-wider">매수 평단가</span>
-            <span id="avgPrice" className="font-mono font-bold text-white mt-0.5">
+            <span id="avgPrice" className="font-mono font-bold text-white mt-0.5 whitespace-nowrap">
               {averagePrice.toLocaleString()} 원
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-slate-500 text-[10px] uppercase font-semibold tracking-wider">현재 수익률</span>
-            <span id="roi" className={`font-mono font-bold mt-0.5 ${holdings > 0 ? (holdingReturnRate >= 0 ? 'text-red-500' : 'text-blue-500') : 'text-slate-500'}`}>
+            <span id="roi" className={`font-mono font-bold mt-0.5 whitespace-nowrap ${holdings > 0 ? (holdingReturnRate >= 0 ? 'text-red-500' : 'text-blue-500') : 'text-slate-500'}`}>
               {holdings > 0 ? (holdingReturnRate >= 0 ? '▲ ' : '▼ ') : ''}
               {holdings > 0 ? holdingReturnRate.toFixed(2) : '0.00'}%
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-slate-500 text-[10px] uppercase font-semibold tracking-wider">가상 잔고</span>
-            <span id="balance" className="font-mono font-bold text-white tracking-wide">
+            <span id="balance" className="font-mono font-bold text-white tracking-wide whitespace-nowrap">
               {Math.round(balance).toLocaleString()} 원
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-slate-500 text-[10px] uppercase font-semibold tracking-wider">보유 수량</span>
-            <span id="quantity" className="font-mono font-bold text-white">
+            <span id="quantity" className="font-mono font-bold text-white whitespace-nowrap">
               {holdings.toLocaleString()} 주
             </span>
           </div>
@@ -628,12 +671,11 @@ export default function App() {
           {/* 종목 선택 및 데이터 연결 상태 바 - 모바일용 (차트 위) */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 border border-slate-800/80 rounded-xl p-3 lg:hidden" id="stock-selector-bar-mobile">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-              <span className="hidden sm:inline-block text-[10px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0">종목 선택</span>
               <div className="relative flex-grow sm:flex-initial sm:w-60 flex gap-2">
                 <select 
                   value={symbol}
                   onChange={handleSymbolChange}
-                  className="flex-grow bg-slate-800 border border-slate-700 text-slate-100 rounded-lg px-3 py-2 text-xs font-semibold outline-none focus:border-blue-500 transition-colors cursor-pointer shadow-sm"
+                  className="flex-grow bg-slate-800 border border-slate-700 text-slate-100 rounded-lg px-3 py-2 text-xs font-semibold outline-none focus:border-blue-500 transition-colors cursor-pointer shadow-sm min-w-0"
                   id="stockSelect"
                 >
                   {isBlindMode && <option value={symbol}>🔒 [블라인드 테스트 진행 중]</option>}
@@ -651,7 +693,7 @@ export default function App() {
 
                 <button 
                   onClick={handleStartRandomBlindTest}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-md active:scale-95 cursor-pointer"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-md active:scale-95 cursor-pointer whitespace-nowrap flex-shrink-0"
                   title="새로운 랜덤 차트 불러오기"
                 >
                   <span>🎲 랜덤</span>
@@ -716,12 +758,30 @@ export default function App() {
 
           {/* 차트 캔버스 */}
           <div className="flex-grow min-h-[280px] sm:min-h-[400px] relative rounded-xl border border-slate-800/80 bg-slate-950/40 overflow-hidden">
-            {isLoading ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-[2px] z-20">
-                <div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mb-3" />
-                <span className="text-xs font-mono text-slate-400">실시간 데이터 불러오는 중...</span>
-              </div>
-            ) : stockData.length === 0 ? (
+            <AnimatePresence>
+              {isLoading && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-[6px] z-20"
+                >
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="relative flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full border border-blue-500/20 animate-ping absolute opacity-40" />
+                      <div className="w-4 h-4 rounded-full bg-blue-500/30 border border-blue-500 animate-pulse" />
+                    </div>
+                    <span className="text-xs font-semibold text-slate-200 tracking-wider mt-2">
+                      새로운 차트를 불러오는 중.
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-sans">실전 훈련용 시세 데이터를 분석하고 있습니다</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {!isLoading && stockData.length === 0 ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 z-20 text-slate-500 p-4 text-center">
                 <AlertCircle className="w-8 h-8 text-red-500/80 mb-2" />
                 <span className="text-xs text-slate-300">데이터가 없습니다. 올바른 6자리 한국 주식 종목코드를 입력하고 조회해 주세요.</span>
@@ -928,8 +988,8 @@ export default function App() {
                     >
                       <div className="flex justify-between items-center font-bold text-[11px]">
                         <span className="text-slate-300 font-semibold">{trade.date}</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] ${isBuy ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}`}>
-                          {isBuy ? '매수 체결' : '매도 체결'}
+                        <span className={`px-2 py-0.5 rounded text-[10px] ${isBuy ? 'bg-red-500/20 text-red-400' : (trade.isAutoLiquidated ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-blue-500/20 text-blue-400')}`}>
+                          {isBuy ? '매수 체결' : (trade.isAutoLiquidated ? '만기 자동 청산 ⏳' : '매도 체결')}
                         </span>
                       </div>
                       <div className="flex justify-between text-slate-200 font-medium text-[11px] mt-0.5 pt-1 border-t border-slate-800/40">
@@ -1035,22 +1095,6 @@ export default function App() {
                   <span className="text-slate-100 font-bold block mb-1">④ 최종 결과 보고서 & 실시간 랭킹</span>
                   120영업일이 전부 경과하여 훈련이 끝나면 실시간 트레이더 리더보드 랭킹 등록과 함께, 이번 연습 세션 동안 매수한 거래의 <strong>평균 승률 및 평균 손익비(Profit-Loss Ratio)</strong>를 정량적으로 도출해 줍니다.
                 </div>
-              </div>
-
-              {/* 가이드 내 [무작위 종목으로 실전 연습하기] 버튼 추가 */}
-              <div className="flex flex-col items-center justify-center pt-4 border-t border-slate-800/60 gap-2 text-center">
-                <p className="text-[11px] text-slate-400">
-                  💡 주식 종목 이름에 선입견을 두지 않고, 오직 <strong>차트 캔들과 거래량의 유기적 흐름</strong>만으로 실력을 겨뤄보고 싶으신가요?
-                </p>
-                <button 
-                  onClick={() => {
-                    handleStartRandomBlindTest();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-8 py-3 rounded-xl text-xs transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98] cursor-pointer"
-                >
-                  🎲 무작위 종목으로 실전 연습하기 (블라인드 테스트 시작)
-                </button>
               </div>
             </div>
           </div>
@@ -1260,13 +1304,13 @@ export default function App() {
       </section>
 
       {/* 3. 하단 푸터 (건의함 및 약관/개인정보 페이지) */}
-      <footer className="h-auto md:h-20 flex flex-col md:flex-row items-center px-6 py-6 md:py-0 bg-slate-950 border-t border-slate-800 gap-4" id="footer-panel">
-        <div className="flex-1 flex flex-col md:flex-row justify-between items-center w-full gap-4">
-          <div className="flex flex-col items-center md:items-start gap-1">
-            <p className="text-[10px] text-slate-500 leading-tight text-center md:text-left max-w-xl">
+      <footer className="h-auto lg:h-20 flex flex-col lg:flex-row items-center px-6 py-6 lg:py-0 bg-slate-950 border-t border-slate-800 gap-4" id="footer-panel">
+        <div className="flex-1 flex flex-col lg:flex-row justify-between items-center w-full gap-4">
+          <div className="flex flex-col items-center lg:items-start gap-1">
+            <p className="text-[10px] text-slate-500 leading-tight text-center lg:text-left max-w-xl">
               본 사이트는 과거 데이터를 활용한 교육용 시뮬레이션입니다. 실제 투자를 유도하지 않으며 매매 결과는 실제 수익을 보장하지 않습니다.
             </p>
-            <div className="flex items-center gap-2.5 text-[10px] text-slate-400 mt-1">
+            <div className="flex items-center gap-2.5 text-[10px] text-slate-400 mt-1 flex-wrap justify-center lg:justify-start">
               <button 
                 onClick={() => setActiveLegalModal('terms')} 
                 className="hover:text-blue-400 underline transition-colors cursor-pointer"
@@ -1289,10 +1333,10 @@ export default function App() {
             href="https://forms.gle/5P3dUTEda5kA3me8A"
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-xs bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-bold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-red-500/20 transition-all active:scale-[0.98] border border-red-500/30"
+            className="flex items-center gap-2 text-xs bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-bold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-red-500/20 transition-all active:scale-[0.98] border border-red-500/30 whitespace-nowrap flex-shrink-0"
           >
-            <MessageSquare className="w-4 h-4 text-white" />
-            <span>고객 건의함 (의견 보내기) 📩</span>
+            <MessageSquare className="w-4 h-4 text-white flex-shrink-0" />
+            <span className="whitespace-nowrap">트레이더 피드백 센터 (의견 및 개선 제안) 📩</span>
           </a>
         </div>
       </footer>
@@ -1598,7 +1642,7 @@ export default function App() {
 
               <div>
                 <h4 className="text-white font-bold text-sm mb-1">4. 개인정보 관련 문의 및 책임자</h4>
-                <p>서비스의 안정적인 작동 방식 및 개인정보 유출 방지 조치에 관한 건의, 혹은 기타 문의 사항은 하단 푸터 영역에 항시 배치되어 있는 구글 폼 링크인 '고객 건의함'을 통해 의견을 전송해 주시면 담당자가 즉시 확인하고 조치하도록 하겠습니다.</p>
+                <p>서비스의 안정적인 작동 방식 및 개인정보 보호 조치에 관한 건의, 혹은 기타 문의 사항은 하단 푸터 영역에 상시 배치되어 있는 구글 폼 링크인 '트레이더 피드백 센터'를 통해 의견을 전송해 주시면 당사 담당자가 즉시 확인하고 반영 조치하도록 하겠습니다.</p>
               </div>
             </div>
 
@@ -1614,150 +1658,143 @@ export default function App() {
         </div>
       )}
 
-      {/* 개발 배경 및 활용 가이드 모달 팝업 */}
-      {showGuideModal && (
-        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in" id="guide-modal">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600" />
+      {/* 개발 배경 및 활용 가이드 모달 팝업 (배경 즉시 로드 및 부드러운 CSS 페이드아웃 적용) */}
+      <div 
+        className={`fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all duration-300 ease-out ${
+          showGuideModal ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
+        }`} 
+        id="guide-modal"
+      >
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600" />
+          
+          <div className="flex justify-between items-center pb-4 border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider">GUIDE</span>
+              <h3 className="text-lg font-black text-white flex items-center gap-1.5">
+                📈 주식 리플레이 시뮬레이터 실전 활용 가이드
+              </h3>
+            </div>
+            <button 
+              onClick={() => setShowGuideModal(false)}
+              className="text-slate-400 hover:text-slate-200 font-bold px-2.5 py-1 text-sm bg-slate-800 hover:bg-slate-700 rounded-lg cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pr-2 mt-4 space-y-6 text-xs text-slate-300 leading-relaxed scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
             
-            <div className="flex justify-between items-center pb-4 border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider">GUIDE</span>
-                <h3 className="text-lg font-black text-white flex items-center gap-1.5">
-                  📈 주식 리플레이 시뮬레이터 실전 활용 가이드
-                </h3>
-              </div>
-              <button 
-                onClick={() => setShowGuideModal(false)}
-                className="text-slate-400 hover:text-slate-200 font-bold px-2.5 py-1 text-sm bg-slate-800 hover:bg-slate-700 rounded-lg cursor-pointer"
-              >
-                ✕
-              </button>
+            <div className="bg-gradient-to-r from-blue-950/40 to-indigo-950/40 border border-blue-900/30 p-5 rounded-2xl flex flex-col items-center gap-2">
+              <p className="font-bold text-blue-400 text-center text-xs md:text-sm leading-relaxed">
+                "투자는 단순한 예측의 영역이 아닌, 통제와 대응의 과학입니다."<br />
+                <span className="text-slate-300 text-xs font-normal mt-1 block">본 복기 시뮬레이터는 반복 훈련을 통해 실전에서 흔들리지 않는 최상의 매매 감각을 이끌어 냅니다.</span>
+              </p>
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-2 mt-4 space-y-6 text-xs text-slate-300 leading-relaxed scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
-              
-              <div className="bg-gradient-to-r from-blue-950/40 to-indigo-950/40 border border-blue-900/30 p-5 rounded-2xl flex flex-col items-center gap-3.5">
-                <p className="font-bold text-blue-400 text-center text-xs md:text-sm leading-relaxed">
-                  "투자는 단순한 예측의 영역이 아닌, 통제와 대응의 과학입니다."<br />
-                  <span className="text-slate-300 text-xs font-normal mt-1 block">본 복기 시뮬레이터는 반복 훈련을 통해 실전에서 흔들리지 않는 최상의 매매 감각을 이끌어 냅니다.</span>
-                </p>
-                <button 
-                  onClick={() => {
-                    handleStartRandomBlindTest();
-                    setShowGuideModal(false);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-all shadow-lg shadow-blue-900/30 active:scale-[0.98] cursor-pointer"
-                >
-                  🎲 무작위 종목으로 실전 연습하기 (블라인드 테스트 시작)
-                </button>
+            {/* 1. 기획 의도 */}
+            <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
+                <div className="w-1.5 h-4 bg-blue-500 rounded-full" />
+                <h4 className="text-white font-bold text-xs md:text-sm">1. 시뮬레이터 기획 의도: 이성적 프로세스의 정밀한 훈련</h4>
               </div>
+              <p className="text-slate-300 leading-relaxed text-xs">
+                개인 투자자가 금융 시장에서 실패하는 가장 큰 요인은 <strong>정보의 격차</strong>가 아니라, 상승장에서의 <strong>탐욕적 추격 매수(뇌동매매)</strong>와 하락장에서의 <strong>감정적 패닉 셀링(공포 투매)</strong>에 따른 자금 관리 실패입니다.
+              </p>
+              <p className="text-slate-300 leading-relaxed text-xs">
+                이러한 고질적인 한계를 기술과 과학적 훈련을 통해 극복하고자 본 <strong>K-주식 리플레이 시뮬레이터</strong>를 기획하였습니다. 역사적으로 검증된 실제 시장 데이터(Historical Data)를 바탕으로, 불필요한 감정 개입을 완벽히 필터링하고 오직 <strong>정량적 통계, 지지와 저항, 거래량 패턴</strong>에 근거하여 냉정하게 대응할 수 있는 전문적인 트레이딩 트레이닝 환경을 구성하는 것에 초점을 맞추었습니다.
+              </p>
+            </div>
 
-              {/* 1. 기획 의도 */}
-              <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
-                  <div className="w-1.5 h-4 bg-blue-500 rounded-full" />
-                  <h4 className="text-white font-bold text-xs md:text-sm">1. 시뮬레이터 기획 의도: 이성적 프로세스의 정밀한 훈련</h4>
-                </div>
-                <p className="text-slate-300 leading-relaxed text-xs">
-                  개인 투자자가 금융 시장에서 실패하는 가장 큰 요인은 <strong>정보의 격차</strong>가 아니라, 상승장에서의 <strong>탐욕적 추격 매수(뇌동매매)</strong>와 하락장에서의 <strong>감정적 패닉 셀링(공포 투매)</strong>에 따른 자금 관리 실패입니다.
-                </p>
-                <p className="text-slate-300 leading-relaxed text-xs">
-                  이러한 고질적인 한계를 기술과 과학적 훈련을 통해 극복하고자 본 <strong>K-주식 리플레이 시뮬레이터</strong>를 기획하였습니다. 역사적으로 검증된 실제 시장 데이터(Historical Data)를 바탕으로, 불필요한 감정 개입을 완벽히 필터링하고 오직 <strong>정량적 통계, 지지와 저항, 거래량 패턴</strong>에 근거하여 냉정하게 대응할 수 있는 전문적인 트레이딩 트레이닝 환경을 구성하는 것에 초점을 맞추었습니다.
-                </p>
+            {/* 2. 차트 복기 훈련의 압도적 중요성 */}
+            <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
+                <div className="w-1.5 h-4 bg-red-500 rounded-full" />
+                <h4 className="text-white font-bold text-xs md:text-sm">2. 차트 복기(Replay)의 절대적 가치: 압축 성장과 일관성</h4>
               </div>
-
-              {/* 2. 차트 복기 훈련의 압도적 중요성 */}
-              <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
-                  <div className="w-1.5 h-4 bg-red-500 rounded-full" />
-                  <h4 className="text-white font-bold text-xs md:text-sm">2. 차트 복기(Replay)의 절대적 가치: 압축 성장과 일관성</h4>
-                </div>
-                <p className="text-slate-300 leading-relaxed text-xs">
-                  실제 라이브 시장에서 매매를 통해 경험치를 쌓는 것은 최소 수개월에서 수년의 절대적 시간이 소요됩니다. 하루에 단 하나의 일봉 캔들만 생성되기 때문입니다. 
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/60 my-1">
-                  <div>
-                    <h5 className="font-bold text-white mb-1.5 text-xs flex items-center gap-1">
-                      <span className="w-1 h-3 bg-red-500 rounded-full" />
-                      압도적인 경험치 시간 압축
-                    </h5>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      본 시뮬레이터는 피튀기는 장중 120거래일 동안의 치열했던 주도 세력과 시장 수급의 마감 데이터를 단 몇 분 만에 완벽하게 순차 전개합니다. 수개월 동안 고생하며 겪어야 할 파동의 사이클을 단 5분으로 압축하여 훈련할 수 있어 성장 효율성이 극대화됩니다.
-                    </p>
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-white mb-1.5 text-xs flex items-center gap-1">
-                      <span className="w-1 h-3 bg-blue-500 rounded-full" />
-                      차트 유형의 시각 인지 지각(지각 패턴)
-                    </h5>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      주가 흐름에서 반복적으로 포착되는 5일 이평선 골든크로스, 거래량 급감 시점의 거래량 눌림목, 강력한 전고점 돌파와 뒤이은 되돌림 지지 현상(Role Reversal) 등 고확률 매매 타점을 뇌와 안구에 그대로 입력시켜 실전 장세에서 망설임 없이 기계적으로 대응하도록 돕습니다.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 3. 연습하면 누구나 할 수 있다는 자신감 */}
-              <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
-                  <div className="w-1.5 h-4 bg-yellow-500 rounded-full" />
-                  <h4 className="text-white font-bold text-xs md:text-sm">3. 연습하면 할 수 있습니다: 트레이딩은 배울 수 있는 과학적 수련입니다</h4>
-                </div>
-                <p className="text-slate-300 leading-relaxed text-xs">
-                  세계적으로 명성이 자자한 전설의 트레이더 모임 '터틀 트레이더(Turtle Traders)' 실험은 <strong>"트레이딩은 타고난 재능이 아니라 철저하게 교육되고 연습을 통해 훈련될 수 있는 영역"</strong>임을 영구히 증명하였습니다. 
-                </p>
-                <p className="text-slate-300 leading-relaxed text-xs">
-                  바둑 기사들이 평생 끊임없이 수십만 판의 기보를 세심하게 복기(復棋)하며 최선의 수를 완성해 가듯, 주식 트레이더 또한 과거의 역사를 철저하게 역추적하고 복기하는 반복 숙련을 거치면 누구나 안정적인 우상향 성과를 내는 프로의 길로 진입할 수 있습니다. 
-                </p>
-                <p className="text-slate-200 font-medium leading-relaxed text-xs bg-slate-950/50 p-3.5 rounded-lg border border-slate-800/80 text-center">
-                  ✨ 처음에는 손실이 발생하거나 매도 타점을 놓칠지라도 낙담하지 마십시오. 5번, 20번, 100번 시뮬레이터로 타점을 연마하고 자신만의 리스크 관리 원칙(자금 관리 철칙)을 수립하면 차트판은 투기장이 아닌 고도의 과학적이고 안전한 확률 게임으로 변모할 것입니다. 당신은 연습을 통해 반드시 스스로 성공적인 의사결정을 내리는 자립형 주도적 트레이더가 될 수 있습니다!
-                </p>
-              </div>
-
-              {/* 4. 법적 책임 면책고지 */}
-              <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
-                  <div className="w-1.5 h-4 bg-amber-500 rounded-full" />
-                  <h4 className="text-white font-bold text-xs md:text-sm">4. 교육 목적 및 법적 책임 면책안내 (Disclaimer)</h4>
-                </div>
-                <div className="text-xs text-slate-300 leading-relaxed space-y-2.5 max-h-[140px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
-                  <p>
-                    본 서비스는 과거 실제 발생하였던 종가 수치 데이터셋에 기반하여 시뮬레이션을 제공하는 금융 학습 교육용 시뮬레이터입니다. 본 서비스가 수록하고 있는 기술적 분석 요령, 설명문, 팁 등 모든 콘텐츠는 일반 금융 지식 증진을 위한 교육 자료에 불과하며, 실제 특정 금융 투자 상품의 매수, 매도, 리스크 자문, 혹은 추천 행위를 제공하지 않습니다.
+              <p className="text-slate-300 leading-relaxed text-xs">
+                실제 라이브 시장에서 매매를 통해 경험치를 쌓는 것은 최소 수개월에서 수년의 절대적 시간이 소요됩니다. 하루에 단 하나의 일봉 캔들만 생성되기 때문입니다. 
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/60 my-1">
+                <div>
+                  <h5 className="font-bold text-white mb-1.5 text-xs flex items-center gap-1">
+                    <span className="w-1 h-3 bg-red-500 rounded-full" />
+                    압도적인 경험치 시간 압축
+                  </h5>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    본 시뮬레이터는 피튀기는 장중 120거래일 동안의 치열했던 주도 세력과 시장 수급의 마감 데이터를 단 몇 분 만에 완벽하게 순차 전개합니다. 수개월 동안 고생하며 겪어야 할 파동의 사이클을 단 5분으로 압축하여 훈련할 수 있어 성장 효율성이 극대화됩니다.
                   </p>
-                  <p>
-                    실제 금융 시장에서의 모든 투자는 거시경제 환경, 유동성 변화, 정치적 변수 등 복합적 요소로 가동되므로 본 시뮬레이터에서의 가상 투자 수익률 성과가 실제 시장에서의 성과를 보증하거나 예측하지 아니하며, 실제 매매에 따른 모든 수익과 손실 책임은 전적으로 투자자 본인(사용자)에게 전속되고 운영자 및 관계자는 일체의 법적 책임을 지지 않음을 알려드립니다.
+                </div>
+                <div>
+                  <h5 className="font-bold text-white mb-1.5 text-xs flex items-center gap-1">
+                    <span className="w-1 h-3 bg-blue-500 rounded-full" />
+                    차트 유형의 시각 인지 지각(지각 패턴)
+                  </h5>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    주가 흐름에서 반복적으로 포착되는 5일 이평선 골든크로스, 거래량 급감 시점의 거래량 눌림목, 강력한 전고점 돌파와 뒤이은 되돌림 지지 현상(Role Reversal) 등 고확률 매매 타점을 뇌와 안구에 그대로 입력시켜 실전 장세에서 망설임 없이 기계적으로 대응하도록 돕습니다.
                   </p>
                 </div>
               </div>
-
             </div>
 
-            <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <button 
-                onClick={() => {
-                  try {
-                    const oneDay = 24 * 60 * 60 * 1000;
-                    localStorage.setItem('hideGuideUntil', (Date.now() + oneDay).toString());
-                  } catch (e) {}
-                  setShowGuideModal(false);
-                }}
-                className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
-              >
-                오늘 하루 이 창을 다시 열지 않기 (24시간 동안 비활성화)
-              </button>
-              
-              <button 
-                onClick={() => setShowGuideModal(false)}
-                className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-2.5 rounded-xl text-xs transition-all w-full sm:w-auto shadow-md shadow-blue-900/20 cursor-pointer"
-              >
-                가이드 닫기 및 훈련 시작
-              </button>
+            {/* 3. 연습하면 누구나 할 수 있다는 자신감 */}
+            <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
+                <div className="w-1.5 h-4 bg-yellow-500 rounded-full" />
+                <h4 className="text-white font-bold text-xs md:text-sm">3. 연습하면 할 수 있습니다: 트레이딩은 배울 수 있는 과학적 수련입니다</h4>
+              </div>
+              <p className="text-slate-300 leading-relaxed text-xs">
+                세계적으로 명성이 자자한 전설의 트레이더 모임 '터틀 트레이더(Turtle Traders)' 실험은 <strong>"트레이딩은 타고난 재능이 아니라 철저하게 교육되고 연습을 통해 훈련될 수 있는 영역"</strong>임을 영구히 증명하였습니다. 
+              </p>
+              <p className="text-slate-300 leading-relaxed text-xs">
+                바둑 기사들이 평생 끊임없이 수십만 판의 기보를 세심하게 복기(復棋)하며 최선의 수를 완성해 가듯, 주식 트레이더 또한 과거의 역사를 철저하게 역추적하고 복기하는 반복 숙련을 거치면 누구나 안정적인 우상향 성과를 내는 프로의 길로 진입할 수 있습니다. 
+              </p>
+              <p className="text-slate-200 font-medium leading-relaxed text-xs bg-slate-950/50 p-3.5 rounded-lg border border-slate-800/80 text-center">
+                ✨ 처음에는 손실이 발생하거나 매도 타점을 놓칠지라도 낙담하지 마십시오. 5번, 20번, 100번 시뮬레이터로 타점을 연마하고 자신만의 리스크 관리 원칙(자금 관리 철칙)을 수립하면 차트판은 투기장이 아닌 고도의 과학적이고 안전한 확률 게임으로 변모할 것입니다. 당신은 연습을 통해 반드시 스스로 성공적인 의사결정을 내리는 자립형 주도적 트레이더가 될 수 있습니다!
+              </p>
             </div>
+
+            {/* 4. 법적 책임 면책고지 */}
+            <div className="space-y-3 bg-slate-950/20 p-4 rounded-xl border border-slate-800/40">
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-1.5">
+                <div className="w-1.5 h-4 bg-amber-500 rounded-full" />
+                <h4 className="text-white font-bold text-xs md:text-sm">4. 교육 목적 및 법적 책임 면책안내 (Disclaimer)</h4>
+              </div>
+              <div className="text-xs text-slate-300 leading-relaxed space-y-2.5 max-h-[140px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+                <p>
+                  본 서비스는 과거 실제 발생하였던 종가 수치 데이터셋에 기반하여 시뮬레이션을 제공하는 금융 학습 교육용 시뮬레이터입니다. 본 서비스가 수록하고 있는 기술적 분석 요령, 설명문, 팁 등 모든 콘텐츠는 일반 금융 지식 증진을 위한 교육 자료에 불과하며, 실제 특정 금융 투자 상품의 매수, 매도, 리스크 자문, 혹은 추천 행위를 제공하지 않습니다.
+                </p>
+                <p>
+                  실제 금융 시장에서의 모든 투자는 거시경제 환경, 유동성 변화, 정치적 변수 등 복합적 요소로 가동되므로 본 시뮬레이터에서의 가상 투자 수익률 성과가 실제 시장에서의 성과를 보증하거나 예측하지 아니하며, 실제 매매에 따른 모든 수익과 손실 책임은 전적으로 투자자 본인(사용자)에게 전속되고 운영자 및 관계자는 일체의 법적 책임을 지지 않음을 알려드립니다.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <button 
+              onClick={() => {
+                try {
+                  const oneDay = 24 * 60 * 60 * 1000;
+                  localStorage.setItem('hideGuideUntil', (Date.now() + oneDay).toString());
+                } catch (e) {}
+                setShowGuideModal(false);
+              }}
+              className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+            >
+              오늘 하루 이 창을 다시 열지 않기 (24시간 동안 비활성화)
+            </button>
+            
+            <button 
+              onClick={() => setShowGuideModal(false)}
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-2.5 rounded-xl text-xs transition-all w-full sm:w-auto shadow-md shadow-blue-900/20 cursor-pointer"
+            >
+              가이드 닫기 및 훈련 시작
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
       {/* 스마트폰 세로 화면용 엄지손가락 친화적 Sticky Bottom 트레이딩 컨트롤러 */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800/90 px-4 py-3.5 lg:hidden flex flex-col gap-2.5 shadow-[0_-8px_30px_rgb(0,0,0,0.5)]" id="mobile-sticky-controller">
