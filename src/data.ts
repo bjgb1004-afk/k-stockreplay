@@ -120,6 +120,13 @@ export const HYNIX_DATA: Candle[] = [
 ];
 
 export const getStockData = (symbol: StockSymbol): Candle[] => {
+  if (symbol === '삼성전자') {
+    return SAMSUNG_DATA;
+  }
+  if (symbol === 'SK하이닉스') {
+    return HYNIX_DATA;
+  }
+
   const tickerMap: Record<string, string> = {
     '삼성전자': '005930',
     'SK하이닉스': '000660',
@@ -328,7 +335,7 @@ export async function resolveStockTicker(query: string): Promise<{ ticker: strin
   throw new Error(`'${trimmed}'에 해당하는 종목을 찾을 수 없습니다. 정확한 한글 종목명 또는 6자리 종목코드를 입력해주세요.`);
 }
 
-// Generate realistic 100 candles for offline/fallback simulation
+// Generate realistic 100 candles for offline/fallback simulation (using a seeded PRNG for absolute consistency on refresh)
 export function generateRealisticMockData(symbolName: string, ticker: string): Candle[] {
   const isHynix = symbolName.includes('하이닉스') || ticker.includes('000660');
   let currentPrice = isHynix ? 170000 : 75000;
@@ -343,9 +350,24 @@ export function generateRealisticMockData(symbolName: string, ticker: string): C
   else if (symbolName.includes('셀트리온')) currentPrice = 185000;
   else if (symbolName.includes('에코프로')) currentPrice = 95000;
 
+  // Generate a deterministic seed based on ticker and symbolName
+  let seed = 0;
+  const seedString = (ticker || '005930') + (symbolName || '삼성전자');
+  for (let s = 0; s < seedString.length; s++) {
+    seed = (seed << 5) - seed + seedString.charCodeAt(s);
+    seed |= 0; // Convert to 32bit integer
+  }
+
+  // Linear Congruential Generator (LCG) for deterministic randomness
+  const lcgRandom = () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return Math.abs(seed) / 4294967296;
+  };
+
   const candles: Candle[] = [];
-  const baseDate = new Date();
-  baseDate.setDate(baseDate.getDate() - 170); // Start 170 days ago to fit 120 trading days
+  
+  // Static base date (e.g. 2026-01-01) instead of Date.now() to prevent shifting dates
+  const baseDate = new Date(2026, 0, 1); // 2026-01-01
 
   let trend = 0.05; // Gentle upward bias
   
@@ -359,7 +381,7 @@ export function generateRealisticMockData(symbolName: string, ticker: string): C
     else if (i < 90) trend = 0.22;  // Strong breakout rally
     else trend = -0.04;             // High volatility peak pullback
 
-    const changePercent = (Math.random() - 0.48) * 4 + trend; // Volatility
+    const changePercent = (lcgRandom() - 0.48) * 4 + trend; // Volatility
     const open = Math.round(currentPrice);
     let close = Math.round(currentPrice * (1 + changePercent / 100));
     
@@ -368,10 +390,10 @@ export function generateRealisticMockData(symbolName: string, ticker: string): C
     const minLimit = Math.round(open * 0.7);
     close = Math.max(minLimit, Math.min(maxLimit, close));
     
-    const high = Math.round(Math.max(open, close) * (1 + Math.random() * 1.8 / 100));
-    const low = Math.round(Math.min(open, close) * (1 - Math.random() * 1.8 / 100));
+    const high = Math.round(Math.max(open, close) * (1 + lcgRandom() * 1.8 / 100));
+    const low = Math.round(Math.min(open, close) * (1 - lcgRandom() * 1.8 / 100));
     
-    const volume = Math.round((Math.random() * 8 + 3) * (isHynix ? 500000 : 2500000) * (trend > 0.1 ? 2.5 : 1));
+    const volume = Math.round((lcgRandom() * 8 + 3) * (isHynix ? 500000 : 2500000) * (trend > 0.1 ? 2.5 : 1));
 
     const yyyy = dateObj.getFullYear();
     const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -393,7 +415,7 @@ export function generateRealisticMockData(symbolName: string, ticker: string): C
   return candles;
 }
 
-export async function fetchRealStockData(symbol: StockSymbol, customTicker?: string): Promise<Candle[]> {
+export async function fetchRealStockData(symbol: StockSymbol, customTicker?: string): Promise<{ candles: Candle[]; name?: string }> {
   const tickerMap: Record<string, string> = {
     '삼성전자': '005930.KS',
     'SK하이닉스': '000660.KS',
@@ -418,7 +440,25 @@ export async function fetchRealStockData(symbol: StockSymbol, customTicker?: str
     throw new Error('유효하지 않은 종목명입니다.');
   }
 
-  // Request 1 year to ensure we have well over 100 trading days to slice exactly 100 candles
+  // 1. Try our full-stack server proxy first (reliable, handles CORS perfectly, fetches actual Naver Finance data)
+  try {
+    const serverUrl = `/api/stock-data?ticker=${encodeURIComponent(ticker)}`;
+    const response = await fetch(serverUrl);
+    if (response.ok) {
+      const data = await response.json();
+      if (data.candles && data.candles.length > 0) {
+        return {
+          candles: data.candles.slice(-120),
+          name: data.name
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Full-stack API proxy failed, trying browser fallbacks...', err);
+  }
+
+  // 2. Browser/CORS Proxy Fallback (Yahoo Finance)
+  // Request 1 year to ensure we have well over 100 trading days to slice exactly 120 candles
   const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1y`;
 
   const fetchUrls = [
@@ -485,7 +525,7 @@ export async function fetchRealStockData(symbol: StockSymbol, customTicker?: str
 
       if (candles.length > 0) {
         // Return exactly the last 120 candles to fulfill the "현재 차트 120개" (current chart 120 candles) requirement
-        return candles.slice(-120);
+        return { candles: candles.slice(-120) };
       }
     } catch (e: any) {
       console.warn(`Proxy failed:`, e);
@@ -495,5 +535,5 @@ export async function fetchRealStockData(symbol: StockSymbol, customTicker?: str
 
   // If both network proxies fail, fallback to a gorgeous dynamically generated 100-candle simulation
   console.log('Using robust client-side realistic generator fallback...');
-  return generateRealisticMockData(symbol, ticker);
+  return { candles: generateRealisticMockData(symbol, ticker) };
 }

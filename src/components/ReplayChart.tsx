@@ -32,202 +32,216 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
   useEffect(() => {
     if (!containerRef.current || candles.length === 0) return;
 
-    // 1. Create Chart
-    const container = containerRef.current;
-    const initialHeight = window.innerWidth < 640 ? 280 : 420;
-    const chart: any = createChart(container, {
-      width: container.clientWidth || 300,
-      height: initialHeight,
-      layout: {
-        background: { type: 'solid' as any, color: '#020617' }, // matching slate-950 background
-        textColor: '#94a3b8', // slate-400
-        fontSize: 11,
-        fontFamily: 'JetBrains Mono, Inter, sans-serif',
-      },
-      grid: {
-        vertLines: { color: 'rgba(51, 65, 85, 0.15)', style: 1 },
-        horzLines: { color: 'rgba(51, 65, 85, 0.15)', style: 1 },
-      },
-      crosshair: {
-        mode: 0, // Normal crosshair
-        vertLine: {
-          color: 'rgba(148, 163, 184, 0.4)',
-          width: 1,
-          style: 3, // dashed
-          labelVisible: true,
+    let chart: any = null;
+    let resizeObserver: ResizeObserver | null = null;
+
+    try {
+      // 1. Create Chart
+      const container = containerRef.current;
+      const initialHeight = window.innerWidth < 640 ? 280 : 420;
+      chart = createChart(container, {
+        width: container.clientWidth || 300,
+        height: initialHeight,
+        layout: {
+          background: { type: 'solid' as any, color: '#020617' }, // matching slate-950 background
+          textColor: '#94a3b8', // slate-400
+          fontSize: 11,
+          fontFamily: 'JetBrains Mono, Inter, sans-serif',
         },
-        horzLine: {
-          color: 'rgba(148, 163, 184, 0.4)',
-          width: 1,
-          style: 3, // dashed
-          labelVisible: true,
+        grid: {
+          vertLines: { color: 'rgba(51, 65, 85, 0.15)', style: 1 },
+          horzLines: { color: 'rgba(51, 65, 85, 0.15)', style: 1 },
         },
-      },
-      rightPriceScale: {
-        borderColor: 'rgba(51, 65, 85, 0.3)',
+        crosshair: {
+          mode: 0, // Normal crosshair
+          vertLine: {
+            color: 'rgba(148, 163, 184, 0.4)',
+            width: 1,
+            style: 3, // dashed
+            labelVisible: true,
+          },
+          horzLine: {
+            color: 'rgba(148, 163, 184, 0.4)',
+            width: 1,
+            style: 3, // dashed
+            labelVisible: true,
+          },
+        },
+        rightPriceScale: {
+          borderColor: 'rgba(51, 65, 85, 0.3)',
+          scaleMargins: {
+            top: 0.1,
+            bottom: 0.35, // Keep candlestick in top 65% to prevent overlapping with volume
+          },
+        },
+        timeScale: {
+          borderColor: 'rgba(51, 65, 85, 0.3)',
+          timeVisible: false,
+          secondsVisible: false,
+        },
+      });
+
+      chartRef.current = chart;
+
+      // 2. Add Candlestick Series
+      const candlestickSeries = chart.addSeries(CandlestickSeries, {
+        upColor: '#ef4444',     // 한국 주식 시장 상승: 빨강
+        downColor: '#3b82f6',   // 한국 주식 시장 하락: 파랑
+        borderVisible: false,
+        wickUpColor: '#ef4444',
+        wickDownColor: '#3b82f6',
+      });
+
+      // Draw Average Price line if holding
+      if (averagePrice && averagePrice > 0) {
+        candlestickSeries.createPriceLine({
+          price: averagePrice,
+          color: '#10b981', // emerald-500
+          lineWidth: 2,
+          lineStyle: 2, // Dashed style in lightweight-charts (0: Solid, 1: Dotted, 2: Dashed, 3: LargeDashed)
+          axisLabelVisible: false,
+          title: '매수평단',
+        });
+      }
+
+      // 3. Add Volume Series as Overlay
+      const volumeSeries = chart.addSeries(HistogramSeries, {
+        priceFormat: {
+          type: 'volume',
+        },
+        priceScaleId: 'volume-scale',
+      });
+
+      chart.priceScale('volume-scale').applyOptions({
         scaleMargins: {
-          top: 0.1,
-          bottom: 0.35, // Keep candlestick in top 65% to prevent overlapping with volume
+          top: 0.8, // Volume takes only bottom 20%
+          bottom: 0,
         },
-      },
-      timeScale: {
-        borderColor: 'rgba(51, 65, 85, 0.3)',
-        timeVisible: false,
-        secondsVisible: false,
-      },
-    });
-
-    chartRef.current = chart;
-
-    // 2. Add Candlestick Series
-    const candlestickSeries = chart.addSeries(CandlestickSeries, {
-      upColor: '#ef4444',     // 한국 주식 시장 상승: 빨강
-      downColor: '#3b82f6',   // 한국 주식 시장 하락: 파랑
-      borderVisible: false,
-      wickUpColor: '#ef4444',
-      wickDownColor: '#3b82f6',
-    });
-
-    // Draw Average Price line if holding
-    if (averagePrice && averagePrice > 0) {
-      candlestickSeries.createPriceLine({
-        price: averagePrice,
-        color: '#10b981', // emerald-500
-        lineWidth: 2,
-        lineStyle: 2, // Dashed style in lightweight-charts (0: Solid, 1: Dotted, 2: Dashed, 3: LargeDashed)
-        axisLabelVisible: false,
-        title: '매수평단',
-      });
-    }
-
-    // 3. Add Volume Series as Overlay
-    const volumeSeries = chart.addSeries(HistogramSeries, {
-      priceFormat: {
-        type: 'volume',
-      },
-      priceScaleId: 'volume-scale',
-    });
-
-    chart.priceScale('volume-scale').applyOptions({
-      scaleMargins: {
-        top: 0.8, // Volume takes only bottom 20%
-        bottom: 0,
-      },
-    });
-
-    // 4. Add Line Series for Moving Averages
-    const ma5Series = chart.addSeries(LineSeries, {
-      color: '#eab308', // yellow-500
-      lineWidth: 1.5,
-      priceLineVisible: false,
-      lastValueVisible: false,
-    });
-
-    const ma20Series = chart.addSeries(LineSeries, {
-      color: '#d946ef', // magenta-500
-      lineWidth: 1.5,
-      priceLineVisible: false,
-      lastValueVisible: false,
-    });
-
-    // 5. Prepare Data
-    const ma5Data: any[] = [];
-    const ma20Data: any[] = [];
-    const candlestickData: any[] = [];
-    const volumeData: any[] = [];
-
-    for (let i = 0; i < candles.length; i++) {
-      const item = candles[i];
-      const dateStr = item.date;
-
-      candlestickData.push({
-        time: dateStr,
-        open: item.open,
-        high: item.high,
-        low: item.low,
-        close: item.close,
       });
 
-      const isUp = item.close >= item.open;
-      volumeData.push({
-        time: dateStr,
-        value: item.volume,
-        color: isUp ? 'rgba(239, 68, 68, 0.25)' : 'rgba(59, 130, 246, 0.25)',
+      // 4. Add Line Series for Moving Averages
+      const ma5Series = chart.addSeries(LineSeries, {
+        color: '#eab308', // yellow-500
+        lineWidth: 1.5,
+        priceLineVisible: false,
+        lastValueVisible: false,
       });
 
-      // Calculate MA 5
-      if (i >= 4) {
-        let sum = 0;
-        for (let k = 0; k < 5; k++) sum += candles[i - k].close;
-        ma5Data.push({ time: dateStr, value: sum / 5 });
-      }
+      const ma20Series = chart.addSeries(LineSeries, {
+        color: '#d946ef', // magenta-500
+        lineWidth: 1.5,
+        priceLineVisible: false,
+        lastValueVisible: false,
+      });
 
-      // Calculate MA 20
-      if (i >= 19) {
-        let sum = 0;
-        for (let k = 0; k < 20; k++) sum += candles[i - k].close;
-        ma20Data.push({ time: dateStr, value: sum / 20 });
-      }
-    }
+      // 5. Prepare Data
+      const ma5Data: any[] = [];
+      const ma20Data: any[] = [];
+      const candlestickData: any[] = [];
+      const volumeData: any[] = [];
 
-    candlestickSeries.setData(candlestickData);
-    volumeSeries.setData(volumeData);
-    if (ma5Data.length > 0) ma5Series.setData(ma5Data);
-    if (ma20Data.length > 0) ma20Series.setData(ma20Data);
+      for (let i = 0; i < candles.length; i++) {
+        const item = candles[i];
+        const dateStr = item.date;
 
-    // 6. Draw Execution Buy/Sell Markers (Sorted chronologically)
-    const markers = trades
-      .filter(t => candles.some(c => c.date === t.date))
-      .map(trade => {
-        const isBuy = trade.type === 'BUY';
-        return {
-          time: trade.date,
-          position: isBuy ? 'belowBar' : 'aboveBar' as any,
-          color: isBuy ? '#22c55e' : '#eab308',
-          shape: isBuy ? 'arrowUp' : 'arrowDown' as any,
-          text: isBuy ? '매수' : '매도',
-          size: 1.2,
-        };
-      })
-      .sort((a, b) => a.time.localeCompare(b.time));
+        candlestickData.push({
+          time: dateStr,
+          open: item.open,
+          high: item.high,
+          low: item.low,
+          close: item.close,
+        });
 
-    createSeriesMarkers(candlestickSeries, markers);
+        const isUp = item.close >= item.open;
+        volumeData.push({
+          time: dateStr,
+          value: item.volume,
+          color: isUp ? 'rgba(239, 68, 68, 0.25)' : 'rgba(59, 130, 246, 0.25)',
+        });
 
-    // 7. Subscribe to Hover / Crosshair Move
-    chart.subscribeCrosshairMove((param: any) => {
-      if (!param || !param.time || param.point === undefined) {
-        setHoverCandle(null);
-        return;
-      }
-      const timeStr = param.time as string;
-      const matchedCandle = candles.find(c => c.date === timeStr);
-      if (matchedCandle) {
-        setHoverCandle(matchedCandle);
-      } else {
-        setHoverCandle(null);
-      }
-    });
+        // Calculate MA 5
+        if (i >= 4) {
+          let sum = 0;
+          for (let k = 0; k < 5; k++) sum += candles[i - k].close;
+          ma5Data.push({ time: dateStr, value: sum / 5 });
+        }
 
-    // 8. Fit Content
-    chart.timeScale().fitContent();
-
-    // 9. Resize Observer
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        const { width } = entry.contentRect;
-        if (width && width > 0) {
-          const currentHeight = window.innerWidth < 640 ? 280 : 420;
-          chart.resize(width, currentHeight);
-          chart.timeScale().fitContent();
+        // Calculate MA 20
+        if (i >= 19) {
+          let sum = 0;
+          for (let k = 0; k < 20; k++) sum += candles[i - k].close;
+          ma20Data.push({ time: dateStr, value: sum / 20 });
         }
       }
-    });
-    resizeObserver.observe(container);
+
+      candlestickSeries.setData(candlestickData);
+      volumeSeries.setData(volumeData);
+      if (ma5Data.length > 0) ma5Series.setData(ma5Data);
+      if (ma20Data.length > 0) ma20Series.setData(ma20Data);
+
+      // 6. Draw Execution Buy/Sell Markers (Sorted chronologically)
+      const markers = trades
+        .filter(t => candles.some(c => c.date === t.date))
+        .map(trade => {
+          const isBuy = trade.type === 'BUY';
+          return {
+            time: trade.date,
+            position: isBuy ? 'belowBar' : 'aboveBar' as any,
+            color: isBuy ? '#22c55e' : '#eab308',
+            shape: isBuy ? 'arrowUp' : 'arrowDown' as any,
+            text: isBuy ? '매수' : '매도',
+            size: 1.2,
+          };
+        })
+        .sort((a, b) => a.time.localeCompare(b.time));
+
+      createSeriesMarkers(candlestickSeries, markers);
+
+      // 7. Subscribe to Hover / Crosshair Move
+      chart.subscribeCrosshairMove((param: any) => {
+        if (!param || !param.time || param.point === undefined) {
+          setHoverCandle(null);
+          return;
+        }
+        const timeStr = param.time as string;
+        const matchedCandle = candles.find(c => c.date === timeStr);
+        if (matchedCandle) {
+          setHoverCandle(matchedCandle);
+        } else {
+          setHoverCandle(null);
+        }
+      });
+
+      // 8. Fit Content
+      chart.timeScale().fitContent();
+
+      // 9. Resize Observer
+      resizeObserver = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          const { width } = entry.contentRect;
+          if (width && width > 0 && chart) {
+            try {
+              const currentHeight = window.innerWidth < 640 ? 280 : 420;
+              chart.resize(width, currentHeight);
+              chart.timeScale().fitContent();
+            } catch (err) {}
+          }
+        }
+      });
+      resizeObserver.observe(container);
+
+    } catch (err) {
+      console.error('Failed to initialize lightweight-charts:', err);
+    }
 
     // Cleanup
     return () => {
-      resizeObserver.disconnect();
-      chart.remove();
+      if (resizeObserver) resizeObserver.disconnect();
+      if (chart) {
+        try {
+          chart.remove();
+        } catch (e) {}
+      }
       chartRef.current = null;
     };
   }, [candles, trades, averagePrice]);

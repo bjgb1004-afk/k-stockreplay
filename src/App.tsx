@@ -41,6 +41,7 @@ export default function App() {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [showResultModal, setShowResultModal] = useState<boolean>(false);
+  const [showPremiumModal, setShowPremiumModal] = useState<boolean>(false);
   const [activeLegalModal, setActiveLegalModal] = useState<'terms' | 'privacy' | null>(null);
   const [showGuideModal, setShowGuideModal] = useState<boolean>(() => {
     try {
@@ -63,28 +64,89 @@ export default function App() {
   const [customStockName, setCustomStockName] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleCustomSearch = async () => {
-    const trimmed = customTickerInput.trim();
-    if (!trimmed) return;
+  // Autocomplete & Search States
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<{ name: string; ticker: string }[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
+  // Real-time Autocomplete Suggestions Fetching
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const delayDebounce = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/search-stock?query=${encodeURIComponent(searchQuery)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setSearchResults(data.results || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch search suggestions:', err);
+      }
+    }, 200);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
+
+  // Handle click on suggestions
+  const selectSearchResult = (item: { name: string; ticker: string }) => {
+    setSymbol('사용자정의');
+    setActiveCustomTicker(item.ticker);
+    setCustomStockName(item.name);
+    setSearchQuery('');
+    setSearchResults([]);
+    setShowSuggestions(false);
+    
+    // Reset trading state
+    setBalance(INITIAL_BALANCE);
+    setHoldings(0);
+    setAveragePrice(0);
+    setTrades([]);
+    setCurrentIndex(9);
+  };
+
+  // Direct manual search / Enter key handler
+  const handleDirectSearch = async () => {
+    const trimmed = searchQuery.trim();
+    if (!trimmed) return;
+    
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      const resolved = await resolveStockTicker(trimmed);
-      
-      // Extract the 6 digit code from resolved ticker (e.g., "005930.KS" -> "005930")
-      const resolvedCode = resolved.ticker.split('.')[0];
-      const ALLOWED_TICKERS = ['005930', '000660', '035420', '035720', '005380', '247540', '196170', '012450', '068270', '086520'];
-      
-      if (!ALLOWED_TICKERS.includes(resolvedCode)) {
-        throw new Error('시뮬레이션 허용 종목이 아닙니다. 현재 10대 인기 종목(삼성전자, SK하이닉스, NAVER, 카카오, 현대차, 에코프로비엠, 알테오젠, 한화에어로스페이스, 셀트리온, 에코프로)만 검색이 가능합니다.');
+      if (/^\d{6}$/.test(trimmed)) {
+        // If it's a 6-digit numeric ticker code
+        setSymbol('사용자정의');
+        setActiveCustomTicker(trimmed);
+        setCustomStockName(trimmed); // Will be updated to name when loaded
+        setSearchQuery('');
+        setSearchResults([]);
+        setShowSuggestions(false);
+        
+        // Reset trading state
+        setBalance(INITIAL_BALANCE);
+        setHoldings(0);
+        setAveragePrice(0);
+        setTrades([]);
+        setCurrentIndex(9);
+      } else {
+        // Search by name via API
+        const response = await fetch(`/api/search-stock?query=${encodeURIComponent(trimmed)}`);
+        if (response.ok) {
+          const data = await response.json();
+          const items = data.results || [];
+          if (items.length > 0) {
+            selectSearchResult(items[0]);
+          } else {
+            throw new Error(`'${trimmed}'에 해당하는 종목을 찾을 수 없습니다.`);
+          }
+        } else {
+          throw new Error('종목 검색에 실패했습니다.');
+        }
       }
-
-      setActiveCustomTicker(resolved.ticker);
-      setCustomStockName(resolved.name);
     } catch (err: any) {
-      console.error(err);
-      setErrorMsg(err.message || '종목을 조회할 수 없습니다.');
+      setErrorMsg(err.message || '종목을 찾을 수 없습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -97,11 +159,14 @@ export default function App() {
       setIsLoading(true);
       setErrorMsg(null);
       try {
-        const fetched = await fetchRealStockData(symbol, symbol === '사용자정의' ? activeCustomTicker : undefined);
+        const result = await fetchRealStockData(symbol, symbol === '사용자정의' ? activeCustomTicker : undefined);
         if (active) {
-          setStockData(fetched);
+          setStockData(result.candles);
           setIsRealData(true);
-          setCurrentIndex(Math.min(9, fetched.length - 1));
+          if (result.name && symbol === '사용자정의') {
+            setCustomStockName(result.name);
+          }
+          setCurrentIndex(Math.min(9, result.candles.length - 1));
           setIsLoading(false);
         }
       } catch (err: any) {
@@ -405,6 +470,12 @@ export default function App() {
   // Handler for symbol drop down changes
   const handleSymbolChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedSymbol = e.target.value as StockSymbol;
+    if (selectedSymbol === '사용자정의') {
+      setShowPremiumModal(true);
+      // Reset the drop down value visually to the active symbol
+      e.target.value = symbol;
+      return;
+    }
     setSymbol(selectedSymbol);
     setCurrentIndex(9);
     setBalance(INITIAL_BALANCE);
@@ -478,9 +549,9 @@ export default function App() {
         <section className="flex-1 bg-slate-950 relative lg:border-r border-slate-800 p-4 sm:p-6 flex flex-col gap-5">
           
           {/* 종목 선택 및 데이터 연결 상태 바 - 모바일용 (차트 위) */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 border border-slate-800/80 rounded-xl p-3 order-2 lg:hidden" id="stock-selector-bar-mobile">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 border border-slate-800/80 rounded-xl p-3 lg:hidden" id="stock-selector-bar-mobile">
             <div className="flex items-center gap-3 w-full sm:w-auto">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0">종목 선택</span>
+              <span className="hidden sm:inline-block text-[10px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0">종목 선택</span>
               <div className="relative flex-grow sm:flex-initial sm:w-60">
                 <select 
                   value={symbol}
@@ -519,7 +590,7 @@ export default function App() {
           </div>
 
           {/* 가상 주가 정보 바 - Sophisticated Dark Layout */}
-          <div className="flex flex-wrap items-baseline gap-4 z-10 order-1 lg:order-1" id="price-hud">
+          <div className="flex flex-wrap items-baseline gap-4 z-10" id="price-hud">
             <span id="displayStockName" className="text-2xl font-bold text-white">
               {symbol === '사용자정의' ? (customStockName || activeCustomTicker) : symbol}
             </span>
@@ -539,14 +610,14 @@ export default function App() {
           </div>
 
           {errorMsg && (
-            <div className="bg-red-950/20 border border-red-900/30 text-red-400 text-xs p-3 rounded-xl flex items-start gap-2 leading-relaxed order-3 lg:order-3" id="error-message">
+            <div className="bg-red-950/20 border border-red-900/30 text-red-400 text-xs p-3 rounded-xl flex items-start gap-2 leading-relaxed" id="error-message">
               <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {/* 차트 캔버스 */}
-          <div className="flex-grow min-h-[280px] sm:min-h-[400px] relative rounded-xl border border-slate-800/80 bg-slate-950/40 overflow-hidden order-4 lg:order-2">
+          <div className="flex-grow min-h-[280px] sm:min-h-[400px] relative rounded-xl border border-slate-800/80 bg-slate-950/40 overflow-hidden">
             {isLoading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-[2px] z-20">
                 <div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mb-3" />
@@ -562,7 +633,7 @@ export default function App() {
           </div>
 
           {/* 단축키 정보바 */}
-          <div className="bg-slate-900/60 border border-slate-800/80 rounded-lg px-4 py-3 flex items-center justify-between text-[11px] text-slate-400 order-5 lg:order-5">
+          <div className="bg-slate-900/60 border border-slate-800/80 rounded-lg px-4 py-3 flex items-center justify-between text-[11px] text-slate-400">
             <div className="flex items-center gap-2">
               <Info className="w-4 h-4 text-blue-400 flex-shrink-0" />
               <span>
@@ -995,6 +1066,72 @@ export default function App() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* 베타 서비스 의견 제안 및 소통 안내 모달 */}
+      {showPremiumModal && (
+        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in" id="premium-modal">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative overflow-hidden flex flex-col">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500" />
+            
+            <div className="flex justify-between items-center pb-4 border-b border-slate-800/80">
+              <div className="flex items-center gap-2">
+                <span className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-2 py-0.5 rounded text-[9px] font-black tracking-wider uppercase">BETA</span>
+                <h3 className="text-md font-bold text-white flex items-center gap-1">
+                  💬 전종목 오픈 및 의견 수렴 안내
+                </h3>
+              </div>
+              <button 
+                onClick={() => setShowPremiumModal(false)}
+                className="text-slate-400 hover:text-slate-200 font-bold px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-4 text-xs text-slate-300 leading-relaxed">
+              <div className="bg-gradient-to-br from-blue-500/10 to-indigo-500/5 border border-blue-500/20 p-4 rounded-xl text-center space-y-1">
+                <p className="font-semibold text-blue-400">
+                  🌱 함께 만들어가는 열린 시뮬레이터
+                </p>
+                <p className="text-[11px] text-slate-400">
+                  현재는 더 많은 분들이 편하게 차트 매매를 연습하고 의견을 공유하실 수 있도록<br />
+                  <span className="text-white font-bold">10대 인기 대표 주도주 세션을 상시 개방</span>하여 운영 중입니다.
+                </p>
+              </div>
+
+              <div className="space-y-3 pt-1">
+                <h4 className="text-slate-200 font-bold text-xs flex items-center gap-1.5">
+                  💡 여러분의 소중한 의견을 들려주세요!
+                </h4>
+                
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  "이 종목도 연습해보고 싶어요", "이런 차트 보조지표가 추가되었으면 좋겠어요" 등 연습하시면서 느끼신 생각들을 편하게 알려주세요. 소통을 통해 가장 요청이 많은 종목과 유용한 기능들을 우선순위로 적극 업데이트하겠습니다!
+                </p>
+
+                <div className="bg-slate-950/40 p-3 rounded-xl border border-slate-800/60 space-y-2">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-slate-400">📧 피드백/제안 문의처</span>
+                    <span className="font-mono text-blue-400 font-semibold select-all">bjgb1004@gmail.com</span>
+                  </div>
+                  <div className="h-[1px] bg-slate-800/60 w-full" />
+                  <p className="text-[10px] text-slate-500 leading-snug">
+                    보내주신 종목 의견이나 개선점은 꼼꼼히 확인하여 서비스의 발전 방향과 다음 업데이트에 온전히 반영하겠습니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 pt-3 border-t border-slate-800/80 flex gap-2">
+              <button 
+                onClick={() => setShowPremiumModal(false)}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer text-center"
+              >
+                10대 인기종목으로 차트 복기 계속하기
+              </button>
+            </div>
           </div>
         </div>
       )}
