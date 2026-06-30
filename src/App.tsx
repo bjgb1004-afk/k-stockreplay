@@ -81,6 +81,10 @@ export default function App() {
   const [customStockName, setCustomStockName] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Blind Test Mode States
+  const [isBlindMode, setIsBlindMode] = useState<boolean>(false);
+  const [blindRealName, setBlindRealName] = useState<string>('');
+
   // Autocomplete & Search States
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<{ name: string; ticker: string }[]>([]);
@@ -109,6 +113,7 @@ export default function App() {
 
   // Handle click on suggestions
   const selectSearchResult = (item: { name: string; ticker: string }) => {
+    setIsBlindMode(false);
     setSymbol('사용자정의');
     setActiveCustomTicker(item.ticker);
     setCustomStockName(item.name);
@@ -134,6 +139,7 @@ export default function App() {
     try {
       if (/^\d{6}$/.test(trimmed)) {
         // If it's a 6-digit numeric ticker code
+        setIsBlindMode(false);
         setSymbol('사용자정의');
         setActiveCustomTicker(trimmed);
         setCustomStockName(trimmed); // Will be updated to name when loaded
@@ -502,11 +508,37 @@ export default function App() {
 
   // Restart / Reset Handler
   const handleReset = () => {
+    if (isBlindMode) {
+      handleStartRandomBlindTest();
+      return;
+    }
     setCurrentIndex(9);
     setBalance(INITIAL_BALANCE);
     setHoldings(0);
     setAveragePrice(0);
     setTrades([]);
+    setShowResultModal(false);
+    playSound('reset');
+  };
+
+  // Start Random Blind Test
+  const handleStartRandomBlindTest = () => {
+    const symbols: StockSymbol[] = ['삼성전자', 'SK하이닉스', 'NAVER', '카카오', '현대차', '에코프로비엠', '알테오젠', '한화에어로스페이스', '셀트리온', '에코프로'];
+    // Filter out the current symbol if possible to ensure variety, otherwise choose randomly from all
+    const filteredSymbols = symbols.filter(s => s !== symbol);
+    const pool = filteredSymbols.length > 0 ? filteredSymbols : symbols;
+    const randomSymbol = pool[Math.floor(Math.random() * pool.length)];
+
+    setIsBlindMode(true);
+    setBlindRealName(randomSymbol);
+    setSymbol(randomSymbol);
+
+    // Reset trading state
+    setBalance(INITIAL_BALANCE);
+    setHoldings(0);
+    setAveragePrice(0);
+    setTrades([]);
+    setCurrentIndex(9);
     setShowResultModal(false);
     playSound('reset');
   };
@@ -520,6 +552,7 @@ export default function App() {
       e.target.value = symbol;
       return;
     }
+    setIsBlindMode(false);
     setSymbol(selectedSymbol);
     setCurrentIndex(9);
     setBalance(INITIAL_BALANCE);
@@ -594,15 +627,16 @@ export default function App() {
           
           {/* 종목 선택 및 데이터 연결 상태 바 - 모바일용 (차트 위) */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 border border-slate-800/80 rounded-xl p-3 lg:hidden" id="stock-selector-bar-mobile">
-            <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <span className="hidden sm:inline-block text-[10px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0">종목 선택</span>
-              <div className="relative flex-grow sm:flex-initial sm:w-60">
+              <div className="relative flex-grow sm:flex-initial sm:w-60 flex gap-2">
                 <select 
                   value={symbol}
                   onChange={handleSymbolChange}
-                  className="w-full bg-slate-800 border border-slate-700 text-slate-100 rounded-lg px-3 py-2 text-xs font-semibold outline-none focus:border-blue-500 transition-colors cursor-pointer shadow-sm"
+                  className="flex-grow bg-slate-800 border border-slate-700 text-slate-100 rounded-lg px-3 py-2 text-xs font-semibold outline-none focus:border-blue-500 transition-colors cursor-pointer shadow-sm"
                   id="stockSelect"
                 >
+                  {isBlindMode && <option value={symbol}>🔒 [블라인드 테스트 진행 중]</option>}
                   <option value="삼성전자">삼성전자 (005930)</option>
                   <option value="SK하이닉스">SK하이닉스 (000660)</option>
                   <option value="NAVER">NAVER (035420)</option>
@@ -614,6 +648,14 @@ export default function App() {
                   <option value="셀트리온">셀트리온 (068270)</option>
                   <option value="에코프로">에코프로 (086520)</option>
                 </select>
+
+                <button 
+                  onClick={handleStartRandomBlindTest}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-md active:scale-95 cursor-pointer"
+                  title="새로운 랜덤 차트 불러오기"
+                >
+                  <span>🎲 랜덤</span>
+                </button>
               </div>
             </div>
 
@@ -636,7 +678,19 @@ export default function App() {
           {/* 가상 주가 정보 바 - Sophisticated Dark Layout */}
           <div className="flex flex-wrap items-baseline gap-4 z-10" id="price-hud">
             <span id="displayStockName" className="text-2xl font-bold text-white">
-              {symbol === '사용자정의' ? (customStockName || activeCustomTicker) : symbol}
+              {isBlindMode ? (
+                currentIndex >= stockData.length - 1 && stockData.length > 0 ? (
+                  <span className="flex items-center gap-1.5 text-green-400 bg-green-500/10 border border-green-500/30 px-2.5 py-1 rounded-lg text-sm font-black">
+                    🔓 {blindRealName} (블라인드 공개)
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5 text-yellow-400 bg-yellow-500/10 border border-yellow-500/30 px-2.5 py-1 rounded-lg text-sm font-black animate-pulse">
+                    🔒 [블라인드 테스트 진행 중]
+                  </span>
+                )
+              ) : (
+                symbol === '사용자정의' ? (customStockName || activeCustomTicker) : symbol
+              )}
             </span>
             <span id="displayPrice" className="text-xl font-mono text-slate-300 font-semibold tracking-tight">
               {currentPrice.toLocaleString()} 원
@@ -722,6 +776,7 @@ export default function App() {
                 className="w-full bg-slate-800 border border-slate-700 text-slate-100 rounded-lg px-3 py-2 text-xs font-semibold outline-none focus:border-blue-500 transition-colors cursor-pointer shadow-sm"
                 id="stockSelectDesktop"
               >
+                {isBlindMode && <option value={symbol}>🔒 [블라인드 테스트 진행 중]</option>}
                 <option value="삼성전자">삼성전자 (005930)</option>
                 <option value="SK하이닉스">SK하이닉스 (000660)</option>
                 <option value="NAVER">NAVER (035420)</option>
@@ -734,6 +789,14 @@ export default function App() {
                 <option value="에코프로">에코프로 (086520)</option>
               </select>
             </div>
+
+            {/* 새로운 랜덤 차트 불러오기 버튼 */}
+            <button 
+              onClick={handleStartRandomBlindTest}
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-900/10 active:scale-[0.98] cursor-pointer"
+            >
+              <span>🎲 새로운 랜덤 차트 불러오기</span>
+            </button>
 
             <div className="flex items-center justify-between mt-1 pt-1 border-t border-slate-800/40">
               <span className="text-[10px] text-slate-500">데이터 연결 상태</span>
@@ -972,6 +1035,22 @@ export default function App() {
                   <span className="text-slate-100 font-bold block mb-1">④ 최종 결과 보고서 & 실시간 랭킹</span>
                   120영업일이 전부 경과하여 훈련이 끝나면 실시간 트레이더 리더보드 랭킹 등록과 함께, 이번 연습 세션 동안 매수한 거래의 <strong>평균 승률 및 평균 손익비(Profit-Loss Ratio)</strong>를 정량적으로 도출해 줍니다.
                 </div>
+              </div>
+
+              {/* 가이드 내 [무작위 종목으로 실전 연습하기] 버튼 추가 */}
+              <div className="flex flex-col items-center justify-center pt-4 border-t border-slate-800/60 gap-2 text-center">
+                <p className="text-[11px] text-slate-400">
+                  💡 주식 종목 이름에 선입견을 두지 않고, 오직 <strong>차트 캔들과 거래량의 유기적 흐름</strong>만으로 실력을 겨뤄보고 싶으신가요?
+                </p>
+                <button 
+                  onClick={() => {
+                    handleStartRandomBlindTest();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-8 py-3 rounded-xl text-xs transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98] cursor-pointer"
+                >
+                  🎲 무작위 종목으로 실전 연습하기 (블라인드 테스트 시작)
+                </button>
               </div>
             </div>
           </div>
@@ -1235,11 +1314,21 @@ export default function App() {
             <h3 className="text-lg font-black text-white text-center">시뮬레이션 종료!</h3>
             <p className="text-xs text-slate-400 text-center mt-1">지정한 일봉 리플레이 데이터가 모두 노출되었습니다.</p>
 
+            {/* 블라인드 테스트 결과 공개 영역 */}
+            {isBlindMode && (
+              <div className="bg-blue-500/10 border border-blue-500/30 p-3.5 rounded-xl text-center font-bold text-xs mt-4 flex flex-col items-center gap-1 animate-fade-in">
+                <span className="text-blue-400 text-[10px] font-black uppercase tracking-widest">블라인드 테스트 결과 공개 🔓</span>
+                <span className="text-slate-100 text-xs mt-1 leading-relaxed">
+                  축하합니다! 당신이 매매한 종목은 <span className="text-yellow-400 font-extrabold bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-sm ml-1">{blindRealName}</span> 이었습니다.
+                </span>
+              </div>
+            )}
+
             {/* 성적 지표 카드 */}
-            <div className="bg-slate-950/60 rounded-xl p-4 my-5 border border-slate-800 space-y-3 font-mono">
+            <div className="bg-slate-950/60 rounded-xl p-4 my-4 border border-slate-800 space-y-3 font-mono">
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-400">종목명:</span>
-                <span className="text-white font-bold">{symbol}</span>
+                <span className="text-white font-bold">{isBlindMode ? `${blindRealName} (블라인드)` : symbol}</span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-400">초기 투자 원금:</span>
@@ -1289,13 +1378,28 @@ export default function App() {
             </div>
 
             {/* 코멘트 문구 */}
-            <div className="text-xs text-slate-300 bg-slate-950 p-3 rounded-lg border border-slate-800/50 leading-relaxed mb-6">
+            <div className="text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800/80 leading-relaxed mb-6">
               {sessionReturnRate > 15 ? (
-                <p className="text-red-400 font-semibold">🏆 당신은 훌륭한 추세 추종 능력을 가지고 있습니다! 적절한 돌파 매수와 홀딩 능력으로 상당한 초과 수익을 거두셨네요.</p>
+                <div className="space-y-1.5">
+                  <p className="text-red-400 font-extrabold text-sm">🏆 워런 버핏 오열 중!</p>
+                  <p className="text-slate-300">
+                    당장 전업 투자자로 전향하시기 바랍니다! 단 한 번의 분할도 없는 100% 몰빵 매매 시스템에서 누적 수익률 <span className="text-red-400 font-extrabold">+{sessionReturnRate.toFixed(2)}%</span>라니... 주식의 신이 강림하셨군요! 워런 버핏이 당신한테 1:1 과외 받고 싶어서 눈물 흘리며 국제전화 걸어올 지경입니다. 시장의 거대 세력들도 지금 당신 매매 타점 훔쳐보려고 안달이 났겠네요!
+                  </p>
+                </div>
               ) : sessionReturnRate > 0 ? (
-                <p className="text-emerald-400 font-semibold">📈 훌륭합니다! 시장 평균 수익률을 상회하는 안정적인 현금 보존 및 매매 분할 원칙을 보여주었습니다.</p>
+                <div className="space-y-1.5">
+                  <p className="text-emerald-400 font-extrabold text-sm">📈 오~ 빨간불 보셨네요? (생색 가능권 획득)</p>
+                  <p className="text-slate-300">
+                    축하합니다! 기어이 익절하고 빨간불로 살아남으셨군요! 분할 매매도 안 되는 가혹한 '올인' 운명 속에서 무려 <span className="text-emerald-400 font-extrabold">+{sessionReturnRate.toFixed(2)}%</span>의 수익을 낸 것은 대단한 뇌지컬입니다. 오늘 밤 지인들에게 "나 차트 분석가다"라고 헛기침 슥 하며 은근슬쩍 생색내도 인정해 드립니다. 국밥 한 그릇 자신 있게 얻어 드세요!
+                  </p>
+                </div>
               ) : (
-                <p className="text-blue-400 font-semibold">💡 아쉽지만 손실이 발생했습니다. 5일선 및 20일선 이동평균선 역배열 상태에서 무리하게 홀딩하거나, 바닥에서 뇌동매수하지 않았는지 일지를 복기해 보세요.</p>
+                <div className="space-y-1.5">
+                  <p className="text-blue-400 font-extrabold text-sm">💡 어이쿠... 우주의 물리 법칙을 증명하셨군요!</p>
+                  <p className="text-slate-300">
+                    수익률 <span className="text-blue-400 font-extrabold">{sessionReturnRate.toFixed(2)}%</span>! 역시 "내가 사면 내리고, 내가 팔면 오르는" 우주의 신비로운 물리 법칙의 정석을 몸소 보여주셨습니다! 혹시 매수 버튼 누를 때 간절히 기도하는 '기도 메타' 트레이더이신가요? 주저앉아 울 시간 없습니다. 얼른 눈물 닦고 '새로운 랜덤 차트'로 세력들에게 복수혈전 피의 복수를 하러 갑시다!
+                  </p>
+                </div>
               )}
             </div>
 
@@ -1533,11 +1637,21 @@ export default function App() {
 
             <div className="flex-1 overflow-y-auto pr-2 mt-4 space-y-6 text-xs text-slate-300 leading-relaxed scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
               
-              <div className="bg-gradient-to-r from-blue-950/40 to-indigo-950/40 border border-blue-900/30 p-5 rounded-2xl">
+              <div className="bg-gradient-to-r from-blue-950/40 to-indigo-950/40 border border-blue-900/30 p-5 rounded-2xl flex flex-col items-center gap-3.5">
                 <p className="font-bold text-blue-400 text-center text-xs md:text-sm leading-relaxed">
                   "투자는 단순한 예측의 영역이 아닌, 통제와 대응의 과학입니다."<br />
                   <span className="text-slate-300 text-xs font-normal mt-1 block">본 복기 시뮬레이터는 반복 훈련을 통해 실전에서 흔들리지 않는 최상의 매매 감각을 이끌어 냅니다.</span>
                 </p>
+                <button 
+                  onClick={() => {
+                    handleStartRandomBlindTest();
+                    setShowGuideModal(false);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-all shadow-lg shadow-blue-900/30 active:scale-[0.98] cursor-pointer"
+                >
+                  🎲 무작위 종목으로 실전 연습하기 (블라인드 테스트 시작)
+                </button>
               </div>
 
               {/* 1. 기획 의도 */}

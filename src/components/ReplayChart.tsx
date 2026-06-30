@@ -84,6 +84,12 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
           timeVisible: false,
           secondsVisible: false,
         },
+        handleScale: {
+          axisPressedMouseMove: {
+            time: true,
+            price: false,
+          },
+        },
       });
 
       chartRef.current = chart;
