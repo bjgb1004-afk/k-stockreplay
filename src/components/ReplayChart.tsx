@@ -52,6 +52,11 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
           vertLines: { color: 'rgba(51, 65, 85, 0.15)', style: 1 },
           horzLines: { color: 'rgba(51, 65, 85, 0.15)', style: 1 },
         },
+        localization: {
+          priceFormatter: (price: number) => {
+            return Math.round(price).toLocaleString() + '원';
+          },
+        },
         crosshair: {
           mode: 0, // Normal crosshair
           vertLine: {
@@ -90,6 +95,11 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
         borderVisible: false,
         wickUpColor: '#ef4444',
         wickDownColor: '#3b82f6',
+        priceFormat: {
+          type: 'price',
+          precision: 0,
+          minMove: 1,
+        },
       });
 
       // Draw Average Price line if holding
@@ -125,6 +135,11 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
         lineWidth: 1.5,
         priceLineVisible: false,
         lastValueVisible: false,
+        priceFormat: {
+          type: 'price',
+          precision: 0,
+          minMove: 1,
+        },
       });
 
       const ma20Series = chart.addSeries(LineSeries, {
@@ -132,6 +147,11 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
         lineWidth: 1.5,
         priceLineVisible: false,
         lastValueVisible: false,
+        priceFormat: {
+          type: 'price',
+          precision: 0,
+          minMove: 1,
+        },
       });
 
       // 5. Prepare Data
@@ -262,24 +282,24 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
             <span className="text-slate-400 font-bold bg-slate-800 px-1.5 py-0.5 rounded">{activeCandle.date}</span>
             <div className="flex gap-1">
               <span className="text-slate-500">시:</span>
-              <span className="text-white font-medium">{activeCandle.open.toLocaleString()}</span>
+              <span className="text-white font-medium">{Math.round(activeCandle.open).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
               <span className="text-slate-500">고:</span>
-              <span className="text-red-400 font-medium">{activeCandle.high.toLocaleString()}</span>
+              <span className="text-red-400 font-medium">{Math.round(activeCandle.high).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
               <span className="text-slate-500">저:</span>
-              <span className="text-blue-400 font-medium">{activeCandle.low.toLocaleString()}</span>
+              <span className="text-blue-400 font-medium">{Math.round(activeCandle.low).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
               <span className="text-slate-500">종:</span>
-              <span className={`${isUp ? 'text-red-500' : 'text-blue-500'} font-bold`}>{activeCandle.close.toLocaleString()}</span>
+              <span className={`${isUp ? 'text-red-500' : 'text-blue-500'} font-bold`}>{Math.round(activeCandle.close).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
               <span className="text-slate-500">변동:</span>
               <span className={`${changeAmt >= 0 ? 'text-red-500' : 'text-blue-500'} font-bold`}>
-                {changeAmt >= 0 ? '+' : ''}{changeAmt.toLocaleString()} ({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)
+                {changeAmt >= 0 ? '+' : ''}{Math.round(changeAmt).toLocaleString()} ({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)
               </span>
             </div>
             <div className="flex gap-1">
