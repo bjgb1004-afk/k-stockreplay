@@ -32,6 +32,20 @@ import { ReplayChart } from './components/ReplayChart';
 
 const INITIAL_BALANCE = 10000000; // 10,000,000 KRW
 
+interface SessionResult {
+  isBlindMode: boolean;
+  blindRealName: string;
+  symbol: string;
+  totalAssets: number;
+  sessionReturnRate: number;
+  completedCount: number;
+  winRate: number;
+  avgWinPct: number;
+  avgLossPct: number;
+  profitLossRatioStr: string;
+  gameOverQuote?: string;
+}
+
 const NOTICES = [
   "[스페이스바(Spacebar)] 키를 누르면 다음 일봉 캔들로 빠르게 넘어갑니다.",
   "5일 이동평균선(노란선)이 20일 이동평균선(자홍선)을 상향 돌파(골든크로스)할 때 주목해보세요.",
@@ -39,7 +53,7 @@ const NOTICES = [
   "거래량(Volume) 막대의 색상이 빨간색이면 상승 마감, 파란색이면 하락 마감을 의미합니다."
 ];
 
-const RANDOM_TEST_SYMBOLS: StockSymbol[] = ['삼성전자', 'SK하이닉스', 'NAVER', '카카오', '현대차', '에코프로비엠', '알테오젠', '한화에어로스페이스', '셀트리온', '에코프로'];
+const RANDOM_TEST_SYMBOLS: StockSymbol[] = ['삼성전자', 'SK하이닉스', 'NAVER', '카카오', '현대차', '에코프로비엠', '알테오젠', '한화에어로스페이스', '셀트리온', '에코프로', '엔켐', '필옵틱스', '메디포스트'];
 const INITIAL_RANDOM_SYMBOL = RANDOM_TEST_SYMBOLS[Math.floor(Math.random() * RANDOM_TEST_SYMBOLS.length)];
 
 export default function App() {
@@ -52,6 +66,9 @@ export default function App() {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [showResultModal, setShowResultModal] = useState<boolean>(false);
+  const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
+  const [sessionResult, setSessionResult] = useState<SessionResult | null>(null);
+  const [gameOverQuote, setGameOverQuote] = useState<string>('');
   const [showPremiumModal, setShowPremiumModal] = useState<boolean>(false);
   const [activeLegalModal, setActiveLegalModal] = useState<'terms' | 'privacy' | null>(null);
   const [showGuideModal, setShowGuideModal] = useState<boolean>(() => {
@@ -414,6 +431,98 @@ export default function App() {
     } catch (e) {}
   };
 
+  // Session End Trigger - captures statistics, pops up modal, and pre-loads next random chart in background
+  const triggerSessionEnd = (
+    isGameOver: boolean, 
+    quote?: string, 
+    overrideTrades?: Trade[], 
+    overrideBalance?: number
+  ) => {
+    const activeTrades = overrideTrades || trades;
+    const activeBalance = overrideBalance !== undefined ? overrideBalance : balance;
+    
+    // Calculate total assets with these active values
+    const finalTotalAssets = overrideBalance !== undefined ? activeBalance : (balance + holdings * currentPrice);
+    const finalSessionReturnRate = ((finalTotalAssets - INITIAL_BALANCE) / INITIAL_BALANCE) * 100;
+
+    const sellTrades = activeTrades.filter(t => t.type === 'SELL');
+    const completedCount = sellTrades.length;
+    const winTrades = sellTrades.filter(t => (t.realizedPnL || 0) > 0);
+    const loseTrades = sellTrades.filter(t => (t.realizedPnL || 0) < 0);
+    const winCount = winTrades.length;
+    const loseCount = loseTrades.length;
+    const winRate = completedCount > 0 ? (winCount / completedCount) * 100 : 0;
+    const avgWinPct = winCount > 0 ? winTrades.reduce((sum, t) => sum + (t.realizedPnLPct || 0), 0) / winCount : 0;
+    const avgLossPct = loseCount > 0 ? Math.abs(loseTrades.reduce((sum, t) => sum + (t.realizedPnLPct || 0), 0) / loseCount) : 0;
+    
+    let profitLossRatioStr = '-';
+    if (completedCount > 0) {
+      if (loseCount === 0) {
+        profitLossRatioStr = winCount > 0 ? '무제한 (손실 없음) 🚀' : '0.00';
+      } else {
+        const ratio = avgLossPct > 0 ? avgWinPct / avgLossPct : 0;
+        profitLossRatioStr = ratio.toFixed(2);
+      }
+    }
+
+    const result: SessionResult = {
+      isBlindMode,
+      blindRealName,
+      symbol,
+      totalAssets: finalTotalAssets,
+      sessionReturnRate: finalSessionReturnRate,
+      completedCount,
+      winRate,
+      avgWinPct,
+      avgLossPct,
+      profitLossRatioStr,
+      gameOverQuote: quote
+    };
+    setSessionResult(result);
+
+    if (isGameOver) {
+      if (quote) {
+        setGameOverQuote(quote);
+      }
+      setShowGameOverModal(true);
+    } else {
+      setShowResultModal(true);
+    }
+
+    // Pre-load the next random chart in the background if in random mode
+    if (isBlindMode) {
+      const symbols: StockSymbol[] = ['삼성전자', 'SK하이닉스', 'NAVER', '카카오', '현대차', '에코프로비엠', '알테오젠', '한화에어로스페이스', '셀트리온', '에코프로', '엔켐', '필옵틱스', '메디포스트'];
+      const filteredSymbols = symbols.filter(s => s !== symbol && s !== blindRealName);
+      const pool = filteredSymbols.length > 0 ? filteredSymbols : symbols;
+      const nextRandomSymbol = pool[Math.floor(Math.random() * pool.length)];
+
+      console.log(`[Pre-loading Next Random Chart] Next Symbol: ${nextRandomSymbol}`);
+
+      setIsBlindMode(true);
+      setBlindRealName(nextRandomSymbol);
+      setSymbol(nextRandomSymbol);
+    }
+  };
+
+  // 💥 Game Over Condition Monitor
+  useEffect(() => {
+    if (!isLoading && stockData.length > 0 && !showGameOverModal && !showResultModal && !sessionResult) {
+      if (totalAssets <= INITIAL_BALANCE * 0.8 || totalAssets <= 0) {
+        // Select random quote
+        const quotes = [
+          "현실이었으면 지금 한강 수온 체크하러 가셔야 합니다.",
+          "시장은 자비가 없습니다.",
+          "혹시... 뇌동매매 중독이신가요? 차트 다시 보고 오세요.",
+          "원금 회복의 꿈은 멀어집니다. 감정 매매의 비참한 최후입니다.",
+          "한강 수온은 따뜻한가요? 차트 분석 없이 들어간 자의 최후입니다."
+        ];
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        playSound('complete');
+        triggerSessionEnd(true, randomQuote);
+      }
+    }
+  }, [totalAssets, isLoading, stockData.length, showGameOverModal, showResultModal, sessionResult]);
+
   // Keyboard Event Listener: Spacebar
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -444,7 +553,7 @@ export default function App() {
 
   // Next Candle Handler
   const handleNextCandle = () => {
-    if (stockData.length === 0) return;
+    if (stockData.length === 0 || showGameOverModal) return;
     if (currentIndex < stockData.length - 1) {
       setCurrentIndex(prev => prev + 1);
       playSound('tick');
@@ -476,16 +585,20 @@ export default function App() {
         setBalance(balanceAfter);
         setTrades(prev => [autoTrade, ...prev]);
         playSound('sell');
-      }
 
-      playSound('complete');
-      setShowResultModal(true);
+        // Trigger session end with final overrides
+        playSound('complete');
+        triggerSessionEnd(false, undefined, [autoTrade, ...trades], balanceAfter);
+      } else {
+        playSound('complete');
+        triggerSessionEnd(false);
+      }
     }
   };
 
   // 100% Market Buy
   const handleMarketBuy = () => {
-    if (!currentCandle || balance < currentPrice) return;
+    if (!currentCandle || balance < currentPrice || showGameOverModal) return;
 
     const purchasableQty = Math.floor(balance / currentPrice);
     if (purchasableQty <= 0) return;
@@ -516,7 +629,7 @@ export default function App() {
 
   // 100% Market Sell
   const handleMarketSell = () => {
-    if (!currentCandle || holdings <= 0) return;
+    if (!currentCandle || holdings <= 0 || showGameOverModal) return;
 
     const sellProceeds = holdings * currentPrice;
     const balanceAfter = balance + sellProceeds;
@@ -547,6 +660,13 @@ export default function App() {
 
   // Restart / Reset Handler
   const handleReset = () => {
+    if (sessionResult) {
+      setShowResultModal(false);
+      setShowGameOverModal(false);
+      setSessionResult(null);
+      playSound('reset');
+      return;
+    }
     if (isBlindMode) {
       handleStartRandomBlindTest();
       return;
@@ -557,12 +677,13 @@ export default function App() {
     setAveragePrice(0);
     setTrades([]);
     setShowResultModal(false);
+    setShowGameOverModal(false);
     playSound('reset');
   };
 
   // Start Random Blind Test
   const handleStartRandomBlindTest = () => {
-    const symbols: StockSymbol[] = ['삼성전자', 'SK하이닉스', 'NAVER', '카카오', '현대차', '에코프로비엠', '알테오젠', '한화에어로스페이스', '셀트리온', '에코프로'];
+    const symbols: StockSymbol[] = ['삼성전자', 'SK하이닉스', 'NAVER', '카카오', '현대차', '에코프로비엠', '알테오젠', '한화에어로스페이스', '셀트리온', '에코프로', '엔켐', '필옵틱스', '메디포스트'];
     // Filter out both the current symbol AND the current revealed blind name to guarantee consecutive variety
     const filteredSymbols = symbols.filter(s => s !== symbol && s !== blindRealName);
     const pool = filteredSymbols.length > 0 ? filteredSymbols : symbols;
@@ -581,6 +702,7 @@ export default function App() {
     setTrades([]);
     setCurrentIndex(9);
     setShowResultModal(false);
+    setShowGameOverModal(false);
     playSound('reset');
   };
 
@@ -601,6 +723,18 @@ export default function App() {
     setAveragePrice(0);
     setTrades([]);
   };
+
+  // Display constants for modal rendering (ensures previous session stats remain visible while pre-loading new chart)
+  const displayIsBlindMode = sessionResult ? sessionResult.isBlindMode : isBlindMode;
+  const displayBlindRealName = sessionResult ? sessionResult.blindRealName : blindRealName;
+  const displaySymbol = sessionResult ? sessionResult.symbol : symbol;
+  const displayTotalAssets = sessionResult ? sessionResult.totalAssets : totalAssets;
+  const displayReturnRate = sessionResult ? sessionResult.sessionReturnRate : sessionReturnRate;
+  const displayCompletedCount = sessionResult ? sessionResult.completedCount : completedCount;
+  const displayWinRate = sessionResult ? sessionResult.winRate : winRate;
+  const displayAvgWinPct = sessionResult ? sessionResult.avgWinPct : avgWinPct;
+  const displayAvgLossPct = sessionResult ? sessionResult.avgLossPct : avgLossPct;
+  const displayProfitLossRatioStr = sessionResult ? sessionResult.profitLossRatioStr : profitLossRatioStr;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between font-sans overflow-x-hidden border border-slate-800 shadow-2xl pb-24 lg:pb-0 select-none" id="root-container">
@@ -689,6 +823,9 @@ export default function App() {
                   <option value="한화에어로스페이스">한화에어로스페이스 (012450)</option>
                   <option value="셀트리온">셀트리온 (068270)</option>
                   <option value="에코프로">에코프로 (086520)</option>
+                  <option value="엔켐">엔켐 (348370)</option>
+                  <option value="필옵틱스">필옵틱스 (161580)</option>
+                  <option value="메디포스트">메디포스트 (078160)</option>
                 </select>
 
                 <button 
@@ -706,7 +843,7 @@ export default function App() {
                 {isLoading ? (
                   <span className="text-blue-400 animate-pulse flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-ping" />
-                    불러오는 중...
+                    새로운 차트를 불러오는 중.
                   </span>
                 ) : isRealData ? (
                   <span className="text-green-400 flex items-center gap-1.5 bg-green-500/10 px-2 py-1 rounded border border-green-500/20 text-[11px]" title="실제 거래소 API에서 가져온 일봉 데이터">
@@ -847,6 +984,9 @@ export default function App() {
                 <option value="한화에어로스페이스">한화에어로스페이스 (012450)</option>
                 <option value="셀트리온">셀트리온 (068270)</option>
                 <option value="에코프로">에코프로 (086520)</option>
+                <option value="엔켐">엔켐 (348370)</option>
+                <option value="필옵틱스">필옵틱스 (161580)</option>
+                <option value="메디포스트">메디포스트 (078160)</option>
               </select>
             </div>
 
@@ -864,7 +1004,7 @@ export default function App() {
                 {isLoading ? (
                   <span className="text-blue-400 animate-pulse flex items-center gap-1 text-[10px]">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-ping" />
-                    불러오는 중...
+                    새로운 차트를 불러오는 중.
                   </span>
                 ) : isRealData ? (
                   <span className="text-green-400 flex items-center gap-1 bg-green-500/10 px-1.5 py-0.5 rounded border border-green-500/20 text-[10px]" title="실제 거래소 API에서 가져온 일봉 데이터">
@@ -1343,8 +1483,8 @@ export default function App() {
 
       {/* 결과 분석 완료 모달 */}
       {showResultModal && (
-        <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in" id="result-modal">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative overflow-hidden">
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 py-6 sm:py-10 z-50 overflow-y-auto animate-fade-in" id="result-modal">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative overflow-hidden my-auto">
             
             {/* Top glowing bar */}
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500" />
@@ -1359,11 +1499,11 @@ export default function App() {
             <p className="text-xs text-slate-400 text-center mt-1">지정한 일봉 리플레이 데이터가 모두 노출되었습니다.</p>
 
             {/* 블라인드 테스트 결과 공개 영역 */}
-            {isBlindMode && (
+            {displayIsBlindMode && (
               <div className="bg-blue-500/10 border border-blue-500/30 p-3.5 rounded-xl text-center font-bold text-xs mt-4 flex flex-col items-center gap-1 animate-fade-in">
                 <span className="text-blue-400 text-[10px] font-black uppercase tracking-widest">블라인드 테스트 결과 공개 🔓</span>
                 <span className="text-slate-100 text-xs mt-1 leading-relaxed">
-                  축하합니다! 당신이 매매한 종목은 <span className="text-yellow-400 font-extrabold bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-sm ml-1">{blindRealName}</span> 이었습니다.
+                  축하합니다! 당신이 매매한 종목은 <span className="text-yellow-400 font-extrabold bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-sm ml-1">{displayBlindRealName}</span> 이었습니다.
                 </span>
               </div>
             )}
@@ -1372,7 +1512,7 @@ export default function App() {
             <div className="bg-slate-950/60 rounded-xl p-4 my-4 border border-slate-800 space-y-3 font-mono">
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-400">종목명:</span>
-                <span className="text-white font-bold">{isBlindMode ? `${blindRealName} (블라인드)` : symbol}</span>
+                <span className="text-white font-bold">{displayIsBlindMode ? `${displayBlindRealName} (블라인드)` : displaySymbol}</span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-400">초기 투자 원금:</span>
@@ -1380,7 +1520,7 @@ export default function App() {
               </div>
               <div className="flex justify-between items-center text-xs border-b border-slate-800/60 pb-2">
                 <span className="text-slate-400">최종 청산 자산:</span>
-                <span className="text-white font-bold">{Math.round(totalAssets).toLocaleString()} 원</span>
+                <span className="text-white font-bold">{Math.round(displayTotalAssets).toLocaleString()} 원</span>
               </div>
 
               {/* 실전 매매 통계 (승률, 수익률, 손익비) */}
@@ -1390,58 +1530,58 @@ export default function App() {
                 <div className="grid grid-cols-2 gap-2">
                   <div className="bg-slate-900/80 border border-slate-800/60 rounded-xl p-2.5 flex flex-col justify-between">
                     <span className="text-slate-500 text-[10px] font-medium">총 실현 거래</span>
-                    <span className="text-slate-200 font-bold text-sm mt-1">{completedCount} 건</span>
+                    <span className="text-slate-200 font-bold text-sm mt-1">{displayCompletedCount} 건</span>
                   </div>
                   <div className="bg-slate-900/80 border border-slate-800/60 rounded-xl p-2.5 flex flex-col justify-between">
                     <span className="text-slate-500 text-[10px] font-medium">평균 승률</span>
-                    <span className="text-emerald-400 font-black text-sm mt-1">{winRate.toFixed(1)}%</span>
+                    <span className="text-emerald-400 font-black text-sm mt-1">{displayWinRate.toFixed(1)}%</span>
                   </div>
                   
                   <div className="bg-slate-900/80 border border-slate-800/60 rounded-xl p-2.5 flex flex-col justify-between">
                     <span className="text-slate-500 text-[10px] font-medium">평균 수익/손실률</span>
                     <div className="text-slate-200 font-bold text-[11px] mt-1 flex items-center gap-1">
-                      <span className="text-red-400">+{avgWinPct.toFixed(1)}%</span>
-                      <span className="text-slate-600">/</span>
-                      <span className="text-blue-400">-{avgLossPct.toFixed(1)}%</span>
+                      <span className="text-red-400">+{displayAvgWinPct.toFixed(1)}%</span>
+                      <span className="text-slate-600">|</span>
+                      <span className="text-blue-400">-{displayAvgLossPct.toFixed(1)}%</span>
                     </div>
                   </div>
                   
                   <div className="bg-amber-500/5 border border-amber-500/25 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
                     <span className="text-amber-500/90 text-[10px] font-bold">평균 손익비 (P/L)</span>
-                    <span className="text-amber-400 font-black text-sm mt-1">{profitLossRatioStr}</span>
+                    <span className="text-amber-400 font-black text-sm mt-1">{displayProfitLossRatioStr}</span>
                   </div>
                 </div>
               </div>
 
               <div className="flex justify-between items-center pt-1">
                 <span className="text-slate-400 text-xs">최종 누적 수익률:</span>
-                <span className={`text-md font-black ${sessionReturnRate >= 0 ? 'text-red-500' : 'text-blue-500'}`}>
-                  {sessionReturnRate >= 0 ? '+' : ''}{sessionReturnRate.toFixed(2)}%
+                <span className={`text-md font-black ${displayReturnRate >= 0 ? 'text-red-500' : 'text-blue-500'}`}>
+                  {displayReturnRate >= 0 ? '+' : ''}{displayReturnRate.toFixed(2)}%
                 </span>
               </div>
             </div>
 
             {/* 코멘트 문구 */}
             <div className="text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800/80 leading-relaxed mb-6">
-              {sessionReturnRate > 15 ? (
+              {displayReturnRate > 15 ? (
                 <div className="space-y-1.5">
                   <p className="text-red-400 font-extrabold text-sm">🏆 워런 버핏 오열 중!</p>
                   <p className="text-slate-300">
-                    당장 전업 투자자로 전향하시기 바랍니다! 단 한 번의 분할도 없는 100% 몰빵 매매 시스템에서 누적 수익률 <span className="text-red-400 font-extrabold">+{sessionReturnRate.toFixed(2)}%</span>라니... 주식의 신이 강림하셨군요! 워런 버핏이 당신한테 1:1 과외 받고 싶어서 눈물 흘리며 국제전화 걸어올 지경입니다. 시장의 거대 세력들도 지금 당신 매매 타점 훔쳐보려고 안달이 났겠네요!
+                    당장 전업 투자자로 전향하시기 바랍니다! 단 한 번의 분할도 없는 100% 몰빵 매매 시스템에서 누적 수익률 <span className="text-red-400 font-extrabold">+{displayReturnRate.toFixed(2)}%</span>라니... 주식의 신이 강림하셨군요! 워런 버핏이 당신한테 1:1 과외 받고 싶어서 눈물 흘리며 국제전화 걸어올 지경입니다. 시장의 거대 세력들도 지금 당신 매매 타점 훔쳐보려고 안달이 났겠네요!
                   </p>
                 </div>
-              ) : sessionReturnRate > 0 ? (
+              ) : displayReturnRate > 0 ? (
                 <div className="space-y-1.5">
                   <p className="text-emerald-400 font-extrabold text-sm">📈 오~ 빨간불 보셨네요? (생색 가능권 획득)</p>
                   <p className="text-slate-300">
-                    축하합니다! 기어이 익절하고 빨간불로 살아남으셨군요! 분할 매매도 안 되는 가혹한 '올인' 운명 속에서 무려 <span className="text-emerald-400 font-extrabold">+{sessionReturnRate.toFixed(2)}%</span>의 수익을 낸 것은 대단한 뇌지컬입니다. 오늘 밤 지인들에게 "나 차트 분석가다"라고 헛기침 슥 하며 은근슬쩍 생색내도 인정해 드립니다. 국밥 한 그릇 자신 있게 얻어 드세요!
+                    축하합니다! 기어이 익절하고 빨간불로 살아남으셨군요! 분할 매매도 안 되는 가혹한 '올인' 운명 속에서 무려 <span className="text-emerald-400 font-extrabold">+{displayReturnRate.toFixed(2)}%</span>의 수익을 낸 것은 대단한 뇌지컬입니다. 오늘 밤 지인들에게 "나 차트 분석가다"라고 헛기침 슥 하며 은근슬쩍 생색내도 인정해 드립니다. 국밥 한 그릇 자신 있게 얻어 드세요!
                   </p>
                 </div>
               ) : (
                 <div className="space-y-1.5">
                   <p className="text-blue-400 font-extrabold text-sm">💡 어이쿠... 우주의 물리 법칙을 증명하셨군요!</p>
                   <p className="text-slate-300">
-                    수익률 <span className="text-blue-400 font-extrabold">{sessionReturnRate.toFixed(2)}%</span>! 역시 "내가 사면 내리고, 내가 팔면 오르는" 우주의 신비로운 물리 법칙의 정석을 몸소 보여주셨습니다! 혹시 매수 버튼 누를 때 간절히 기도하는 '기도 메타' 트레이더이신가요? 주저앉아 울 시간 없습니다. 얼른 눈물 닦고 '새로운 랜덤 차트'로 세력들에게 복수혈전 피의 복수를 하러 갑시다!
+                    수익률 <span className="text-blue-400 font-extrabold">{displayReturnRate.toFixed(2)}%</span>! 역시 "내가 사면 내리고, 내가 팔면 오르는" 우주의 신비로운 물리 법칙의 정석을 몸소 보여주셨습니다! 혹시 매수 버튼 누를 때 간절히 기도하는 '기도 메타' 트레이더이신가요? 주저앉아 울 시간 없습니다. 얼른 눈물 닦고 '새로운 랜덤 차트'로 세력들에게 복수혈전 피의 복수를 하러 갑시다!
                   </p>
                 </div>
               )}
@@ -1451,18 +1591,105 @@ export default function App() {
             <div className="flex gap-3">
               <button
                 onClick={handleReset}
-                className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-black py-2.5 rounded-xl transition-all active:scale-95 text-xs text-center"
+                className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-black py-2.5 rounded-xl transition-all active:scale-95 text-xs text-center cursor-pointer"
               >
                 다시 훈련하기
               </button>
               <button
-                onClick={() => setShowResultModal(false)}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 px-4 rounded-xl text-xs transition-colors"
+                onClick={() => {
+                  setShowResultModal(false);
+                  setSessionResult(null);
+                }}
+                className="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 px-4 rounded-xl text-xs transition-colors cursor-pointer"
               >
                 닫기
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* 💥 깡통 알림 (GAME OVER) 모달 */}
+      {showGameOverModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 py-6 sm:py-10 z-50 overflow-y-auto animate-fade-in" id="gameover-modal">
+          <div className="bg-slate-950 border-2 border-red-500/80 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-[0_0_50px_rgba(239,68,68,0.3)] relative overflow-hidden flex flex-col items-center my-auto">
+            
+            {/* Top pulsing red bar */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-600 via-red-500 to-red-600 animate-pulse" />
+            
+            <div className="flex justify-center mb-5 mt-2">
+              <div className="bg-red-500/10 p-4 rounded-full border border-red-500/30 text-red-500 animate-pulse">
+                <AlertCircle className="w-12 h-12" />
+              </div>
+            </div>
+
+            <h3 className="text-3xl font-black text-red-500 tracking-wider text-center select-none uppercase font-sans animate-pulse">
+              GAME OVER
+            </h3>
+            <span className="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 uppercase tracking-widest select-none">
+              🚨 깡통 계좌 발생 (원금 회수 불능)
+            </span>
+
+            {/* 뼈때리는 멘트 출력 */}
+            <div className="bg-slate-900/80 border border-red-500/15 p-4.5 rounded-xl text-center font-bold text-slate-100 text-xs mt-6 w-full shadow-inner relative">
+              <div className="absolute -top-2.5 left-4 bg-slate-950 px-2 text-[8px] font-black tracking-wider uppercase text-red-400/80">
+                MARKET COMMENTARY
+              </div>
+              <p className="text-sm leading-relaxed text-red-200 mt-1">
+                "{sessionResult ? sessionResult.gameOverQuote : gameOverQuote}"
+              </p>
+            </div>
+
+            {/* 성적 지표 카드 */}
+            <div className="bg-slate-900/40 rounded-xl p-4 my-5 border border-slate-800/80 space-y-2.5 font-mono w-full text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">당시 종목명:</span>
+                <span className="text-slate-300 font-bold">{displayIsBlindMode ? `${displayBlindRealName} (블라인드)` : displaySymbol}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">초기 투자 원금:</span>
+                <span className="text-slate-300 font-bold">{INITIAL_BALANCE.toLocaleString()} 원</span>
+              </div>
+              <div className="flex justify-between items-center border-b border-slate-800/60 pb-2">
+                <span className="text-slate-500">깡통 청산 자산:</span>
+                <span className="text-red-400 font-black">{Math.round(displayTotalAssets).toLocaleString()} 원</span>
+              </div>
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-slate-500">최종 청산 손실률:</span>
+                <span className="text-red-500 font-black text-sm">
+                  {displayReturnRate.toFixed(2)}%
+                </span>
+              </div>
+            </div>
+
+            {/* 이 악물고 복구하러 가기 버튼 */}
+            <button
+              onClick={() => {
+                if (sessionResult) {
+                  setShowGameOverModal(false);
+                  setSessionResult(null);
+                  playSound('reset');
+                } else {
+                  handleStartRandomBlindTest();
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="w-full bg-gradient-to-r from-red-600 via-orange-600 to-red-500 hover:from-red-500 hover:via-orange-500 hover:to-orange-400 text-white font-extrabold py-4 px-6 rounded-xl text-xs transition-all duration-300 shadow-[0_0_20px_rgba(239,68,68,0.4)] active:scale-[0.98] tracking-wider uppercase flex items-center justify-center gap-2 cursor-pointer mt-2 animate-bounce"
+            >
+              <span>🔥 이 악물고 복구하러 가기 (랜덤 재도전)</span>
+            </button>
+            
+            {/* 닫기 버튼 */}
+            <button
+              onClick={() => {
+                setShowGameOverModal(false);
+                setShowResultModal(true); // Let them see details if they close it
+              }}
+              className="text-[10px] text-slate-500 hover:text-slate-300 mt-4 underline transition-colors cursor-pointer"
+            >
+              상세 거래 내역 보기
+            </button>
           </div>
         </div>
       )}

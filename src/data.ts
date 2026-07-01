@@ -138,6 +138,9 @@ export const getStockData = (symbol: StockSymbol): Candle[] => {
     '한화에어로스페이스': '012450',
     '셀트리온': '068270',
     '에코프로': '086520',
+    '엔켐': '348370',
+    '필옵틱스': '161580',
+    '메디포스트': '078160',
     '사용자정의': '005930'
   };
   const ticker = tickerMap[symbol] || '005930';
@@ -217,6 +220,12 @@ const KOREAN_STOCK_DICTIONARY: Record<string, string> = {
   '제주반도체': '080220.KQ',
   '유한양행': '000100.KS',
   '한미약품': '128940.KS',
+  '엔켐': '348370.KQ',
+  'enchem': '348370.KQ',
+  '필옵틱스': '161580.KQ',
+  'philoptics': '161580.KQ',
+  '메디포스트': '078160.KQ',
+  'medipost': '078160.KQ',
 };
 
 const KOREAN_STOCK_NAMES_BY_TICKER: Record<string, string> = {
@@ -230,6 +239,9 @@ const KOREAN_STOCK_NAMES_BY_TICKER: Record<string, string> = {
   '012450.KS': '한화에어로스페이스',
   '068270.KS': '셀트리온',
   '086520.KQ': '에코프로',
+  '348370.KQ': '엔켐',
+  '161580.KQ': '필옵틱스',
+  '078160.KQ': '메디포스트',
   '042700.KS': '한미반도체',
   '207940.KS': '삼성바이오로직스',
   '373220.KS': 'LG에너지솔루션',
@@ -349,6 +361,9 @@ export function generateRealisticMockData(symbolName: string, ticker: string): C
   else if (symbolName.includes('한화에어로')) currentPrice = 250000;
   else if (symbolName.includes('셀트리온')) currentPrice = 185000;
   else if (symbolName.includes('에코프로')) currentPrice = 95000;
+  else if (symbolName.includes('엔켐')) currentPrice = 250000;
+  else if (symbolName.includes('필옵틱스')) currentPrice = 25000;
+  else if (symbolName.includes('메디포스트')) currentPrice = 12000;
 
   // Generate a deterministic seed based on ticker and symbolName
   let seed = 0;
@@ -426,7 +441,10 @@ export async function fetchRealStockData(symbol: StockSymbol, customTicker?: str
     '알테오젠': '196170.KQ',
     '한화에어로스페이스': '012450.KS',
     '셀트리온': '068270.KS',
-    '에코프로': '086520.KQ'
+    '에코프로': '086520.KQ',
+    '엔켐': '348370.KQ',
+    '필옵틱스': '161580.KQ',
+    '메디포스트': '078160.KQ'
   };
 
   let ticker = '';

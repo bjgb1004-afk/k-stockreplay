@@ -12,7 +12,7 @@ export interface Candle {
   volume: number;
 }
 
-export type StockSymbol = '삼성전자' | 'SK하이닉스' | 'NAVER' | '카카오' | '현대차' | '에코프로비엠' | '알테오젠' | '한화에어로스페이스' | '셀트리온' | '에코프로' | '사용자정의';
+export type StockSymbol = '삼성전자' | 'SK하이닉스' | 'NAVER' | '카카오' | '현대차' | '에코프로비엠' | '알테오젠' | '한화에어로스페이스' | '셀트리온' | '에코프로' | '엔켐' | '필옵틱스' | '메디포스트' | '사용자정의';
 
 export interface Trade {
   id: string;
