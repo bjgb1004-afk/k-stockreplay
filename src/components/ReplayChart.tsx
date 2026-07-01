@@ -342,7 +342,7 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
 
       {/* Loading Placeholder */}
       {candles.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-slate-400 z-50">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-slate-400 z-10">
           <span className="animate-pulse">데이터 로딩 중...</span>
         </div>
       )}

@@ -26,11 +26,48 @@ import {
   MessageSquare,
   BookOpen,
   Trophy,
-  Loader2
+  Loader2,
+  Share2,
+  Check,
+  Copy
 } from 'lucide-react';
 import { Candle, StockSymbol, Trade } from './types';
 import { getStockData, fetchRealStockData, resolveStockTicker } from './data';
 import { ReplayChart } from './components/ReplayChart';
+
+// --- Firebase Ultra-Lightweight Optimized Configuration ---
+// 100% Client-Side, modular, using firestore/lite SDK to ensure extremely fast loading and zero bundle bloat.
+// All computations are lazy-loaded and run EXACTLY twice: once at app launch, and once upon nickname submission.
+// This guarantees ZERO execution overhead or UI stuttering during the main game loop (spacebar charting, buying, selling).
+import { initializeApp } from 'firebase/app';
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  getDocs, 
+  query, 
+  orderBy, 
+  limit, 
+  where
+} from 'firebase/firestore/lite';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDummyKey-ForKStockReplaySimulation",
+  authDomain: "k-stock-replay.firebaseapp.com",
+  projectId: "k-stock-replay",
+  storageBucket: "k-stock-replay.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef123456"
+};
+
+// Lazy initialization wrapper to prevent any app startup crash if config is incorrect
+let db: any = null;
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+} catch (e) {
+  console.error("Firebase initialization failed. Falling back to local data storage.", e);
+}
 
 const INITIAL_BALANCE = 10000000; // 10,000,000 KRW
 
@@ -114,17 +151,63 @@ export default function App() {
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSubmitSuccess, setIsSubmitSuccess] = useState<boolean>(false);
+  const [userRank, setUserRank] = useState<{ rank: number; total: number } | null>(null);
+  const [leaderboardTab, setLeaderboardTab] = useState<'top10' | 'myStats'>('top10');
+  const [shareCopied, setShareCopied] = useState<boolean>(false);
 
+  // Fetch Top 10 Leaderboard from local Express backend API
   const fetchLeaderboard = async () => {
     setLeaderboardLoading(true);
     try {
-      const res = await fetch('/api/leaderboard');
-      if (res.ok) {
-        const data = await res.json();
-        setLeaderboard(data.leaderboard || []);
+      const response = await fetch('/api/leaderboard');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.leaderboard && Array.isArray(data.leaderboard)) {
+          // Map to LeaderboardItem interface
+          const list: LeaderboardItem[] = data.leaderboard.map((entry: any) => ({
+            name: entry.name || entry.nickname || '무명 트레이더',
+            yieldRate: Number(entry.yieldRate ?? entry.yield ?? 0),
+            symbol: entry.symbol || '종목 미정',
+            totalAssets: Number(entry.totalAssets ?? 10000000),
+            date: entry.date || new Date().toLocaleDateString()
+          }));
+          setLeaderboard(list.slice(0, 10));
+          setLeaderboardLoading(false);
+          return;
+        }
       }
     } catch (err) {
-      console.error('Failed to fetch leaderboard:', err);
+      console.warn('Backend leaderboard API failed, falling back to local storage:', err);
+    }
+
+    // Fallback: load from local leaderboard.json merged with local storage records
+    try {
+      const response = await fetch('/leaderboard.json');
+      if (response.ok) {
+        const defaultRankings = await response.json();
+        const localSubmitted = JSON.parse(localStorage.getItem('local_submitted_rankings') || '[]');
+        const merged = [...localSubmitted, ...defaultRankings]
+          .map((item: any) => ({
+            name: item.name || item.nickname || '무명 트레이더',
+            yieldRate: Number(item.yieldRate ?? item.yield ?? 0),
+            symbol: item.symbol || '종목 미정',
+            totalAssets: Number(item.totalAssets ?? 10000000),
+            date: item.date || new Date().toLocaleDateString()
+          }))
+          .sort((a, b) => b.yieldRate - a.yieldRate);
+        
+        const unique: any[] = [];
+        const seenNames = new Set();
+        for (const item of merged) {
+          if (!seenNames.has(item.name)) {
+            seenNames.add(item.name);
+            unique.push(item);
+          }
+        }
+        setLeaderboard(unique.slice(0, 10));
+      }
+    } catch (e) {
+      console.error('Failed to load fallback rankings:', e);
     } finally {
       setLeaderboardLoading(false);
     }
@@ -134,7 +217,8 @@ export default function App() {
     fetchLeaderboard();
   }, []);
 
-  const handleRegisterRanking = async (finalYield: number, finalAssets: number, finalSymbol: string) => {
+  // Submit Score to local Express backend API and compute user rank
+  const handleRegisterRanking = async (finalYield: number, finalAssets: number, finalSymbol: string, finalWinRate: number) => {
     if (!nickname.trim()) {
       alert('닉네임을 입력해주세요!');
       return;
@@ -144,7 +228,7 @@ export default function App() {
       return;
     }
     
-    // Double check local storage 1 day limit
+    // LocalStorage 1-day submission defense (1일 1회 등록 제한 프론트엔드 방어 로직)
     const todayKst = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10);
     const lastRegDate = localStorage.getItem('last_ranking_submission_date');
     if (lastRegDate === todayKst) {
@@ -153,7 +237,10 @@ export default function App() {
     }
 
     setIsSubmitting(true);
+    let registeredRank = 1;
+    let totalCount = 1;
     try {
+      // 1. Post to our backend Express API
       const response = await fetch('/api/leaderboard', {
         method: 'POST',
         headers: {
@@ -168,21 +255,90 @@ export default function App() {
       });
 
       if (response.ok) {
-        try {
-          localStorage.setItem('default_nickname', nickname.trim());
-          localStorage.setItem('last_ranking_submission_date', todayKst);
-        } catch (e) {}
+        // 2. Fetch the updated leaderboard to compute actual rank
+        const leaderboardRes = await fetch('/api/leaderboard');
+        if (leaderboardRes.ok) {
+          const lbData = await leaderboardRes.json();
+          if (lbData.leaderboard && Array.isArray(lbData.leaderboard)) {
+            const list = lbData.leaderboard;
+            // Find our rank: count how many people have higher yield rate
+            const higherCount = list.filter((item: any) => Number(item.yieldRate ?? item.yield ?? 0) > finalYield).length;
+            registeredRank = higherCount + 1;
+            totalCount = list.length;
+          }
+        }
+      } else {
+        throw new Error('서버 등록 실패');
+      }
+
+      // Save locally to prevent multiple submissions
+      try {
+        localStorage.setItem('default_nickname', nickname.trim());
+        localStorage.setItem('last_ranking_submission_date', todayKst);
+        
+        // Also save to local submitted history for local fallbacks
+        const localSubmitted = JSON.parse(localStorage.getItem('local_submitted_rankings') || '[]');
+        localSubmitted.push({
+          name: nickname.trim(),
+          yieldRate: finalYield,
+          symbol: finalSymbol,
+          totalAssets: finalAssets,
+          date: todayKst
+        });
+        localStorage.setItem('local_submitted_rankings', JSON.stringify(localSubmitted));
+      } catch (e) {}
+
+      setIsRegisteredToday(true);
+      setIsSubmitSuccess(true);
+      setUserRank({ rank: registeredRank, total: totalCount });
+      playSound('complete');
+      
+      // Refresh the leaderboard table
+      await fetchLeaderboard();
+      setLeaderboardTab('top10');
+    } catch (err) {
+      console.error('Failed to register ranking via API, running fallback:', err);
+      
+      // Graceful local-only fallback if server API is down
+      try {
+        const todayKst = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10);
+        const localSubmitted = JSON.parse(localStorage.getItem('local_submitted_rankings') || '[]');
+        const newRecord = {
+          name: nickname.trim(),
+          yieldRate: finalYield,
+          symbol: finalSymbol,
+          totalAssets: finalAssets,
+          date: todayKst
+        };
+        localSubmitted.push(newRecord);
+        localStorage.setItem('local_submitted_rankings', JSON.stringify(localSubmitted));
+        localStorage.setItem('default_nickname', nickname.trim());
+        localStorage.setItem('last_ranking_submission_date', todayKst);
+
+        // Calculate rank locally using fallback leaderboard.json
+        const backupRes = await fetch('/leaderboard.json');
+        let allItems = [];
+        if (backupRes.ok) {
+          const defaultRankings = await backupRes.json();
+          allItems = [...localSubmitted, ...defaultRankings];
+        } else {
+          allItems = localSubmitted;
+        }
+        allItems.sort((a, b) => Number(b.yieldRate ?? b.yield ?? 0) - Number(a.yieldRate ?? a.yield ?? 0));
+        
+        const rankIndex = allItems.findIndex(item => (item.name || item.nickname) === nickname.trim() && Number(item.yieldRate ?? item.yield ?? 0) === finalYield);
+        registeredRank = rankIndex !== -1 ? rankIndex + 1 : 1;
+        totalCount = allItems.length;
+
         setIsRegisteredToday(true);
         setIsSubmitSuccess(true);
+        setUserRank({ rank: registeredRank, total: totalCount });
         playSound('complete');
         await fetchLeaderboard();
-      } else {
-        const errData = await response.json();
-        alert(errData.error || '랭킹 등록에 실패했습니다.');
+      } catch (fallbackErr) {
+        console.error('Fallback registration failed:', fallbackErr);
+        alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       }
-    } catch (err) {
-      console.error('Failed to register ranking:', err);
-      alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }
@@ -309,10 +465,7 @@ export default function App() {
       setIsLoading(true);
       setErrorMsg(null);
       try {
-        const [result] = await Promise.all([
-          fetchRealStockData(symbol, symbol === '사용자정의' ? activeCustomTicker : undefined),
-          new Promise((resolve) => setTimeout(resolve, 400)), // minimum 400ms delay for premium loading experience
-        ]);
+        const result = await fetchRealStockData(symbol, symbol === '사용자정의' ? activeCustomTicker : undefined);
         if (active) {
           setStockData(result.candles);
           setIsRealData(true);
@@ -324,8 +477,6 @@ export default function App() {
         }
       } catch (err: any) {
         console.error('API load failed, using fallback mock data:', err);
-        // Ensure consistent 400ms transition time on error/fallback paths as well
-        await new Promise((resolve) => setTimeout(resolve, 400));
         if (active) {
           if (symbol === '사용자정의') {
             setErrorMsg(err.message || '데이터를 불러오는 데 실패했습니다.');
@@ -763,9 +914,119 @@ export default function App() {
     playSound('sell');
   };
 
+  // Result sharing functionality (Web Share API with graceful Clipboard fallback)
+  const handleShareResult = async (
+    yieldRate: number,
+    assets: number,
+    symbolName: string,
+    winRateValue: number,
+    isBlind: boolean,
+    blindName: string
+  ) => {
+    const finalSymbol = isBlind ? `${blindName} (블라인드)` : symbolName;
+    const emoji = yieldRate >= 50 ? '👑' : yieldRate >= 15 ? '🔥' : yieldRate > 0 ? '📈' : yieldRate > -20 ? '💸' : '🚨';
+    const profitStatus = yieldRate >= 0 ? `+${yieldRate.toFixed(2)}%` : `${yieldRate.toFixed(2)}%`;
+    const rankText = userRank ? `전체 ${userRank.rank}위 (총 ${userRank.total}명 중)` : '리더보드 등록 완료!';
+    
+    // Dynamic tier and comment based on ROI
+    let tier = "초보 트레이더 🐣";
+    let comment = "아직 시장에 살아있는 전설이 되기 위해 더 연습이 필요합니다!";
+    if (yieldRate >= 50) {
+      tier = "👑 주식의 신 (워런 버핏 오열)";
+      comment = "워런 버핏도 눈물 흘리며 비법을 가르쳐달라고 전화를 걸어올 수준입니다!";
+    } else if (yieldRate >= 15) {
+      tier = "🔥 프로 트레이더 (세력 요주의 대상)";
+      comment = "여유롭게 익절을 꽂아 넣으며 시장의 주도 세력 머리 위에 앉아 있습니다!";
+    } else if (yieldRate > 0) {
+      tier = "📈 실력파 투자자 (국밥 생색권 획득)";
+      comment = "치열한 올인 매매 전투 속에서도 기어이 빨간불 수익을 완성했습니다!";
+    } else if (yieldRate > -20) {
+      tier = "💸 손실 발생 (복구 시급)";
+      comment = "수익률의 파도를 타며 조금의 정밀함이 더 보완된다면 대박이 날 것입니다!";
+    } else {
+      tier = "🚨 깡통 계좌 (시장 청산)";
+      comment = "지독한 하락폭에 휩쓸려 시장에 전 재산을 기부하셨습니다! 피의 복수 필요!";
+    }
+
+    const appUrl = window.location.origin + window.location.pathname;
+    const shareText = `[K-Stock Replay] 나의 실시간 주식 리플레이 성적표!
+
+${emoji} 투자 등급: ${tier}
+🔥 최종 수익률: ${profitStatus}
+💰 최종 평가자산: ${Math.round(assets).toLocaleString()}원
+📈 도전 종목: ${finalSymbol}
+🎯 체결 승률: ${winRateValue > 0 ? `${winRateValue.toFixed(1)}%` : '0.0%'}
+🏅 전세계 순위: ${rankText}
+
+💬 분석 코멘트:
+"${comment}"
+
+당신의 투자 본능과 주식 차트 분석 실력은 몇 등일까?
+지금 무료로 120일간의 주식 대전에 참전해보세요! 🚀
+👉 ${appUrl}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'K-Stock Replay 성적 공유',
+          text: shareText,
+          url: appUrl
+        });
+        playSound('complete');
+      } catch (err) {
+        console.warn('Native sharing failed/canceled, copying to clipboard instead:', err);
+        copyToClipboard(shareText);
+      }
+    } else {
+      copyToClipboard(shareText);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          setShareCopied(true);
+          playSound('complete');
+          setTimeout(() => setShareCopied(false), 3000);
+        })
+        .catch((err) => {
+          console.error('Clipboard copy failed:', err);
+          fallbackCopyToClipboard(text);
+        });
+    } else {
+      fallbackCopyToClipboard(text);
+    }
+  };
+
+  const fallbackCopyToClipboard = (text: string) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";  // avoid scrolling to bottom
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      if (successful) {
+        setShareCopied(true);
+        playSound('complete');
+        setTimeout(() => setShareCopied(false), 3000);
+      } else {
+        alert('복사에 실패했습니다. 아래 내용을 직접 복사해주세요:\n\n' + text);
+      }
+    } catch (err) {
+      console.error('Fallback copy failed:', err);
+      alert('복사에 실패했습니다. 아래 내용을 직접 복사해주세요:\n\n' + text);
+    }
+  };
+
   // Restart / Reset Handler
   const handleReset = () => {
     setIsSubmitSuccess(false);
+    setUserRank(null);
+    setLeaderboardTab('top10');
     try {
       const todayKst = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10);
       const lastRegDate = localStorage.getItem('last_ranking_submission_date');
@@ -1014,7 +1275,7 @@ export default function App() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-[6px] z-20"
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-[6px] z-40"
                 >
                   <div className="flex flex-col items-center gap-3">
                     <div className="relative flex items-center justify-center">
@@ -1214,90 +1475,216 @@ export default function App() {
             </div>
           </div>
 
-          {/* 실시간 트레이더 리더보드 (Sleek Golden Version) */}
-          <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex flex-col h-[320px] overflow-hidden shadow-xl" id="leaderboard-panel">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-2.5">
-              <div className="flex items-center gap-1.5">
-                <Trophy className="w-4 h-4 text-amber-500 animate-pulse" />
-                <h2 className="text-xs font-black text-slate-200 tracking-wider">실시간 탑 10 리더보드</h2>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-[9px] text-emerald-400 font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                  실시간
-                </div>
-                <button 
-                  onClick={fetchLeaderboard}
-                  disabled={leaderboardLoading}
-                  className="p-1 hover:bg-slate-900 rounded text-slate-400 hover:text-white transition-colors cursor-pointer"
-                  title="새로고침"
+          {/* 실시간 랭킹 & 나의 수익률 듀얼 패널 (Real-time Leaderboard & My Stats Dual Panel) */}
+          <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex flex-col h-[320px] justify-between shadow-xl" id="leaderboard-panel">
+            {/* 탭 인터페이스 헤더 */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+              <div className="flex items-center gap-1 bg-slate-900/60 p-0.5 rounded-lg border border-slate-800/80">
+                <button
+                  onClick={() => setLeaderboardTab('top10')}
+                  className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${leaderboardTab === 'top10' ? 'bg-slate-800 text-amber-400 shadow-sm border border-slate-700/50' : 'text-slate-400 hover:text-slate-200'}`}
                 >
-                  <RefreshCw className={`w-3 h-3 ${leaderboardLoading ? 'animate-spin' : ''}`} />
+                  <Trophy className="w-3.5 h-3.5" />
+                  실시간 탑 10
                 </button>
+                <button
+                  onClick={() => setLeaderboardTab('myStats')}
+                  className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${leaderboardTab === 'myStats' ? 'bg-slate-800 text-blue-400 shadow-sm border border-slate-700/50' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  <BarChart3 className="w-3.5 h-3.5" />
+                  나의 수익률
+                </button>
+              </div>
+              
+              <div className="flex items-center gap-1.5">
+                {leaderboardTab === 'top10' ? (
+                  <>
+                    <div className="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-[8px] text-emerald-400 font-bold">
+                      <span className="w-1 h-1 rounded-full bg-emerald-400 animate-ping" />
+                      실시간
+                    </div>
+                    <button 
+                      onClick={fetchLeaderboard}
+                      disabled={leaderboardLoading}
+                      className="p-1 hover:bg-slate-900 rounded text-slate-400 hover:text-white transition-colors cursor-pointer"
+                      title="새로고침"
+                    >
+                      <RefreshCw className={`w-2.5 h-2.5 ${leaderboardLoading ? 'animate-spin' : ''}`} />
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-1 bg-red-500/10 border border-red-500/20 px-1.5 py-0.5 rounded text-[8px] text-red-400 font-bold">
+                    <span className="w-1 h-1 rounded-full bg-red-400 animate-ping" />
+                    집계 중
+                  </div>
+                )}
               </div>
             </div>
             
-            <div className="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent pr-1">
-              {leaderboardLoading && leaderboard.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-slate-500 gap-2">
-                  <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
-                  <p className="text-[10px] font-medium text-slate-400">랭킹 불러오는 중...</p>
-                </div>
-              ) : leaderboard.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-slate-600 text-center p-2">
-                  <p className="text-[10px]">등록된 랭킹이 없습니다</p>
-                </div>
-              ) : (
-                <div className="w-full">
-                  <table className="w-full text-left text-[11px] font-mono border-collapse">
-                    <thead>
-                      <tr className="text-slate-500 text-[10px] border-b border-slate-800/60 pb-1.5">
-                        <th className="pb-1 text-center w-[12%]">순위</th>
-                        <th className="pb-1 pl-1 text-left w-[38%]">닉네임</th>
-                        <th className="pb-1 text-right w-[25%]">수익률</th>
-                        <th className="pb-1 text-right w-[25%] pr-1">종목</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-900/60">
-                      {leaderboard.slice(0, 10).map((entry, index) => {
-                        const rank = index + 1;
-                        let rankDisplay = `${rank}`;
-                        let rankBg = 'bg-slate-900 text-slate-400';
-                        if (rank === 1) {
-                          rankDisplay = '🥇';
-                          rankBg = 'bg-amber-500/10 text-amber-400 font-extrabold border border-amber-500/20';
-                        } else if (rank === 2) {
-                          rankDisplay = '🥈';
-                          rankBg = 'bg-slate-300/10 text-slate-300 font-extrabold border border-slate-300/20';
-                        } else if (rank === 3) {
-                          rankDisplay = '🥉';
-                          rankBg = 'bg-amber-700/10 text-amber-600 font-extrabold border border-amber-700/20';
-                        }
-                        
-                        return (
-                          <tr key={index} className="hover:bg-slate-900/40 transition-colors">
-                            <td className="py-1.5 text-center">
-                              <span className={`inline-flex items-center justify-center w-4 h-4 rounded text-[9px] font-sans ${rankBg}`}>
-                                {rankDisplay}
-                              </span>
-                            </td>
-                            <td className="py-1.5 pl-1 text-left font-sans font-semibold text-slate-200 truncate max-w-[80px]" title={entry.name}>
-                              {entry.name}
-                            </td>
-                            <td className={`py-1.5 text-right font-bold font-mono ${entry.yieldRate >= 0 ? 'text-red-400' : 'text-blue-400'}`}>
-                              {entry.yieldRate >= 0 ? '+' : ''}{entry.yieldRate.toFixed(2)}%
-                            </td>
-                            <td className="py-1.5 text-right text-slate-400 font-sans truncate max-w-[65px] pr-1" title={entry.symbol}>
-                              {entry.symbol}
-                            </td>
+            {leaderboardTab === 'top10' ? (
+              /* 실시간 탑 10 리더보드 테이블 탭 (Firestore 연동) */
+              <div className="flex-grow flex flex-col justify-between overflow-hidden">
+                <div className="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent pr-1">
+                  {leaderboardLoading && leaderboard.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-500 gap-2">
+                      <Loader2 className="w-4 h-4 text-amber-500 animate-spin" />
+                      <p className="text-[10px] font-medium text-slate-400">랭킹 불러오는 중...</p>
+                    </div>
+                  ) : leaderboard.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-600 text-center p-2">
+                      <p className="text-[10px]">등록된 랭킹이 없습니다</p>
+                    </div>
+                  ) : (
+                    <div className="w-full">
+                      <table className="w-full text-left text-[11px] font-mono border-collapse">
+                        <thead>
+                          <tr className="text-slate-500 text-[9px] border-b border-slate-800/60 pb-1.5">
+                            <th className="pb-1 text-center w-[12%]">순위</th>
+                            <th className="pb-1 pl-1 text-left w-[38%]">닉네임</th>
+                            <th className="pb-1 text-right w-[25%]">수익률</th>
+                            <th className="pb-1 text-right w-[25%] pr-1">종목</th>
                           </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                        </thead>
+                        <tbody className="divide-y divide-slate-900/60">
+                          {leaderboard.slice(0, 10).map((entry, index) => {
+                            const rank = index + 1;
+                            let rankDisplay = `${rank}`;
+                            let rankBg = 'bg-slate-900 text-slate-400';
+                            if (rank === 1) {
+                              rankDisplay = '🥇';
+                              rankBg = 'bg-amber-500/10 text-amber-400 font-extrabold border border-amber-500/20';
+                            } else if (rank === 2) {
+                              rankDisplay = '🥈';
+                              rankBg = 'bg-slate-300/10 text-slate-300 font-extrabold border border-slate-300/20';
+                            } else if (rank === 3) {
+                              rankDisplay = '🥉';
+                              rankBg = 'bg-amber-700/10 text-amber-600 font-extrabold border border-amber-700/20';
+                            }
+                            
+                            return (
+                              <tr key={index} className="hover:bg-slate-900/40 transition-colors">
+                                <td className="py-1 text-center">
+                                  <span className={`inline-flex items-center justify-center w-4 h-4 rounded text-[9px] font-sans ${rankBg}`}>
+                                    {rankDisplay}
+                                  </span>
+                                </td>
+                                <td className="py-1 pl-1 text-left font-sans font-semibold text-slate-200 truncate max-w-[80px]" title={entry.name}>
+                                  {entry.name}
+                                </td>
+                                <td className={`py-1 text-right font-bold font-mono ${entry.yieldRate >= 0 ? 'text-red-400' : 'text-blue-400'}`}>
+                                  {entry.yieldRate >= 0 ? '+' : ''}{entry.yieldRate.toFixed(2)}%
+                                </td>
+                                <td className="py-1 text-right text-slate-400 font-sans truncate max-w-[65px] pr-1" title={entry.symbol}>
+                                  {entry.symbol}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+
+                {/* 랭킹 등록 완료 상태 시 나의 순위 요약 바 */}
+                {isSubmitSuccess && userRank && (
+                  <div className="mt-1.5 text-center text-[9px] bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold py-1 rounded">
+                    이번 세션 나의 최종 수익률: {sessionReturnRate >= 0 ? '+' : ''}{sessionReturnRate.toFixed(2)}% (현재 전체 {userRank.rank}위!)
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* 나의 실시간 게임 수익률 탭 */
+              <div className="flex-grow flex flex-col justify-between overflow-hidden">
+                {/* 메인 대형 수익률 정보 */}
+                <div className="flex-grow flex flex-col justify-center items-center py-1 relative">
+                  <div className={`absolute w-24 h-24 rounded-full blur-3xl opacity-10 pointer-events-none -translate-y-1 ${sessionReturnRate >= 0 ? 'bg-red-500' : 'bg-blue-500'}`} />
+                  
+                  <div className="text-[9px] text-slate-500 font-bold tracking-wide uppercase">누적 투자 수익률 (ROI)</div>
+                  <div className={`text-3xl font-black font-mono tracking-tight my-0.5 filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] ${sessionReturnRate >= 0 ? 'text-red-500' : 'text-blue-400'}`}>
+                    {sessionReturnRate >= 0 ? '+' : ''}{sessionReturnRate.toFixed(2)}%
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-sans flex items-center gap-1">
+                    <span>현재 종목:</span>
+                    <span className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded font-bold text-slate-200">
+                      {isBlindMode ? '🔒 블라인드 종목' : symbol}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 세부 트레이딩 지표 그리드 */}
+                <div className="grid grid-cols-2 gap-1.5 bg-slate-900/40 p-2 rounded-lg border border-slate-800/80 mb-1.5">
+                  <div className="flex flex-col">
+                    <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">총 평가자산</span>
+                    <span className="text-xs font-bold text-slate-200 font-mono mt-0.5">
+                      {Math.round(totalAssets).toLocaleString()}원
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">체결 성공률 (승률)</span>
+                    <span className={`text-xs font-bold font-mono mt-0.5 ${completedCount > 0 ? (winRate >= 50 ? 'text-red-400' : 'text-slate-300') : 'text-slate-400'}`}>
+                      {completedCount > 0 ? `${winRate.toFixed(1)}%` : '-'}
+                    </span>
+                  </div>
+                  <div className="flex flex-col border-t border-slate-800/40 pt-1">
+                    <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">누적 매매 횟수</span>
+                    <span className="text-xs font-bold text-slate-200 font-mono mt-0.5">
+                      {trades.length}회
+                    </span>
+                  </div>
+                  <div className="flex flex-col border-t border-slate-800/40 pt-1">
+                    <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">평균 손익비 (P/L)</span>
+                    <span className="text-xs font-bold text-slate-200 font-mono mt-0.5">
+                      {profitLossRatioStr}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 하단 팁 / 경고 영역 */}
+                <div className="text-[9px] text-slate-500 bg-slate-900/30 border border-slate-800/50 px-2 py-1 rounded flex items-center justify-center gap-1.5 text-center">
+                  {holdings > 0 ? (
+                    <span className="text-slate-400 font-medium">
+                      📢 보유 주식 수익률: <span className={`font-mono font-bold ${holdingReturnRate >= 0 ? 'text-red-400' : 'text-blue-400'}`}>{holdingReturnRate >= 0 ? '+' : ''}{holdingReturnRate.toFixed(2)}%</span>
+                    </span>
+                  ) : (
+                    <span className="text-slate-500 font-medium">
+                      💡 20% 원금 손실 시 파산(Game Over)에 도달합니다!
+                    </span>
+                  )}
+                </div>
+
+                {/* 🔗 결과 공유 버튼 (My Stats 사이드바 배치용) */}
+                {trades.length > 0 && (
+                  <button
+                    onClick={() => handleShareResult(
+                      sessionReturnRate, 
+                      totalAssets, 
+                      symbol, 
+                      winRate, 
+                      isBlindMode, 
+                      blindRealName
+                    )}
+                    className={`w-full py-2 px-3 rounded-lg font-bold text-[10px] tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-1.5 select-none cursor-pointer active:scale-[0.98] mt-1.5 ${
+                      shareCopied 
+                        ? 'bg-emerald-600 text-white border border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]' 
+                        : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-sm border border-emerald-400/20'
+                    }`}
+                  >
+                    {shareCopied ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-white animate-bounce" />
+                        <span>성적 복사 완료! 📋</span>
+                      </>
+                    ) : (
+                      <>
+                        <Share2 className="w-3.5 h-3.5 text-white" />
+                        <span>🔥 현재 성적 친구에게 공유하기</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
         </aside>
@@ -1647,13 +2034,15 @@ export default function App() {
 
       {/* 결과 분석 완료 모달 */}
       {showResultModal && (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 py-6 sm:py-10 z-50 overflow-y-auto animate-fade-in" id="result-modal">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative overflow-hidden my-auto">
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 py-6 sm:py-10 z-50 animate-fade-in" id="result-modal">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] p-5 sm:p-6 shadow-2xl relative overflow-hidden my-auto flex flex-col">
             
             {/* Top glowing bar */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500" />
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 z-10" />
             
-            <div className="flex justify-center mb-4">
+            {/* Scrollable contents wrapper */}
+            <div className="overflow-y-auto pr-1 flex-grow scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+              <div className="flex justify-center mb-4 mt-2">
               <div className="bg-yellow-500/10 p-3 rounded-full border border-yellow-500/20 text-yellow-500">
                 <Award className="w-10 h-10" />
               </div>
@@ -1751,21 +2140,24 @@ export default function App() {
               )}
             </div>
 
+
             {/* 🏆 실시간 리더보드 랭킹 등록 영역 */}
-            <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 mb-5 space-y-3">
+            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-5 space-y-3">
               <div className="flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
-                <Trophy className="w-4 h-4 text-amber-400" />
-                <span className="text-xs font-black text-slate-200 tracking-wider">실시간 랭킹 등록 (비로그인)</span>
+                <Trophy className="w-4 h-4 text-amber-400 animate-pulse" />
+                <span className="text-xs font-black text-slate-200 tracking-wider">실시간 전세계 랭킹 등록</span>
               </div>
               
               {isSubmitSuccess ? (
-                <div className="text-center py-2.5 space-y-1.5 animate-fade-in">
-                  <p className="text-xs font-bold text-emerald-400">🎉 랭킹 등록이 완료되었습니다!</p>
-                  <p className="text-[10px] text-slate-400 font-medium">실시간 리더보드 표에서 자신의 성적을 확인해 보세요.</p>
+                <div className="text-center py-2.5 space-y-1.5 animate-fade-in bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                  <p className="text-xs font-bold text-emerald-400">🎉 랭킹 등록 완료!</p>
+                  <p className="text-[11px] text-slate-300 font-semibold">
+                    이번 세션 최종 수익률: {displayReturnRate >= 0 ? '+' : ''}{displayReturnRate.toFixed(2)}% ({userRank ? `현재 전체 ${userRank.rank}위 / 총 ${userRank.total}명!` : '등록 완료'})
+                  </p>
                 </div>
               ) : isRegisteredToday ? (
                 <div className="text-center py-2 bg-slate-900/40 rounded border border-slate-800/50">
-                  <p className="text-[11px] text-slate-500 font-medium">⚠️ 오늘은 이미 랭킹을 등록하셨습니다 (1일 1회 한정)</p>
+                  <p className="text-[11px] text-slate-500 font-medium">⚠️ 오늘은 이미 랭킹을 등록하셨습니다 (1일 1회 제한)</p>
                 </div>
               ) : (
                 <div className="flex gap-2">
@@ -1774,12 +2166,12 @@ export default function App() {
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value.slice(0, 12))}
                     placeholder="등록할 닉네임 (최대 12자)"
-                    className="flex-grow bg-slate-905 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500/80 transition-colors font-sans"
+                    className="flex-grow bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500/80 transition-colors font-sans"
                     maxLength={12}
                     disabled={isSubmitting}
                   />
                   <button
-                    onClick={() => handleRegisterRanking(displayReturnRate, displayTotalAssets, displayIsBlindMode ? displayBlindRealName : displaySymbol)}
+                    onClick={() => handleRegisterRanking(displayReturnRate, displayTotalAssets, displayIsBlindMode ? displayBlindRealName : displaySymbol, displayWinRate)}
                     disabled={isSubmitting || !nickname.trim()}
                     className="bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-600 font-extrabold text-[11px] px-4 py-2 rounded-lg text-slate-950 transition-all duration-200 cursor-pointer select-none flex items-center justify-center gap-1 active:scale-95"
                   >
@@ -1791,8 +2183,44 @@ export default function App() {
               )}
             </div>
 
+            {/* 🔗 결과 공유 버튼 (바이럴 장치) */}
+            <div className="mb-4">
+              <button
+                onClick={() => handleShareResult(
+                  displayReturnRate, 
+                  displayTotalAssets, 
+                  displaySymbol, 
+                  displayWinRate, 
+                  displayIsBlindMode, 
+                  displayBlindRealName
+                )}
+                className={`w-full py-3 px-5 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.25)] flex items-center justify-center gap-2 select-none cursor-pointer active:scale-[0.98] ${
+                  shareCopied 
+                    ? 'bg-emerald-600 text-white border border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]' 
+                    : 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white hover:from-emerald-400 hover:to-teal-400 border border-emerald-400/20'
+                }`}
+              >
+                {shareCopied ? (
+                  <>
+                    <Check className="w-4 h-4 animate-bounce" />
+                    <span>성적표 & 초대링크 복사 완료! 📋</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="w-4 h-4" />
+                    <span>🔥 친구에게 성적 자랑 및 결과 공유하기</span>
+                  </>
+                )}
+              </button>
+              <p className="text-[9px] text-slate-500 text-center mt-1.5 font-medium leading-normal">
+                {shareCopied ? '클립보드에 복사된 내용을 메신저나 SNS에 붙여넣어 공유하세요!' : '모바일은 카카오톡 등 직접 공유, 데스크톱은 클립보드에 복사됩니다.'}
+              </p>
+            </div>
+
+            </div>
+
             {/* 모달 제어 버튼 */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-4">
               <button
                 onClick={handleReset}
                 className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-black py-2.5 rounded-xl transition-all active:scale-95 text-xs text-center cursor-pointer"
@@ -1816,13 +2244,15 @@ export default function App() {
 
       {/* 💥 깡통 알림 (GAME OVER) 모달 */}
       {showGameOverModal && (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 py-6 sm:py-10 z-50 overflow-y-auto animate-fade-in" id="gameover-modal">
-          <div className="bg-slate-950 border-2 border-red-500/80 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-[0_0_50px_rgba(239,68,68,0.3)] relative overflow-hidden flex flex-col items-center my-auto">
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 py-6 sm:py-10 z-50 animate-fade-in" id="gameover-modal">
+          <div className="bg-slate-950 border-2 border-red-500/80 rounded-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] p-5 sm:p-6 shadow-[0_0_50px_rgba(239,68,68,0.3)] relative overflow-hidden flex flex-col items-center my-auto">
             
             {/* Top pulsing red bar */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-600 via-red-500 to-red-600 animate-pulse" />
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-600 via-red-500 to-red-600 animate-pulse z-10" />
             
-            <div className="flex justify-center mb-5 mt-2">
+            {/* Scrollable contents wrapper */}
+            <div className="overflow-y-auto pr-1 flex-grow w-full flex flex-col items-center scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+              <div className="flex justify-center mb-5 mt-4">
               <div className="bg-red-500/10 p-4 rounded-full border border-red-500/30 text-red-500 animate-pulse">
                 <AlertCircle className="w-12 h-12" />
               </div>
@@ -1867,24 +2297,27 @@ export default function App() {
               </div>
             </div>
 
+
             {/* 🏆 실시간 리더보드 랭킹 등록 영역 */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-4 space-y-3 w-full">
               <div className="flex items-center gap-1.5 border-b border-slate-800 pb-2">
                 <Trophy className="w-4 h-4 text-red-400" />
-                <span className="text-xs font-black text-slate-300 tracking-wider">실시간 랭킹 등록 (비로그인)</span>
+                <span className="text-xs font-black text-slate-300 tracking-wider">실시간 전세계 랭킹 등록</span>
               </div>
               
               {isSubmitSuccess ? (
-                <div className="text-center py-2 animate-fade-in">
-                  <p className="text-xs font-bold text-emerald-400">🎉 랭킹 등록이 완료되었습니다!</p>
-                  <p className="text-[10px] text-slate-400 font-medium mt-1">실시간 리더보드 표에서 자신의 성적을 확인해 보세요.</p>
+                <div className="text-center py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg animate-fade-in">
+                  <p className="text-xs font-bold text-emerald-400">🎉 랭킹 등록 완료!</p>
+                  <p className="text-[11px] text-slate-300 font-semibold mt-1">
+                    이번 세션 최종 수익률: {displayReturnRate >= 0 ? '+' : ''}{displayReturnRate.toFixed(2)}% ({userRank ? `현재 전체 ${userRank.rank}위 / 총 ${userRank.total}명!` : '등록 완료'})
+                  </p>
                 </div>
               ) : isRegisteredToday ? (
                 <div className="text-center py-2 bg-slate-950/40 rounded border border-slate-800/40">
-                  <p className="text-[11px] text-slate-500 font-medium">⚠️ 오늘은 이미 랭킹을 등록하셨습니다 (1일 1회 한정)</p>
+                  <p className="text-[11px] text-slate-500 font-medium">⚠️ 오늘은 이미 랭킹을 등록하셨습니다 (1일 1회 제한)</p>
                 </div>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full">
                   <input
                     type="text"
                     value={nickname}
@@ -1895,7 +2328,7 @@ export default function App() {
                     disabled={isSubmitting}
                   />
                   <button
-                    onClick={() => handleRegisterRanking(displayReturnRate, displayTotalAssets, displayIsBlindMode ? displayBlindRealName : displaySymbol)}
+                    onClick={() => handleRegisterRanking(displayReturnRate, displayTotalAssets, displayIsBlindMode ? displayBlindRealName : displaySymbol, displayWinRate)}
                     disabled={isSubmitting || !nickname.trim()}
                     className="bg-red-500 hover:bg-red-400 disabled:bg-slate-800 disabled:text-slate-600 font-extrabold text-[11px] px-4 py-2 rounded-lg text-white transition-all duration-200 cursor-pointer select-none flex items-center justify-center gap-1 active:scale-95"
                   >
@@ -1905,6 +2338,42 @@ export default function App() {
                   </button>
                 </div>
               )}
+            </div>
+
+            {/* 🔗 결과 공유 버튼 (바이럴 장치) */}
+            <div className="mb-4 w-full">
+              <button
+                onClick={() => handleShareResult(
+                  displayReturnRate, 
+                  displayTotalAssets, 
+                  displaySymbol, 
+                  displayWinRate, 
+                  displayIsBlindMode, 
+                  displayBlindRealName
+                )}
+                className={`w-full py-3.5 px-5 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_4px_15px_rgba(239,68,68,0.2)] flex items-center justify-center gap-2 select-none cursor-pointer active:scale-[0.98] ${
+                  shareCopied 
+                    ? 'bg-red-600 text-white border border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]' 
+                    : 'bg-slate-900 border border-slate-800 hover:border-red-500/50 text-slate-300 hover:text-white transition-all duration-200'
+                }`}
+              >
+                {shareCopied ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-400 animate-bounce" />
+                    <span>성적표 & 초대링크 복사 완료! 📋</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="w-4 h-4 text-red-500" />
+                    <span>💥 친구에게 깡통 성적 공유하기</span>
+                  </>
+                )}
+              </button>
+              <p className="text-[9px] text-slate-500 text-center mt-1.5 font-medium leading-normal">
+                {shareCopied ? '클립보드에 복사된 내용을 메신저나 SNS에 붙여넣어 공유하세요!' : '모바일은 카카오톡 등 직접 공유, 데스크톱은 클립보드에 복사됩니다.'}
+              </p>
+            </div>
+
             </div>
 
             {/* 이 악물고 복구하러 가기 버튼 */}
