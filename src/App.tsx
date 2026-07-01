@@ -24,7 +24,9 @@ import {
   Wifi,
   WifiOff,
   MessageSquare,
-  BookOpen
+  BookOpen,
+  Trophy,
+  Loader2
 } from 'lucide-react';
 import { Candle, StockSymbol, Trade } from './types';
 import { getStockData, fetchRealStockData, resolveStockTicker } from './data';
@@ -44,6 +46,14 @@ interface SessionResult {
   avgLossPct: number;
   profitLossRatioStr: string;
   gameOverQuote?: string;
+}
+
+interface LeaderboardItem {
+  name: string;
+  yieldRate: number;
+  symbol: string;
+  totalAssets: number;
+  date: string;
 }
 
 const NOTICES = [
@@ -82,6 +92,101 @@ export default function App() {
     } catch (e) {}
     return true;
   });
+
+  // Leaderboard States
+  const [leaderboard, setLeaderboard] = useState<LeaderboardItem[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState<boolean>(true);
+  const [nickname, setNickname] = useState<string>(() => {
+    try {
+      return localStorage.getItem('default_nickname') || '';
+    } catch (e) {
+      return '';
+    }
+  });
+  const [isRegisteredToday, setIsRegisteredToday] = useState<boolean>(() => {
+    try {
+      const todayKst = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10);
+      const lastRegDate = localStorage.getItem('last_ranking_submission_date');
+      return lastRegDate === todayKst;
+    } catch (e) {
+      return false;
+    }
+  });
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSubmitSuccess, setIsSubmitSuccess] = useState<boolean>(false);
+
+  const fetchLeaderboard = async () => {
+    setLeaderboardLoading(true);
+    try {
+      const res = await fetch('/api/leaderboard');
+      if (res.ok) {
+        const data = await res.json();
+        setLeaderboard(data.leaderboard || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch leaderboard:', err);
+    } finally {
+      setLeaderboardLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, []);
+
+  const handleRegisterRanking = async (finalYield: number, finalAssets: number, finalSymbol: string) => {
+    if (!nickname.trim()) {
+      alert('닉네임을 입력해주세요!');
+      return;
+    }
+    if (nickname.trim().length > 12) {
+      alert('닉네임은 최대 12글자까지 입력 가능합니다.');
+      return;
+    }
+    
+    // Double check local storage 1 day limit
+    const todayKst = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10);
+    const lastRegDate = localStorage.getItem('last_ranking_submission_date');
+    if (lastRegDate === todayKst) {
+      alert('이미 오늘 랭킹을 등록하셨습니다. 랭킹 등록은 하루 1회만 가능합니다!');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/leaderboard', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: nickname.trim(),
+          yieldRate: finalYield,
+          symbol: finalSymbol,
+          totalAssets: finalAssets
+        })
+      });
+
+      if (response.ok) {
+        try {
+          localStorage.setItem('default_nickname', nickname.trim());
+          localStorage.setItem('last_ranking_submission_date', todayKst);
+        } catch (e) {}
+        setIsRegisteredToday(true);
+        setIsSubmitSuccess(true);
+        playSound('complete');
+        await fetchLeaderboard();
+      } else {
+        const errData = await response.json();
+        alert(errData.error || '랭킹 등록에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error('Failed to register ranking:', err);
+      alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Rotating Tips / Notices State
   const [noticeIndex, setNoticeIndex] = useState<number>(0);
@@ -660,6 +765,13 @@ export default function App() {
 
   // Restart / Reset Handler
   const handleReset = () => {
+    setIsSubmitSuccess(false);
+    try {
+      const todayKst = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10);
+      const lastRegDate = localStorage.getItem('last_ranking_submission_date');
+      setIsRegisteredToday(lastRegDate === todayKst);
+    } catch (e) {}
+
     if (sessionResult) {
       setShowResultModal(false);
       setShowGameOverModal(false);
@@ -1102,43 +1214,88 @@ export default function App() {
             </div>
           </div>
 
-          {/* 실시간 매매 일지 기록 로그 (Sleek Dark Version) */}
-          <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col h-[200px] overflow-hidden" id="trade-history-panel">
-            <div className="flex items-center gap-1.5 border-b border-slate-800 pb-2 mb-2">
-              <FileText className="w-3.5 h-3.5 text-blue-400" />
-              <h2 className="text-[11px] font-bold text-slate-400">실시간 체결 일지 ({trades.length}건)</h2>
+          {/* 실시간 트레이더 리더보드 (Sleek Golden Version) */}
+          <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex flex-col h-[320px] overflow-hidden shadow-xl" id="leaderboard-panel">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-2.5">
+              <div className="flex items-center gap-1.5">
+                <Trophy className="w-4 h-4 text-amber-500 animate-pulse" />
+                <h2 className="text-xs font-black text-slate-200 tracking-wider">실시간 탑 10 리더보드</h2>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-[9px] text-emerald-400 font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  실시간
+                </div>
+                <button 
+                  onClick={fetchLeaderboard}
+                  disabled={leaderboardLoading}
+                  className="p-1 hover:bg-slate-900 rounded text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  title="새로고침"
+                >
+                  <RefreshCw className={`w-3 h-3 ${leaderboardLoading ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
             </div>
             
-            <div className="flex-grow overflow-y-auto space-y-1.5 text-[10px] font-mono scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
-              {trades.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-slate-700 text-center p-2">
-                  <p>체결 내역이 없습니다</p>
+            <div className="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent pr-1">
+              {leaderboardLoading && leaderboard.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-slate-500 gap-2">
+                  <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
+                  <p className="text-[10px] font-medium text-slate-400">랭킹 불러오는 중...</p>
+                </div>
+              ) : leaderboard.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-slate-600 text-center p-2">
+                  <p className="text-[10px]">등록된 랭킹이 없습니다</p>
                 </div>
               ) : (
-                trades.map((trade) => {
-                  const isBuy = trade.type === 'BUY';
-                  return (
-                    <div 
-                      key={trade.id} 
-                      className={`p-2.5 rounded-lg border flex flex-col gap-1 transition-colors ${
-                        isBuy 
-                          ? 'bg-red-950/30 border-red-800/50 text-red-100' 
-                          : 'bg-blue-950/30 border-blue-800/50 text-blue-100'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center font-bold text-[11px]">
-                        <span className="text-slate-300 font-semibold">{trade.date}</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] ${isBuy ? 'bg-red-500/20 text-red-400' : (trade.isAutoLiquidated ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-blue-500/20 text-blue-400')}`}>
-                          {isBuy ? '매수 체결' : (trade.isAutoLiquidated ? '만기 자동 청산 ⏳' : '매도 체결')}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-slate-200 font-medium text-[11px] mt-0.5 pt-1 border-t border-slate-800/40">
-                        <span>단가: <span className="font-mono text-white font-bold">{trade.price.toLocaleString()}</span> 원</span>
-                        <span>수량: <span className="font-mono text-white font-bold">{trade.quantity}</span> 주</span>
-                      </div>
-                    </div>
-                  );
-                })
+                <div className="w-full">
+                  <table className="w-full text-left text-[11px] font-mono border-collapse">
+                    <thead>
+                      <tr className="text-slate-500 text-[10px] border-b border-slate-800/60 pb-1.5">
+                        <th className="pb-1 text-center w-[12%]">순위</th>
+                        <th className="pb-1 pl-1 text-left w-[38%]">닉네임</th>
+                        <th className="pb-1 text-right w-[25%]">수익률</th>
+                        <th className="pb-1 text-right w-[25%] pr-1">종목</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-900/60">
+                      {leaderboard.slice(0, 10).map((entry, index) => {
+                        const rank = index + 1;
+                        let rankDisplay = `${rank}`;
+                        let rankBg = 'bg-slate-900 text-slate-400';
+                        if (rank === 1) {
+                          rankDisplay = '🥇';
+                          rankBg = 'bg-amber-500/10 text-amber-400 font-extrabold border border-amber-500/20';
+                        } else if (rank === 2) {
+                          rankDisplay = '🥈';
+                          rankBg = 'bg-slate-300/10 text-slate-300 font-extrabold border border-slate-300/20';
+                        } else if (rank === 3) {
+                          rankDisplay = '🥉';
+                          rankBg = 'bg-amber-700/10 text-amber-600 font-extrabold border border-amber-700/20';
+                        }
+                        
+                        return (
+                          <tr key={index} className="hover:bg-slate-900/40 transition-colors">
+                            <td className="py-1.5 text-center">
+                              <span className={`inline-flex items-center justify-center w-4 h-4 rounded text-[9px] font-sans ${rankBg}`}>
+                                {rankDisplay}
+                              </span>
+                            </td>
+                            <td className="py-1.5 pl-1 text-left font-sans font-semibold text-slate-200 truncate max-w-[80px]" title={entry.name}>
+                              {entry.name}
+                            </td>
+                            <td className={`py-1.5 text-right font-bold font-mono ${entry.yieldRate >= 0 ? 'text-red-400' : 'text-blue-400'}`}>
+                              {entry.yieldRate >= 0 ? '+' : ''}{entry.yieldRate.toFixed(2)}%
+                            </td>
+                            <td className="py-1.5 text-right text-slate-400 font-sans truncate max-w-[65px] pr-1" title={entry.symbol}>
+                              {entry.symbol}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>
@@ -1178,26 +1335,26 @@ export default function App() {
       </div>
 
       {/* 주식 리플레이 시뮬레이터 탄생배경 및 활용 가이드 & 단타 매매 꿀팁 (SEO/AdSense 승인용 3,500자 이상의 정성 글) */}
-      <section className="max-w-7xl mx-auto w-full px-6 pb-12 mt-6" id="education-guide-center">
+      <article className="max-w-7xl mx-auto w-full px-6 pb-12 mt-6 font-sans" id="education-guide-center" aria-labelledby="guide-main-title">
         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-8">
           
-          <div className="border-b border-slate-800 pb-6">
-            <h2 className="text-xl md:text-2xl font-black text-white flex items-center gap-2 tracking-tight">
-              <span className="bg-blue-600 text-white p-1.5 rounded-lg text-xs font-mono">CLASS</span>
+          <header className="border-b border-slate-800 pb-6">
+            <h2 id="guide-main-title" className="text-xl md:text-2xl font-black text-white flex items-center gap-2 tracking-tight">
+              <span className="bg-blue-600 text-white p-1.5 rounded-lg text-xs font-mono select-none">CLASS</span>
               주식 리플레이 시뮬레이터 탄생 배경 및 마스터 가이드
             </h2>
             <p className="text-xs text-slate-400 mt-2 leading-relaxed">
               본 가이드는 주식 투자 초보자(주린이)부터 전업 투자자를 꿈꾸는 분들을 위해 제작되었습니다. 
               차트의 핵심 작동 메커니즘인 OHLC, 거래량의 정수, 그리고 실전 단타 매매 타점을 잡기 위한 지지와 저항 이론을 상세하게 수록하였습니다.
             </p>
-          </div>
+          </header>
 
-          {/* 1. 시뮬레이터 개발 배경 및 기획 의도 (상단 인트로 섹션으로 독립 분리) */}
-          <div className="bg-slate-950/40 border border-slate-800 p-5 md:p-6 rounded-2xl space-y-4">
-            <div className="flex items-center gap-2">
+          {/* 1. 시뮬레이터 개발 배경 및 기획 의도 */}
+          <section className="bg-slate-950/40 border border-slate-800 p-5 md:p-6 rounded-2xl space-y-4" aria-labelledby="section-bg-title">
+            <header className="flex items-center gap-2">
               <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
-              <h3 className="text-base font-bold text-slate-100">시뮬레이터 개발 배경 및 200% 활용 가이드</h3>
-            </div>
+              <h3 id="section-bg-title" className="text-base font-bold text-slate-100">시뮬레이터 개발 배경 및 200% 활용 가이드</h3>
+            </header>
             <div className="text-xs text-slate-300 leading-relaxed space-y-3">
               <p>
                 실전 주식 매매는 소중한 자산이 직접 거래되는 극도의 심리전이자 냉혹한 전장입니다. 대다수의 입문 투자자들은 주식 시장의 구조적 메커니즘을 제대로 체득하지 못한 채, 상승하는 종목에 흥분하여 매수하고 하락하는 종목에 공포를 느껴 매도하는 이른바 <strong>'뇌동매수'</strong>와 <strong>'공포 손절'</strong>을 무한 반복하게 됩니다. 이는 결국 치명적인 원금 손실로 이어지는 지름길이 됩니다.
@@ -1210,7 +1367,7 @@ export default function App() {
               </p>
             </div>
 
-            {/* 주식 차트 복기 시뮬레이터 사용설명서 (글자 크기를 text-xs로 완벽하게 통일 및 가독성 업그레이드) */}
+            {/* 주식 차트 복기 시뮬레이터 사용설명서 */}
             <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4 md:p-5 mt-4 space-y-3 shadow-lg shadow-black/20">
               <h4 className="text-xs font-black text-blue-400 flex items-center gap-1.5 uppercase tracking-wide">
                 📖 주식 차트 복기 시뮬레이터 사용설명서 (How To Play)
@@ -1237,22 +1394,22 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* 2. 실전 차트 분석 및 트레이딩 핵심 마스터 전략 (독립 타이틀 및 2x2 그리드 배치) */}
-          <div className="border-t border-slate-800 pt-8 space-y-6">
-            <div className="flex items-center gap-2">
-              <span className="bg-gradient-to-r from-red-500 to-amber-500 text-white px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">STRATEGY</span>
-              <h3 className="text-md md:text-lg font-black text-slate-100">📈 실전 차트 분석 및 매매 핵심 전략</h3>
-            </div>
+          {/* 2. 실전 차트 분석 및 트레이딩 핵심 마스터 전략 */}
+          <section className="border-t border-slate-800 pt-8 space-y-6" aria-labelledby="section-strategy-title">
+            <header className="flex items-center gap-2">
+              <span className="bg-gradient-to-r from-red-500 to-amber-500 text-white px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider select-none">STRATEGY</span>
+              <h3 id="section-strategy-title" className="text-md md:text-lg font-black text-slate-100">📈 실전 차트 분석 및 매매 핵심 전략</h3>
+            </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* 전략 1 */}
-              <div className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+              <article className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
+                <header className="flex items-center gap-2 border-b border-slate-800 pb-2">
                   <div className="w-1.5 h-4 bg-red-500 rounded-full" />
                   <h4 className="text-sm font-bold text-slate-100">1. 시가, 고가, 저가, 종가(OHLC)를 지배하는 캔들 독해 비책</h4>
-                </div>
+                </header>
                 <div className="text-xs text-slate-400 leading-relaxed space-y-3">
                   <p>
                     기술적 분석의 가장 위대한 첫 단추는 캔들스틱(봉차트)의 구조를 정교하게 독해하는 능력입니다. 하나의 캔들은 당일 시장의 시작부터 마감까지 발생한 모든 투자자의 탐욕, 공포, 주도 세력의 의도와 대중 심리의 결과물을 압축적으로 보여주는 힘의 지도입니다. 캔들은 <strong>시가(Open), 고가(High), 저가(Low), 종가(Close)</strong>의 네 가지 핵심 수치로 완성됩니다.
@@ -1267,14 +1424,14 @@ export default function App() {
                     <strong>종가(Close):</strong> 오후 3시 30분, 하루 동안의 치열했던 공방이 최종 타협을 이뤄 확정된 마지막 가격입니다. 주식 바닥의 오랜 격언 중 하나는 <strong>"시가는 아마추어와 세력의 의도가 만들고, 종가는 진정한 프로와 시장 전체의 합의가 만든다"</strong>는 것입니다. 종가가 시가보다 높게 끝나면 붉은색의 양봉이 되고, 낮게 끝나면 푸른색의 음봉이 됩니다. 특히 장 막판까지 매수세를 길게 유지하며 윗꼬리 없는 장대양봉으로 종가를 형성하는 경우, 다음 거래일에도 강한 추가 상승 추세를 예고하는 중요한 전조가 됩니다.
                   </p>
                 </div>
-              </div>
+              </article>
 
               {/* 전략 2 */}
-              <div className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+              <article className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
+                <header className="flex items-center gap-2 border-b border-slate-800 pb-2">
                   <div className="w-1.5 h-4 bg-yellow-500 rounded-full" />
                   <h4 className="text-sm font-bold text-slate-100">2. 거래량(Volume): 영혼을 흔드는 시장의 진실 지표</h4>
-                </div>
+                </header>
                 <div className="text-xs text-slate-400 leading-relaxed space-y-3">
                   <p>
                     초보 투자자들은 차트의 캔들 형상과 보조지표(RSI, MACD 등)에만 목을 매는 경향이 있습니다. 그러나 이 지표들은 후행성 성격이 강하며, 주도 세력의 페이크(속임수) 패턴에 쉽게 무력화되곤 합니다. 이때 세력이 절대로 조작하거나 숨길 수 없는 유일한 기록이 바로 <strong>'거래량(Volume)'</strong>입니다. 거래량은 주식이 체결된 총량으로, 돈의 실시간 유입 크기를 직접적으로 대변합니다.
@@ -1286,16 +1443,16 @@ export default function App() {
                     또한, 급격하게 상승한 주가가 단기 과열로 인해 횡보하거나 조정을 받는 국면에서도 거래량의 분석은 중요합니다. 조정을 받는 하락 음봉에서 거래량이 눈에 띄게 격감(예: 거래대금이 이전 상승 거래일의 1/5 수준으로 축소)한다면, 상승을 견인했던 중심 주체(스마트 머니)가 아직 주식을 팔지 않고 매집한 채 쥐고 있음을 반증합니다. 이러한 거래량 격감 시점이 바로 5일선이나 10일 이동평균선과 맞닿는 <strong>황금 눌림목 매수 타점</strong>이 되는 것입니다.
                   </p>
                 </div>
-              </div>
+              </article>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
               {/* 전략 3 */}
-              <div className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+              <article className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
+                <header className="flex items-center gap-2 border-b border-slate-800 pb-2">
                   <div className="w-1.5 h-4 bg-green-500 rounded-full" />
                   <h4 className="text-sm font-bold text-slate-100">3. 지지와 저항(S&R)을 응용한 실전 단타 매매 절대 타점</h4>
-                </div>
+                </header>
                 <div className="text-xs text-slate-400 leading-relaxed space-y-3">
                   <p>
                     데이트레이딩(단타 매매)에서 수익을 꾸준히 내기 위한 열쇠는 복잡한 수식이 아니라 단순한 <strong>'지지와 저항(Support and Resistance)'</strong>에 기반한 일관된 타점입니다. 손실은 가혹할 정도로 짧게 잡고, 이익은 넉넉하게 극대화하는 손익비 우위를 점해야 장기적으로 우상향 계좌를 만들 수 있습니다.
@@ -1310,14 +1467,14 @@ export default function App() {
                     <strong>핵심 자금 관리 철칙:</strong> 주식 매매에서 100% 성공을 담보하는 비책은 존재하지 않습니다. 프로 투자자들은 매수에 들어가기 전 "내가 틀렸을 때 어디서 손절할 것인가?"를 먼저 결정합니다. 손절 기준선을 타이트하게(보통 -1.5% ~ -3% 이내) 설정하고, 매매 대상 종목에 한 번에 모든 시드를 진입하기보다 3단계에 걸친 분할 진입 전략을 철저히 집행하십시오. 무모한 뇌동 매수를 제어하고, 본 리플레이 시뮬레이터에서 수없이 반복 연습한 '나의 필살 패턴'이 출현할 때까지 사냥꾼처럼 기다리는 인내심이야말로 투자자로 살아남는 마지막 승부수입니다.
                   </p>
                 </div>
-              </div>
+              </article>
 
-              {/* 전략 4: 종가 베팅 (신규 추가된 섹션) */}
-              <div className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+              {/* 전략 4: 종가 베팅 */}
+              <article className="space-y-3 bg-slate-950/20 p-5 rounded-xl border border-slate-800/40 hover:border-slate-800/80 transition-colors">
+                <header className="flex items-center gap-2 border-b border-slate-800 pb-2">
                   <div className="w-1.5 h-4 bg-purple-500 rounded-full" />
                   <h4 className="text-sm font-bold text-slate-100">4. 종가 베팅(Closing Price Betting): 시간 효율과 리스크의 최고 균형</h4>
-                </div>
+                </header>
                 <div className="text-xs text-slate-400 leading-relaxed space-y-3">
                   <p>
                     <strong>종가 베팅(EOD Betting)</strong>은 직장인이나 장중 실시간 대응이 불가능한 전업 투자자 모두에게 매우 큰 시간 효율성과 확고한 기대수익률을 주는 기술적 매매 기법입니다. 이는 주식 시장 마감 직전(보통 15시 15분 ~ 15시 30분 동시호가)에 매수하여 익일 장 초반 갭 상승이나 추가 시세 분출 시 매도하는 전략입니다. 밤사이 발생할 수 있는 대외적 불확실성을 짧게 견디며, 장 시작과 동시에 이득을 확정 짓는 것이 이 기법의 정수입니다.
@@ -1334,46 +1491,50 @@ export default function App() {
                     청산은 익일 오전 9시 장이 개시된 후, 시초가 갭이 2% 이상 우호적으로 형성된다면 장 개시 후 5~10분 이내 분출하는 첫 양봉 고점에서 즉시 전량 또는 분할 매도하여 이익을 기계적으로 실현합니다. 만약 시초가가 악재나 수급 부족으로 인해 약세 출발한다면, 5분봉 기준 시초가를 이탈하거나 본인의 정량적 손절선(-2% 내외)을 위반할 시 지체하지 않고 물량을 던져 리스크를 엄격하게 제어해야 장기적 우위를 유지할 수 있습니다.
                   </p>
                 </div>
-              </div>
+              </article>
             </div>
-          </div>
+          </section>
 
-          {/* 3. 구글 애드센스 승인용 정보성 특별 가이드 (인기 종목 기술적 복기 비책) */}
-          <div className="border-t border-slate-800 pt-8 space-y-6">
-            <div className="flex items-center gap-2">
-              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">SPECIAL ARTICLE</span>
-              <h3 className="text-md md:text-lg font-black text-slate-100">💡 대한민국 대표 주도주 10대 인기 종목 기술적 분석 및 리플레이 복기 비책</h3>
-            </div>
+          {/* 3. 구글 애드센스 승인용 정보성 특별 가이드 */}
+          <section className="border-t border-slate-800 pt-8 space-y-6" aria-labelledby="section-special-title">
+            <header className="flex items-center gap-2">
+              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider select-none">SPECIAL ARTICLE</span>
+              <h3 id="section-special-title" className="text-md md:text-lg font-black text-slate-100">💡 대한민국 대표 주도주 10대 인기 종목 기술적 분석 및 리플레이 복기 비책</h3>
+            </header>
 
             <div className="bg-slate-950/40 border border-slate-800/60 p-6 md:p-8 rounded-2xl space-y-6 text-xs md:text-sm text-slate-300 leading-relaxed font-sans">
               
               {/* 도입부 */}
-              <div className="space-y-3">
-                <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
-                  <span className="w-1 h-3.5 bg-emerald-500 rounded-full" />
-                  들어가며: 단기 트레이딩(Short-term Trading)에서 과거 차트 복기의 절대적 중요성
-                </h4>
+              <article className="space-y-3">
+                <header>
+                  <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                    <span className="w-1 h-3.5 bg-emerald-500 rounded-full" />
+                    들어가며: 단기 트레이딩(Short-term Trading)에서 과거 차트 복기의 절대적 중요성
+                  </h4>
+                </header>
                 <p>
                   주식 단기 트레이딩(Short-term Trading) 영역에서 시장의 변동성을 이겨내고 누적 수익을 꾸준히 쌓아 올리는 프로 트레이더들은 단 하나의 강력한 무기를 가지고 있습니다. 그것은 바로 <strong>'통계적 우위에 기반한 기계적 대응'</strong>입니다. 대다수 개인 투자자들은 장중에 요동치는 실시간 호가창과 1분봉, 3분봉의 화려한 움직임에 정신을 빼앗겨 뇌동매매를 거듭하고 치명적인 손실을 입곤 합니다. 급변하는 시장 분위기 속에서 감정을 완전히 배제하고 이성적인 원칙을 관철하기란 인간의 심리 구조상 대단히 어렵기 때문입니다.
                 </p>
                 <p>
                   이러한 감정적 한계를 무력화하고 완벽한 기계적 매매 감각을 체득하는 가장 확실하고 유일한 방법이 바로 <strong>'과거 차트 복기(Chart Replay)'</strong>입니다. 바둑 기사들이 실전 대국이 끝난 후 바둑돌을 하나씩 놓아보며 최선의 수를 치열하게 복기하듯, 주식 트레이더 역시 역사적으로 검증된 주가 데이터(Historical Data)의 캔들을 하루씩 전개하며 매수와 매도 타점을 검토하는 정밀한 훈련을 거쳐야 합니다. 이를 통해 뇌와 안구에 고확률 주가 패턴을 깊이 각인시키고, 실전 상황에서 망설임 없이 원칙대로 주문을 실행하는 트레이더로 거듭날 수 있습니다. 본 리플레이 시뮬레이터는 이러한 수련 과정을 최단 시간에 압축적으로 수행하도록 돕기 위해 개발되었습니다.
                 </p>
-              </div>
+              </article>
 
               {/* 반도체 테마 */}
-              <div className="space-y-3 pt-4 border-t border-slate-800/60">
-                <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
-                  <span className="w-1 h-3.5 bg-blue-500 rounded-full" />
-                  1. 반도체 테마 대표 종목 기술적 분석 및 복기 노하우 (삼성전자, SK하이닉스, 한미반도체)
-                </h4>
+              <article className="space-y-3 pt-4 border-t border-slate-800/60">
+                <header>
+                  <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                    <span className="w-1 h-3.5 bg-blue-500 rounded-full" />
+                    1. 반도체 테마 대표 종목 기술적 분석 및 복기 노하우 (삼성전자, SK하이닉스, 한미반도체)
+                  </h4>
+                </header>
                 <p>
                   대한민국 증시를 견인하는 최고 핵심 산업인 반도체 섹터의 대장주 <strong>삼성전자</strong>, <strong>SK하이닉스</strong>, 그리고 고대역폭메모리(HBM) 핵심 장비주인 <strong>한미반도체</strong> 등은 주로 거대 수급 주체(외국인 및 기관)의 자금력에 의해 매우 굵직하고 강력한 추세를 그리는 대표적인 수급 주도주입니다. 이러한 반도체 주도 종목들을 차트 복기할 때 최우선적으로 주목해야 할 핵심 분석 비책은 <strong>'강력한 저항대 돌파 시의 대량 거래량'</strong>과 <strong>'20일 이동평균선의 추세 지지'</strong>입니다.
                 </p>
                 <p>
                   일반적으로 강력한 상승 시세가 가동되는 초입에는 오랫동안 쌓여 있던 고점의 매물대(저항선)를 강하게 관통하는 '역대급 대량 거래량을 동반한 장대양봉'이 출현합니다. 이 장대양봉은 거대 세력이 대규모 매수 자금을 투입하여 매물을 전부 소화했음을 뜻하는 확실한 추세 전환의 이정표입니다. 장대양봉이 탄생한 직후의 눌림목 조정을 복기할 때는 다음 두 가지 원칙을 관찰하셔야 합니다.
                 </p>
-                <ul className="list-disc pl-5 space-y-2 mt-2">
+                <ul className="list-disc pl-5 space-y-2 mt-2 text-xs">
                   <li>
                     <strong>장대양봉 중심선 및 시가 지지력 확인:</strong> 주가는 급등한 후 단기 차익 실현 매물로 인해 필연적으로 조정을 받게 됩니다. 이때 거래량이 직전 상승일 대비 5분의 1 이하로 급격히 줄어들면서(거래량 격감), 장대양봉 몸통의 중심선(50% 구간)이나 시가 부근을 훼손하지 않고 지지해 주는 도지형(Doji) 혹은 아래꼬리 음봉 캔들이 형성되는 시점이 리스크 대비 기대 수익이 가장 높은 1차 눌림목 매수 급소입니다.
                   </li>
@@ -1381,14 +1542,16 @@ export default function App() {
                     <strong>생명선(20일 이동평균선) 매매 타이밍:</strong> 20일 이동평균선은 단기 트레이딩에서 추세의 살아있음을 판가름하는 가장 신뢰도 높은 생명선입니다. 주가가 조정을 받아 20일선 근처까지 우하향할 때, 20일선을 종가 기준으로 확실히 지탱하며 양봉 흐름을 돌려세우는 확인 매매를 진행합니다. 만약 종가 기준으로 20일선을 대량 거래량과 함께 강하게 하향 돌파(이탈)한다면, 이는 강력한 매도 수급이 발생한 것으로 판단하고 즉시 포지션을 전량 청산(손절)하여 원금을 철저히 보전해야 합니다.
                   </li>
                 </ul>
-              </div>
+              </article>
 
               {/* 바이오/제약 테마 */}
-              <div className="space-y-3 pt-4 border-t border-slate-800/60">
-                <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
-                  <span className="w-1 h-3.5 bg-red-500 rounded-full" />
-                  2. 바이오 및 제약 테마 고변동성 종목 기술적 대응 가이드 (알테오젠, 셀트리온, HLB)
-                </h4>
+              <article className="space-y-3 pt-4 border-t border-slate-800/60">
+                <header>
+                  <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                    <span className="w-1 h-3.5 bg-red-500 rounded-full" />
+                    2. 바이오 및 제약 테마 고변동성 종목 기술적 대응 가이드 (알테오젠, 셀트리온, HLB)
+                  </h4>
+                </header>
                 <p>
                   임상 결과 발표, 글로벌 거대 제약사로의 기술 수출(L/O) 계약, 대형 면역학회 모멘텀 등 눈에 보이지 않는 무형의 재료 가치에 극단적으로 반응하는 <strong>알테오젠</strong>, <strong>셀트리온</strong>, <strong>HLB</strong> 등의 바이오 종목들은 변동성이 일반 제조주에 비해 수배 이상 달하는 초고위험·초고수익 테마군입니다. 바이오 종목을 복기하며 수익 기회를 포착하기 위해 가장 집중해야 할 기술적 신호는 <strong>'이동평균선의 역배열에서 정배열로의 전환(골든크로스)'</strong>과 <strong>'급락 흐름에서의 비타협적 리스크 관리'</strong>입니다.
                 </p>
@@ -1398,7 +1561,7 @@ export default function App() {
                 <p>
                   그러나 바이오 섹터는 '재료의 소멸'이나 예기치 못한 '임상 실패 루머'가 발생할 경우 하한가를 비롯한 무자비한 수급 붕괴 현상이 발생합니다. 따라서 바이오 트레이딩에서는 리스크 관리 원칙을 신성 불가침한 법률처럼 고수해야 합니다.
                 </p>
-                <ul className="list-disc pl-5 space-y-2 mt-2">
+                <ul className="list-disc pl-5 space-y-2 mt-2 text-xs">
                   <li>
                     <strong>정량적 손절 제한선 수립:</strong> 주가가 본인의 매입 단가 대비 사전에 정의한 정량적 손절선(보통 단기 -3%에서 최대 -5%)을 위반하여 하락할 때는, 기업 가치나 전망에 대한 주관적 기대를 배제하고 시장가 매도를 통해 신속하게 포지션을 청산해야 합니다.
                   </li>
@@ -1406,14 +1569,16 @@ export default function App() {
                     <strong>추세 훼손 종가 청산 기법:</strong> 바이오의 강한 추세 랠리 도중 일봉 캔들의 종가가 5일선 혹은 10일 이동평균선을 하향 돌파하여 이탈 마감할 시에는 단기 시세 동력이 현저히 상실된 것으로 판정하여 포지션을 일차적으로 최소 50% 이상 분할 청산하며 이익을 안전하게 확보해 가는 지혜가 요구됩니다.
                   </li>
                 </ul>
-              </div>
+              </article>
 
               {/* 시뮬레이터 활용법 */}
-              <div className="space-y-3 pt-4 border-t border-slate-800/60">
-                <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
-                  <span className="w-1 h-3.5 bg-purple-500 rounded-full" />
-                  3. K-Stock Replay Simulator를 활용한 고효율 차트 복기 및 실전 가상 훈련법
-                </h4>
+              <article className="space-y-3 pt-4 border-t border-slate-800/60">
+                <header>
+                  <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                    <span className="w-1 h-3.5 bg-purple-500 rounded-full" />
+                    3. K-Stock Replay Simulator를 활용한 고효율 차트 복기 및 실전 가상 훈련법
+                  </h4>
+                </header>
                 <p>
                   이러한 반도체 및 바이오 종목의 극적인 추세 전환과 지지, 저항, 눌림목 패턴들을 라이브 장세에서 직접 돈을 투입하여 체득하려면 수많은 시간과 고통스러운 금전적 대가가 소요됩니다. 라이브 주식 시장에서는 오직 하루에 단 하나의 일봉만이 형성되기 때문에 충분한 경험치를 쌓을 때까지의 도제 기간이 너무나 깁니다. 본 무료 주식 차트 복기 시뮬레이터는 이러한 시장의 시간 제약을 완전히 철폐하고, 수개월간의 치열했던 주도 세력 간의 마감 공방을 단 몇 분 만에 압축하여 온전히 본인의 경험치로 흡수할 수 있도록 설계되었습니다. 시뮬레이터를 통해 가장 효율적으로 실력을 성장시키는 단계별 가이드라인은 다음과 같습니다.
                 </p>
@@ -1435,13 +1600,12 @@ export default function App() {
                     매입이 완료된 후에는 미리 도출해 둔 청산 가이드라인(예: 5일선 붕괴 시 전량 매도 등)에 맞춰 캔들을 넘깁니다. 도달 시 지체 없이 <strong>[시장가 매도]</strong>로 대응합니다. 120일의 순차 전개가 모두 종료되면, 본인의 최종 손익 결과 보고서와 함께 평균 승률 및 평균 손익비 지표가 정밀 분석되어 리더보드에 기재됩니다. 이 수치들을 근거로 자신만의 정량적 트레이딩 알고리즘을 부단히 수정 및 발달시켜 가기 바랍니다.
                   </div>
                 </div>
-              </div>
-
+              </article>
             </div>
-          </div>
+          </section>
 
         </div>
-      </section>
+      </article>
 
       {/* 3. 하단 푸터 (건의함 및 약관/개인정보 페이지) */}
       <footer className="h-auto lg:h-20 flex flex-col lg:flex-row items-center px-6 py-6 lg:py-0 bg-slate-950 border-t border-slate-800 gap-4" id="footer-panel">
@@ -1587,6 +1751,46 @@ export default function App() {
               )}
             </div>
 
+            {/* 🏆 실시간 리더보드 랭킹 등록 영역 */}
+            <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 mb-5 space-y-3">
+              <div className="flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
+                <Trophy className="w-4 h-4 text-amber-400" />
+                <span className="text-xs font-black text-slate-200 tracking-wider">실시간 랭킹 등록 (비로그인)</span>
+              </div>
+              
+              {isSubmitSuccess ? (
+                <div className="text-center py-2.5 space-y-1.5 animate-fade-in">
+                  <p className="text-xs font-bold text-emerald-400">🎉 랭킹 등록이 완료되었습니다!</p>
+                  <p className="text-[10px] text-slate-400 font-medium">실시간 리더보드 표에서 자신의 성적을 확인해 보세요.</p>
+                </div>
+              ) : isRegisteredToday ? (
+                <div className="text-center py-2 bg-slate-900/40 rounded border border-slate-800/50">
+                  <p className="text-[11px] text-slate-500 font-medium">⚠️ 오늘은 이미 랭킹을 등록하셨습니다 (1일 1회 한정)</p>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value.slice(0, 12))}
+                    placeholder="등록할 닉네임 (최대 12자)"
+                    className="flex-grow bg-slate-905 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500/80 transition-colors font-sans"
+                    maxLength={12}
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    onClick={() => handleRegisterRanking(displayReturnRate, displayTotalAssets, displayIsBlindMode ? displayBlindRealName : displaySymbol)}
+                    disabled={isSubmitting || !nickname.trim()}
+                    className="bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-600 font-extrabold text-[11px] px-4 py-2 rounded-lg text-slate-950 transition-all duration-200 cursor-pointer select-none flex items-center justify-center gap-1 active:scale-95"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : '등록'}
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* 모달 제어 버튼 */}
             <div className="flex gap-3">
               <button
@@ -1661,6 +1865,46 @@ export default function App() {
                   {displayReturnRate.toFixed(2)}%
                 </span>
               </div>
+            </div>
+
+            {/* 🏆 실시간 리더보드 랭킹 등록 영역 */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-4 space-y-3 w-full">
+              <div className="flex items-center gap-1.5 border-b border-slate-800 pb-2">
+                <Trophy className="w-4 h-4 text-red-400" />
+                <span className="text-xs font-black text-slate-300 tracking-wider">실시간 랭킹 등록 (비로그인)</span>
+              </div>
+              
+              {isSubmitSuccess ? (
+                <div className="text-center py-2 animate-fade-in">
+                  <p className="text-xs font-bold text-emerald-400">🎉 랭킹 등록이 완료되었습니다!</p>
+                  <p className="text-[10px] text-slate-400 font-medium mt-1">실시간 리더보드 표에서 자신의 성적을 확인해 보세요.</p>
+                </div>
+              ) : isRegisteredToday ? (
+                <div className="text-center py-2 bg-slate-950/40 rounded border border-slate-800/40">
+                  <p className="text-[11px] text-slate-500 font-medium">⚠️ 오늘은 이미 랭킹을 등록하셨습니다 (1일 1회 한정)</p>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value.slice(0, 12))}
+                    placeholder="등록할 닉네임 (최대 12자)"
+                    className="flex-grow bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500/80 transition-colors font-sans"
+                    maxLength={12}
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    onClick={() => handleRegisterRanking(displayReturnRate, displayTotalAssets, displayIsBlindMode ? displayBlindRealName : displaySymbol)}
+                    disabled={isSubmitting || !nickname.trim()}
+                    className="bg-red-500 hover:bg-red-400 disabled:bg-slate-800 disabled:text-slate-600 font-extrabold text-[11px] px-4 py-2 rounded-lg text-white transition-all duration-200 cursor-pointer select-none flex items-center justify-center gap-1 active:scale-95"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : '등록'}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* 이 악물고 복구하러 가기 버튼 */}
