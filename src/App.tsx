@@ -1678,7 +1678,7 @@ ${emoji} 투자 등급: ${tier}
                     ) : (
                       <>
                         <Share2 className="w-3.5 h-3.5 text-white" />
-                        <span>🔥 현재 성적 친구에게 공유하기</span>
+                        <span>🔥 카카오톡 공유 x 클립보드 복사</span>
                       </>
                     )}
                   </button>
@@ -2203,17 +2203,17 @@ ${emoji} 투자 등급: ${tier}
                 {shareCopied ? (
                   <>
                     <Check className="w-4 h-4 animate-bounce" />
-                    <span>성적표 & 초대링크 복사 완료! 📋</span>
+                    <span>공유 문구 복사 완료! 📋</span>
                   </>
                 ) : (
                   <>
                     <Share2 className="w-4 h-4" />
-                    <span>🔥 친구에게 성적 자랑 및 결과 공유하기</span>
+                    <span>🔥 카카오톡 공유 x 클립보드 복사</span>
                   </>
                 )}
               </button>
               <p className="text-[9px] text-slate-500 text-center mt-1.5 font-medium leading-normal">
-                {shareCopied ? '클립보드에 복사된 내용을 메신저나 SNS에 붙여넣어 공유하세요!' : '모바일은 카카오톡 등 직접 공유, 데스크톱은 클립보드에 복사됩니다.'}
+                {shareCopied ? '클립보드에 복사되었습니다! SNS나 메신저 창에 붙여넣으세요.' : '카카오톡 공유 및 클립보드 복사를 지원합니다.'}
               </p>
             </div>
 
@@ -2360,17 +2360,17 @@ ${emoji} 투자 등급: ${tier}
                 {shareCopied ? (
                   <>
                     <Check className="w-4 h-4 text-emerald-400 animate-bounce" />
-                    <span>성적표 & 초대링크 복사 완료! 📋</span>
+                    <span>깡통 성적 복사 완료! 📋</span>
                   </>
                 ) : (
                   <>
                     <Share2 className="w-4 h-4 text-red-500" />
-                    <span>💥 친구에게 깡통 성적 공유하기</span>
+                    <span>💥 카카오톡 공유 x 클립보드 복사</span>
                   </>
                 )}
               </button>
               <p className="text-[9px] text-slate-500 text-center mt-1.5 font-medium leading-normal">
-                {shareCopied ? '클립보드에 복사된 내용을 메신저나 SNS에 붙여넣어 공유하세요!' : '모바일은 카카오톡 등 직접 공유, 데스크톱은 클립보드에 복사됩니다.'}
+                {shareCopied ? '클립보드에 복사되었습니다! SNS나 메신저 창에 붙여넣으세요.' : '카카오톡 공유 및 클립보드 복사를 지원합니다.'}
               </p>
             </div>
 
