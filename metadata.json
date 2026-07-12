@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Remix: Remix: K-Stock Replay Simulator",
+  "description": "과거 일봉 데이터를 활용해 주식 매매 타이밍을 훈련하는 트레이더 전용 리플레이 시뮬레이터",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

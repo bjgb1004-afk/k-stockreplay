@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Hide TradingView watermark/attribution logo in Lightweight Charts */
+a[href*="tradingview.com"] {
+  display: none !important;
+}

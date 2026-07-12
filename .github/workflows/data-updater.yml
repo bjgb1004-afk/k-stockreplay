@@ -1,0 +1,71 @@
+name: K-Stock Analyst & Threads Publishing Daemon
+
+on:
+  schedule:
+    - cron: '50 22 * * *' # 07:50 KST (Next day UTC)
+    - cron: '30 3 * * *'  # 12:30 KST
+    - cron: '0 7 * * *'   # 16:00 KST
+    - cron: '0 11 * * *'  # 20:00 KST
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Manual execution mode (morning, lunch, afternoon, evening)'
+        required: true
+        type: choice
+        default: 'afternoon'
+        options:
+          - morning
+          - lunch
+          - afternoon
+          - evening
+
+jobs:
+  run-analyst:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Execute AI Analyst Daemon
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY || secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.AI_API_KEY }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          APP_URL: ${{ secrets.APP_URL || 'https://k-stockreplay.pe.kr' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_ANON_KEY }}
+        run: |
+          # Determine the execution mode dynamically
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MODE="${{ github.event.inputs.mode }}"
+          else
+            # Calculate current KST hour
+            KST_HOUR=$(TZ=Asia/Seoul date +%H)
+            echo "Detected KST Hour: $KST_HOUR"
+            if [ "$KST_HOUR" -eq 7 ] || [ "$KST_HOUR" -eq 8 ]; then
+              MODE="morning"
+            elif [ "$KST_HOUR" -eq 12 ] || [ "$KST_HOUR" -eq 13 ]; then
+              MODE="lunch"
+            elif [ "$KST_HOUR" -eq 16 ] || [ "$KST_HOUR" -eq 17 ]; then
+              MODE="afternoon"
+            elif [ "$KST_HOUR" -eq 20 ] || [ "$KST_HOUR" -eq 21 ]; then
+              MODE="evening"
+            else
+              echo "Scheduled trigger but outside KST target hours. Defaulting to afternoon."
+              MODE="afternoon"
+            fi
+          fi
+          
+          echo "Executing AI Analyst Daemon in mode: $MODE"
+          node scripts/ai-analyst.js "$MODE"
