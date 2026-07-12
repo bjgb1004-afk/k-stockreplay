@@ -8,12 +8,11 @@ import { PreMarketBriefing } from '../types';
 
 interface BriefingViewProps {
   briefing: PreMarketBriefing | null;
-  onRegenerate: () => void;
   loading: boolean;
   isCompact?: boolean;
 }
 
-export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, onRegenerate, loading, isCompact = false }) => {
+export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, isCompact = false }) => {
   if (loading) {
     return (
       <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-900/40 rounded-2xl border border-slate-800">
@@ -26,15 +25,8 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, onRegenera
   if (!briefing) {
     return (
       <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-900/40 rounded-2xl border border-slate-800">
-        <Globe className="w-12 h-12 text-slate-600" />
-        <p className="text-xs text-slate-400">데이터가 존재하지 않습니다. 장전 브리핑을 신규 생성해주세요.</p>
-        <button
-          onClick={onRegenerate}
-          className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-lg transition-colors cursor-pointer flex items-center gap-2"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>브리핑 데이터 즉시 생성</span>
-        </button>
+        <Globe className="w-12 h-12 text-slate-600 animate-pulse" />
+        <p className="text-xs text-slate-400 font-sans">데이터를 불러오는 중입니다...</p>
       </div>
     );
   }
@@ -142,14 +134,6 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, onRegenera
               미국 증시 마감 상황과 국내 시장 영향도, 핵심 관심 테마를 선제 진단합니다.
             </p>
           </div>
-
-          <button
-            onClick={onRegenerate}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition-colors cursor-pointer flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>브리핑 재생성 ⚡</span>
-          </button>
         </div>
       )}
 

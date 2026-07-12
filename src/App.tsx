@@ -1582,12 +1582,8 @@ export default function App() {
                   {/* Service Menu Grid (SEO Friendly a tags + smooth SPA state updating) */}
                   <div className="flex flex-col gap-2.5 max-h-[450px] overflow-y-auto pr-0.5 custom-scrollbar">
                     
-                    {/* Section 1: AI 실시간 마켓 피드 (5 서브 메뉴) */}
+                    {/* Section 1: AI 실시간 마켓 피드 (4 서브 메뉴) */}
                     <div className="space-y-1.5 select-none">
-                      <div className="flex items-center gap-1.5 px-1 py-1">
-                        <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">AI 실시간 브리핑 센터</span>
-                      </div>
                       
                       {/* Sub-item 1: 장전 브리핑 */}
                       <button
@@ -1599,17 +1595,16 @@ export default function App() {
                         className="w-full text-left group flex items-start gap-2.5 p-2 rounded-xl bg-slate-950/40 hover:bg-slate-950 border border-slate-850/50 hover:border-amber-500/30 transition-all duration-200"
                       >
                         <div className="bg-amber-500/10 p-1.5 rounded-lg border border-amber-500/20 text-amber-400 shrink-0 mt-0.5">
-                          <span className="text-sm">🌅</span>
+                          <Clock className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-300 group-hover:text-amber-400 transition-colors">장전 브리핑</span>
                             <span className="text-[8px] font-mono font-bold bg-amber-500/20 text-amber-400 px-1 rounded">07:45</span>
                           </div>
-                          <p className="text-[10px] text-slate-500 truncate mt-0.5">글로벌 거시 경제 및 개장 전 핵심 지표 연동</p>
                         </div>
                       </button>
-
+ 
                       {/* Sub-item 2: 장중 실시간 수급 */}
                       <button
                         onClick={() => {
@@ -1620,17 +1615,16 @@ export default function App() {
                         className="w-full text-left group flex items-start gap-2.5 p-2 rounded-xl bg-slate-950/40 hover:bg-slate-950 border border-slate-850/50 hover:border-sky-500/30 transition-all duration-200"
                       >
                         <div className="bg-sky-500/10 p-1.5 rounded-lg border border-sky-500/20 text-sky-400 shrink-0 mt-0.5">
-                          <span className="text-sm">☀️</span>
+                          <TrendingUp className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-300 group-hover:text-sky-400 transition-colors">장중 실시간 수급</span>
                             <span className="text-[8px] font-mono font-bold bg-sky-500/20 text-sky-400 px-1 rounded">12:30</span>
                           </div>
-                          <p className="text-[10px] text-slate-500 truncate mt-0.5">오전장 수급 결산 및 뇌동매매 방지 요령</p>
                         </div>
                       </button>
-
+ 
                       {/* Sub-item 3: 장마감 브리핑 */}
                       <button
                         onClick={() => {
@@ -1641,39 +1635,17 @@ export default function App() {
                         className="w-full text-left group flex items-start gap-2.5 p-2 rounded-xl bg-slate-950/40 hover:bg-slate-950 border border-slate-850/50 hover:border-blue-500/30 transition-all duration-200"
                       >
                         <div className="bg-blue-500/10 p-1.5 rounded-lg border border-blue-500/20 text-blue-400 shrink-0 mt-0.5">
-                          <span className="text-sm">🌇</span>
+                          <Zap className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-300 group-hover:text-blue-400 transition-colors">장마감 브리핑</span>
                             <span className="text-[8px] font-mono font-bold bg-blue-500/20 text-blue-400 px-1 rounded">16:00</span>
                           </div>
-                          <p className="text-[10px] text-slate-500 truncate mt-0.5">당일 마감 시황 정리 및 수급 복기 레포트</p>
                         </div>
                       </button>
-
-                      {/* Sub-item 4: 주도주 심층 분석 */}
-                      <button
-                        onClick={() => {
-                          setShowLauncherMenu(false);
-                          setShowAiFeedModal(true);
-                          setAiFeedActiveTab('jodoju_deep');
-                        }}
-                        className="w-full text-left group flex items-start gap-2.5 p-2 rounded-xl bg-slate-950/40 hover:bg-slate-950 border border-slate-850/50 hover:border-red-500/30 transition-all duration-200"
-                      >
-                        <div className="bg-red-500/10 p-1.5 rounded-lg border border-red-500/20 text-red-400 shrink-0 mt-0.5">
-                          <span className="text-sm">🔍</span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-slate-300 group-hover:text-red-400 transition-colors">주도주 심층 분석</span>
-                            <span className="text-[8px] font-mono font-bold bg-red-500/20 text-red-400 px-1 rounded">16:15</span>
-                          </div>
-                          <p className="text-[10px] text-slate-500 truncate mt-0.5">차트 선택 종목과 완벽히 일치하는 분석 연동</p>
-                        </div>
-                      </button>
-
-                      {/* Sub-item 5: 저녁 금융 칼럼 */}
+ 
+                      {/* Sub-item 4: 저녁 금융 칼럼 */}
                       <button
                         onClick={() => {
                           setShowLauncherMenu(false);
@@ -1683,14 +1655,13 @@ export default function App() {
                         className="w-full text-left group flex items-start gap-2.5 p-2 rounded-xl bg-slate-950/40 hover:bg-slate-950 border border-slate-850/50 hover:border-indigo-500/30 transition-all duration-200"
                       >
                         <div className="bg-indigo-500/10 p-1.5 rounded-lg border border-indigo-500/20 text-indigo-400 shrink-0 mt-0.5">
-                          <span className="text-sm">🌙</span>
+                          <BookOpen className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-300 group-hover:text-indigo-400 transition-colors">저녁 금융 칼럼</span>
                             <span className="text-[8px] font-mono font-bold bg-indigo-500/20 text-indigo-400 px-1 rounded">20:00</span>
                           </div>
-                          <p className="text-[10px] text-slate-500 truncate mt-0.5">메가트렌드 금융 칼럼 및 심야 시장 전망</p>
                         </div>
                       </button>
                     </div>
@@ -1721,7 +1692,6 @@ export default function App() {
                             <span className="text-xs font-black text-slate-200 group-hover:text-indigo-400 transition-colors">증시 캘린더</span>
                             <span className="text-[9px] font-mono font-black px-1.5 bg-indigo-500/20 text-indigo-400 rounded">CALENDAR</span>
                           </div>
-                          <p className="text-[10px] text-slate-400 leading-snug mt-0.5">금리결정, 옵션만기일, 거시경제 지표 및 실적 캘린더</p>
                         </div>
                       </a>
 
@@ -1742,7 +1712,6 @@ export default function App() {
                             <span className="text-xs font-black text-slate-200 group-hover:text-indigo-400 transition-colors">지식공유 블로그 센터</span>
                             <span className="text-[9px] font-mono font-black px-1.5 bg-indigo-500/20 text-indigo-400 rounded">BLOG</span>
                           </div>
-                          <p className="text-[10px] text-slate-400 leading-snug mt-0.5">주식 시장 노하우 및 복기 차트 학습 지식 공유 공간</p>
                         </div>
                       </a>
 
@@ -1763,7 +1732,6 @@ export default function App() {
                             <span className="text-xs font-black text-slate-200 group-hover:text-indigo-400 transition-colors">서비스 이용약관</span>
                             <span className="text-[9px] font-mono font-black px-1.5 bg-indigo-500/20 text-indigo-400 rounded">TERMS</span>
                           </div>
-                          <p className="text-[10px] text-slate-400 leading-snug mt-0.5">교육 시뮬레이션 활용 조건 및 법적 면책 특약 한계</p>
                         </div>
                       </a>
 
@@ -1784,7 +1752,6 @@ export default function App() {
                             <span className="text-xs font-black text-slate-200 group-hover:text-emerald-400 transition-colors">개인정보처리방침</span>
                             <span className="text-[9px] font-mono font-black px-1.5 bg-emerald-500/20 text-emerald-400 rounded">PRIVACY</span>
                           </div>
-                          <p className="text-[10px] text-slate-400 leading-snug mt-0.5">로그인 없는 익명 운용 및 쿠키 데이터 처리 방침</p>
                         </div>
                       </a>
                     </div>
@@ -2310,24 +2277,8 @@ export default function App() {
         ) : platformTab === 'news' ? (
           <NewsView 
             briefing={preMarketBriefing} 
-            onRegenerateBriefing={() => {
-              const generate = async () => {
-                setBriefingLoading(true);
-                await fetch('/api/platform/briefing', { method: 'POST' });
-                await fetchPreMarketBriefing();
-              };
-              generate();
-            }}
             briefingLoading={briefingLoading}
             report={afterMarketReport}
-            onRegenerateReport={() => {
-              const generate = async () => {
-                setReportLoading(true);
-                await fetch('/api/platform/report', { method: 'POST' });
-                await fetchAfterMarketReport();
-              };
-              generate();
-            }}
             reportLoading={reportLoading}
             onSelectStock={(code) => {
               const match = JODOJU_STOCKS.find(s => s.code === code);
@@ -2336,6 +2287,14 @@ export default function App() {
                 setPlatformTab('replay');
               }
             }}
+            onOpenAiFeed={(tab) => {
+              setAiFeedActiveTab(tab as any);
+              setShowAiFeedModal(true);
+            }}
+            lunchBriefing={lunchBriefing}
+            lunchLoading={lunchLoading}
+            eveningColumn={eveningColumn}
+            eveningLoading={eveningLoading}
           />
         ) : platformTab === 'jodoju' ? (
           <JodojuAnalysisView 
@@ -4192,7 +4151,6 @@ export default function App() {
                       <span>실시간 AI 마켓 피드 & 데이터 센터</span>
                       <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full animate-pulse">SUPABASE SYNC</span>
                     </h2>
-                    <p className="text-[10px] sm:text-xs text-slate-500 font-bold">인공지능 로봇이 실시간으로 Supabase DB로 동기화하는 투자 지표 허브</p>
                   </div>
                 </div>
                 <button
@@ -4206,25 +4164,26 @@ export default function App() {
               {/* Main Workspace: Sidebar Tab + Content Area */}
               <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
                 {/* Tabs Sidebar */}
-                <div className="bg-slate-950/50 border-r border-slate-850 w-full md:w-64 flex-shrink-0 flex md:flex-col overflow-x-auto md:overflow-x-hidden md:overflow-y-auto p-2 gap-1.5 scrollbar-none">
+                <div className="bg-slate-950/50 border-r border-slate-850 w-full md:w-64 flex-shrink-0 flex md:flex-col overflow-x-auto md:overflow-x-hidden md:overflow-y-auto p-2 gap-1.5 scrollbar-none select-none">
                   {[
-                    { id: 'morning', label: '장전 브리핑', time: '07:45', icon: '🌅', color: 'text-amber-400 bg-amber-500/5' },
-                    { id: 'lunch', label: '장중 실시간 수급', time: '12:30', icon: '☀️', color: 'text-sky-400 bg-sky-500/5' },
-                    { id: 'afternoon', label: '장마감 브리핑', time: '16:00', icon: '🌇', color: 'text-blue-400 bg-blue-500/5' },
-                    { id: 'jodoju_deep', label: '주도주 심층 분석', time: '16:15', icon: '🔍', color: 'text-red-400 bg-red-500/5' },
-                    { id: 'evening', label: '저녁 금융 칼럼', time: '20:00', icon: '🌙', color: 'text-indigo-400 bg-indigo-500/5' }
+                    { id: 'morning', label: '장전 브리핑', time: '07:45', icon: Clock, color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
+                    { id: 'lunch', label: '장중 실시간 수급', time: '12:30', icon: TrendingUp, color: 'text-sky-400 bg-sky-500/10 border-sky-500/20' },
+                    { id: 'afternoon', label: '장마감 브리핑', time: '16:00', icon: Zap, color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
+                    { id: 'evening', label: '저녁 금융 칼럼', time: '20:00', icon: BookOpen, color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20' }
                   ].map((tab) => (
                     <button
                       key={tab.id}
                       onClick={() => setAiFeedActiveTab(tab.id as any)}
-                      className={`flex md:flex-row flex-col items-center md:items-start gap-2.5 p-3 rounded-xl transition-all cursor-pointer w-full text-center md:text-left border shrink-0 md:shrink ${
+                      className={`flex md:flex-row flex-col items-center md:items-start gap-2.5 p-3 rounded-xl transition-all cursor-pointer w-full border shrink-0 md:shrink ${
                         aiFeedActiveTab === tab.id
                           ? 'bg-slate-800 border-slate-700 text-slate-100 shadow-lg'
                           : 'bg-transparent border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
                       }`}
                     >
-                      <span className="text-xl">{tab.icon}</span>
-                      <div className="min-w-0 flex-1 select-none">
+                      <div className={`p-1.5 rounded-lg border ${tab.color} flex items-center justify-center`}>
+                        <tab.icon className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1 text-center md:text-left select-none">
                         <div className="flex md:flex-row flex-col md:items-center md:justify-between">
                           <span className="text-xs font-black truncate">{tab.label}</span>
                           <span className="text-[9px] font-mono font-bold text-slate-500 mt-0.5 md:mt-0">{tab.time}</span>
@@ -4240,372 +4199,40 @@ export default function App() {
                   {/* Morning Briefing Content */}
                   {aiFeedActiveTab === 'morning' && (
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">🌅</span>
-                          <div>
-                            <h3 className="text-sm font-black text-slate-100">07:45 장전 글로벌 브리핑</h3>
-                            <p className="text-[10px] text-slate-500 font-bold">미국 3대 지수 상황 및 한국 증시 개장 전망</p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={fetchPreMarketBriefing}
-                          className="px-2.5 py-1.5 bg-slate-850 hover:bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg border border-slate-800 transition-colors cursor-pointer"
-                        >
-                          {briefingLoading ? '동기화 중...' : '즉시 동기화 🔄'}
-                        </button>
-                      </div>
-
-                      {briefingLoading ? (
-                        <div className="flex flex-col items-center justify-center py-16 space-y-3">
-                          <div className="w-8 h-8 rounded-full border-4 border-amber-500/20 border-t-amber-500 animate-spin" />
-                          <p className="text-[10px] text-slate-400 font-mono">Supabase에서 데이터를 로드 중입니다...</p>
-                        </div>
-                      ) : preMarketBriefing ? (
-                        <div className="space-y-5 text-xs text-slate-300 select-text">
-                          {/* US Markets Grid */}
-                          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                            {[
-                              { label: 'DOW', val: preMarketBriefing.usSummary?.dow },
-                              { label: 'NASDAQ', val: preMarketBriefing.usSummary?.nasdaq },
-                              { label: 'S&P 500', val: preMarketBriefing.usSummary?.sp500 },
-                              { label: 'RUSSELL 2000', val: preMarketBriefing.usSummary?.russell2000 },
-                              { label: 'VIX', val: preMarketBriefing.usSummary?.vix }
-                            ].map((idx) => (
-                              <div key={idx.label} className="bg-slate-950/60 p-2.5 rounded-xl border border-slate-850 text-center">
-                                <p className="text-[9px] font-mono text-slate-500 font-black">{idx.label}</p>
-                                <p className="text-xs font-mono text-slate-200 font-extrabold mt-1">{idx.val || 'N/A'}</p>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Macro Table */}
-                          <div className="bg-slate-950/40 border border-slate-850/80 rounded-2xl p-4 space-y-3">
-                            <h4 className="text-[11px] font-black text-slate-400 flex items-center gap-1.5">
-                              <span className="w-1 h-2.5 bg-amber-500 rounded-full" />
-                              <span>글로벌 거시 경제 지표</span>
-                            </h4>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
-                              <div><span className="text-slate-500 font-bold mr-2">기준 금리:</span> <span className="text-slate-200 font-mono font-bold">{preMarketBriefing.macro?.interestRate || 'N/A'}</span></div>
-                              <div><span className="text-slate-500 font-bold mr-2">원/달러 환율:</span> <span className="text-slate-200 font-mono font-bold">{preMarketBriefing.macro?.exchangeRate || 'N/A'}</span></div>
-                              <div><span className="text-slate-500 font-bold mr-2">미 10년 국채:</span> <span className="text-slate-200 font-mono font-bold">{preMarketBriefing.macro?.bondYield || 'N/A'}</span></div>
-                              <div><span className="text-slate-500 font-bold mr-2">WTI 국제유가:</span> <span className="text-slate-200 font-mono font-bold">{preMarketBriefing.macro?.oilPrice || 'N/A'}</span></div>
-                            </div>
-                          </div>
-
-                          {/* Korean Impact */}
-                          <div className="space-y-2">
-                            <h4 className="text-[11px] font-black text-slate-400 flex items-center gap-1.5">
-                              <span className="w-1 h-2.5 bg-amber-500 rounded-full" />
-                              <span>국내 증시 외국인/기관 수급 및 대응 가이드</span>
-                            </h4>
-                            <p className="leading-relaxed bg-amber-500/5 border border-amber-500/10 p-3.5 rounded-xl text-slate-300">
-                              {preMarketBriefing.koreanImpact || preMarketBriefing.koreanMarketImpact || 'N/A'}
-                            </p>
-                          </div>
-
-                          {/* Related Korean Stocks */}
-                          {Array.isArray(preMarketBriefing.relatedKoreanStocks) && preMarketBriefing.relatedKoreanStocks.length > 0 && (
-                            <div className="space-y-2">
-                              <h4 className="text-[11px] font-black text-slate-400 flex items-center gap-1.5">
-                                <span className="w-1 h-2.5 bg-amber-500 rounded-full" />
-                                <span>장전 관심 테마 및 연동 국내 종목</span>
-                              </h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                {preMarketBriefing.relatedKoreanStocks.map((item, idx) => (
-                                  <div key={idx} className="bg-slate-950/60 p-3 rounded-xl border border-slate-850/60">
-                                    <div className="flex items-center justify-between border-b border-slate-850 pb-1.5 mb-1.5">
-                                      <span className="text-xs font-black text-amber-400">{item.name}</span>
-                                      <span className="text-[9px] font-mono text-slate-500">주요 관심주</span>
-                                    </div>
-                                    <p className="text-[11px] text-slate-400 leading-normal">{item.reason}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-center py-12 text-slate-500 text-xs">
-                          아직 동기화된 장전 브리핑 데이터가 존재하지 않습니다.
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Lunch Briefing Content */}
-                  {aiFeedActiveTab === 'lunch' && (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">☀️</span>
-                          <div>
-                            <h3 className="text-sm font-black text-slate-100">12:30 장중 실시간 수급 동향</h3>
-                            <p className="text-[10px] text-slate-500 font-bold">오전장 자금 흐름 결산 및 개미 투자자 뇌동매매 방지 요령</p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={fetchLunchBriefing}
-                          className="px-2.5 py-1.5 bg-slate-850 hover:bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg border border-slate-800 transition-colors cursor-pointer"
-                        >
-                          {lunchLoading ? '동기화 중...' : '즉시 동기화 🔄'}
-                        </button>
-                      </div>
-
-                      {lunchLoading ? (
-                        <div className="flex flex-col items-center justify-center py-16 space-y-3">
-                          <div className="w-8 h-8 rounded-full border-4 border-sky-500/20 border-t-sky-500 animate-spin" />
-                          <p className="text-[10px] text-slate-400 font-mono">Supabase에서 장중 수급 데이터를 로드 중입니다...</p>
-                        </div>
-                      ) : lunchBriefing ? (
-                        <div className="space-y-4 text-xs text-slate-300 select-text leading-relaxed">
-                          <div className="bg-sky-500/5 border border-sky-500/15 p-4 rounded-2xl">
-                            <h4 className="text-xs font-black text-sky-400 mb-2">{lunchBriefing.title || '오전장 수급 결산 핵심'}</h4>
-                            <p className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-wrap">
-                              {lunchBriefing.midDayAnalysis || '오전 장중 분석 데이터가 존재하지 않습니다.'}
-                            </p>
-                          </div>
-                          
-                          {lunchBriefing.threadsText && (
-                            <div className="bg-slate-950/60 border border-slate-850 p-4 rounded-xl space-y-2">
-                              <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono">15년차 전업투자자 긴급 관점 (SNS 스레드 연동)</h5>
-                              <p className="text-[11px] text-slate-400 font-mono leading-relaxed italic whitespace-pre-wrap">
-                                "{lunchBriefing.threadsText}"
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-center py-12 text-slate-500 text-xs">
-                          아직 동기화된 장중 실시간 수급 데이터가 존재하지 않습니다.
-                        </div>
-                      )}
+                      <BriefingView 
+                        briefing={preMarketBriefing}
+                        onRegenerate={async () => {
+                          setBriefingLoading(true);
+                          await fetch('/api/platform/briefing', { method: 'POST' });
+                          await fetchPreMarketBriefing();
+                        }}
+                        loading={briefingLoading}
+                        isCompact={false}
+                      />
                     </div>
                   )}
 
                   {/* Afternoon Report Content */}
                   {aiFeedActiveTab === 'afternoon' && (
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">🌇</span>
-                          <div>
-                            <h3 className="text-sm font-black text-slate-100">16:00 장마감 특징주 & 브리핑</h3>
-                            <p className="text-[10px] text-slate-500 font-bold">당일 특징주 카탈리스트 분석 및 시장 수급 복기</p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={fetchAfterMarketReport}
-                          className="px-2.5 py-1.5 bg-slate-850 hover:bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg border border-slate-800 transition-colors cursor-pointer"
-                        >
-                          {reportLoading ? '동기화 중...' : '즉시 동기화 🔄'}
-                        </button>
-                      </div>
-
-                      {reportLoading ? (
-                        <div className="flex flex-col items-center justify-center py-16 space-y-3">
-                          <div className="w-8 h-8 rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin" />
-                          <p className="text-[10px] text-slate-400 font-mono">Supabase에서 장마감 리포트를 로드 중입니다...</p>
-                        </div>
-                      ) : afterMarketReport ? (
-                        <div className="space-y-5 text-xs text-slate-300 select-text">
-                          {afterMarketReport.marketAnalysisSummary && (
-                            <div className="bg-slate-950/40 border border-slate-850 p-3.5 rounded-2xl">
-                              <h4 className="text-[11px] font-black text-slate-400 flex items-center gap-1.5 mb-2">
-                                <span className="w-1 h-2.5 bg-blue-500 rounded-full" />
-                                <span>오늘의 장마감 시장 종합 복기</span>
-                              </h4>
-                              <p className="text-[11px] leading-relaxed text-slate-300">{afterMarketReport.marketAnalysisSummary}</p>
-                            </div>
-                          )}
-
-                          {/* Features stocks */}
-                          {Array.isArray(afterMarketReport.features) && afterMarketReport.features.length > 0 && (
-                            <div className="space-y-2">
-                              <h4 className="text-[11px] font-black text-slate-400 flex items-center gap-1.5">
-                                <span className="w-1 h-2.5 bg-blue-500 rounded-full" />
-                                <span>당일 핵심 테마 특징주 (Catalyst 분석)</span>
-                              </h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                {afterMarketReport.features.map((item, idx) => (
-                                  <div key={idx} className="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-850/60 flex flex-col justify-between">
-                                    <div>
-                                      <div className="flex items-center justify-between border-b border-slate-850 pb-2 mb-2">
-                                        <span className="text-xs font-black text-blue-400">{item.name}</span>
-                                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${item.category === 'GOOD' ? 'bg-red-500/10 text-red-400' : 'bg-blue-500/10 text-blue-400'}`}>
-                                          {item.category === 'GOOD' ? '급등재료' : '악재이탈'}
-                                        </span>
-                                      </div>
-                                      <p className="text-[11px] text-slate-300 leading-relaxed font-bold">{item.catalyst}</p>
-                                    </div>
-                                    {Array.isArray(item.relatedStocks) && item.relatedStocks.length > 0 && (
-                                      <div className="flex flex-wrap gap-1 mt-3 pt-2 border-t border-slate-900/60">
-                                        {item.relatedStocks.map((s, si) => (
-                                          <span key={si} className="text-[9px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded-full border border-slate-850">
-                                            {s}
-                                          </span>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-center py-12 text-slate-500 text-xs">
-                          아직 동기화된 장마감 브리핑 데이터가 존재하지 않습니다.
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Jodoju Deep Analysis Content */}
-                  {aiFeedActiveTab === 'jodoju_deep' && (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">🔍</span>
-                          <div>
-                            <h3 className="text-sm font-black text-slate-100 flex items-center gap-1.5">
-                              <span>16:15 주도주 심층 분석</span>
-                              <span className="text-xs text-red-400 font-extrabold bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">{isRandomChallengeMode ? '블라인드' : selectedStock.name}</span>
-                            </h3>
-                            <p className="text-[10px] text-slate-500 font-bold">차트 활성 종목과 동일한 타겟 분석 데이터 실시간 연동</p>
-                          </div>
-                        </div>
-                        <span className="text-[9px] font-mono bg-slate-950 px-2 py-1 rounded border border-slate-850 text-slate-500">
-                          종목코드: {isRandomChallengeMode ? '******' : selectedStock.code}
-                        </span>
-                      </div>
-
-                      {(() => {
-                        // Find match in jodoju15
-                        const reportMatch = afterMarketReport?.jodoju15?.find(r => r.ticker === selectedStock.code);
-                        // Find match in features
-                        const featureMatch = afterMarketReport?.features?.find(f => f.name === selectedStock.name || f.ticker === selectedStock.code);
-
-                        if (!reportMatch && !featureMatch) {
-                          return (
-                            <div className="bg-slate-950/40 border border-slate-850 p-5 rounded-2xl text-center space-y-3">
-                              <p className="text-xs text-slate-400">
-                                죄송합니다. 오늘 장마감 리포트의 주도주 15선이나 당일 특징주 분석 데이터 중에서 <strong className="text-slate-200">'{selectedStock.name}'</strong> 종목의 매칭 데이터를 찾을 수 없습니다.
-                              </p>
-                              <p className="text-[10px] text-slate-500 leading-normal">
-                                주도주 심층 분석은 메인 화면의 종목 리스트(일봉/분봉) 중 당일 급등/주도주 종목에 한하여 완벽한 매칭 분석 데이터를 제공합니다. 종목 선택을 변경 후 다시 조회해 주십시오.
-                              </p>
-                            </div>
-                          );
-                        }
-
-                        return (
-                          <div className="space-y-5 text-xs text-slate-300 select-text leading-relaxed">
-                            {/* Integrated features first (특징주 분석 내용 통합 노출) */}
-                            {featureMatch && (
-                              <div className="bg-red-500/5 border border-red-500/10 p-4 rounded-2xl">
-                                <div className="flex items-center gap-1.5 mb-1.5">
-                                  <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded">당일 특징주</span>
-                                  <h4 className="text-xs font-black text-slate-200">'{selectedStock.name}' 분석 테마 정보</h4>
-                                </div>
-                                <p className="text-[11px] text-slate-300 font-bold leading-normal mb-2">{featureMatch.catalyst}</p>
-                                {Array.isArray(featureMatch.keywords) && featureMatch.keywords.length > 0 && (
-                                  <div className="flex flex-wrap gap-1">
-                                    {featureMatch.keywords.map((kw, kwi) => (
-                                      <span key={kwi} className="text-[9px] bg-slate-950 text-slate-400 px-1.5 py-0.5 rounded border border-slate-850">
-                                        #{kw}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Detailed Jodoju Report match */}
-                            {reportMatch && (
-                              <div className="space-y-4">
-                                {/* Scoreboard */}
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                                  <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-850">
-                                    <p className="text-[9px] text-slate-500 font-bold">시장 주도 등급</p>
-                                    <p className="text-sm font-extrabold text-red-400 mt-1">{'★'.repeat(reportMatch.stars || 5)}</p>
-                                  </div>
-                                  <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-850">
-                                    <p className="text-[9px] text-slate-500 font-bold">자금 유입 점수</p>
-                                    <p className="text-sm font-mono font-extrabold text-slate-200 mt-1">{reportMatch.score || 95}점</p>
-                                  </div>
-                                  <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-850">
-                                    <p className="text-[9px] text-slate-500 font-bold">외국인 수급</p>
-                                    <p className="text-sm font-extrabold text-emerald-400 mt-1">{reportMatch.supplyDemand?.foreigner || '순매수'}</p>
-                                  </div>
-                                  <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-850">
-                                    <p className="text-[9px] text-slate-500 font-bold">기관 수급</p>
-                                    <p className="text-sm font-extrabold text-slate-200 mt-1">{reportMatch.supplyDemand?.institution || 'N/A'}</p>
-                                  </div>
-                                </div>
-
-                                {/* AI Summary comment */}
-                                <div className="space-y-1.5">
-                                  <h4 className="text-[11px] font-black text-slate-400 flex items-center gap-1.5">
-                                    <span className="w-1 h-2.5 bg-red-500 rounded-full" />
-                                    <span>AI 애널리스트 3줄 심층 종합 평문</span>
-                                  </h4>
-                                  <p className="p-3 bg-slate-950/60 border border-slate-850 rounded-xl leading-relaxed text-slate-300">
-                                    {reportMatch.aiSummary}
-                                  </p>
-                                </div>
-
-                                {/* Detailed breakdowns */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
-                                  {/* Buy Points */}
-                                  <div className="bg-slate-950/40 border border-slate-850/85 p-3.5 rounded-2xl space-y-2">
-                                    <h5 className="font-black text-red-400 flex items-center gap-1">
-                                      <span>📈</span>
-                                      <span>타겟 분할매수 매력 포인트</span>
-                                    </h5>
-                                    <ul className="list-disc list-inside space-y-1 text-slate-400 leading-normal pl-1">
-                                      {reportMatch.aiAnalysis?.buyPoints?.map((p, pi) => <li key={pi}>{p}</li>) || (
-                                        <li>대량의 외인 프로그램 유입에 따른 수급 돌파 지지점 관찰</li>
-                                      )}
-                                    </ul>
-                                  </div>
-
-                                  {/* Caution Points */}
-                                  <div className="bg-slate-950/40 border border-slate-850/85 p-3.5 rounded-2xl space-y-2">
-                                    <h5 className="font-black text-blue-400 flex items-center gap-1">
-                                      <span>📉</span>
-                                      <span>추가 조정 및 위험 리스크 요인</span>
-                                    </h5>
-                                    <ul className="list-disc list-inside space-y-1 text-slate-400 leading-normal pl-1">
-                                      {reportMatch.aiAnalysis?.cautionPoints?.map((p, pi) => <li key={pi}>{p}</li>) || (
-                                        <li>차익 실현 출회 우려 및 대형 매물 저항 부담</li>
-                                      )}
-                                    </ul>
-                                  </div>
-                                </div>
-
-                                {/* Tomorrow Checkpoints */}
-                                {Array.isArray(reportMatch.aiAnalysis?.tomorrowCheckpoints) && reportMatch.aiAnalysis.tomorrowCheckpoints.length > 0 && (
-                                  <div className="space-y-1.5">
-                                    <h4 className="text-[11px] font-black text-slate-400 flex items-center gap-1.5">
-                                      <span className="w-1 h-2.5 bg-red-500 rounded-full" />
-                                      <span>익일 시장 대응 핵심 트리거 조건</span>
-                                    </h4>
-                                    <div className="bg-slate-950/80 border border-slate-850 p-3.5 rounded-xl text-[11px] space-y-1 pl-1">
-                                      {reportMatch.aiAnalysis.tomorrowCheckpoints.map((cp, cpi) => (
-                                        <p key={cpi} className="flex items-start gap-2 text-slate-300">
-                                          <span className="text-red-500 font-extrabold font-mono shrink-0">0{cpi+1}.</span>
-                                          <span className="leading-normal">{cp}</span>
-                                        </p>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })()}
+                      <ReportView 
+                        report={afterMarketReport}
+                        onRegenerate={async () => {
+                          setReportLoading(true);
+                          await fetch('/api/platform/report', { method: 'POST' });
+                          await fetchAfterMarketReport();
+                        }}
+                        loading={reportLoading}
+                        onSelectStock={(code) => {
+                          const match = JODOJU_STOCKS.find(s => s.code === code);
+                          if (match) {
+                            setSelectedStock(match);
+                            setPlatformTab('replay');
+                            setShowAiFeedModal(false);
+                          }
+                        }}
+                        isCompact={false}
+                      />
                     </div>
                   )}
 

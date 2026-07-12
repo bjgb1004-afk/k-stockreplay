@@ -9,13 +9,12 @@ import { JODOJU_STOCKS } from '../App';
 
 interface ReportViewProps {
   report: AfterMarketReport | null;
-  onRegenerate: () => void;
   loading: boolean;
   onSelectStock: (code: string) => void;
   isCompact?: boolean;
 }
 
-export const ReportView: React.FC<ReportViewProps> = ({ report, onRegenerate, loading, onSelectStock, isCompact = false }) => {
+export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelectStock, isCompact = false }) => {
 
   if (loading) {
     return (
@@ -29,15 +28,8 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, onRegenerate, lo
   if (!report) {
     return (
       <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-900/40 rounded-2xl border border-slate-800">
-        <Zap className="w-12 h-12 text-slate-600" />
-        <p className="text-xs text-slate-400">데이터가 존재하지 않습니다. 장마감 브리핑을 신규 생성해주세요.</p>
-        <button
-          onClick={onRegenerate}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black rounded-lg transition-colors cursor-pointer flex items-center gap-2"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>장마감 브리핑 즉시 생성</span>
-        </button>
+        <Zap className="w-12 h-12 text-slate-600 animate-pulse" />
+        <p className="text-xs text-slate-400 font-sans">데이터를 불러오는 중입니다...</p>
       </div>
     );
   }
@@ -100,14 +92,6 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, onRegenerate, lo
               오늘 한국 주식시장의 핵심 주도 특징주와 호재/악재 뉴스 흐름을 복기하고 시장 맥점을 정밀히 되짚습니다.
             </p>
           </div>
-
-          <button
-            onClick={onRegenerate}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition-colors cursor-pointer flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            <span>분석 보고서 재생성 ⚡</span>
-          </button>
         </div>
       )}
 

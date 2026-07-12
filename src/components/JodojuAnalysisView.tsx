@@ -5,6 +5,7 @@ import {
   ChevronRight, Calendar, ArrowUpRight, Search, Landmark, ShieldAlert, Sparkles
 } from 'lucide-react';
 import { AfterMarketReport, JodojuAnalysis, AiReplayStudyGuide, ReplayGuideInterval } from '../types';
+import { ReplayChart } from './ReplayChart';
 
 interface JodojuAnalysisViewProps {
   report: AfterMarketReport | null;
@@ -433,16 +434,41 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
   const [selectedTicker, setSelectedTicker] = useState<string>(jodojuList[0]?.ticker || '314930');
   const [studyGuide, setStudyGuide] = useState<any | null>(null);
   const [guideLoading, setGuideLoading] = useState<boolean>(false);
+  const [candles, setCandles] = useState<any[]>([]);
+  const [candlesLoading, setCandlesLoading] = useState<boolean>(false);
 
   // Find selected stock details
   const activeStock = jodojuList.find(s => s.ticker === selectedTicker) || jodojuList[0];
 
-  // Fetch Study Guide on Selected Stock Change
+  // Fetch Study Guide & Candle Data on Selected Stock Change
   useEffect(() => {
     if (activeStock?.ticker) {
       fetchGuide(activeStock.ticker);
+      fetchCandles(activeStock.ticker);
     }
   }, [activeStock?.ticker]);
+
+  const fetchCandles = async (ticker: string) => {
+    setCandlesLoading(true);
+    try {
+      const res = await fetch(`/api/stock-data?ticker=${encodeURIComponent(ticker)}&timeframe=day`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.candles)) {
+          setCandles(data.candles);
+        } else {
+          setCandles([]);
+        }
+      } else {
+        setCandles([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch candles in JodojuAnalysisView:', err);
+      setCandles([]);
+    } finally {
+      setCandlesLoading(false);
+    }
+  };
 
   const fetchGuide = async (ticker: string) => {
     setGuideLoading(true);
@@ -570,6 +596,28 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
                       </span>
                     </div>
                   </div>
+                </div>
+
+                {/* 주도주 복기 차트 */}
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                  <h4 className="text-sm font-black text-slate-200 tracking-wider flex items-center gap-1.5 border-b border-slate-850 pb-2">
+                    <TrendingUp className="w-4 h-4 text-indigo-400" />
+                    <span>📈 [주도주 복기 차트] 실시간 기술적 복기 캔들 정보</span>
+                  </h4>
+                  {candlesLoading ? (
+                    <div className="h-[300px] flex flex-col items-center justify-center text-slate-500 text-xs font-mono">
+                      <div className="w-8 h-8 rounded-full border-2 border-indigo-500/20 border-t-indigo-500 animate-spin mb-3" />
+                      <span>해당 주도주 기술적 봉 캔들 데이터 로딩 중...</span>
+                    </div>
+                  ) : candles && candles.length > 0 ? (
+                    <div className="bg-slate-950 rounded-xl p-3 border border-slate-850">
+                      <ReplayChart candles={candles} trades={[]} />
+                    </div>
+                  ) : (
+                    <div className="h-[200px] flex items-center justify-center text-slate-500 text-xs font-mono">
+                      복기 캔들 데이터가 존재하지 않습니다.
+                    </div>
+                  )}
                 </div>
 
                 {/* Detailed Stock Analysis Report */}
