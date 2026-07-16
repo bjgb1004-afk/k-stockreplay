@@ -394,10 +394,11 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
   }, [candles, trades, averagePrice]);
 
   // Fallback to last candle if not hovering
-  const activeCandle = hoverCandle || candles[candles.length - 1];
+  const activeCandle = hoverCandle || (candles && candles.length > 0 ? candles[candles.length - 1] : null);
   const isUp = activeCandle ? activeCandle.close >= activeCandle.open : true;
   const changeAmt = activeCandle ? activeCandle.close - activeCandle.open : 0;
   const changePct = activeCandle ? (changeAmt / activeCandle.open) * 100 : 0;
+  const tradeValueMillion = activeCandle ? (activeCandle.close * activeCandle.volume) / 1000000 : 0;
 
   return (
     <div className="relative flex flex-col w-full h-full bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-xl" id="chart-panel">
@@ -435,7 +436,9 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
             </div>
             <div className="flex gap-1">
               <span className="text-slate-500">거래대금:</span>
-              <span className="text-slate-300 font-medium">{Math.round(activeCandle.volume * activeCandle.close).toLocaleString()}원</span>
+              <span className="text-amber-400 font-bold">
+                {tradeValueMillion.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}백만원
+              </span>
             </div>
           </div>
 

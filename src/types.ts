@@ -44,6 +44,21 @@ export interface SimulationState {
 // After-Market Replay & Study Platform Types
 // ==========================================
 
+export interface MacroDetail {
+  value: string;
+  reason: string;
+  majorsAction: string;
+  marketImpact: string;
+  sectorsAnalysis: string;
+}
+
+export interface DomesticSectorAnalysis {
+  sectorName: string;
+  sentiment: string;
+  reason: string;
+  stocks: string[];
+}
+
 export interface PreMarketBriefing {
   id: string;
   date: string;
@@ -64,6 +79,15 @@ export interface PreMarketBriefing {
     exchangeRate: string;
     oilPrice: string;
   };
+  macroDetailed?: {
+    interestRate: MacroDetail;
+    cpi: MacroDetail;
+    ppi: MacroDetail;
+    bond10y: MacroDetail;
+    exchangeRate: MacroDetail;
+    oilPrice: MacroDetail;
+  };
+  domesticSectors?: DomesticSectorAnalysis[];
   worldNews: string[];
   usFeaturedStocks: string[];
   usJodoju: string[];
@@ -78,6 +102,7 @@ export interface PreMarketBriefing {
     description: string;
     keywords: string[];
   };
+  quantAnalysisMarkdown?: string;
 }
 
 export interface JodojuAnalysis {

@@ -1,3 +1,7 @@
+import dns from 'dns';
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 import fs from 'fs';
 import path from 'path';
 import { GoogleGenAI } from '@google/genai';

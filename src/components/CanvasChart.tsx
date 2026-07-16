@@ -77,7 +77,6 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
   const chartRef = useRef<any>(null);
   const [priceChartInstance, setPriceChartInstance] = useState<any>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const headerRef = useRef<HTMLDivElement | null>(null);
   const [panelHeight, setPanelHeight] = useState<number>(() => {
     return typeof window !== 'undefined' && window.innerWidth < 640 ? 350 : 450;
   });
@@ -89,7 +88,9 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
       for (let entry of entries) {
         const height = entry.contentRect.height;
         if (height > 0) {
-          setPanelHeight(height);
+          setPanelHeight((prev) => {
+            return Math.abs(prev - height) > 1.5 ? Math.round(height) : prev;
+          });
         }
       }
     });
@@ -97,19 +98,27 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (!headerRef.current) return;
-    const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        const height = entry.contentRect.height;
-        if (height > 0) {
-          setHeaderHeight(height);
+  const headerObserverRef = useRef<ResizeObserver | null>(null);
+  const headerRef = React.useCallback((node: HTMLDivElement | null) => {
+    if (headerObserverRef.current) {
+      headerObserverRef.current.disconnect();
+      headerObserverRef.current = null;
+    }
+    if (node) {
+      const observer = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          const height = entry.contentRect.height;
+          if (height > 0) {
+            setHeaderHeight((prev) => {
+              return Math.abs(prev - height) > 1.5 ? Math.round(height) : prev;
+            });
+          }
         }
-      }
-    });
-    observer.observe(headerRef.current);
-    return () => observer.disconnect();
-  }, [candles]);
+      });
+      observer.observe(node);
+      headerObserverRef.current = observer;
+    }
+  }, []);
 
   const remainingHeight = Math.max(180, panelHeight - headerHeight);
   const priceHeight = Math.round(remainingHeight * 0.74);
@@ -143,6 +152,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
     date: string;
     x: number;
     y: number;
+    prevClose: number | null;
   } | null>(null);
 
   // Effect 1: Initialize the chart once or when dataset changes (stock switch/reset)
@@ -299,13 +309,28 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
       chart.subscribeCrosshairMove((param: any) => {
         if (!param || !param.time || param.point === undefined) {
           setHoverIndex(null);
+          setTooltipData(null);
           return;
         }
         const matchedIndex = candles.findIndex(c => parseTimeToChart(c.date) === param.time);
         if (matchedIndex !== -1) {
           setHoverIndex(matchedIndex);
+          const candle = candles[matchedIndex];
+          const prevCandle = matchedIndex > 0 ? candles[matchedIndex - 1] : null;
+          setTooltipData({
+            open: candle.open,
+            high: candle.high,
+            low: candle.low,
+            close: candle.close,
+            volume: candle.volume,
+            date: candle.date,
+            x: param.point.x,
+            y: param.point.y,
+            prevClose: prevCandle ? prevCandle.close : null,
+          });
         } else {
           setHoverIndex(null);
+          setTooltipData(null);
         }
       });
 
@@ -507,55 +532,32 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
         chartRef.current = null;
         setPriceChartInstance(null);
       }
+      if (headerObserverRef.current) {
+        headerObserverRef.current.disconnect();
+        headerObserverRef.current = null;
+      }
     };
   }, []);
 
-  // Listen to mousedown on the chart container to show OHLCV tooltip and mousemove to hide it
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
 
-    const handleMouseDown = (e: MouseEvent) => {
-      if (e.button !== 0) return; // Only handle left click
-      if (hoverIndex !== null && candles[hoverIndex]) {
-        const candle = candles[hoverIndex];
-        const rect = container.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
 
-        setTooltipData({
-          open: candle.open,
-          high: candle.high,
-          low: candle.low,
-          close: candle.close,
-          volume: candle.volume,
-          date: candle.date,
-          x: x,
-          y: y,
-        });
-      }
-    };
+  const activeCandleIndex = hoverIndex !== null ? hoverIndex : (candles && candles.length > 0 ? candles.length - 1 : 0);
+  const activeCandle = candles && candles.length > 0 ? candles[activeCandleIndex] : null;
 
-    const handleMouseMove = () => {
-      setTooltipData(null);
-    };
+  const prevCandle = activeCandle && activeCandleIndex > 0 ? candles[activeCandleIndex - 1] : null;
+  const changePct = activeCandle
+    ? (prevCandle 
+        ? ((activeCandle.close - prevCandle.close) / prevCandle.close) * 100 
+        : ((activeCandle.close - activeCandle.open) / activeCandle.open) * 100)
+    : 0;
 
-    container.addEventListener('mousedown', handleMouseDown);
-    container.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      container.removeEventListener('mousedown', handleMouseDown);
-      container.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [candles, hoverIndex]);
-
-  const activeCandle = hoverIndex !== null ? candles[hoverIndex] : candles[candles.length - 1];
+  const tradeValueMillion = activeCandle ? (activeCandle.close * activeCandle.volume) / 1000000 : 0;
 
   return (
     <div ref={panelRef} className="relative flex flex-col w-full h-full bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-xl" id="canvas-chart-panel">
       {/* Static Indicator Top Bar Header */}
       {activeCandle && (
-        <div ref={headerRef} className="w-full bg-slate-900 border-b border-slate-800/80 p-3 flex flex-col gap-2 z-10" id="canvas-indicator-header">
+        <div ref={headerRef} className="w-full bg-slate-900 border-b border-slate-800/80 p-3 flex flex-col gap-2.5 z-10" id="canvas-indicator-header">
           {/* Indicators Legend & Progress Box */}
           <div className="flex items-center justify-between w-full text-[10px] font-mono" id="canvas-indicator-legend-container">
             <div className="flex items-center gap-3" id="canvas-indicator-legend">
@@ -590,40 +592,76 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
         style={{ height: `${priceHeight}px` }}
         id="lightweight-canvas-chart-container"
       >
-        {tooltipData && (
-          <div
-            className="absolute bg-slate-900/95 border border-slate-700/80 rounded-lg p-3 shadow-2xl z-50 pointer-events-none text-xs font-mono text-slate-200 min-w-[150px] flex flex-col gap-1.5"
-            style={{
-              left: `${Math.min(tooltipData.x + 15, (containerRef.current?.clientWidth || 300) - 170)}px`,
-              top: `${Math.max(tooltipData.y - 120, 10)}px`,
-            }}
-            id="candle-detail-tooltip"
-          >
-            <div className="border-b border-slate-800 pb-1 mb-0.5 text-slate-400 font-bold text-[10px]" id="tooltip-date">
-              {tooltipData.date}
+        {tooltipData && (() => {
+          const refPrice = tooltipData.prevClose !== null ? tooltipData.prevClose : tooltipData.open;
+          
+          const openPct = tooltipData.prevClose !== null 
+            ? ((tooltipData.open - tooltipData.prevClose) / tooltipData.prevClose) * 100 
+            : 0;
+
+          const highPct = ((tooltipData.high - refPrice) / refPrice) * 100;
+          const lowPct = ((tooltipData.low - refPrice) / refPrice) * 100;
+          const closePct = ((tooltipData.close - refPrice) / refPrice) * 100;
+
+          const tooltipTradeValueMillion = (tooltipData.close * tooltipData.volume) / 1000000;
+          
+          return (
+            <div
+              className="absolute bg-slate-905/95 backdrop-blur-md border border-slate-700/70 rounded-xl p-3 shadow-2xl z-50 pointer-events-none text-xs font-mono text-slate-200 min-w-[210px] flex flex-col gap-1.5"
+              style={{
+                left: `${Math.min(tooltipData.x + 15, (containerRef.current?.clientWidth || 300) - 230)}px`,
+                top: `${Math.max(tooltipData.y - 140, 10)}px`,
+              }}
+              id="candle-detail-tooltip"
+            >
+              <div className="border-b border-slate-800 pb-1 mb-0.5 text-slate-400 font-bold text-[10px]" id="tooltip-date">
+                {tooltipData.date}
+              </div>
+              <div className="flex justify-between items-center gap-4" id="tooltip-open">
+                <span className="text-slate-400">시가</span>
+                <div className="flex items-center gap-1 font-semibold">
+                  <span className="text-white">{Math.round(tooltipData.open).toLocaleString()}원</span>
+                  <span className={`text-[10px] ${openPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
+                    ({openPct >= 0 ? '+' : ''}{openPct.toFixed(2)}%)
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-4" id="tooltip-high">
+                <span className="text-slate-400">고가</span>
+                <div className="flex items-center gap-1 font-semibold">
+                  <span className="text-white">{Math.round(tooltipData.high).toLocaleString()}원</span>
+                  <span className={`text-[10px] ${highPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
+                    ({highPct >= 0 ? '+' : ''}{highPct.toFixed(2)}%)
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-4" id="tooltip-low">
+                <span className="text-slate-400">저가</span>
+                <div className="flex items-center gap-1 font-semibold">
+                  <span className="text-white">{Math.round(tooltipData.low).toLocaleString()}원</span>
+                  <span className={`text-[10px] ${lowPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
+                    ({lowPct >= 0 ? '+' : ''}{lowPct.toFixed(2)}%)
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-4" id="tooltip-close">
+                <span className="text-slate-400">종가</span>
+                <div className="flex items-center gap-1 font-semibold">
+                  <span className="text-white">{Math.round(tooltipData.close).toLocaleString()}원</span>
+                  <span className={`text-[10px] ${closePct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
+                    ({closePct >= 0 ? '+' : ''}{closePct.toFixed(2)}%)
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-4 border-t border-slate-800/80 pt-1.5 mt-0.5" id="tooltip-volume">
+                <span className="text-slate-400">거래대금</span>
+                <span className="font-semibold text-amber-400">
+                  {tooltipTradeValueMillion.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}백만원
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between gap-4" id="tooltip-open">
-              <span className="text-slate-400">시가</span>
-              <span className="font-semibold text-white">{Math.round(tooltipData.open).toLocaleString()}원</span>
-            </div>
-            <div className="flex justify-between gap-4" id="tooltip-high">
-              <span className="text-slate-400">고가</span>
-              <span className="font-semibold text-emerald-400">{Math.round(tooltipData.high).toLocaleString()}원</span>
-            </div>
-            <div className="flex justify-between gap-4" id="tooltip-low">
-              <span className="text-slate-400">저가</span>
-              <span className="font-semibold text-sky-400">{Math.round(tooltipData.low).toLocaleString()}원</span>
-            </div>
-            <div className="flex justify-between gap-4" id="tooltip-close">
-              <span className="text-slate-400">종가</span>
-              <span className="font-semibold text-white">{Math.round(tooltipData.close).toLocaleString()}원</span>
-            </div>
-            <div className="flex justify-between gap-4 border-t border-slate-800/80 pt-1.5 mt-0.5" id="tooltip-volume">
-              <span className="text-slate-400">거래대금</span>
-              <span className="font-semibold text-amber-400">{Math.round(tooltipData.close * tooltipData.volume).toLocaleString()}원</span>
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* Separated Volume Chart Component */}

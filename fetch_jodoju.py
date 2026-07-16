@@ -70,32 +70,33 @@ def collect_jodoju():
         df_ohlcv["등락률"] = df_ohlcv["ChgRate"]
         df_ohlcv["거래대금"] = df_ohlcv["Amount"]
         
-        # Dynamic N scaling
-        N = 100
-        intersection_tickers = []
-        max_n = 500  # Cap search space to 500 to keep it relevant to leaders
+        # Dynamic M scaling based on User's Search Formula
+        # 1. Fix Top 100 by Change Rate (상승률 상위 100위 고정)
+        top100_change_df = df_ohlcv.sort_values(by="등락률", ascending=False).head(100)
+        top100_change_tickers = set(top100_change_df.index.tolist())
         
-        while N <= max_n:
-            topN_change = df_ohlcv.sort_values(by="등락률", ascending=False).head(N).index.tolist()
-            topN_value = df_ohlcv.sort_values(by="거래대금", ascending=False).head(N).index.tolist()
-            intersection_tickers = [t for t in topN_change if t in topN_value]
+        # 2. Expand Trading Value Rank (M) from 100 by steps of 50
+        M = 100
+        intersection_tickers = []
+        
+        while M <= 1000:
+            topM_value = df_ohlcv.sort_values(by="거래대금", ascending=False).head(M).index.tolist()
+            intersection_tickers = [t for t in topM_value if t in top100_change_tickers]
             
-            print(f"N = {N}: Found {len(intersection_tickers)} stocks in intersection of Top {N} change & value.")
+            print(f"M = {M}: Found {len(intersection_tickers)} stocks in intersection of Top 100 change & Top {M} value.")
             if len(intersection_tickers) >= 15:
-                # If we get at least 15, we can stop and cut off exactly at 15
                 break
-            # Increment and retry
-            N += 100
+            M += 50
             
-        # If N exceeded max_n and still < 15, just get the top 15 by change rate from top 300 by value
+        # Fallback if we still don't have 15 stocks (Highly unlikely but kept for safety)
         if len(intersection_tickers) < 15:
-            print("Intersection yields less than 15 stocks even at N=500. Falling back to top 300 by value sorted by change.")
-            top300_value = df_ohlcv.sort_values(by="거래대금", ascending=False).head(300)
-            fallback_sorted = top300_value.sort_values(by="등락률", ascending=False)
-            intersection_tickers = fallback_sorted.head(15).index.tolist()
+            print("Intersection yields less than 15 stocks. Falling back to top 100 change sorted by trading value.")
+            intersection_df_fallback = top100_change_df.sort_values(by="거래대금", ascending=False)
+            intersection_tickers = intersection_df_fallback.index.tolist()
             
-        # Sort intersection by trading value (거래대금) descending
-        intersection_df = df_ohlcv.loc[intersection_tickers].sort_values(by="거래대금", ascending=False)
+        # 3. Sort the final selected intersection stocks by Change Rate descending
+        # (순위는 상승률로 내림차순해서 나열)
+        intersection_df = df_ohlcv.loc[intersection_tickers].sort_values(by="등락률", ascending=False)
         
         # Limit to exactly 15 stocks
         top15_df = intersection_df.head(15)

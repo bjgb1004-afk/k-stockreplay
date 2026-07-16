@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { 
   Shield, Clock, Zap, FileText, Database, Sparkles, 
-  Check, Save, Trash2, RefreshCw, AlertTriangle 
+  Check, Save, Trash2, RefreshCw, AlertTriangle, Key 
 } from 'lucide-react';
 import { PreMarketBriefing, AfterMarketReport } from '../types';
 
@@ -31,7 +31,33 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
   providerIndex,
   setProviderIndex
 }) => {
-  const [adminTab, setAdminTab] = useState<'briefing' | 'report' | 'logs'>('briefing');
+  const [adminTab, setAdminTab] = useState<'report' | 'logs'>('report');
+  const [kisVerifyResult, setKisVerifyResult] = useState<any>(null);
+  const [kisVerifyLoading, setKisVerifyLoading] = useState<boolean>(false);
+
+  const handleVerifyKis = async () => {
+    setKisVerifyLoading(true);
+    setKisVerifyResult(null);
+    try {
+      const res = await fetch('/api/kis-verify');
+      if (res.ok) {
+        const data = await res.json();
+        setKisVerifyResult(data);
+      } else {
+        setKisVerifyResult({
+          tokenSuccess: false,
+          tokenError: '서버 에러가 발생했습니다.'
+        });
+      }
+    } catch (err: any) {
+      setKisVerifyResult({
+        tokenSuccess: false,
+        tokenError: err.message || String(err)
+      });
+    } finally {
+      setKisVerifyLoading(false);
+    }
+  };
   
   // Editorial States
   const [briefingText, setBriefingText] = useState<string>('');
@@ -230,18 +256,6 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
       {/* Tab select bar */}
       <div className="flex border-b border-slate-800 gap-1.5 overflow-x-auto pb-px">
         <button
-          onClick={() => setAdminTab('briefing')}
-          className={`px-4 py-2 text-xs font-extrabold flex items-center gap-1.5 border-b-2 transition-all cursor-pointer ${
-            adminTab === 'briefing'
-              ? 'border-amber-500 text-amber-400 font-black'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <Clock className="w-3.5 h-3.5" />
-          <span>장전 브리핑 JSON 편집 & 수동생성</span>
-        </button>
-
-        <button
           onClick={() => setAdminTab('report')}
           className={`px-4 py-2 text-xs font-extrabold flex items-center gap-1.5 border-b-2 transition-all cursor-pointer ${
             adminTab === 'report'
@@ -269,114 +283,9 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
       {/* Panel container */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 space-y-5">
         
-        {/* TAB 1: BRIEFING */}
-        {adminTab === 'briefing' && (
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-slate-950 p-4 rounded-xl border border-slate-850">
-              <div>
-                <span className="text-xs font-black text-amber-400 block">07:50 장전 브리핑 강제 재생성</span>
-                <span className="text-[11px] text-slate-400 font-sans">미국 증시 브리핑, 해외 지표, 관련 국내 영향 종목을 AI로 강제 추출합니다.</span>
-              </div>
-              <button
-                disabled={triggeringBriefing}
-                onClick={handleForceGenerateBriefing}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 text-slate-950 disabled:text-slate-500 text-xs font-black rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer self-start sm:self-center"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>{triggeringBriefing ? 'AI 생성 분석 진행 중...' : '브리핑 즉시 재생성 ⚡'}</span>
-              </button>
-            </div>
-
-            {/* JSON Code editor */}
-            <div className="space-y-2 text-left">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Pre-Market Briefing JSON Schema Editor</span>
-                {briefingJsonError ? (
-                  <span className="text-xs font-bold text-red-400 flex items-center gap-1 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20 font-mono">
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                    <span>구문 오류</span>
-                  </span>
-                ) : (
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 font-mono">
-                    <Check className="w-3.5 h-3.5" />
-                    <span>정상 스키마</span>
-                  </span>
-                )}
-              </div>
-              <textarea
-                value={briefingText}
-                onChange={(e) => {
-                  setBriefingText(e.target.value);
-                  try {
-                    JSON.parse(e.target.value);
-                    setBriefingJsonError(null);
-                  } catch (err: any) {
-                    setBriefingJsonError(err.message);
-                  }
-                }}
-                className="w-full h-96 bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-amber-300/90 focus:outline-none focus:border-amber-500/50 custom-scrollbar resize-none"
-              />
-              {briefingJsonError && (
-                <p className="text-[11px] text-red-400 font-mono bg-red-500/5 p-2 rounded-lg border border-red-500/10">
-                  {briefingJsonError}
-                </p>
-              )}
-            </div>
-
-            {/* Study guide generation launcher */}
-            <div className="bg-slate-950 p-4 rounded-xl border border-indigo-500/20 space-y-3.5">
-              <div>
-                <span className="text-xs font-black text-indigo-400 block">AI 주도주 차트 학습 가이드 즉시 주입</span>
-                <span className="text-[11px] text-slate-400 font-sans">특정 종목의 지지선, 저항선, 매점 가이드라인 오버레이를 생성하여 차트에 실시간 연동합니다.</span>
-              </div>
-              <div className="flex gap-2.5 max-w-sm">
-                <input 
-                  type="text" 
-                  placeholder="종목코드 (예: 000250)" 
-                  value={guideSymbol}
-                  onChange={(e) => setGuideSymbol(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 font-mono flex-1"
-                />
-                <button
-                  disabled={triggeringGuide}
-                  onClick={handleForceGenerateGuide}
-                  className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white disabled:text-slate-500 text-xs font-black rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-                >
-                  {triggeringGuide ? '구동 중...' : '가이드 주입 🚀'}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-3 border-t border-slate-800/60">
-              <button
-                onClick={handleSaveBriefingText}
-                className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <Save className="w-4 h-4" />
-                <span>장전 브리핑 JSON 편집본 저장하기</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: REPORT */}
+        {/* TAB 1: REPORT (JSON Schema Editor Only) */}
         {adminTab === 'report' && (
           <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-slate-950 p-4 rounded-xl border border-slate-850">
-              <div>
-                <span className="text-xs font-black text-blue-400 block">16:00 장마감 주도주 리포트 강제 재생성</span>
-                <span className="text-[11px] text-slate-400 font-sans">당일 한국 시장 주도주 및 호재/악재 뉴스, 테마를 국장 복기 엔진으로 강제 추출합니다.</span>
-              </div>
-              <button
-                disabled={triggeringReport}
-                onClick={handleForceGenerateReport}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white disabled:text-slate-500 text-xs font-black rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer self-start sm:self-center"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>{triggeringReport ? 'AI 분석 진행 중...' : '주도주 분석 즉시 실행 ⚡'}</span>
-              </button>
-            </div>
-
             {/* JSON Code editor */}
             <div className="space-y-2 text-left">
               <div className="flex justify-between items-center">
