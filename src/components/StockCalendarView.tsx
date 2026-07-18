@@ -248,7 +248,7 @@ export const StockCalendarView: React.FC = () => {
   const activeEvents = selectedDay ? JULY_2026_EVENTS.filter(e => e.day === selectedDay) : [];
 
   return (
-    <div id="stock-calendar-root" className="min-h-[80vh] bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 font-sans">
+    <div id="stock-calendar-root" className="col-span-12 min-h-[80vh] bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4 sm:p-6 lg:p-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Upper Brand / SEO Header */}
@@ -261,35 +261,35 @@ export const StockCalendarView: React.FC = () => {
                 JULY 2026
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
               K-STOCK <span className="text-indigo-500">증시 캘린더</span>
             </h1>
-            <p className="text-xs text-slate-400 leading-relaxed font-medium">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
               국내외 증시의 변동성을 좌우하는 핵심 금리, 만기일, 매크로 지표, 그리고 실적 발표 실시간 일정을 완전 해부합니다.
             </p>
           </div>
 
           {/* Quick Stats Summary */}
-          <div className="flex items-center gap-2.5 bg-slate-900/60 border border-slate-800/80 p-3 rounded-2xl shrink-0">
-            <div className="text-center px-3 border-r border-slate-800/80">
-              <span className="block text-[9px] font-bold text-slate-500 font-mono uppercase">총 주요 일정</span>
-              <span className="text-base font-black text-slate-200 font-mono">{JULY_2026_EVENTS.length}건</span>
+          <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 p-3 rounded-2xl shrink-0">
+            <div className="text-center px-3 border-r border-slate-200 dark:border-slate-800/80">
+              <span className="block text-[9px] font-bold text-slate-500 dark:text-slate-500 font-mono uppercase">총 주요 일정</span>
+              <span className="text-base font-black text-slate-800 dark:text-slate-200 font-mono">{JULY_2026_EVENTS.length}건</span>
             </div>
-            <div className="text-center px-3 border-r border-slate-800/80">
-              <span className="block text-[9px] font-bold text-slate-500 font-mono uppercase">초고변동 (HIGH)</span>
+            <div className="text-center px-3 border-r border-slate-200 dark:border-slate-800/80">
+              <span className="block text-[9px] font-bold text-slate-500 dark:text-slate-500 font-mono uppercase">초고변동 (HIGH)</span>
               <span className="text-base font-black text-red-400 font-mono">
                 {JULY_2026_EVENTS.filter(e => e.impact === 'HIGH').length}건
               </span>
             </div>
             <div className="text-center px-1">
-              <span className="block text-[9px] font-bold text-slate-500 font-mono uppercase">FOMC 일정</span>
+              <span className="block text-[9px] font-bold text-slate-500 dark:text-slate-500 font-mono uppercase">FOMC 일정</span>
               <span className="text-base font-black text-indigo-400 font-mono">1건</span>
             </div>
           </div>
         </div>
 
         {/* Categories / Filtering Row */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/40 p-2.5 rounded-2xl border border-slate-900">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-2xl border border-slate-900">
           <div className="flex flex-wrap gap-1.5 select-none">
             {[
               { id: 'all', label: '전체 일정', count: JULY_2026_EVENTS.length, color: 'bg-indigo-600/10 text-indigo-400' },
@@ -308,12 +308,12 @@ export const StockCalendarView: React.FC = () => {
                 className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 border ${
                   filterType === tab.id
                     ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/10'
-                    : 'bg-slate-950 text-slate-400 border-slate-900 hover:border-slate-800 hover:text-slate-200'
+                    : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
               >
                 <span>{tab.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold ${
-                  filterType === tab.id ? 'bg-indigo-700 text-white' : 'bg-slate-900 text-slate-500'
+                  filterType === tab.id ? 'bg-indigo-700 text-white' : 'bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-500'
                 }`}>
                   {tab.count}
                 </span>
@@ -337,20 +337,20 @@ export const StockCalendarView: React.FC = () => {
         <div className="space-y-6 max-w-4xl mx-auto">
           
           {/* Calendar Month Matrix */}
-          <div className="bg-slate-900/40 rounded-3xl border border-slate-900 p-4 sm:p-5">
+          <div className="bg-slate-50 dark:bg-slate-900/40 rounded-3xl border border-slate-900 p-4 sm:p-5">
             {/* Calendar Control Header */}
             <div className="flex items-center justify-between mb-5 px-1 select-none">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-black text-slate-100 font-mono">2026. 07</span>
-                <span className="text-[10px] font-bold text-slate-500 bg-slate-950 px-2 py-0.5 rounded-md border border-slate-900">
+                <span className="text-xl font-black text-slate-900 dark:text-slate-100 font-mono">2026. 07</span>
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 bg-white dark:bg-slate-950 px-2 py-0.5 rounded-md border border-slate-900">
                   JULY
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <button disabled className="p-1.5 rounded-lg bg-slate-950 border border-slate-900/80 text-slate-600 cursor-not-allowed">
+                <button disabled className="p-1.5 rounded-lg bg-white dark:bg-slate-950 border border-slate-900/80 text-slate-600 cursor-not-allowed">
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <button disabled className="p-1.5 rounded-lg bg-slate-950 border border-slate-900/80 text-slate-600 cursor-not-allowed">
+                <button disabled className="p-1.5 rounded-lg bg-white dark:bg-slate-950 border border-slate-900/80 text-slate-600 cursor-not-allowed">
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -362,7 +362,7 @@ export const StockCalendarView: React.FC = () => {
                 <div 
                   key={idx} 
                   className={`text-[11px] font-black pb-1.5 border-b border-slate-900 ${
-                    idx === 0 ? 'text-rose-400' : idx === 6 ? 'text-blue-400' : 'text-slate-500'
+                    idx === 0 ? 'text-rose-400' : idx === 6 ? 'text-blue-400' : 'text-slate-500 dark:text-slate-500'
                   }`}
                 >
                   {dow}
@@ -399,7 +399,7 @@ export const StockCalendarView: React.FC = () => {
                         ? 'bg-transparent border-transparent cursor-default' 
                         : isSelected
                         ? 'bg-indigo-950/60 border-indigo-500 shadow-lg shadow-indigo-500/5 cursor-pointer z-10'
-                        : 'bg-slate-950/50 border-slate-900/60 hover:bg-slate-900/80 hover:border-slate-800 cursor-pointer'
+                        : 'bg-white dark:bg-slate-950/50 border-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-900/80 hover:border-slate-200 dark:hover:border-slate-800 cursor-pointer'
                     }`}
                   >
                     {/* Day Number Row */}
@@ -412,7 +412,7 @@ export const StockCalendarView: React.FC = () => {
                             ? 'text-rose-400' 
                             : isSaturday 
                             ? 'text-blue-400' 
-                            : 'text-slate-400'
+                            : 'text-slate-600 dark:text-slate-400'
                         }`}>
                           {day}
                         </span>
@@ -437,14 +437,14 @@ export const StockCalendarView: React.FC = () => {
                                 ? 'bg-rose-950/40 text-rose-300 border border-rose-900/40'
                                 : ev.impact === 'MEDIUM'
                                 ? 'bg-amber-950/30 text-amber-300 border border-amber-900/40'
-                                : 'bg-slate-900 text-slate-400 border border-slate-800/60'
+                                : 'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800/60'
                             }`}
                           >
                             {ev.title}
                           </div>
                         ))}
                         {dayEvents.length > 2 && (
-                          <div className="text-[7px] sm:text-[8px] font-mono text-slate-500 font-extrabold text-right pr-0.5">
+                          <div className="text-[7px] sm:text-[8px] font-mono text-slate-500 dark:text-slate-500 font-extrabold text-right pr-0.5">
                             +{dayEvents.length - 2}건 더있음
                           </div>
                         )}
@@ -457,9 +457,9 @@ export const StockCalendarView: React.FC = () => {
           </div>
 
           {/* Educational Disclaimer Panel */}
-          <div className="bg-slate-900/20 border border-slate-900 p-4 rounded-3xl text-[10px] text-slate-500 leading-relaxed select-text">
-            <span className="font-extrabold text-slate-400 flex items-center gap-1.5 mb-1 select-none">
-              <Info className="w-3.5 h-3.5 text-slate-500" />
+          <div className="bg-slate-50 dark:bg-slate-900/20 border border-slate-900 p-4 rounded-3xl text-[10px] text-slate-500 dark:text-slate-500 leading-relaxed select-text">
+            <span className="font-extrabold text-slate-600 dark:text-slate-400 flex items-center gap-1.5 mb-1 select-none">
+              <Info className="w-3.5 h-3.5 text-slate-500 dark:text-slate-500" />
               캘린더 활용 및 투자 면책 안내
             </span>
             K-STOCK REPLAY 증시 캘린더는 실제 공정 공시 및 각 통화당국 공표 일정을 가공하여 제공합니다. 단, 거시경제 여건이나 유관 기관 사정으로 고지일정은 상시 변경될 수 있습니다. <strong>본 가이드 내용은 단순 교육 목적 수치 정보 분석이며 어떠한 주식 매수/매도 권유도 포함하지 않습니다.</strong>
@@ -479,7 +479,7 @@ export const StockCalendarView: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedDay(null)}
-              className="absolute inset-0 bg-slate-950/85 backdrop-blur-md"
+              className="absolute inset-0 bg-white dark:bg-slate-950/85 backdrop-blur-md"
             />
             
             {/* Modal Box */}
@@ -488,12 +488,12 @@ export const StockCalendarView: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.4 }}
-              className="relative w-full max-w-lg bg-slate-900/95 border border-slate-800 rounded-3xl p-6 shadow-2xl z-10 max-h-[85vh] overflow-y-auto custom-scrollbar"
+              className="relative w-full max-w-lg bg-slate-50 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl z-10 max-h-[85vh] overflow-y-auto custom-scrollbar"
             >
               {/* Close Button */}
               <button
                 onClick={() => setSelectedDay(null)}
-                className="absolute top-4 right-4 p-1.5 rounded-xl border border-slate-800 text-slate-400 hover:text-slate-200 bg-slate-900 hover:bg-slate-800 transition-colors cursor-pointer select-none"
+                className="absolute top-4 right-4 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer select-none"
               >
                 <span className="sr-only">닫기</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -503,17 +503,17 @@ export const StockCalendarView: React.FC = () => {
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between select-none pr-8">
-                  <span className="text-base font-black text-slate-100 flex items-center gap-1.5">
+                  <span className="text-base font-black text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                     <CalendarIcon className="w-5 h-5 text-indigo-400" />
                     <span>7월 {selectedDay}일 상세 일정</span>
                   </span>
-                  <span className="text-[10px] font-mono font-extrabold bg-slate-950 px-2 py-0.5 border border-slate-900 text-indigo-400 rounded-md">
+                  <span className="text-[10px] font-mono font-extrabold bg-white dark:bg-slate-950 px-2 py-0.5 border border-slate-900 text-indigo-400 rounded-md">
                     {activeEvents.length}개 발견
                   </span>
                 </div>
 
                 {activeEvents.length === 0 ? (
-                  <div className="py-12 text-center text-xs text-slate-500 space-y-2">
+                  <div className="py-12 text-center text-xs text-slate-500 dark:text-slate-500 space-y-2">
                     <HelpCircle className="w-8 h-8 mx-auto text-slate-600 stroke-1" />
                     <p>해당 일자에는 필터링된 일정 및 주요 이벤트가 없습니다.</p>
                   </div>
@@ -522,7 +522,7 @@ export const StockCalendarView: React.FC = () => {
                     {activeEvents.map((ev) => (
                       <div
                         key={ev.id}
-                        className="bg-slate-950 p-4 rounded-2xl border border-slate-900 hover:border-slate-850 transition-colors select-text"
+                        className="bg-white dark:bg-slate-950 p-4 rounded-2xl border border-slate-900 hover:border-slate-200 dark:border-slate-850 transition-colors select-text"
                       >
                         {/* Event Type & Impact Badges */}
                         <div className="flex items-center justify-between mb-2">
@@ -541,14 +541,14 @@ export const StockCalendarView: React.FC = () => {
 
                           <div className="flex items-center gap-1.5">
                             {ev.time && (
-                              <span className="text-[9px] font-semibold text-slate-500 font-mono">
+                              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-500 font-mono">
                                 {ev.time}
                               </span>
                             )}
                             <span className={`text-[8px] sm:text-[9px] font-extrabold px-1.5 py-0.5 rounded-md font-mono ${
                               ev.impact === 'HIGH' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
                               ev.impact === 'MEDIUM' ? 'bg-amber-500/15 text-amber-300 border border-amber-500/20' :
-                              'bg-slate-900 text-slate-400'
+                              'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
                             }`}>
                               {ev.impact} IMPACT
                             </span>
@@ -556,18 +556,18 @@ export const StockCalendarView: React.FC = () => {
                         </div>
 
                         {/* Event Title */}
-                        <h4 className="text-xs sm:text-sm font-black text-slate-100 mb-1.5">
+                        <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-slate-100 mb-1.5">
                           {ev.title}
                         </h4>
 
                         {/* Description */}
-                        <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
+                        <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
                           {ev.description}
                         </p>
 
                         {/* Market Reaction Tip */}
                         {ev.marketReaction && (
-                          <div className="bg-slate-900 border border-slate-850 p-2.5 rounded-xl text-[10px] text-slate-400 leading-relaxed">
+                          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-2.5 rounded-xl text-[10px] text-slate-600 dark:text-slate-400 leading-relaxed">
                             <span className="font-extrabold text-indigo-400 flex items-center gap-1 mb-1 select-none">
                               <AlertCircle className="w-3.5 h-3.5" />
                               매매 가이드 및 영향
@@ -580,10 +580,10 @@ export const StockCalendarView: React.FC = () => {
                   </div>
                 )}
                 
-                <div className="pt-3 border-t border-slate-800 flex justify-end">
+                <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
                   <button
                     onClick={() => setSelectedDay(null)}
-                    className="px-4 py-2 rounded-xl text-xs font-black bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer select-none"
+                    className="px-4 py-2 rounded-xl text-xs font-black bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 transition-colors cursor-pointer select-none"
                   >
                     확인
                   </button>

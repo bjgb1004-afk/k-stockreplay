@@ -1748,6 +1748,65 @@ CREATE TABLE kstock_platform_data (
     return candles;
   }
 
+  function generateFallbackMinuteCandles(ticker: string): any[] {
+    let basePrice = 25000;
+    const hash = parseInt(ticker, 10) || 123456;
+    basePrice = 5000 + (hash % 150000); // 5,000 ~ 155,000 KRW
+    
+    const candles: any[] = [];
+    const count = 390; // 09:00 to 15:30 is exactly 390 minutes
+    let currentPrice = basePrice;
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10);
+    
+    // Seeded pseudorandom generator for consistent chart movement
+    let seed = hash;
+    const randomSeed = () => {
+      const x = Math.sin(seed++) * 10000;
+      return x - Math.floor(x);
+    };
+
+    for (let i = 0; i < count; i++) {
+      const hour = 9 + Math.floor(i / 60);
+      const minVal = i % 60;
+      const timeStr = `${hour.toString().padStart(2, '0')}:${minVal.toString().padStart(2, '0')}:00`;
+      const dateWithTimeStr = `${dateStr} ${timeStr}`;
+
+      const change = currentPrice * 0.0008 * (randomSeed() - 0.49); // slight upward bias
+      const open = roundToTick(currentPrice);
+      const close = roundToTick(currentPrice + change);
+      let high = roundToTick(Math.max(open, close) + randomSeed() * (currentPrice * 0.0012));
+      let low = roundToTick(Math.min(open, close) - randomSeed() * (currentPrice * 0.0012));
+      
+      if (high < Math.max(open, close)) high = Math.max(open, close);
+      if (low > Math.min(open, close)) low = Math.min(open, close);
+
+      // Volume pattern: high activity at open/close, dry midday
+      let timeWeight = 1.0;
+      if (i < 45) {
+        timeWeight = 3.5;
+      } else if (i < 120) {
+        timeWeight = 1.2;
+      } else if (i > 340) {
+        timeWeight = 2.0;
+      } else {
+        timeWeight = 0.4;
+      }
+      const volume = Math.round((12000 + randomSeed() * 250000) * timeWeight);
+
+      candles.push({
+        date: dateWithTimeStr,
+        open,
+        high,
+        low,
+        close,
+        volume
+      });
+      currentPrice = close;
+    }
+    return candles;
+  }
+
   // --- 5단계 : Replay Engine Data Provider 추상화 아키텍처 ---
   interface IStockDataProvider {
     name: string;
@@ -1882,46 +1941,88 @@ CREATE TABLE kstock_platform_data (
 
       const { accessToken, baseUrl } = await getKisAccessToken(appKey, appSecret);
       const isMock = baseUrl.includes('vts');
-      const candles: any[] = [];
+      let candles: any[] = [];
       let name = KNOWN_TICKER_NAMES[cleanTicker] || cleanTicker;
+      const supabaseKey = `stock_${timeframe}_${cleanTicker}`;
+
+      // 1. Check Supabase first (if configured and active)
+      try {
+        if (isSupabaseActive()) {
+          const cached = await getPlatformDataFromSupabase(supabaseKey);
+          if (cached && Array.isArray(cached.candles) && cached.candles.length >= (timeframe === 'day' ? 120 : 350)) {
+            // Check flat line for minute candles to avoid corrupted data
+            const isFlat = timeframe === 'minute' && cached.candles.length > 10 && cached.candles.every((c: any) => c.close === cached.candles[0].close);
+            if (!isFlat) {
+              console.log(`[Supabase Cache] Loaded ${cached.candles.length} ${timeframe} candles for ticker ${cleanTicker} from Supabase.`);
+              return { candles: cached.candles, name: cached.name || name };
+            } else {
+              console.warn(`[Supabase Cache] Cached ${timeframe} candles for ${cleanTicker} are flat. Forcing fresh fetch.`);
+            }
+          }
+        }
+      } catch (sbErr: any) {
+        console.warn(`[Supabase Cache] Error checking cache for ${cleanTicker}:`, sbErr.message || sbErr);
+      }
 
       try {
         if (timeframe === 'day') {
           const today = new Date(Date.now() + (9 * 60 * 60 * 1000));
-          const endDateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
           
-          const pastDate = new Date(today.getTime() - 150 * 24 * 60 * 60 * 1000);
-          const startDateStr = pastDate.toISOString().slice(0, 10).replace(/-/g, '');
+          // Request 1: past 90 days to today (~60 trading days)
+          const endDateStr1 = today.toISOString().slice(0, 10).replace(/-/g, '');
+          const pastDate1 = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
+          const startDateStr1 = pastDate1.toISOString().slice(0, 10).replace(/-/g, '');
+          
+          // Request 2: past 240 days to 91 days ago (~100 trading days)
+          const endDateStr2 = new Date(today.getTime() - 91 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10).replace(/-/g, '');
+          const pastDate2 = new Date(today.getTime() - 240 * 24 * 60 * 60 * 1000);
+          const startDateStr2 = pastDate2.toISOString().slice(0, 10).replace(/-/g, '');
 
-          const url = `${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice?FID_COND_MRKT_DIV_CODE=J&FID_INPUT_ISCD=${cleanTicker}&FID_INPUT_DATE_1=${startDateStr}&FID_INPUT_DATE_2=${endDateStr}&FID_PERIOD_DIV_CODE=D&FID_ORG_ADJ_PRC=0`;
+          const fetchDailyRange = async (start: string, end: string) => {
+            const url = `${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice?FID_COND_MRKT_DIV_CODE=J&FID_INPUT_ISCD=${cleanTicker}&FID_INPUT_DATE_1=${start}&FID_INPUT_DATE_2=${end}&FID_PERIOD_DIV_CODE=D&FID_ORG_ADJ_PRC=0`;
+            console.log(`[KIS API] Fetching daily range (${start} to ${end}) via ${url}`);
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: {
+                'content-type': 'application/json; charset=utf-8',
+                'authorization': `Bearer ${accessToken}`,
+                'appkey': appKey,
+                'appsecret': appSecret,
+                'tr_id': isMock ? 'VTKST03010100' : 'FHKST03010100'
+              }
+            });
 
-          console.log(`[KIS API] Fetching daily candles via ${url}`);
-          const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-              'content-type': 'application/json; charset=utf-8',
-              'authorization': `Bearer ${accessToken}`,
-              'appkey': appKey,
-              'appsecret': appSecret,
-              'tr_id': isMock ? 'VTKST03010100' : 'FHKST03010100'
+            if (!response.ok) {
+              throw new Error(`KIS Daily API range returned status ${response.status}`);
             }
-          });
 
-          if (!response.ok) {
-            throw new Error(`KIS Daily API returned status ${response.status}`);
+            const data: any = await response.json();
+            if (data.rt_cd !== '0' || !Array.isArray(data.output2)) {
+              throw new Error(`KIS Daily API returned error: ${data.msg1 || JSON.stringify(data)}`);
+            }
+
+            if (data.output1?.hts_kor_isnm) {
+              name = data.output1.hts_kor_isnm.trim();
+            }
+
+            return data.output2;
+          };
+
+          const output1 = await fetchDailyRange(startDateStr1, endDateStr1);
+          await new Promise(resolve => setTimeout(resolve, 200)); // Sleep to prevent rate limits
+          const output2 = await fetchDailyRange(startDateStr2, endDateStr2);
+
+          const combinedOutput = [...output1, ...output2];
+          const uniqueMap = new Map<string, any>();
+          for (const item of combinedOutput) {
+            if (item.stck_bsop_date) {
+              uniqueMap.set(item.stck_bsop_date, item);
+            }
           }
 
-          const data: any = await response.json();
-          if (data.rt_cd !== '0' || !Array.isArray(data.output2)) {
-            throw new Error(`KIS Daily API returned error: ${data.msg1 || JSON.stringify(data)}`);
-          }
-
-          if (data.output1?.hts_kor_isnm) {
-            name = data.output1.hts_kor_isnm.trim();
-          }
-
-          const rawOutput = [...data.output2].reverse();
-          for (const item of rawOutput) {
+          const sortedRaw = Array.from(uniqueMap.values()).sort((a: any, b: any) => a.stck_bsop_date.localeCompare(b.stck_bsop_date));
+          
+          for (const item of sortedRaw) {
             const rawDate = item.stck_bsop_date;
             if (!rawDate || rawDate.length !== 8) continue;
             
@@ -1935,69 +2036,61 @@ CREATE TABLE kstock_platform_data (
               volume: parseInt(item.acml_vol, 10) || 0
             });
           }
+
+          if (candles.length < 120) {
+            console.warn(`[KIS API] Returned only ${candles.length} daily candles after combining. Throwing error to cascade to Naver fallback.`);
+            throw new Error(`Insufficient daily candles from KIS (got ${candles.length}, need 120).`);
+          }
         } else {
-          const url = `${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice?FID_COND_MRKT_DIV_CODE=J&FID_INPUT_ISCD=${cleanTicker}&FID_HOUR_CLSF=1&FID_PW_DATA_IN_ENVR_DV_CODE=00&FID_ETC_CLS_CODE=&FID_INPUT_HOUR_1=`;
-
-          console.log(`[KIS API] Fetching 1-minute intraday candles via ${url}`);
-          const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-              'content-type': 'application/json; charset=utf-8',
-              'authorization': `Bearer ${accessToken}`,
-              'appkey': appKey,
-              'appsecret': appSecret,
-              'tr_id': isMock ? 'VTKST03010200' : 'FHKST03010200'
-            }
-          });
-
-          if (!response.ok) {
-            throw new Error(`KIS Minute API returned status ${response.status}`);
-          }
-
-          const data: any = await response.json();
-          if (data.rt_cd !== '0' || !Array.isArray(data.output2)) {
-            throw new Error(`KIS Minute API returned error: ${data.msg1 || JSON.stringify(data)}`);
-          }
-
-          if (data.output1?.hts_kor_isnm) {
-            name = data.output1.hts_kor_isnm.trim();
-          }
-
-          const rawDate = data.output1?.stck_bsop_date || new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10).replace(/-/g, '');
-          const year = rawDate.slice(0, 4);
-          const month = rawDate.slice(4, 6);
-          const day = rawDate.slice(6, 8);
-          const datePrefix = `${year}-${month}-${day}`;
-
-          const rawOutput = [...data.output2].reverse();
-          for (const item of rawOutput) {
-            const timeStr = item.stck_cntg_hour;
-            if (!timeStr || timeStr.length < 4) continue;
-            
-            const formattedHour = timeStr.slice(0, 2);
-            const formattedMin = timeStr.slice(2, 4);
-            const fullDateTimeStr = `${datePrefix} ${formattedHour}:${formattedMin}:00`;
-
-            candles.push({
-              date: fullDateTimeStr,
-              open: parseInt(item.stck_oprc, 10) || 0,
-              high: parseInt(item.stck_hgpr, 10) || 0,
-              low: parseInt(item.stck_lwpr, 10) || 0,
-              close: parseInt(item.stck_clpr, 10) || 0,
-              volume: parseInt(item.cntg_vol, 10) || 0
-            });
-          }
+          // Use our robust paging 390-minute candles downloader for intraday replay!
+          console.log(`[KIS API] Fetching full 390-minute intraday dataset for ${cleanTicker} using paginated queries...`);
+          candles = await fetch390MinuteCandles(baseUrl, cleanTicker, accessToken, appKey, appSecret, isMock);
         }
 
         if (candles.length === 0) {
           throw new Error('Zero candles returned from KIS API');
         }
 
+        if (timeframe === 'minute') {
+          if (candles.length < 350) {
+            throw new Error(`Insufficient minute candles from KIS (got only ${candles.length} candles, expected ~390). Cascading to Naver...`);
+          }
+          const isFlatLine = candles.length > 10 && candles.every(c => c.close === candles[0].close);
+          if (isFlatLine) {
+            throw new Error('Minute candles are completely flat (horizontal line). Market might be closed or KIS returned broken data on a weekend.');
+          }
+        }
+
+        // Cache the successful dataset to Supabase for extremely fast future loading!
+        try {
+          if (isSupabaseActive()) {
+            await savePlatformDataToSupabase(supabaseKey, { candles, name });
+            console.log(`[Supabase Save] Successfully cached ${candles.length} ${timeframe} candles to Supabase for ${cleanTicker}.`);
+          }
+        } catch (sbSaveErr: any) {
+          console.warn('[Supabase Save] Failed to cache stock data:', sbSaveErr.message || sbSaveErr);
+        }
+
         return { candles, name };
       } catch (err: any) {
         console.warn(`[KoreaInvestmentStockDataProvider] KIS API call failed for ticker ${cleanTicker}: ${err.message || err}. Cascading fallback to Naver Finance...`);
         const naverProvider = new NaverStockDataProvider();
-        return await naverProvider.fetchStockData(ticker, timeframe);
+        const naverResult = await naverProvider.fetchStockData(ticker, timeframe);
+
+        // Cache Naver's response to Supabase so that we can reuse it too!
+        try {
+          if (isSupabaseActive() && naverResult.candles && naverResult.candles.length > 0) {
+            const isFlat = timeframe === 'minute' && naverResult.candles.length > 10 && naverResult.candles.every(c => c.close === naverResult.candles[0].close);
+            if (!isFlat) {
+              await savePlatformDataToSupabase(supabaseKey, { candles: naverResult.candles, name: naverResult.name });
+              console.log(`[Supabase Save] Successfully cached cascaded Naver ${timeframe} candles for ${cleanTicker} to Supabase.`);
+            }
+          }
+        } catch (sbSaveErr: any) {
+          console.warn('[Supabase Save] Failed to cache cascaded Naver stock data:', sbSaveErr.message || sbSaveErr);
+        }
+
+        return naverResult;
       }
     }
   }
@@ -2159,7 +2252,7 @@ CREATE TABLE kstock_platform_data (
     const formattedDate = `${timeInfo.dateStr.slice(0, 4)}-${timeInfo.dateStr.slice(4, 6)}-${timeInfo.dateStr.slice(6, 8)}`;
 
     while (loopCount < maxLoops) {
-      const url = `${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice?FID_COND_MRKT_DIV_CODE=J&FID_INPUT_ISCD=${cleanTicker}&FID_HOUR_CLSF=1&FID_PW_DATA_IN_ENVR_DV_CODE=00&FID_ETC_CLS_CODE=&FID_INPUT_HOUR_1=${nextHour}`;
+      const url = `${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice?FID_COND_MRKT_DIV_CODE=J&FID_INPUT_ISCD=${cleanTicker}&FID_HOUR_CLSF=1&FID_PW_DATA_IN_ENVR_DV_CODE=00&FID_ETC_CLS_CODE=&FID_INPUT_HOUR_1=${nextHour}&FID_PW_DATA_INCU_YN=Y`;
       
       const response = await fetch(url, {
         method: 'GET',
@@ -2334,6 +2427,15 @@ CREATE TABLE kstock_platform_data (
             }
 
             slicedDayCandles = dayCandles.slice(-120);
+            
+            if (slicedDayCandles.length < 120) {
+              console.warn(`[Stock Batch] KIS returned only ${slicedDayCandles.length} candles. Falling back to Naver for 120 candles.`);
+              const naverProvider = new NaverStockDataProvider();
+              const dayResult = await naverProvider.fetchStockData(ticker, 'day');
+              if (dayResult.candles.length >= 120) {
+                slicedDayCandles = dayResult.candles.slice(-120);
+              }
+            }
 
             // API 요청 속도 제어
             await new Promise(resolve => setTimeout(resolve, 800));
@@ -2343,6 +2445,12 @@ CREATE TABLE kstock_platform_data (
             
             if (rawMinuteCandles.length === 0) {
               throw new Error('Zero minute candles returned');
+            }
+            
+            // Check if all candles are identical (flat horizontal line) indicating broken data
+            const isFlatLine = rawMinuteCandles.length > 10 && rawMinuteCandles.every(c => c.close === rawMinuteCandles[0].close);
+            if (isFlatLine) {
+              throw new Error('Minute candles are completely flat (horizontal line). Market might be closed or KIS returned broken data on a weekend.');
             }
 
             // 3단계 가공 파이프라인 (노이즈 + 워핑 + 호가 틱 반올림)
@@ -2499,7 +2607,9 @@ CREATE TABLE kstock_platform_data (
 
     async fetchStockData(ticker: string, timeframe: 'day' | 'minute'): Promise<{ candles: any[]; name: string }> {
       const cleanTicker = ticker.replace(/\.(KS|KQ)$/i, '').trim();
-      const candles = generateFallbackDailyCandles(cleanTicker);
+      const candles = timeframe === 'minute'
+        ? generateFallbackMinuteCandles(cleanTicker)
+        : generateFallbackDailyCandles(cleanTicker);
       const name = KNOWN_TICKER_NAMES[cleanTicker] || cleanTicker;
       return { candles, name };
     }
@@ -2572,17 +2682,28 @@ CREATE TABLE kstock_platform_data (
           const fileBuffer = fs.readFileSync(filePath);
           const decompressed = zlib.gunzipSync(fileBuffer);
           const candles = JSON.parse(decompressed.toString('utf-8'));
+          
+          const isZeroOrCorrupted = Array.isArray(candles) && candles.length > 0 && candles.slice(0, 10).every(c => !c.close || c.close === 0);
+          if (isZeroOrCorrupted) {
+            throw new Error('Decompressed candles in GZIP file are corrupted or contain all zeros.');
+          }
           return { candles, name };
         } catch (err: any) {
-          console.error(`[Gzip Stock DB] Error decompressing ${filePath}. Serving fallback simulation...`, err.message || err);
+          console.error(`[Gzip Stock DB] Error decompressing or validating ${filePath}. Serving fallback simulation...`, err.message || err);
         }
       }
 
       // To respect the rule "Do not fetch dynamically during market hours", we DO NOT hit KIS API here.
-      // Instead, we seamlessly serve realistic simulated fallback data.
-      console.log(`[Gzip Stock DB] No compressed file found for ${cleanTicker} (${timeframe}) in cache. Serving simulated fallback data...`);
-      const fallbackProvider = new FallbackStockDataProvider();
-      return fallbackProvider.fetchStockData(ticker, timeframe);
+      // Instead, we prioritize cascading to Naver Finance to load real 1-minute candles.
+      console.log(`[Gzip Stock DB] No compressed file found for ${cleanTicker} (${timeframe}) in cache. Servicing real data fallback via Naver...`);
+      try {
+        const naverProvider = new NaverStockDataProvider();
+        return await naverProvider.fetchStockData(ticker, timeframe);
+      } catch (naverErr: any) {
+        console.warn(`[Gzip Stock DB] Naver Stock Provider also failed for ${cleanTicker}:`, naverErr.message || naverErr);
+        const fallbackProvider = new FallbackStockDataProvider();
+        return fallbackProvider.fetchStockData(ticker, timeframe);
+      }
     }
   }
 
@@ -2659,11 +2780,7 @@ CREATE TABLE kstock_platform_data (
         const kstMinutes = kstNow.getUTCMinutes();
         const currentKstTimeNum = kstHour * 100 + kstMinutes;
 
-        if (sortedDays[sortedDays.length - 1] === kstTodayStr && currentKstTimeNum < 1600) {
-          if (sortedDays.length > 1) {
-            sortedDays.pop();
-          }
-        }
+        // (Removed pop() of today's date per user request "당일포함")
 
         const targetDay = sortedDays[sortedDays.length - 1];
         const selectedRawItems = daysMap.get(targetDay)!;
@@ -2731,7 +2848,7 @@ CREATE TABLE kstock_platform_data (
           });
         }
       } else {
-        const naverUrl = `https://fchart.stock.naver.com/sise.nhn?symbol=${cleanTicker}&timeframe=day&count=120&requestType=0`;
+        const naverUrl = `https://fchart.stock.naver.com/sise.nhn?symbol=${cleanTicker}&timeframe=day&count=150&requestType=0`;
         const response = await fetch(naverUrl, {
           headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -2772,12 +2889,7 @@ CREATE TABLE kstock_platform_data (
         const kstMinutes = kstNow.getUTCMinutes();
         const currentKstTimeNum = kstHour * 100 + kstMinutes;
 
-        if (currentKstTimeNum < 1600) {
-          const todayIdx = candles.findIndex(c => c.date === kstTodayStr);
-          if (todayIdx !== -1) {
-            candles.splice(todayIdx, 1);
-          }
-        }
+        // (Removed splice() of today's date per user request "당일포함")
       }
 
       return { candles, name };
@@ -2851,8 +2963,8 @@ CREATE TABLE kstock_platform_data (
       return res.status(400).json({ error: 'Invalid ticker format. Expected a 6-digit stock code.' });
     }
 
-    // If force is true, use live KIS provider (0). Otherwise use GzipStockFileDataProvider (3).
-    const idx = isForce ? 0 : (providerIndex ? parseInt(providerIndex as string, 10) : 3);
+    // If force is true, use live KIS provider (0). Otherwise use GzipStockFileDataProvider (4).
+    const idx = isForce ? 0 : (providerIndex ? parseInt(providerIndex as string, 10) : 4);
 
     // Check memory cache first (Only if NOT forced)
     const now = Date.now();
@@ -2903,7 +3015,9 @@ CREATE TABLE kstock_platform_data (
       console.warn(`Warning/Soft Error fetching real stock data for ticker ${ticker} (mode: ${mode}):`, err.message || err);
       
       const name = KNOWN_TICKER_NAMES[cleanTicker] || cleanTicker;
-      const candles = generateFallbackDailyCandles(cleanTicker);
+      const candles = mode === 'minute'
+        ? generateFallbackMinuteCandles(cleanTicker)
+        : generateFallbackDailyCandles(cleanTicker);
 
       stockCache.set(cacheKey, {
         timestamp: Date.now(),
@@ -3427,6 +3541,24 @@ CREATE TABLE kstock_platform_data (
     }
   });
 
+  // 1b. Dynamic Jodoju Analysis Endpoint
+  app.get('/api/platform/jodoju-analysis', async (req, res) => {
+    const { ticker, name, closePrice, changeRate, tradeValue } = req.query;
+    if (!ticker || !name) {
+      return res.status(400).json({ error: 'ticker와 name 파라미터가 필요합니다.' });
+    }
+    try {
+      console.log(`[Jodoju Analysis API] Generating dynamic report for ${name} (${ticker})...`);
+      const cp = closePrice ? Number(closePrice) : undefined;
+      const cr = changeRate ? Number(changeRate) : undefined;
+      const tv = tradeValue ? Number(tradeValue) : undefined;
+      const analysis = await PlatformEngine.generateJodojuAnalysisAI(String(ticker), String(name), cp, cr, tv);
+      res.json(analysis);
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || 'AI 주도주 상세 분석 생성 실패' });
+    }
+  });
+
   // 2. After-Market Report Endpoints
   app.get('/api/platform/report', async (req, res) => {
     try {
@@ -3866,58 +3998,20 @@ CREATE TABLE kstock_platform_data (
     if (!fs.existsSync(CONTENT_DIR)) {
       fs.mkdirSync(CONTENT_DIR, { recursive: true });
     }
+    // Always start with a completely empty state as requested by the user
+    fs.writeFileSync(POSTS_FILE, '[]', 'utf-8');
+    const originalWorkspacePath = path.resolve(process.cwd(), 'data/content/posts.json');
+    if (fs.existsSync(originalWorkspacePath)) {
+      fs.writeFileSync(originalWorkspacePath, '[]', 'utf-8');
+    }
+    console.log('[Writable Storage] Unconditionally cleared all posts to start with a fresh empty state!');
   } catch (err: any) {
-    console.warn('[Writable Storage] Failed to create CONTENT_DIR (read-only filesystem), proceeding with tmp posts.json instead:', err.message || err);
+    console.warn('[Writable Storage] Failed to initialize CONTENT_DIR or clean old posts:', err.message || err);
   }
 
   function getPostsList(): any[] {
     if (!fs.existsSync(POSTS_FILE)) {
-      const seedPosts = [
-        {
-          id: 'post_1',
-          title: '주도주 첫 분봉 거래량 돌파 전략: 하루 3% 수익 실현 비법 📈',
-          category: 'blog',
-          author: '운영팀 수석 트레이더',
-          createdAt: new Date().toISOString(),
-          views: 128,
-          slug: 'jodoju-first-candle-trading-strategy',
-          tags: ['주도주', '단타기법', '돌파매매', '거래량분석'],
-          content: '주식 시장에서 단기 매매로 꾸준한 수익을 내기 위해서는 반드시 거래대금이 수천억 이상 쏠리는 주도주만을 집중 공략해야 합니다. \n\n첫 번째 핵심 원칙은 오전 9시 개장 후 첫 3분봉 거래량을 체크하는 것입니다. 전일 전체 거래량의 20% 이상을 단 3분 만에 돌파하는 종목은 오늘 강력한 주도력을 증명한 셈입니다. \n\n두 번째 원칙은 당일 피봇 2차 저항선이나 전일 고가 등 유의미한 매물대 저항 라인을 강력하게 돌파 지지하는 시점(돌파 타점)을 노리는 것입니다. 추격 매수가 아닌 돌파 직후 첫 눌림목 지지를 매수 타점으로 설정하면 안전하게 3% 이상의 수익을 담보할 수 있습니다. \n\n세 번째 핵심 원칙은 손절선 엄수입니다. 당일 시가 또는 첫 분봉의 최저가를 이탈하는 경우 주저 없이 비중을 축소하고 다음 기회를 노려야 리스크를 완전히 헤지할 수 있습니다.'
-        },
-        {
-          id: 'post_2',
-          title: 'K-Stock Replay 시뮬레이터 100% 실전 활용 가이드 📖',
-          category: 'guide',
-          author: '운영팀 멘토',
-          createdAt: new Date().toISOString(),
-          views: 94,
-          slug: 'simulator-full-guide',
-          tags: ['시뮬레이터', '사용법', '훈련방법', '백테스팅'],
-          content: 'K-Stock Replay 시뮬레이터는 실제 역사적 주도주의 차트 흐름을 초단위 호가 틱 변동처럼 경험하며 백테스팅 훈련을 진행할 수 있도록 개발되었습니다. \n\n기본적인 사용 프로세스는 다음과 같습니다: \n1. [일봉 모드] 또는 [분봉 모드]를 선택합니다. 초보자분들은 장기 추세를 익히기 위해 일봉 모드를 먼저 훈련하는 것을 권장합니다. \n2. 실시간 API, 시뮬 시세, 모크 데이터 등 수급 공급망을 취향에 맞춰 선택합니다. \n3. [훈련 시작] 버튼을 누르면 캔들이 실시간으로 그려지기 시작합니다. \n4. 훈련 시간을 줄이고 빠르게 캔들을 확정하고 싶다면 키보드의 [Spacebar]를 누르세요. 현재 봉이 마감되고 즉시 다음 봉의 흐름이 흘러갑니다. \n5. 하단의 매수/매도 버튼을 눌러 모의 자금 1,000만 원으로 분할 매수 및 매도 비중을 조절하며 최적의 익절/손절 평단가 배분 훈련을 할 수 있습니다. \n\n시가총액 상위 주도주들의 파동 에너지를 몸으로 체득할 때까지 반복 훈련해보세요!'
-        },
-        {
-          id: 'post_3',
-          title: '자주 묻는 질문(FAQ): 시뮬레이션 체결가와 지연율 관련 안내 ❓',
-          category: 'faq',
-          author: '고객지원팀',
-          createdAt: new Date().toISOString(),
-          views: 73,
-          slug: 'faq-simulator-execution',
-          tags: ['FAQ', '체결가', '자료동기화', '오류제보'],
-          content: 'K-Stock Replay를 이용해주시는 회원님들께서 자주 하시는 질문을 모았습니다. \n\nQ. 시뮬레이션 속도가 너무 빠르거나 느릴 때는 어떻게 조절하나요? \nA. [훈련 시작] 버튼 우측의 [2배속] 옵션을 체크하시면 캔들 내 틱 생성 속도가 두 배 빠르게 흘러갑니다. 또한 차트 진행 간격을 건너뛰고 싶으시면 키보드 단축키인 [Spacebar] 키를 눌러 즉시 다음 캔들로 도약할 수 있습니다. \n\nQ. 시뮬레이션 가격 데이터의 원천은 어디인가요? \nA. 본 시뮬레이터는 네이버 금융(Naver Financial)의 실시간 시세 조회 전용 API 인터페이스 및 로컬에 무손실 압축 저장된 역사적 주도주 GZIP Replay DB 파서를 결합하여 활용하므로 실제 가격 지수 및 거래량과 100% 일치합니다. \n\nQ. 훈련 중 발생한 손실 데이터가 전체 랭킹에 즉시 연동되나요? \nA. 네, [랜덤 챌린지 🎲]를 통과하여 최종 제출한 성적은 즉시 실시간 명예의 전당 랭킹에 합산되어 경쟁심을 고취시키도록 설계되었습니다.'
-        },
-        {
-          id: 'post_4',
-          title: '공지사항: 실시간 랜덤 챌린지 및 랭킹 명예의 전당 개편 안내 📢',
-          category: 'notice',
-          author: '시스템 관리자',
-          createdAt: new Date().toISOString(),
-          views: 110,
-          slug: 'notice-ranking-update',
-          tags: ['공지사항', '기능업데이트', '명예의전당', '랜덤챌린지'],
-          content: '안녕하세요. K-Stock Replay 운영진입니다. \n\n실전 트레이더분들의 훈련 성취감과 동기 부여를 위해 [랜덤 챌린지 🎲] 및 [실시간 명예의 전당] 랭킹 시스템을 전면 도입 및 개편하였습니다. \n\n주요 개편 요소를 알려드립니다: \n1. 블라인드 종목 훈련 도입: 랜덤 챌린지를 클릭하시면 어떤 종목의 몇 년 몇 월 며칠 데이터인지 알 수 없도록 종목명과 티커가 🔒 처리됩니다. 오로지 캔들 추세와 수급 거래량 차트 분석에만 의존하여 거래하는 고도의 심리 훈련 기법입니다. \n2. 실시간 랭킹 시스템: 도전 종료 후 본인의 닉네임을 제출하면 실시간 글로벌 데이터베이스와 안전하게 연동되어 자신의 백분위 수익률 순위를 한눈에 확인하고 명예의 전당에 등재될 수 있습니다. \n3. 모바일 반응형 최적화: 모바일 브라우저 터치 드래그 및 주문 버튼 레이아웃을 개선하여 출퇴근길 등 언제 어디서나 주도주 호가 복기 실습이 가능해졌습니다. \n\n앞으로도 유익한 기능들을 지속적으로 패치할 예정이오니 많은 피드백 부탁드립니다. 감사합니다.'
-        }
-      ];
+      const seedPosts: any[] = [];
       fs.writeFileSync(POSTS_FILE, JSON.stringify(seedPosts, null, 2));
     }
     try {
@@ -3935,7 +4029,27 @@ CREATE TABLE kstock_platform_data (
 
   app.get('/api/posts', (req, res) => {
     try {
-      const posts = getPostsList();
+      let posts = getPostsList();
+      const isAdmin = req.query.admin === 'true';
+
+      // 현재 시간보다 발행 예정 시간(published_at)이 과거이거나 같은 글만 노출하는 규칙 적용
+      const now = new Date();
+      if (!isAdmin) {
+        posts = posts.filter(p => {
+          // published_at 또는 publishedAt이 존재하면 현재 시간과 비교하여 과거이거나 같을 때만 노출
+          const pubAt = p.published_at || p.publishedAt;
+          if (!pubAt) return true; // 설정되지 않은 과거 글은 노출
+          return new Date(pubAt) <= now;
+        });
+      }
+
+      // 정렬 규칙: id 오름차순 (SELECT * FROM posts WHERE published_at <= NOW() ORDER BY id ASC;)
+      posts.sort((a, b) => {
+        const idA = parseInt(a.id.toString().replace(/[^0-9]/g, '')) || 0;
+        const idB = parseInt(b.id.toString().replace(/[^0-9]/g, '')) || 0;
+        return idA - idB;
+      });
+
       res.json({ posts });
     } catch (e: any) {
       res.status(500).json({ error: e.message || '게시글 목록 조회 실패' });
@@ -3949,6 +4063,13 @@ CREATE TABLE kstock_platform_data (
       if (!post) {
         return res.status(404).json({ error: '게시글을 찾을 수 없습니다.' });
       }
+
+      // 상세 조회 시에도 발행 규칙 적용
+      const pubAt = post.published_at || post.publishedAt;
+      if (pubAt && new Date(pubAt) > new Date() && req.query.admin !== 'true') {
+        return res.status(403).json({ error: '아직 발행되지 않은 비공개 게시글입니다.' });
+      }
+
       res.json(post);
     } catch (e: any) {
       res.status(500).json({ error: e.message || '게시글 상세 조회 실패' });
@@ -3957,7 +4078,7 @@ CREATE TABLE kstock_platform_data (
 
   app.post('/api/posts', (req, res) => {
     try {
-      const { title, content, category, author, tags, slug } = req.body;
+      const { title, content, category, author, tags, slug, published_at, publishedAt } = req.body;
       if (!title || !content) {
         return res.status(400).json({ error: '제목과 내용을 채워주세요.' });
       }
@@ -3971,6 +4092,7 @@ CREATE TABLE kstock_platform_data (
         tags: Array.isArray(tags) ? tags : [],
         slug: slug || title.toLowerCase().replace(/[^a-z0-9가-힣\s]/g, '').replace(/\s+/g, '-'),
         createdAt: new Date().toISOString(),
+        published_at: published_at || publishedAt || null,
         views: 0
       };
       posts.unshift(newPost);
@@ -3983,7 +4105,7 @@ CREATE TABLE kstock_platform_data (
 
   app.put('/api/posts/:id', (req, res) => {
     try {
-      const { title, content, category, author, tags, slug } = req.body;
+      const { title, content, category, author, tags, slug, published_at, publishedAt } = req.body;
       const posts = getPostsList();
       const index = posts.findIndex(p => p.id === req.params.id);
       if (index === -1) {
@@ -3996,7 +4118,8 @@ CREATE TABLE kstock_platform_data (
         category: category || posts[index].category,
         author: author || posts[index].author,
         tags: Array.isArray(tags) ? tags : posts[index].tags,
-        slug: slug || posts[index].slug
+        slug: slug || posts[index].slug,
+        published_at: published_at !== undefined ? published_at : (publishedAt !== undefined ? publishedAt : posts[index].published_at)
       };
       savePostsList(posts);
       res.json(posts[index]);

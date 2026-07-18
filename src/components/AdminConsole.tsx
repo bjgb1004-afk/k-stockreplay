@@ -173,9 +173,9 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-lg font-black text-slate-100">AI 복기 플랫폼 시스템 관리자 (Admin Console)</h2>
+            <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">AI 복기 플랫폼 시스템 관리자 (Admin Console)</h2>
           </div>
-          <p className="text-xs text-slate-400 font-sans">
+          <p className="text-xs text-slate-600 dark:text-slate-400 font-sans">
             07:50 및 16:00 정기 발행 콘텐츠의 수동 제어, 데이터 즉시 재생성 및 감사 로그 추적을 담당합니다.
           </p>
         </div>
@@ -194,23 +194,23 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
 
       {/* 데이터 공급원 설정 (Data Provider Selector) */}
       {providerIndex !== undefined && setProviderIndex !== undefined && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Database className="w-4 h-4 text-indigo-400" />
-              <h3 className="text-sm font-black text-slate-100">차트 시세 공급망 설정 (Data Provider Control)</h3>
+              <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">차트 시세 공급망 설정 (Data Provider Control)</h3>
             </div>
-            <p className="text-[11px] text-slate-400 font-sans">
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 font-sans">
               시뮬레이터에서 복기할 주도주 차트의 백엔드 원천 데이터 공급 방식을 실시간으로 스위칭합니다.
             </p>
           </div>
-          <div className="grid grid-cols-4 gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 w-full md:w-96 flex-shrink-0 font-mono">
+          <div className="grid grid-cols-4 gap-1.5 bg-white dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 w-full md:w-96 flex-shrink-0 font-mono">
             <button
               onClick={() => setProviderIndex(0)}
               className={`py-2 text-[10px] font-black rounded-lg transition-all cursor-pointer text-center ${
                 providerIndex === 0
                   ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
               title="Naver Finance 실시간 일봉/분봉 API"
             >
@@ -221,7 +221,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
               className={`py-2 text-[10px] font-black rounded-lg transition-all cursor-pointer text-center ${
                 providerIndex === 1
                   ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
               title="시뮬레이션 기반 난수 정밀 생성 공급자"
             >
@@ -232,7 +232,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
               className={`py-2 text-[10px] font-black rounded-lg transition-all cursor-pointer text-center ${
                 providerIndex === 2
                   ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
               title="고정 모크 차트 정합성 공급자"
             >
@@ -243,7 +243,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
               className={`py-2 text-[10px] font-black rounded-lg transition-all cursor-pointer text-center ${
                 providerIndex === 3
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
               title="로컬 저장소의 JSON.gz 압축 파일로부터 차트를 복기합니다."
             >
@@ -254,13 +254,13 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
       )}
 
       {/* Tab select bar */}
-      <div className="flex border-b border-slate-800 gap-1.5 overflow-x-auto pb-px">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 gap-1.5 overflow-x-auto pb-px">
         <button
           onClick={() => setAdminTab('report')}
           className={`px-4 py-2 text-xs font-extrabold flex items-center gap-1.5 border-b-2 transition-all cursor-pointer ${
             adminTab === 'report'
               ? 'border-blue-500 text-blue-400 font-black'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
           }`}
         >
           <Zap className="w-3.5 h-3.5" />
@@ -272,7 +272,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
           className={`px-4 py-2 text-xs font-extrabold flex items-center gap-1.5 border-b-2 transition-all cursor-pointer ${
             adminTab === 'logs'
               ? 'border-indigo-500 text-indigo-400 font-black'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
           }`}
         >
           <Database className="w-3.5 h-3.5" />
@@ -281,7 +281,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
       </div>
 
       {/* Panel container */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 space-y-5">
+      <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 md:p-6 space-y-5">
         
         {/* TAB 1: REPORT (JSON Schema Editor Only) */}
         {adminTab === 'report' && (
@@ -289,7 +289,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
             {/* JSON Code editor */}
             <div className="space-y-2 text-left">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-slate-400 uppercase tracking-wider">After-Market Report JSON Schema Editor</span>
+                <span className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider">After-Market Report JSON Schema Editor</span>
                 {reportJsonError ? (
                   <span className="text-xs font-bold text-red-400 flex items-center gap-1 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20 font-mono">
                     <AlertTriangle className="w-3.5 h-3.5" />
@@ -313,7 +313,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
                     setReportJsonError(err.message);
                   }
                 }}
-                className="w-full h-96 bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-blue-300/90 focus:outline-none focus:border-blue-500/50 custom-scrollbar resize-none"
+                className="w-full h-96 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-xs font-mono text-blue-300/90 focus:outline-none focus:border-blue-500/50 custom-scrollbar resize-none"
               />
               {reportJsonError && (
                 <p className="text-[11px] text-red-400 font-mono bg-red-500/5 p-2 rounded-lg border border-red-500/10">
@@ -322,7 +322,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
               )}
             </div>
 
-            <div className="flex justify-end pt-3 border-t border-slate-800/60">
+            <div className="flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800/60">
               <button
                 onClick={handleSaveReportText}
                 className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
@@ -337,25 +337,25 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
         {/* TAB 3: AUDIT LOGS */}
         {adminTab === 'logs' && (
           <div className="space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <h4 className="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h4 className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Database className="w-4 h-4 text-indigo-400" />
                 <span>실시간 플랫폼 로깅 및 추적 (Audit Trail)</span>
               </h4>
               <button
                 disabled={logsLoading}
                 onClick={loadAuditLogs}
-                className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-950 text-slate-400 hover:text-slate-200 rounded-lg border border-slate-700 cursor-pointer flex items-center gap-1 text-xs"
+                className="p-1.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:bg-slate-700 disabled:bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer flex items-center gap-1 text-xs"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${logsLoading ? 'animate-spin' : ''}`} />
                 <span>새로고침</span>
               </button>
             </div>
 
-            <div className="overflow-x-auto border border-slate-800 rounded-xl bg-slate-950/70">
+            <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/70">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-500 font-bold bg-slate-950">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-500 font-bold bg-white dark:bg-slate-950">
                     <th className="p-3">타임스탬프</th>
                     <th className="p-3">작업명 (Action)</th>
                     <th className="p-3">대상 매개변수 (Params)</th>
@@ -365,18 +365,18 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
                 <tbody>
                   {logsLoading ? (
                     <tr>
-                      <td colSpan={4} className="p-8 text-center text-slate-500 font-mono">감사로그를 조회하는 중입니다...</td>
+                      <td colSpan={4} className="p-8 text-center text-slate-500 dark:text-slate-500 font-mono">감사로그를 조회하는 중입니다...</td>
                     </tr>
                   ) : auditLogs.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="p-8 text-center text-slate-500">조회된 감사 기록이 아직 없습니다. 가이드라인이나 매매 분석을 진행해보세요!</td>
+                      <td colSpan={4} className="p-8 text-center text-slate-500 dark:text-slate-500">조회된 감사 기록이 아직 없습니다. 가이드라인이나 매매 분석을 진행해보세요!</td>
                     </tr>
                   ) : (
                     auditLogs.map((log, idx) => (
-                      <tr key={idx} className="border-b border-slate-850 hover:bg-slate-900/30 font-mono text-[11px] text-slate-300">
-                        <td className="p-3 text-slate-500">{new Date(log.timestamp).toLocaleTimeString()}</td>
-                        <td className="p-3 font-bold text-slate-200">{log.action}</td>
-                        <td className="p-3 text-slate-400 truncate max-w-[300px]" title={JSON.stringify(log.params)}>{JSON.stringify(log.params)}</td>
+                      <tr key={idx} className="border-b border-slate-200 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-900/30 font-mono text-[11px] text-slate-700 dark:text-slate-300">
+                        <td className="p-3 text-slate-500 dark:text-slate-500">{new Date(log.timestamp).toLocaleTimeString()}</td>
+                        <td className="p-3 font-bold text-slate-800 dark:text-slate-200">{log.action}</td>
+                        <td className="p-3 text-slate-600 dark:text-slate-400 truncate max-w-[300px]" title={JSON.stringify(log.params)}>{JSON.stringify(log.params)}</td>
                         <td className="p-3">
                           <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-black uppercase">
                             Success

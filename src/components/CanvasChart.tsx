@@ -139,6 +139,8 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
   const candlestickSeriesRef = useRef<any>(null);
   const ma5SeriesRef = useRef<any>(null);
   const ma20SeriesRef = useRef<any>(null);
+  const ma60SeriesRef = useRef<any>(null);
+  const ma120SeriesRef = useRef<any>(null);
   const tradeSeriesRef = useRef<any>(null);
   const priceLineRef = useRef<any>(null);
   const firstCandleDateRef = useRef<string | null>(null);
@@ -168,12 +170,15 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
       } else {
         // Ticker/Dataset changed! Recreate the chart
         try {
+          if ((chartRef.current as any)?.__observer) (chartRef.current as any).__observer.disconnect();
           chartRef.current.remove();
         } catch (e) {}
         chartRef.current = null;
         candlestickSeriesRef.current = null;
         ma5SeriesRef.current = null;
         ma20SeriesRef.current = null;
+        ma60SeriesRef.current = null;
+        ma120SeriesRef.current = null;
         tradeSeriesRef.current = null;
         priceLineRef.current = null;
       }
@@ -182,6 +187,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
     let chart: any = null;
     let resizeObserver: ResizeObserver | null = null;
     let resizeAnimationFrameId: number | null = null;
+    let isChartActive = true;
 
     try {
       const container = containerRef.current;
@@ -191,8 +197,8 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
         width: container.clientWidth || 300,
         height: priceChartHeight,
         layout: {
-          background: { type: 'solid' as any, color: '#020617' }, // matching slate-950
-          textColor: '#94a3b8', // slate-400
+          background: { type: 'solid' as any, color: document.documentElement.classList.contains('dark') ? '#020617' : '#ffffff' },
+          textColor: document.documentElement.classList.contains('dark') ? '#94a3b8' : '#64748b',
           fontSize: 11,
           fontFamily: 'JetBrains Mono, Inter, sans-serif',
         },
@@ -247,6 +253,28 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
           },
         },
       });
+      (chart as any).__observer = new MutationObserver(() => {
+        if (!isChartActive || !chartRef.current) return;
+        try {
+          const isDark = document.documentElement.classList.contains('dark');
+          chart.applyOptions({
+            layout: {
+              background: { type: 'solid' as any, color: isDark ? '#020617' : '#ffffff' },
+              textColor: isDark ? '#94a3b8' : '#64748b',
+            }
+          });
+          chart.priceScale('right').applyOptions({
+            borderColor: isDark ? '#1e293b' : '#e2e8f0',
+          });
+          chart.timeScale().applyOptions({
+            borderColor: isDark ? '#1e293b' : '#e2e8f0',
+          });
+        } catch (e) {
+          console.warn('[CanvasChart] Dark mode toggle failed:', e);
+        }
+      });
+      (chart as any).__observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
 
       chartRef.current = chart;
       setPriceChartInstance(chart);
@@ -291,6 +319,24 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
         priceFormat: { type: 'price', precision: 0, minMove: 1 },
       });
 
+      ma60SeriesRef.current = chart.addSeries(LineSeries, {
+        color: '#06b6d4',
+        lineWidth: 1.5,
+        priceLineVisible: false,
+        lastValueVisible: false,
+        crosshairMarkerVisible: false,
+        priceFormat: { type: 'price', precision: 0, minMove: 1 },
+      });
+
+      ma120SeriesRef.current = chart.addSeries(LineSeries, {
+        color: '#8b5cf6',
+        lineWidth: 1.5,
+        priceLineVisible: false,
+        lastValueVisible: false,
+        crosshairMarkerVisible: false,
+        priceFormat: { type: 'price', precision: 0, minMove: 1 },
+      });
+
       // Add Trade Series for EXACT price markers
       tradeSeriesRef.current = chart.addSeries(LineSeries, {
         color: 'rgba(0, 0, 0, 0)', // fully transparent line
@@ -307,6 +353,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
 
       // Subscribe to Hover
       chart.subscribeCrosshairMove((param: any) => {
+        if (!isChartActive || !chartRef.current) return;
         if (!param || !param.time || param.point === undefined) {
           setHoverIndex(null);
           setTooltipData(null);
@@ -338,14 +385,14 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
       resizeObserver = new ResizeObserver((entries) => {
         for (let entry of entries) {
           const { width } = entry.contentRect;
-          if (width && Math.abs(width - lastWidth) > 1 && chartRef.current) {
+          if (width && Math.abs(width - lastWidth) > 1 && isChartActive && chartRef.current) {
             lastWidth = width;
             if (resizeAnimationFrameId !== null) {
               cancelAnimationFrame(resizeAnimationFrameId);
             }
             resizeAnimationFrameId = requestAnimationFrame(() => {
               try {
-                if (chartRef.current) {
+                if (isChartActive && chartRef.current) {
                   chartRef.current.resize(width, priceHeightRef.current);
                 }
               } catch (err) {}
@@ -360,7 +407,11 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
     }
 
     return () => {
-      // Cleanup is handled on complete unmount or reset
+      isChartActive = false;
+      if (resizeObserver) resizeObserver.disconnect();
+      if (resizeAnimationFrameId !== null) {
+        cancelAnimationFrame(resizeAnimationFrameId);
+      }
     };
   }, [candles[0]?.date]);
 
@@ -371,6 +422,8 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
     // Prepare Data
     const ma5Data: any[] = [];
     const ma20Data: any[] = [];
+    const ma60Data: any[] = [];
+    const ma120Data: any[] = [];
     const candlestickData: any[] = [];
 
     const calculateMA = (data: Candle[], period: number): (number | null)[] => {
@@ -391,6 +444,8 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
 
     const ma5Values = calculateMA(candles, 5);
     const ma20Values = calculateMA(candles, 20);
+    const ma60Values = calculateMA(candles, 60);
+    const ma120Values = calculateMA(candles, 120);
 
     for (let i = 0; i < candles.length; i++) {
       const item = candles[i];
@@ -413,11 +468,23 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
       if (m20 !== null) {
         ma20Data.push({ time: chartTime, value: m20 });
       }
+
+      const m60 = ma60Values[i];
+      if (m60 !== null) {
+        ma60Data.push({ time: chartTime, value: m60 });
+      }
+
+      const m120 = ma120Values[i];
+      if (m120 !== null) {
+        ma120Data.push({ time: chartTime, value: m120 });
+      }
     }
 
     candlestickSeriesRef.current.setData(candlestickData);
     if (ma5SeriesRef.current) ma5SeriesRef.current.setData(ma5Data);
     if (ma20SeriesRef.current) ma20SeriesRef.current.setData(ma20Data);
+    if (ma60SeriesRef.current) ma60SeriesRef.current.setData(ma60Data);
+    if (ma120SeriesRef.current) ma120SeriesRef.current.setData(ma120Data);
 
     // Draw / update Average Price Line if holding
     if (priceLineRef.current) {
@@ -527,6 +594,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
     return () => {
       if (chartRef.current) {
         try {
+          if ((chartRef.current as any)?.__observer) (chartRef.current as any).__observer.disconnect();
           chartRef.current.remove();
         } catch (e) {}
         chartRef.current = null;
@@ -554,19 +622,25 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
   const tradeValueMillion = activeCandle ? (activeCandle.close * activeCandle.volume) / 1000000 : 0;
 
   return (
-    <div ref={panelRef} className="relative flex flex-col w-full h-full bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-xl" id="canvas-chart-panel">
+    <div ref={panelRef} className="relative flex flex-col w-full h-full bg-white dark:bg-slate-950 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl" id="canvas-chart-panel">
       {/* Static Indicator Top Bar Header */}
       {activeCandle && (
-        <div ref={headerRef} className="w-full bg-slate-900 border-b border-slate-800/80 p-3 flex flex-col gap-2.5 z-10" id="canvas-indicator-header">
+        <div ref={headerRef} className="w-full bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800/80 p-3 flex flex-col gap-2.5 z-10" id="canvas-indicator-header">
           {/* Indicators Legend & Progress Box */}
           <div className="flex items-center justify-between w-full text-[10px] font-mono" id="canvas-indicator-legend-container">
             <div className="flex items-center gap-3" id="canvas-indicator-legend">
-              <span className="text-slate-500 font-semibold uppercase tracking-wider text-[8px] mr-1">지표:</span>
+              <span className="text-slate-500 dark:text-slate-500 font-semibold uppercase tracking-wider text-[8px] mr-1">지표:</span>
               <span className="text-[#eab308] flex items-center gap-1 bg-[#eab308]/5 px-1.5 py-0.5 rounded border border-[#eab308]/10">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#eab308]" /> 5
               </span>
               <span className="text-[#d946ef] flex items-center gap-1 bg-[#d946ef]/5 px-1.5 py-0.5 rounded border border-[#d946ef]/10">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#d946ef]" /> 20
+              </span>
+              <span className="text-[#06b6d4] flex items-center gap-1 bg-[#06b6d4]/5 px-1.5 py-0.5 rounded border border-[#06b6d4]/10">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#06b6d4]" /> 60
+              </span>
+              <span className="text-[#8b5cf6] flex items-center gap-1 bg-[#8b5cf6]/5 px-1.5 py-0.5 rounded border border-[#8b5cf6]/10">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#8b5cf6]" /> 120
               </span>
             </div>
             {/* Progress Badge */}
@@ -580,7 +654,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
 
       {/* Loading Placeholder */}
       {candles.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-slate-400 z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 z-10">
           <span className="animate-pulse">데이터 로딩 중...</span>
         </div>
       )}
@@ -607,18 +681,18 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
           
           return (
             <div
-              className="absolute bg-slate-905/95 backdrop-blur-md border border-slate-700/70 rounded-xl p-3 shadow-2xl z-50 pointer-events-none text-xs font-mono text-slate-200 min-w-[210px] flex flex-col gap-1.5"
+              className="absolute bg-slate-905/95 backdrop-blur-md border border-slate-300 dark:border-slate-700/70 rounded-xl p-3 shadow-2xl z-50 pointer-events-none text-xs font-mono text-slate-800 dark:text-slate-200 min-w-[210px] flex flex-col gap-1.5"
               style={{
                 left: `${Math.min(tooltipData.x + 15, (containerRef.current?.clientWidth || 300) - 230)}px`,
                 top: `${Math.max(tooltipData.y - 140, 10)}px`,
               }}
               id="candle-detail-tooltip"
             >
-              <div className="border-b border-slate-800 pb-1 mb-0.5 text-slate-400 font-bold text-[10px]" id="tooltip-date">
+              <div className="border-b border-slate-200 dark:border-slate-800 pb-1 mb-0.5 text-slate-600 dark:text-slate-400 font-bold text-[10px]" id="tooltip-date">
                 {tooltipData.date}
               </div>
               <div className="flex justify-between items-center gap-4" id="tooltip-open">
-                <span className="text-slate-400">시가</span>
+                <span className="text-slate-600 dark:text-slate-400">시가</span>
                 <div className="flex items-center gap-1 font-semibold">
                   <span className="text-white">{Math.round(tooltipData.open).toLocaleString()}원</span>
                   <span className={`text-[10px] ${openPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
@@ -627,7 +701,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
                 </div>
               </div>
               <div className="flex justify-between items-center gap-4" id="tooltip-high">
-                <span className="text-slate-400">고가</span>
+                <span className="text-slate-600 dark:text-slate-400">고가</span>
                 <div className="flex items-center gap-1 font-semibold">
                   <span className="text-white">{Math.round(tooltipData.high).toLocaleString()}원</span>
                   <span className={`text-[10px] ${highPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
@@ -636,7 +710,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
                 </div>
               </div>
               <div className="flex justify-between items-center gap-4" id="tooltip-low">
-                <span className="text-slate-400">저가</span>
+                <span className="text-slate-600 dark:text-slate-400">저가</span>
                 <div className="flex items-center gap-1 font-semibold">
                   <span className="text-white">{Math.round(tooltipData.low).toLocaleString()}원</span>
                   <span className={`text-[10px] ${lowPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
@@ -645,7 +719,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
                 </div>
               </div>
               <div className="flex justify-between items-center gap-4" id="tooltip-close">
-                <span className="text-slate-400">종가</span>
+                <span className="text-slate-600 dark:text-slate-400">종가</span>
                 <div className="flex items-center gap-1 font-semibold">
                   <span className="text-white">{Math.round(tooltipData.close).toLocaleString()}원</span>
                   <span className={`text-[10px] ${closePct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
@@ -653,8 +727,8 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
                   </span>
                 </div>
               </div>
-              <div className="flex justify-between items-center gap-4 border-t border-slate-800/80 pt-1.5 mt-0.5" id="tooltip-volume">
-                <span className="text-slate-400">거래대금</span>
+              <div className="flex justify-between items-center gap-4 border-t border-slate-200 dark:border-slate-800/80 pt-1.5 mt-0.5" id="tooltip-volume">
+                <span className="text-slate-600 dark:text-slate-400">거래대금</span>
                 <span className="font-semibold text-amber-400">
                   {tooltipTradeValueMillion.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}백만원
                 </span>

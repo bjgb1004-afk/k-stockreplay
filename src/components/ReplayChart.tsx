@@ -46,6 +46,7 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
     let chart: any = null;
     let resizeObserver: ResizeObserver | null = null;
     let resizeAnimationFrameId: number | null = null;
+    let isChartActive = true;
 
     try {
       // 1. Create Chart
@@ -55,8 +56,8 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
         width: container.clientWidth || 300,
         height: initialHeight,
         layout: {
-          background: { type: 'solid' as any, color: '#020617' }, // matching slate-950 background
-          textColor: '#94a3b8', // slate-400
+          background: { type: 'solid' as any, color: document.documentElement.classList.contains('dark') ? '#020617' : '#ffffff' },
+          textColor: document.documentElement.classList.contains('dark') ? '#94a3b8' : '#64748b',
           fontSize: 11,
           fontFamily: 'JetBrains Mono, Inter, sans-serif',
         },
@@ -103,6 +104,28 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
           },
         },
       });
+      (chart as any).__observer = new MutationObserver(() => {
+        if (!isChartActive || !chartRef.current) return;
+        try {
+          const isDark = document.documentElement.classList.contains('dark');
+          chart.applyOptions({
+            layout: {
+              background: { type: 'solid' as any, color: isDark ? '#020617' : '#ffffff' },
+              textColor: isDark ? '#94a3b8' : '#64748b',
+            }
+          });
+          chart.priceScale('right').applyOptions({
+            borderColor: isDark ? '#1e293b' : '#e2e8f0',
+          });
+          chart.timeScale().applyOptions({
+            borderColor: isDark ? '#1e293b' : '#e2e8f0',
+          });
+        } catch (e) {
+          console.warn('[ReplayChart] Dark mode toggle failed:', e);
+        }
+      });
+      (chart as any).__observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
 
       chartRef.current = chart;
 
@@ -156,7 +179,7 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
         priceScaleId: 'volume-scale',
       });
 
-      chart.priceScale('volume-scale').applyOptions({
+      volumeSeries.priceScale().applyOptions({
         scaleMargins: {
           top: 0.8, // Volume takes only bottom 20%
           bottom: 0,
@@ -335,6 +358,7 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
 
       // 7. Subscribe to Hover / Crosshair Move
       chart.subscribeCrosshairMove((param: any) => {
+        if (!isChartActive || !chartRef.current) return;
         if (!param || !param.time || param.point === undefined) {
           setHoverCandle(null);
           return;
@@ -355,14 +379,14 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
       resizeObserver = new ResizeObserver((entries) => {
         for (let entry of entries) {
           const { width } = entry.contentRect;
-          if (width && Math.abs(width - lastWidth) > 1 && chart) {
+          if (width && Math.abs(width - lastWidth) > 1 && isChartActive && chartRef.current) {
             lastWidth = width;
             if (resizeAnimationFrameId !== null) {
               cancelAnimationFrame(resizeAnimationFrameId);
             }
             resizeAnimationFrameId = requestAnimationFrame(() => {
               try {
-                if (chart) {
+                if (isChartActive && chartRef.current) {
                   const currentHeight = window.innerWidth < 640 ? 280 : 420;
                   chart.resize(width, currentHeight);
                   chart.timeScale().fitContent();
@@ -380,12 +404,14 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
 
     // Cleanup
     return () => {
+      isChartActive = false;
       if (resizeObserver) resizeObserver.disconnect();
       if (resizeAnimationFrameId !== null) {
         cancelAnimationFrame(resizeAnimationFrameId);
       }
       if (chart) {
         try {
+          if ((chart as any)?.__observer) (chart as any).__observer.disconnect();
           chart.remove();
         } catch (e) {}
       }
@@ -401,41 +427,41 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
   const tradeValueMillion = activeCandle ? (activeCandle.close * activeCandle.volume) / 1000000 : 0;
 
   return (
-    <div className="relative flex flex-col w-full h-full bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-xl" id="chart-panel">
+    <div className="relative flex flex-col w-full h-full bg-white dark:bg-slate-950 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl" id="chart-panel">
       {/* Static OHLC & Indicator Top Bar Header */}
       {activeCandle && (
-        <div className="w-full bg-slate-900 border-b border-slate-800/80 p-3 flex flex-col gap-2 z-10" id="ohlc-header">
+        <div className="w-full bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800/80 p-3 flex flex-col gap-2 z-10" id="ohlc-header">
           {/* OHLC Values */}
           <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] md:text-xs font-mono">
-            <span className="text-slate-400 font-bold bg-slate-800 px-1.5 py-0.5 rounded">{activeCandle.date}</span>
+            <span className="text-slate-600 dark:text-slate-400 font-bold bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">{activeCandle.date}</span>
             <div className="flex gap-1">
-              <span className="text-slate-500">시:</span>
+              <span className="text-slate-500 dark:text-slate-500">시:</span>
               <span className="text-white font-medium">{Math.round(activeCandle.open).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
-              <span className="text-slate-500">고:</span>
+              <span className="text-slate-500 dark:text-slate-500">고:</span>
               <span className="text-red-400 font-medium">{Math.round(activeCandle.high).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
-              <span className="text-slate-500">저:</span>
+              <span className="text-slate-500 dark:text-slate-500">저:</span>
               <span className="text-blue-400 font-medium">{Math.round(activeCandle.low).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
-              <span className="text-slate-500">종:</span>
+              <span className="text-slate-500 dark:text-slate-500">종:</span>
               <span className={`${isUp ? 'text-red-500' : 'text-blue-500'} font-bold`}>{Math.round(activeCandle.close).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
-              <span className="text-slate-500">변동:</span>
+              <span className="text-slate-500 dark:text-slate-500">변동:</span>
               <span className={`${changeAmt >= 0 ? 'text-red-500' : 'text-blue-500'} font-bold`}>
                 {changeAmt >= 0 ? '+' : ''}{Math.round(changeAmt).toLocaleString()} ({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)
               </span>
             </div>
             <div className="flex gap-1">
-              <span className="text-slate-500">거래량:</span>
-              <span className="text-slate-300 font-medium">{Math.round(activeCandle.volume).toLocaleString()}주</span>
+              <span className="text-slate-500 dark:text-slate-500">거래량:</span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium">{Math.round(activeCandle.volume).toLocaleString()}주</span>
             </div>
             <div className="flex gap-1">
-              <span className="text-slate-500">거래대금:</span>
+              <span className="text-slate-500 dark:text-slate-500">거래대금:</span>
               <span className="text-amber-400 font-bold">
                 {tradeValueMillion.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}백만원
               </span>
@@ -443,8 +469,8 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
           </div>
 
           {/* Indicators Legend */}
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] md:text-[10px] font-mono border-t border-slate-800/40 pt-1.5" id="indicator-legend">
-            <span className="text-slate-500 font-semibold uppercase tracking-wider text-[8px] mr-1">지표:</span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] md:text-[10px] font-mono border-t border-slate-200 dark:border-slate-800/40 pt-1.5" id="indicator-legend">
+            <span className="text-slate-500 dark:text-slate-500 font-semibold uppercase tracking-wider text-[8px] mr-1">지표:</span>
             <span className="text-[#eab308] flex items-center gap-1 bg-[#eab308]/5 px-1.5 py-0.5 rounded border border-[#eab308]/10">
               <span className="h-1.5 w-1.5 rounded-full bg-[#eab308]" /> 이평 5
             </span>
@@ -463,7 +489,7 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
 
       {/* Loading Placeholder */}
       {candles.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-slate-400 z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 z-10">
           <span className="animate-pulse">데이터 로딩 중...</span>
         </div>
       )}
@@ -478,12 +504,12 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
 
       {/* Volume Area Info Overlay (Date, Time, Volume inside volume chart) */}
       {activeCandle && (
-        <div className="absolute bottom-12 left-3 bg-slate-950/85 border border-slate-800/85 px-2.5 py-1 rounded-md text-[10px] font-mono text-slate-400 pointer-events-none z-10 flex items-center gap-1.5 shadow-md">
-          <span className="text-slate-500 font-bold uppercase text-[8px]">VOLUME TIME:</span>
-          <span className="text-slate-200 font-bold">{activeCandle.date}</span>
+        <div className="absolute bottom-12 left-3 bg-white dark:bg-slate-950/85 border border-slate-200 dark:border-slate-800/85 px-2.5 py-1 rounded-md text-[10px] font-mono text-slate-600 dark:text-slate-400 pointer-events-none z-10 flex items-center gap-1.5 shadow-md">
+          <span className="text-slate-500 dark:text-slate-500 font-bold uppercase text-[8px]">VOLUME TIME:</span>
+          <span className="text-slate-800 dark:text-slate-200 font-bold">{activeCandle.date}</span>
           <span className="text-slate-600">|</span>
-          <span className="text-slate-500 font-bold uppercase text-[8px]">VOL:</span>
-          <span className="text-slate-300 font-bold">{Math.round(activeCandle.volume).toLocaleString()}주</span>
+          <span className="text-slate-500 dark:text-slate-500 font-bold uppercase text-[8px]">VOL:</span>
+          <span className="text-slate-700 dark:text-slate-300 font-bold">{Math.round(activeCandle.volume).toLocaleString()}주</span>
         </div>
       )}
     </div>

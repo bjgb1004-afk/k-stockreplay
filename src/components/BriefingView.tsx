@@ -30,7 +30,7 @@ const MacroDetailCard: React.FC<{
 }> = ({ label, value, icon, colorClass, textClass, detail, defaultOpen }) => {
   const [isOpen, setIsOpen] = React.useState(defaultOpen);
   return (
-    <div className={`bg-slate-950/60 border ${colorClass} rounded-xl p-4 transition-all duration-300 flex flex-col justify-between`}>
+    <div className={`bg-white dark:bg-slate-950/60 border ${colorClass} rounded-xl p-4 transition-all duration-300 flex flex-col justify-between`}>
       <div>
         {/* 지표 헤더 */}
         <div 
@@ -39,7 +39,7 @@ const MacroDetailCard: React.FC<{
         >
           <div className="flex items-center gap-1.5">
             <span className="text-sm">{icon}</span>
-            <span className="text-xs font-bold text-slate-200">{label}</span>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{label}</span>
           </div>
           <span className={`text-[10px] font-black font-mono ${textClass}`}>
             {value}
@@ -49,27 +49,27 @@ const MacroDetailCard: React.FC<{
         {/* 상세 4대 분석 아코디언 */}
         {isOpen && detail ? (
           <div className="space-y-2 mt-2 text-[11px] leading-relaxed">
-            <div className="bg-slate-900/40 p-2 rounded border border-slate-850/55">
-              <span className="font-extrabold text-slate-100 block mb-0.5">• 원인 분석</span>
-              <span className="text-slate-300 font-medium block">{detail.reason}</span>
+            <div className="bg-slate-50 dark:bg-slate-900/40 p-2 rounded border border-slate-200 dark:border-slate-850/55">
+              <span className="font-extrabold text-slate-900 dark:text-slate-100 block mb-0.5">• 원인 분석</span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium block">{detail.reason}</span>
             </div>
-            <div className="bg-slate-900/40 p-2 rounded border border-slate-850/55">
+            <div className="bg-slate-50 dark:bg-slate-900/40 p-2 rounded border border-slate-200 dark:border-slate-850/55">
               <span className="font-extrabold text-indigo-400 block mb-0.5">• 글로벌 메이저 행동</span>
-              <span className="text-slate-300 font-medium block">{detail.majorsAction}</span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium block">{detail.majorsAction}</span>
             </div>
-            <div className="bg-slate-900/40 p-2 rounded border border-slate-850/55">
+            <div className="bg-slate-50 dark:bg-slate-900/40 p-2 rounded border border-slate-200 dark:border-slate-850/55">
               <span className="font-extrabold text-amber-400 block mb-0.5">• 시장 파급 영향</span>
-              <span className="text-slate-300 font-medium block">{detail.marketImpact}</span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium block">{detail.marketImpact}</span>
             </div>
-            <div className="bg-slate-900/40 p-2 rounded border border-slate-850/55">
+            <div className="bg-slate-50 dark:bg-slate-900/40 p-2 rounded border border-slate-200 dark:border-slate-850/55">
               <span className="font-extrabold text-rose-400 block mb-0.5">• 주도/이탈섹터 진단</span>
-              <span className="text-slate-300 font-medium block">{detail.sectorsAnalysis}</span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium block">{detail.sectorsAnalysis}</span>
             </div>
           </div>
         ) : (
           <button 
             onClick={() => setIsOpen(true)}
-            className="w-full py-1.5 mt-1 bg-slate-900/35 hover:bg-slate-900/70 border border-slate-850/40 text-[10px] font-bold text-slate-400 rounded-lg transition-all"
+            className="w-full py-1.5 mt-1 bg-slate-50 dark:bg-slate-900/35 hover:bg-slate-50 dark:hover:bg-slate-900/70 border border-slate-200 dark:border-slate-850/40 text-[10px] font-bold text-slate-600 dark:text-slate-400 rounded-lg transition-all"
           >
             클릭하여 상세 4대 분석 펼치기
           </button>
@@ -113,39 +113,23 @@ const getStockThemeName = (stockName: string, fallbackTheme?: string): string =>
   return '주도수급 개별테마';
 };
 
-const getHeadlineAnalysis = (newsText: string, idx: number): string => {
-  const defaultAnalysis = [
-    '엔비디아의 시총 1위 복귀는 글로벌 테크 거인들의 AI 인프라 투자(CAPEX) 강도가 예상보다 견고함을 증명합니다. 국내 HBM 밸류체인(SK하이닉스, 한미반도체)의 실적 가시성을 높이는 대형 호재입니다.',
-    '노동시장 과열 해소는 연준(Fed)의 금리 인하 당위성을 지지하는 매크로적 신호입니다. 이는 국채 금리 하향 안정화를 유도하여 기술 성장주 전반의 멀티플 상향 요인으로 작용합니다.',
-    '유럽과 중국 간 무역 갈등 격화는 이차전지 및 전기차 공급망의 재편을 가속화합니다. 이에 따라 중국 업체의 강한 점유율 압박을 받아온 국내 배터리 셀 3사 및 소재 기업들에 장기적인 반사이익 가능성이 제기됩니다.',
-    '중동 지정학적 리스크 확산에 따른 원유 공급 차질 불안은 국제 유가 상방 압력을 자극하며, 이는 인플레이션 하락 기조를 일부 지연시킬 우려가 있습니다. 국내 정유 및 LNG 에너지 가스 테마의 단기 수급 자극과 동시에 시장 전반의 원가 불확실성을 가중시키는 요소입니다.',
-    '금리 인하의 구체적인 시기 논의보다는 연내 인하 개시라는 거시적 방향성이 재확인되었습니다. 글로벌 달러화 인덱스 고점 형성 및 원/달러 환율 안정을 이끌어내어 한국 시장에 대한 외국인 순매수(쌍끌이 수급) 유입 매력도를 극대화할 전망입니다.'
-  ];
-  if (newsText.includes('엔비디아') || newsText.includes('NVIDIA')) return defaultAnalysis[0];
-  if (newsText.includes('실업수당') || newsText.includes('고용')) return defaultAnalysis[1];
-  if (newsText.includes('유럽') || newsText.includes('관세') || newsText.includes('중국산')) return defaultAnalysis[2];
-  if (newsText.includes('중동') || newsText.includes('유가') || newsText.includes('브렌트유')) return defaultAnalysis[3];
-  if (newsText.includes('금리') || newsText.includes('인하') || newsText.includes('FOMC')) return defaultAnalysis[4];
-  return defaultAnalysis[idx % 5];
-};
-
 function RenderMarkdown({ text }: { text: string }) {
   if (!text) return null;
   
   const lines = text.split('\n');
   return (
-    <div className="space-y-3 font-sans text-xs text-slate-300 leading-relaxed text-left">
+    <div className="space-y-3 font-sans text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-left">
       {lines.map((line, idx) => {
         const trimmed = line.trim();
         if (!trimmed) return <div key={idx} className="h-2" />;
         
         if (trimmed === '---') {
-          return <hr key={idx} className="border-slate-800 my-4" />;
+          return <hr key={idx} className="border-slate-200 dark:border-slate-800 my-4" />;
         }
         
         if (trimmed.match(/^(🌐|🇺🇸|📰|🔥|🇰🇷|💡)\s+\d*\.?\s*.*$/) || trimmed.startsWith('🌐') || trimmed.startsWith('🇺🇸') || trimmed.startsWith('📰') || trimmed.startsWith('🔥') || trimmed.startsWith('🇰🇷')) {
           return (
-            <h4 key={idx} className="text-sm font-extrabold text-white tracking-tight border-b border-slate-800 pb-1.5 mt-5 mb-2 flex items-center gap-1.5">
+            <h4 key={idx} className="text-sm font-extrabold text-white tracking-tight border-b border-slate-200 dark:border-slate-800 pb-1.5 mt-5 mb-2 flex items-center gap-1.5">
               {trimmed}
             </h4>
           );
@@ -173,9 +157,9 @@ function RenderMarkdown({ text }: { text: string }) {
             return (
               <div key={idx} className={`flex items-start gap-1.5 leading-relaxed ${indentClass}`}>
                 {isBullet && <span className="text-indigo-450 mt-1 shrink-0">•</span>}
-                <p className="text-slate-300">
+                <p className="text-slate-700 dark:text-slate-300">
                   <span className="font-extrabold text-indigo-300">{label}</span>
-                  <span className="text-slate-300 font-medium">{value}</span>
+                  <span className="text-slate-700 dark:text-slate-300 font-medium">{value}</span>
                 </p>
               </div>
             );
@@ -186,7 +170,7 @@ function RenderMarkdown({ text }: { text: string }) {
           return (
             <div key={idx} className="flex items-start gap-2 pl-2">
               <span className="text-indigo-400 mt-1 shrink-0">•</span>
-              <p className="text-slate-300">{trimmed.substring(2)}</p>
+              <p className="text-slate-700 dark:text-slate-300">{trimmed.substring(2)}</p>
             </div>
           );
         }
@@ -208,18 +192,18 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
   
   if (loading) {
     return (
-      <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-900/40 rounded-2xl border border-slate-800">
+      <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800">
         <div className="w-12 h-12 rounded-full border-4 border-amber-500/20 border-t-amber-500 animate-spin" />
-        <p className="text-xs text-slate-400 font-mono">07:50 글로벌 장전 브리핑 및 인공지능 분석 데이터 생성 중...</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 font-mono">07:50 글로벌 장전 브리핑 및 인공지능 분석 데이터 생성 중...</p>
       </div>
     );
   }
 
   if (!briefing) {
     return (
-      <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-900/40 rounded-2xl border border-slate-800">
+      <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800">
         <Globe className="w-12 h-12 text-slate-600 animate-pulse" />
-        <p className="text-xs text-slate-400 font-sans">데이터를 불러오는 중입니다...</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 font-sans">데이터를 불러오는 중입니다...</p>
       </div>
     );
   }
@@ -253,7 +237,6 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
   const exchangeRate = macro.exchangeRate || 'N/A';
   const oilPrice = macro.oilPrice || 'N/A';
 
-  const worldNews = briefing.worldNews || [];
   const usLeaders = (briefing as any).usLeaders || (Array.isArray(briefing.usJodoju) ? briefing.usJodoju.join(', ') : '');
   const usFeaturedStock = (briefing as any).usFeaturedStock || (Array.isArray(briefing.usFeaturedStocks) ? briefing.usFeaturedStocks.join('\n') : '');
 
@@ -314,7 +297,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
   return (
     <div className="col-span-12 space-y-6">
       {/* 퀀트리포트창 삭제 후 단일화된 요약 브리핑 헤더 */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse shrink-0" />
           <span className="text-sm font-black text-white tracking-tight flex items-center gap-2">
@@ -330,8 +313,8 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
 
       <div className="space-y-6">
         {/* 1. 글로벌 거시경제 주요지표 (맨 위로 이동 및 상세 4대 분석 탑재) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 space-y-5">
-          <div className="border-b border-slate-800 pb-3 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 md:p-6 space-y-5">
+          <div className="border-b border-slate-200 dark:border-slate-800 pb-3 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
               <h3 className="text-sm font-black text-white tracking-tight flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-indigo-400" />
                 <span>글로벌 거시경제 주요지표 및 6대 지표 상세 분석</span>
@@ -342,7 +325,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
             </div>
 
             {/* 짧은 전체 분석 코멘트 */}
-            <div className="bg-indigo-500/5 border-l-2 border-indigo-500 p-4 rounded-r-xl text-xs text-slate-300 leading-relaxed select-text">
+            <div className="bg-indigo-500/5 border-l-2 border-indigo-500 p-4 rounded-r-xl text-xs text-slate-700 dark:text-slate-300 leading-relaxed select-text">
               <span className="font-extrabold text-indigo-400 block mb-1">💡 거시경제 종합 시각</span>
               {getMacroOverallCommentary()}
             </div>
@@ -414,9 +397,9 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
           </div>
 
           {/* 2. 핵심 브리핑 요약 */}
-          <div className="bg-slate-900 border border-indigo-500/10 rounded-2xl p-5 space-y-4 relative overflow-hidden">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-indigo-500/10 rounded-2xl p-5 space-y-4 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full filter blur-xl pointer-events-none" />
-            <h3 className="text-xs font-black text-slate-300 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-800 pb-2">
+            <h3 className="text-xs font-black text-slate-700 dark:text-slate-300 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
               <Sparkles className="w-4 h-4 text-indigo-400" />
               <span>핵심 브리핑 요약</span>
             </h3>
@@ -424,20 +407,20 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
               {aiSummary5Lines.map((line, idx) => (
                 <div key={idx} className="flex gap-2.5 items-start">
                   <span className="text-indigo-400 text-xs font-black font-mono mt-0.5">{idx + 1}.</span>
-                  <p className="text-xs text-slate-300 leading-relaxed font-sans break-keep break-words whitespace-normal">{line}</p>
+                  <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans break-keep break-words whitespace-normal">{line}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* 3. 미국증시 주요지수 마감 현황 */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-800 pb-2">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
               <TrendingUp className="w-4 h-4 text-emerald-400" />
               <span>미국증시 주요지수 마감 현황</span>
             </h3>
             
-            <div className="bg-emerald-500/5 border-l-2 border-emerald-500 p-3.5 rounded-r-xl text-xs text-slate-300 leading-relaxed max-w-4xl select-text">
+            <div className="bg-emerald-500/5 border-l-2 border-emerald-500 p-3.5 rounded-r-xl text-xs text-slate-700 dark:text-slate-300 leading-relaxed max-w-4xl select-text">
               <span className="font-extrabold text-emerald-400 block mb-1">💡 시장 마감 한줄 요약</span>
               {getUsMarketsOverallCommentary()}
             </div>
@@ -490,16 +473,16 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                 };
 
                 return (
-                  <div key={idx} className="bg-slate-950 border border-slate-850 p-3 rounded-xl flex flex-col justify-between items-center text-center gap-2.5 w-full min-h-[118px]">
+                  <div key={idx} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-3 rounded-xl flex flex-col justify-between items-center text-center gap-2.5 w-full min-h-[118px]">
                     <div className="flex flex-col items-center gap-1 w-full">
-                      <span className="text-[11px] font-extrabold text-slate-400 block whitespace-normal break-keep w-full leading-tight">{m.name}</span>
+                      <span className="text-[11px] font-extrabold text-slate-600 dark:text-slate-400 block whitespace-normal break-keep w-full leading-tight">{m.name}</span>
                       <div className="flex flex-col gap-0.5 w-full items-center">
-                        <span className="text-xs font-black font-mono text-slate-100 block whitespace-normal break-all w-full leading-normal">{price}</span>
+                        <span className="text-xs font-black font-mono text-slate-900 dark:text-slate-100 block whitespace-normal break-all w-full leading-normal">{price}</span>
                         {change && (
                           <span className={`text-[10px] font-bold font-mono block leading-normal whitespace-normal break-all w-full ${
                             m.isVix 
                               ? 'text-amber-400' 
-                              : change.includes('+') ? 'text-red-400' : change.includes('-') ? 'text-blue-400' : 'text-slate-400'
+                              : change.includes('+') ? 'text-red-400' : change.includes('-') ? 'text-blue-400' : 'text-slate-600 dark:text-slate-400'
                           }`}>
                             {change}
                           </span>
@@ -507,7 +490,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                       </div>
                     </div>
                     <div className="w-full border-t border-slate-900/60 pt-1.5 select-none">
-                      <p className="text-[9px] font-medium text-slate-400 leading-tight break-keep">{getUsCommentary(m.name, m.val)}</p>
+                      <p className="text-[9px] font-medium text-slate-600 dark:text-slate-400 leading-tight break-keep">{getUsCommentary(m.name, m.val)}</p>
                     </div>
                   </div>
                 );
@@ -515,74 +498,22 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
             </div>
           </div>
 
-          {/* 4. 세계주요외신 헤드라인 및 글로벌 확장 분석 (정확히 5개로 확장분석 제공) */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-            <div className="border-b border-slate-800 pb-2">
-              <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
-                <Newspaper className="w-4 h-4 text-sky-400" />
-                <span>세계 주요 외신 헤드라인 5대 이슈 & 글로벌 확장분석</span>
-              </h3>
-            </div>
-            
-            {(() => {
-              const headlines = [...worldNews];
-              const defaultHeadlines = [
-                '엔비디아 시가총액 다시 1위 탈환, AI 가속기 차세대 칩 수요 폭발 지속 언급',
-                '미국 신규 실업수당 청구 건수 23.8만 건 기록하며 고용시장 점진적 둔화 시그널',
-                '유럽 연합(EU), 중국산 전기차에 최대 38.1% 상계 관세 예비 부과 통보',
-                '중동 지정학적 긴장 재확산에 따라 브렌트유 장중 85달러선 돌파 시도',
-                '미국 FOMC 위원들 하반기 물가지표 추가 개선 확인 시 기준금리 인하 동의'
-              ];
-              while (headlines.length < 5) {
-                headlines.push(defaultHeadlines[headlines.length % 5]);
-              }
-              const finalHeadlines = headlines.slice(0, 5);
-
-              return (
-                <div className="space-y-4">
-                  {finalHeadlines.map((news, idx) => (
-                    <div 
-                      key={idx} 
-                      className="bg-slate-950 border border-slate-850/80 p-4 rounded-xl flex flex-col md:flex-row gap-3.5 md:items-start hover:border-slate-800 transition-all shadow-sm"
-                    >
-                      {/* 뉴스 제목 */}
-                      <div className="flex gap-3 items-start shrink-0 md:w-5/12">
-                        <span className="w-5 h-5 rounded-full bg-slate-900 text-sky-400 border border-sky-500/20 text-[10px] font-mono font-black flex items-center justify-center shrink-0">
-                          {idx + 1}
-                        </span>
-                        <p className="text-xs text-slate-200 leading-relaxed font-bold break-keep select-text">{news}</p>
-                      </div>
-
-                      {/* 확장분석 */}
-                      <div className="md:border-l md:border-slate-850 md:pl-4 flex-1">
-                        <span className="text-[10px] font-extrabold text-sky-400 block mb-1">🔍 실시간 외신 확장분석</span>
-                        <p className="text-[11px] text-slate-400 leading-relaxed font-medium break-keep select-text">
-                          {getHeadlineAnalysis(news, idx)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
-          </div>
-
           {/* 5. 미국 주도주 및 특징주 */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-800 pb-2">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
               <Flame className="w-4 h-4 text-amber-500" />
               <span>미국 주도주 및 특징주</span>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850">
+              <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850">
                 <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block mb-2">US Leader / 미국 주도주</span>
-                <div className="text-xs text-slate-300 leading-relaxed font-extrabold whitespace-normal break-keep bg-slate-900/40 p-3 rounded-lg border border-slate-850/50">
+                <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-extrabold whitespace-normal break-keep bg-slate-50 dark:bg-slate-900/40 p-3 rounded-lg border border-slate-200 dark:border-slate-850/50">
                   {usLeaders}
                 </div>
               </div>
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850">
+              <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850">
                 <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest block mb-2">Featured Stock Movement / 특징주 분석</span>
-                <div className="text-xs text-slate-300 leading-relaxed font-medium whitespace-pre-wrap break-keep bg-slate-900/40 p-3 rounded-lg border border-slate-850/50">
+                <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium whitespace-pre-wrap break-keep bg-slate-50 dark:bg-slate-900/40 p-3 rounded-lg border border-slate-200 dark:border-slate-850/50">
                   {usFeaturedStock}
                 </div>
               </div>
@@ -591,8 +522,8 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
 
           {/* 6. 국내 시장 영향 분석 및 연동 종목 분석 (섹터별 매핑 및 최대 6개 섹터 적응형 렌더링) */}
           <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/20 border border-indigo-500/10 rounded-2xl p-5 space-y-5">
-            <div className="border-b border-slate-800 pb-2 flex items-center justify-between">
-              <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-2 flex items-center justify-between">
+              <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-indigo-400" />
                 <span>국내 시장 영향 및 섹터별 주도 연동종목 분석</span>
               </h3>
@@ -602,7 +533,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
             </div>
 
             {/* 수급 이동 시나리오 */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-indigo-500/15 text-xs text-slate-300 leading-relaxed shadow-inner">
+            <div className="bg-white dark:bg-slate-950/60 p-4 rounded-xl border border-indigo-500/15 text-xs text-slate-700 dark:text-slate-300 leading-relaxed shadow-inner">
               <h4 className="font-extrabold text-indigo-300 mb-1.5">📊 전업 트레이더 전략적 연결 분석</h4>
               <p className="leading-relaxed whitespace-pre-wrap break-keep break-words">{koreanMarketImpact}</p>
             </div>
@@ -617,15 +548,15 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                       ? 'bg-red-500/10 border-red-500/20 text-red-400' 
                       : sec.sentiment === 'bearish' 
                         ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' 
-                        : 'bg-slate-800/40 border-slate-800/60 text-slate-400';
+                        : 'bg-slate-200 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800/60 text-slate-600 dark:text-slate-400';
 
                   return (
-                    <div key={idx} className="bg-slate-950/50 border border-slate-850 p-4 rounded-xl flex flex-col gap-3 hover:border-slate-800 transition-all">
+                    <div key={idx} className="bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-slate-850 p-4 rounded-xl flex flex-col gap-3 hover:border-slate-200 dark:hover:border-slate-800 transition-all">
                       {/* 섹터 헤더 */}
                       <div className="flex items-center justify-between border-b border-slate-900/60 pb-2">
                         <div className="flex items-center gap-2">
                           <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full shrink-0" />
-                          <span className="text-xs font-black text-slate-200">{sec.sectorName}</span>
+                          <span className="text-xs font-black text-slate-800 dark:text-slate-200">{sec.sectorName}</span>
                         </div>
                         <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded border uppercase ${sentimentColors}`}>
                           {sec.sentiment}
@@ -633,7 +564,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                       </div>
 
                       {/* 분석 리포트 */}
-                      <p className="text-[11px] text-slate-300 leading-relaxed font-medium break-keep">
+                      <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed font-medium break-keep">
                         {sec.reason}
                       </p>
 
@@ -656,12 +587,12 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
 
             {/* 기존 단일 리스트 형태도 하단에 슬림하게 서브로 유지해 완벽한 하위호환 확보 */}
             {domesticMatches.length > 0 && (
-              <div className="border-t border-slate-850/50 pt-3 mt-1.5">
-                <span className="text-[9.5px] font-black text-slate-500 uppercase tracking-widest block mb-2">📋 연동 주도주 세부 분석 요약</span>
+              <div className="border-t border-slate-200 dark:border-slate-850/50 pt-3 mt-1.5">
+                <span className="text-[9.5px] font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest block mb-2">📋 연동 주도주 세부 분석 요약</span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {domesticMatches.map((item, idx) => (
-                    <div key={idx} className="bg-slate-950/40 border border-slate-850/50 p-2.5 rounded-lg flex flex-col justify-start gap-1 w-full">
-                      <span className="text-xs font-extrabold text-slate-300 leading-tight">{item.stockName}</span>
+                    <div key={idx} className="bg-white dark:bg-slate-950/40 border border-slate-200 dark:border-slate-850/50 p-2.5 rounded-lg flex flex-col justify-start gap-1 w-full">
+                      <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 leading-tight">{item.stockName}</span>
                       <span className="text-[10px] text-indigo-400 font-mono font-bold block">연계: {item.theme}</span>
                       <span className="text-[10px] text-slate-450 leading-relaxed block break-keep">{item.reason}</span>
                     </div>
@@ -672,8 +603,8 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
           </div>
 
           {/* 7. 오늘의 핵심 관심 테마 및 주요 종목 */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-black text-slate-300 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-800 pb-2">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-black text-slate-700 dark:text-slate-300 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
               <Flame className="w-4 h-4 text-red-500" />
               <span>오늘의 핵심 관심 테마 및 주요 종목</span>
             </h3>
@@ -682,11 +613,11 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                 const themeName = typeof item === 'string' ? item : (item.theme || '관심테마');
                 const stocks = Array.isArray(item.relatedStocks) ? item.relatedStocks : [];
                 return (
-                  <div key={idx} className="bg-slate-950 p-4 rounded-xl border border-slate-850 flex flex-col gap-3.5">
+                  <div key={idx} className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 flex flex-col gap-3.5">
                     {/* Theme Label */}
                     <div className="flex items-center gap-2 border-b border-slate-900 pb-2.5 shrink-0 min-h-[36px]">
                       <span className="w-1.5 h-3 bg-red-500 rounded-full shrink-0" />
-                      <span className="text-xs font-black text-slate-200 leading-snug block whitespace-normal break-keep w-full">{themeName}</span>
+                      <span className="text-xs font-black text-slate-800 dark:text-slate-200 leading-snug block whitespace-normal break-keep w-full">{themeName}</span>
                     </div>
                     
                     {/* Stocks (Horizontally laid out) */}
@@ -711,16 +642,16 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
 
                         const isNegative = detailParts[0]?.includes('-');
                         const isPositive = detailParts[0]?.includes('+');
-                        const changeColor = isNegative ? 'text-blue-400' : (isPositive ? 'text-red-400' : 'text-slate-300');
+                        const changeColor = isNegative ? 'text-blue-400' : (isPositive ? 'text-red-400' : 'text-slate-700 dark:text-slate-300');
 
                         return (
-                          <div key={sIdx} className="bg-slate-900/60 hover:bg-slate-900 border border-slate-850/50 py-2.5 px-3 rounded-xl flex flex-col justify-between transition-all min-w-0 gap-1.5 w-full h-full shadow-sm">
-                            <div className="font-extrabold text-slate-100 text-[12px] sm:text-xs tracking-tight truncate w-full">
+                          <div key={sIdx} className="bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-850/50 py-2.5 px-3 rounded-xl flex flex-col justify-between transition-all min-w-0 gap-1.5 w-full h-full shadow-sm">
+                            <div className="font-extrabold text-slate-900 dark:text-slate-100 text-[12px] sm:text-xs tracking-tight truncate w-full">
                               {name}
                             </div>
                             
                             {detailParts.length > 0 && (
-                              <div className="flex items-center justify-between w-full border-t border-slate-800/40 pt-2 mt-0.5 select-none gap-2">
+                              <div className="flex items-center justify-between w-full border-t border-slate-200 dark:border-slate-800/40 pt-2 mt-0.5 select-none gap-2">
                                 <span className={`font-black text-[10px] sm:text-[10.5px] font-mono whitespace-nowrap ${changeColor}`}>
                                   {detailParts[0]}
                                 </span>
@@ -735,7 +666,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                         );
                       })}
                       {stocks.length === 0 && (
-                        <div className="text-[10px] text-slate-500 italic col-span-2 py-1">종목 준비 중...</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-500 italic col-span-2 py-1">종목 준비 중...</div>
                       )}
                     </div>
                   </div>
@@ -745,16 +676,16 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
           </div>
 
           {/* 8. 오늘의 핵심 주의 리스크 (마지막 배치) */}
-          <div className="bg-slate-900 border border-red-500/10 rounded-2xl p-5 space-y-3">
-            <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-800 pb-2">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-red-500/10 rounded-2xl p-5 space-y-3">
+            <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
               <AlertTriangle className="w-4 h-4 text-red-400" />
               <span>오늘의 핵심 주의 리스크 및 위기 요소</span>
             </h3>
             <div className="bg-red-950/10 border border-red-500/10 p-4 rounded-xl flex items-start gap-2.5">
-              <span className="w-5 h-5 rounded-full bg-slate-950 text-red-400 border border-red-500/20 text-[10px] font-mono font-black flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="w-5 h-5 rounded-full bg-white dark:bg-slate-950 text-red-400 border border-red-500/20 text-[10px] font-mono font-black flex items-center justify-center flex-shrink-0 mt-0.5">
                 !
               </span>
-              <p className="text-xs text-slate-300 leading-relaxed font-semibold whitespace-pre-wrap break-keep break-words">
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-semibold whitespace-pre-wrap break-keep break-words">
                 {warningIssues}
               </p>
             </div>

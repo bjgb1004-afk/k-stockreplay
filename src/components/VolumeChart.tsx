@@ -54,6 +54,7 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
     let chart: any = null;
     let resizeObserver: ResizeObserver | null = null;
     let resizeAnimationFrameId: number | null = null;
+    let isChartActive = true;
 
     try {
       const container = containerRef.current;
@@ -64,8 +65,8 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
         handleScale: false,
         handleScroll: false,
         layout: {
-          background: { type: 'solid' as any, color: '#020617' }, // matching slate-950
-          textColor: '#94a3b8', // slate-400
+          background: { type: 'solid' as any, color: document.documentElement.classList.contains('dark') ? '#020617' : '#ffffff' },
+          textColor: document.documentElement.classList.contains('dark') ? '#94a3b8' : '#64748b',
           fontSize: 11,
           fontFamily: 'JetBrains Mono, Inter, sans-serif',
         },
@@ -134,6 +135,28 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
           },
         },
       });
+      (chart as any).__observer = new MutationObserver(() => {
+        if (!isChartActive || !chartRef.current) return;
+        try {
+          const isDark = document.documentElement.classList.contains('dark');
+          chart.applyOptions({
+            layout: {
+              background: { type: 'solid' as any, color: isDark ? '#020617' : '#ffffff' },
+              textColor: isDark ? '#94a3b8' : '#64748b',
+            }
+          });
+          chart.priceScale('right').applyOptions({
+            borderColor: isDark ? '#1e293b' : '#e2e8f0',
+          });
+          chart.timeScale().applyOptions({
+            borderColor: isDark ? '#1e293b' : '#e2e8f0',
+          });
+        } catch (e) {
+          console.warn('[VolumeChart] Dark mode toggle failed:', e);
+        }
+      });
+      (chart as any).__observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
 
       chartRef.current = chart;
       firstCandleDateRef.current = firstCandleDate;
@@ -167,14 +190,14 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
       resizeObserver = new ResizeObserver((entries) => {
         for (let entry of entries) {
           const { width } = entry.contentRect;
-          if (width && Math.abs(width - lastWidth) > 1 && chartRef.current) {
+          if (width && Math.abs(width - lastWidth) > 1 && isChartActive && chartRef.current) {
             lastWidth = width;
             if (resizeAnimationFrameId !== null) {
               cancelAnimationFrame(resizeAnimationFrameId);
             }
             resizeAnimationFrameId = requestAnimationFrame(() => {
               try {
-                if (chartRef.current) {
+                if (isChartActive && chartRef.current) {
                   chartRef.current.resize(width, height);
                 }
               } catch (err) {}
@@ -189,7 +212,11 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
     }
 
     return () => {
-      // Clean up handled on unmount
+      isChartActive = false;
+      if (resizeObserver) resizeObserver.disconnect();
+      if (resizeAnimationFrameId !== null) {
+        cancelAnimationFrame(resizeAnimationFrameId);
+      }
     };
   }, [candles[0]?.date, height]);
 
@@ -282,7 +309,7 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
   return (
     <div
       ref={containerRef}
-      className="w-full block border-t border-slate-800/60 bg-slate-950"
+      className="w-full block border-t border-slate-200 dark:border-slate-800/60 bg-white dark:bg-slate-950"
       style={{ height: `${height}px` }}
       id="volume-chart-container"
     />

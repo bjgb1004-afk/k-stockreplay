@@ -113,6 +113,8 @@ export interface JodojuAnalysis {
   changeRate: number;
   volume: number;
   tradeValuePct: number; // e.g. 5000억
+  tradeValue?: number;
+  tradingValue?: number;
   marketStrength: number; // 1-100
   themeStrength: number; // 1-100
   score: number; // 0-100
@@ -181,6 +183,9 @@ export interface ReplayReviewReport {
   maxDrawdown: number; // %
   averageHoldingTime: string; // e.g. "4일" / "25분"
   aiFeedback: string;
+  score?: number;
+  fitIndex?: number;
+  adviceText?: string;
   matchedIdealGuides: {
     guideType: string;
     price: number;

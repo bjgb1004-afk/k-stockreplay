@@ -18,18 +18,18 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
 
   if (loading) {
     return (
-      <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-900/40 rounded-2xl border border-slate-800">
+      <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800">
         <div className="w-12 h-12 rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin" />
-        <p className="text-xs text-slate-400 font-mono">16:00 장마감 브리핑 및 시장 복기 자료 분석 중...</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 font-mono">16:00 장마감 브리핑 및 시장 복기 자료 분석 중...</p>
       </div>
     );
   }
 
   if (!report) {
     return (
-      <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-900/40 rounded-2xl border border-slate-800">
+      <div className="col-span-12 flex flex-col items-center justify-center py-20 text-center space-y-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800">
         <Zap className="w-12 h-12 text-slate-600 animate-pulse" />
-        <p className="text-xs text-slate-400 font-sans">데이터를 불러오는 중입니다...</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 font-sans">데이터를 불러오는 중입니다...</p>
       </div>
     );
   }
@@ -82,13 +82,13 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
               <span className="bg-blue-500/20 text-blue-400 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-blue-500/30 uppercase tracking-wider">
                 After-Market Analysis
               </span>
-              <span className="text-slate-400 font-mono text-[10px]">생성 일시: {new Date(createdAtStr).toLocaleString()}</span>
+              <span className="text-slate-600 dark:text-slate-400 font-mono text-[10px]">생성 일시: {new Date(createdAtStr).toLocaleString()}</span>
             </div>
-            <h2 className="text-xl md:text-2xl font-black text-slate-100 flex items-center gap-2">
+            <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <Zap className="w-6 h-6 text-blue-500" />
               <span>16:00 오늘 하루 장마감 국내시장 분석</span>
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               오늘 한국 주식시장의 핵심 주도 특징주와 호재/악재 뉴스 흐름을 복기하고 시장 맥점을 정밀히 되짚습니다.
             </p>
           </div>
@@ -101,16 +101,16 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
         <div className="space-y-5">
           
           {/* Index summary */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+            <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
               <TrendingUp className="w-4 h-4 text-emerald-400" />
               <span>국내 주요 지수 마감 상황</span>
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-slate-950 border border-slate-850 p-4 rounded-xl flex flex-row items-center justify-between gap-4">
+              <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-4 rounded-xl flex flex-row items-center justify-between gap-4">
                 <div>
-                  <span className="text-xs text-slate-400 font-black block">코스피 (KOSPI)</span>
-                  <div className="text-lg font-black font-mono mt-1 text-slate-100">{marketOverview.kospiIndex}</div>
+                  <span className="text-xs text-slate-600 dark:text-slate-400 font-black block">코스피 (KOSPI)</span>
+                  <div className="text-lg font-black font-mono mt-1 text-slate-900 dark:text-slate-100">{marketOverview.kospiIndex}</div>
                 </div>
                 <div className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-black shrink-0 ${
                   marketOverview.kospiChange.includes('+') 
@@ -122,10 +122,10 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
                 </div>
               </div>
 
-              <div className="bg-slate-950 border border-slate-850 p-4 rounded-xl flex flex-row items-center justify-between gap-4">
+              <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-4 rounded-xl flex flex-row items-center justify-between gap-4">
                 <div>
-                  <span className="text-xs text-slate-400 font-black block">코스닥 (KOSDAQ)</span>
-                  <div className="text-lg font-black font-mono mt-1 text-slate-100">{marketOverview.kosdaqIndex}</div>
+                  <span className="text-xs text-slate-600 dark:text-slate-400 font-black block">코스닥 (KOSDAQ)</span>
+                  <div className="text-lg font-black font-mono mt-1 text-slate-900 dark:text-slate-100">{marketOverview.kosdaqIndex}</div>
                 </div>
                 <div className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-black shrink-0 ${
                   marketOverview.kosdaqChange.includes('+') 
@@ -140,24 +140,24 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
           </div>
 
           {/* 장마감 시장동향 및 분석 (이동 및 명칭 수정 적용) */}
-          <div className="bg-slate-900 border border-blue-500/20 rounded-2xl p-5 space-y-4 relative overflow-hidden">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-blue-500/20 rounded-2xl p-5 space-y-4 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full filter blur-xl pointer-events-none" />
-            <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+            <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-blue-400" />
               <span>장마감 시장동향 및 분석</span>
             </h3>
             
             <div className="space-y-4">
-              <div className="text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-wrap bg-slate-950/40 p-4 rounded-xl border border-slate-850/60 break-keep break-words">
+              <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans whitespace-pre-wrap bg-white dark:bg-slate-950/40 p-4 rounded-xl border border-slate-200 dark:border-slate-850/60 break-keep break-words">
                 {marketAnalysisSummary}
               </div>
               
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850 space-y-2">
+              <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 space-y-2">
                 <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5" />
                   실전 트레이더 학습 가이드
                 </span>
-                <p className="text-[11px] text-slate-400 leading-relaxed break-keep break-words whitespace-normal">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed break-keep break-words whitespace-normal">
                   오늘 시장의 수급은 주도 테마군으로 집중되었습니다. 해당 종목들의 장중 거래량 및 분봉 추세를 밀접하게 체크하고 복기하는 훈련을 반복하십시오.
                 </p>
               </div>
@@ -165,9 +165,9 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
           </div>
 
           {/* 특징주 분류 (당일 특징주) */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-5">
-              <div className="border-b border-slate-800 pb-3 flex justify-between items-center">
-                <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-5">
+              <div className="border-b border-slate-200 dark:border-slate-800 pb-3 flex justify-between items-center">
+                <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-indigo-400" />
                   <span>당일 특징주호재악재 분류</span>
                 </h3>
@@ -191,13 +191,13 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
                     }));
 
                     if (list.length === 0) {
-                      return <div className="text-[11px] text-slate-500 py-6 text-center">오늘 관측된 주요 호재성 특징주가 없습니다.</div>;
+                      return <div className="text-[11px] text-slate-500 dark:text-slate-500 py-6 text-center">오늘 관측된 주요 호재성 특징주가 없습니다.</div>;
                     }
 
                     return list.map((item: any, idx: number) => (
-                      <div key={idx} className="bg-slate-950/70 border border-red-950/30 p-3.5 rounded-xl hover:border-red-900/40 transition-all space-y-2.5">
+                      <div key={idx} className="bg-white dark:bg-slate-950/70 border border-red-950/30 p-3.5 rounded-xl hover:border-red-900/40 transition-all space-y-2.5">
                         <div className="flex flex-col gap-1.5 border-b border-slate-900/60 pb-2">
-                          <span className="text-xs font-black text-red-300">{item.name} <span className="text-[10px] text-slate-500 font-mono">({item.ticker})</span></span>
+                          <span className="text-xs font-black text-red-300">{item.name} <span className="text-[10px] text-slate-500 dark:text-slate-500 font-mono">({item.ticker})</span></span>
                           {item.keywords && item.keywords.length > 0 && (
                             <div className="flex flex-wrap gap-1">
                               {item.keywords.slice(0, 3).map((kw: string, kIdx: number) => (
@@ -208,12 +208,12 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
                             </div>
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-300 font-sans leading-relaxed break-keep break-words whitespace-normal">{item.catalyst}</p>
+                        <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans leading-relaxed break-keep break-words whitespace-normal">{item.catalyst}</p>
                         {item.relatedStocks && item.relatedStocks.length > 1 && (
-                          <div className="text-[9px] text-slate-500 font-sans border-t border-slate-900/60 pt-1.5 flex flex-wrap items-center gap-1">
+                          <div className="text-[9px] text-slate-500 dark:text-slate-500 font-sans border-t border-slate-900/60 pt-1.5 flex flex-wrap items-center gap-1">
                             <span className="text-red-400/80">연관 종목:</span>
                             {item.relatedStocks.map((rel: string, rIdx: number) => (
-                              <span key={rIdx} className="bg-slate-900 px-1.5 py-0.5 rounded text-slate-400 hover:text-slate-200 cursor-pointer" onClick={() => {
+                              <span key={rIdx} className="bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer" onClick={() => {
                                 const match = JODOJU_STOCKS.find(s => s.name === rel);
                                 if (match) onSelectStock(match.code);
                               }}>{rel}</span>
@@ -242,13 +242,13 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
                     }));
 
                     if (list.length === 0) {
-                      return <div className="text-[11px] text-slate-500 py-6 text-center">오늘 관측된 주요 악재성 특징주가 없습니다.</div>;
+                      return <div className="text-[11px] text-slate-500 dark:text-slate-500 py-6 text-center">오늘 관측된 주요 악재성 특징주가 없습니다.</div>;
                     }
 
                     return list.map((item: any, idx: number) => (
-                      <div key={idx} className="bg-slate-950/70 border border-blue-950/30 p-3.5 rounded-xl hover:border-blue-900/40 transition-all space-y-2.5">
+                      <div key={idx} className="bg-white dark:bg-slate-950/70 border border-blue-950/30 p-3.5 rounded-xl hover:border-blue-900/40 transition-all space-y-2.5">
                         <div className="flex flex-col gap-1.5 border-b border-slate-900/60 pb-2">
-                          <span className="text-xs font-black text-blue-300">{item.name} <span className="text-[10px] text-slate-500 font-mono">({item.ticker})</span></span>
+                          <span className="text-xs font-black text-blue-300">{item.name} <span className="text-[10px] text-slate-500 dark:text-slate-500 font-mono">({item.ticker})</span></span>
                           {item.keywords && item.keywords.length > 0 && (
                             <div className="flex flex-wrap gap-1">
                               {item.keywords.slice(0, 3).map((kw: string, kIdx: number) => (
@@ -259,12 +259,12 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
                             </div>
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-300 font-sans leading-relaxed break-keep break-words whitespace-normal">{item.catalyst}</p>
+                        <p className="text-[11px] text-slate-700 dark:text-slate-300 font-sans leading-relaxed break-keep break-words whitespace-normal">{item.catalyst}</p>
                         {item.relatedStocks && item.relatedStocks.length > 1 && (
-                          <div className="text-[9px] text-slate-500 font-sans border-t border-slate-900/60 pt-1.5 flex flex-wrap items-center gap-1">
+                          <div className="text-[9px] text-slate-500 dark:text-slate-500 font-sans border-t border-slate-900/60 pt-1.5 flex flex-wrap items-center gap-1">
                             <span className="text-blue-400/80">연관 종목:</span>
                             {item.relatedStocks.map((rel: string, rIdx: number) => (
-                              <span key={rIdx} className="bg-slate-900 px-1.5 py-0.5 rounded text-slate-400 hover:text-slate-200 cursor-pointer" onClick={() => {
+                              <span key={rIdx} className="bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer" onClick={() => {
                                 const match = JODOJU_STOCKS.find(s => s.name === rel);
                                 if (match) onSelectStock(match.code);
                               }}>{rel}</span>
@@ -281,8 +281,8 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
         </div>
 
         {/* Right Side: AI Market Critique & Theme Summary (Full-width row) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-          <h3 className="text-xs font-black text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+          <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
             <BarChart3 className="w-4 h-4 text-indigo-400" />
             <span>당일 핫 테마 및 자금 점유율</span>
           </h3>
@@ -295,10 +295,10 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
             ].map((theme, idx) => (
               <div key={idx} className="space-y-1">
                 <div className="flex justify-between items-center text-[11px] font-bold">
-                  <span className="text-slate-300">{theme.name}</span>
-                  <span className="text-slate-400 font-mono">{theme.pct}%</span>
+                  <span className="text-slate-700 dark:text-slate-300">{theme.name}</span>
+                  <span className="text-slate-600 dark:text-slate-400 font-mono">{theme.pct}%</span>
                 </div>
-                <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-white dark:bg-slate-950 rounded-full overflow-hidden">
                   <div className={`h-full rounded-full ${theme.color}`} style={{ width: `${theme.pct}%` }} />
                 </div>
               </div>

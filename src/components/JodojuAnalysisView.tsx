@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  TrendingUp, Zap, Sparkles
+  TrendingUp, Zap, Sparkles, Loader2, AlertCircle, BarChart3, Building, HelpCircle, ArrowRight
 } from 'lucide-react';
 import { AfterMarketReport } from '../types';
 
@@ -108,9 +108,7 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
     const uniqueJodoju15 = report.jodoju15.filter((r: any) => {
       const ticker = r.ticker || r.code;
       if (!ticker) return false;
-      if (seenTickers.has(ticker)) {
-        return false;
-      }
+      if (seenTickers.has(ticker)) return false;
       seenTickers.add(ticker);
       return true;
     });
@@ -150,128 +148,323 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
     .sort((a, b) => b.changeRate - a.changeRate)
     .slice(0, 10);
 
+  // Selection states
+  const [selectedTicker, setSelectedTicker] = useState<string>('');
+  const [analysisCache, setAnalysisCache] = useState<Record<string, { technicalAnalysis: string; financialAnalysis: string }>>({});
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Set initial selected stock
+  useEffect(() => {
+    if (jodojuList.length > 0 && !selectedTicker) {
+      setSelectedTicker(jodojuList[0].ticker);
+    }
+  }, [jodojuList, selectedTicker]);
+
+  // Fetch quantitative analysis when selected stock changes
+  useEffect(() => {
+    if (!selectedTicker) return;
+
+    const currentStock = jodojuList.find(s => s.ticker === selectedTicker);
+    if (!currentStock) return;
+
+    if (analysisCache[selectedTicker]) {
+      // Load from cache directly
+      return;
+    }
+
+    const fetchAnalysis = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/platform/jodoju-analysis?ticker=${currentStock.ticker}&name=${encodeURIComponent(currentStock.name)}&closePrice=${currentStock.closePrice || 0}&changeRate=${currentStock.changeRate || 0}&tradeValue=${currentStock.tradeValue || 0}`);
+        if (!res.ok) {
+          throw new Error('AI 분석 정보를 가져오지 못했습니다.');
+        }
+        const data = await res.json();
+        setAnalysisCache(prev => ({
+          ...prev,
+          [selectedTicker]: {
+            technicalAnalysis: data.technicalAnalysis,
+            financialAnalysis: data.financialAnalysis
+          }
+        }));
+      } catch (err: any) {
+        console.error('[Jodoju View] Failed to fetch dynamic AI analysis:', err);
+        setError(err.message || '데이터 로딩 오류');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalysis();
+  }, [selectedTicker, analysisCache, jodojuList]);
+
+  const currentStock = jodojuList.find(s => s.ticker === selectedTicker) || jodojuList[0];
+  const activeAnalysis = selectedTicker ? analysisCache[selectedTicker] : null;
+
   if (jodojuList.length === 0) {
     return (
-      <div className="col-span-12 bg-slate-900 border border-slate-800 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-3">
+      <div className="col-span-12 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-3">
         <Sparkles className="w-8 h-8 text-indigo-400 animate-pulse" />
-        <span className="text-sm font-black text-slate-200">당일 주도주 분석 데이터를 불러오는 중입니다...</span>
-        <span className="text-[11px] text-slate-500">실시간 종목 발굴 및 AI 수급 입체 보고서를 최신화하고 있습니다.</span>
+        <span className="text-sm font-black text-slate-800 dark:text-slate-200">당일 주도주 분석 데이터를 불러오는 중입니다...</span>
+        <span className="text-[11px] text-slate-500 dark:text-slate-500">실시간 종목 발굴 및 AI 수급 입체 보고서를 최신화하고 있습니다.</span>
       </div>
     );
   }
 
   return (
-    <div className="col-span-12 bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 flex flex-col gap-6">
-      {/* Title Header */}
-      <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="col-span-12 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 md:p-6 flex flex-col gap-6" id="jodoju-analysis-container">
+      {/* Title Header with Merged Dropdown */}
+      <div className="border-b border-slate-200 dark:border-slate-800 pb-4 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div>
-          <h2 className="text-base font-black text-slate-100 flex items-center gap-2">
+          <h2 className="text-base font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-amber-500" />
-            <span>당일주도주 분석 리스트 ({report?.date ? `${parseInt(report.date.split('-')[1])}월 ${parseInt(report.date.split('-')[2])}일` : '당일'}) ({jodojuList.length}종목)</span>
+            <span>당일주도주 정량 분석센터 ({report?.date ? `${parseInt(report.date.split('-')[1])}월 ${parseInt(report.date.split('-')[2])}일` : '당일'}) ({jodojuList.length}종목)</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            실전 차트 복기 시뮬레이터가 엄선한 오늘 시장의 최상위 거래대금 주도주 리스트입니다. 각 종목의 상세 정보 및 재료를 확인하고 복기 시뮬레이션을 즐겨보세요.
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+            인간의 주관적 예측과 과장을 배제하고, 실시간 구글 검색(Google Search) 팩트체크 기반의 회계학적·통계적 지표 보고서만 제공합니다.
           </p>
+        </div>
+
+        {/* Elegant Merged Stock Selector Dropdown */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 shrink-0 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 rounded-xl p-2 px-3 shadow-sm">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">주도주 종목 선택 (Select Stock):</span>
+          <select
+            value={selectedTicker}
+            onChange={(e) => setSelectedTicker(e.target.value)}
+            className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 text-xs rounded-lg px-3 py-2 font-black focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer min-w-[240px]"
+            id="jodoju-stock-dropdown-select"
+          >
+            {jodojuList.map((stk, idx) => (
+              <option key={stk.ticker} value={stk.ticker}>
+                [{idx + 1}위] {stk.name} ({stk.ticker}) | +{stk.changeRate?.toFixed(2)}%
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* Grid of 10 Leading Stocks */}
-      <div className="flex flex-col gap-4">
-        {jodojuList.map((stk, idx) => {
-          const isUp = stk.changeRate >= 0;
-          const themes = stk.relatedThemes || [];
-          
-          return (
-            <div 
-              key={stk.ticker} 
-              className="bg-slate-950 hover:bg-slate-950/80 border border-slate-850 hover:border-indigo-500/30 rounded-xl p-4 md:p-5 transition-all duration-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 group"
-            >
-              {/* Left Column: Rank, Stock Info, Theme Tags */}
-              <div className="flex items-start gap-4 flex-1">
-                {/* Rank Badge */}
-                <div className="bg-slate-900 border border-slate-800 h-10 w-10 rounded-lg flex flex-col items-center justify-center shrink-0">
-                  <span className="text-[10px] text-slate-500 font-bold leading-none">RANK</span>
-                  <span className="text-sm font-black text-amber-400 leading-none mt-1">{idx + 1}</span>
+      {/* Main Full-Width Multi-Pane Layout (Sidebar completely removed) */}
+      <div className="flex flex-col gap-6">
+        {currentStock && (
+          <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 rounded-xl p-5 shadow-md flex flex-col gap-4">
+            {/* Selected Stock Overview Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-4 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shrink-0">
+                  <TrendingUp className="w-5 h-5 text-amber-400" />
                 </div>
-
-                {/* Stock Details */}
-                <div className="space-y-1.5 flex-1">
-                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                    <span className="text-sm font-black text-slate-100 group-hover:text-indigo-400 transition-colors">
-                      {stk.name}
-                    </span>
-                    <span className="text-xs text-slate-500 font-mono">
-                      {stk.ticker}
-                    </span>
-                    {/* Price and Change */}
-                    <div className="flex items-center gap-1.5 ml-0 lg:ml-2">
-                      <span className="text-xs font-mono text-slate-300">
-                        {stk.closePrice ? `${stk.closePrice.toLocaleString()}원` : ''}
-                      </span>
-                      <span className={`text-xs font-black font-mono px-1.5 py-0.5 rounded ${
-                        isUp ? 'bg-red-500/10 text-red-400' : 'bg-blue-500/10 text-blue-400'
-                      }`}>
-                        {isUp ? '+' : ''}{stk.changeRate?.toFixed(2)}%
-                      </span>
-                    </div>
-                    {/* Trading Value */}
-                    <span className="bg-slate-900 border border-slate-800/80 text-slate-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
-                      거래대금: {stk.tradeValue ? `${Math.round(stk.tradeValue).toLocaleString()}억` : 'N/A'}
-                    </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-black text-slate-900 dark:text-slate-100">{currentStock.name}</h3>
+                    <span className="text-xs font-mono text-slate-500">{currentStock.ticker}</span>
                   </div>
-
-                  {/* Themes as tags */}
-                  {themes.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {themes.map((theme: string, tIdx: number) => (
-                        <span 
-                          key={tIdx} 
-                          className="bg-indigo-500/5 hover:bg-indigo-500/10 text-indigo-400 text-[9px] font-bold px-2 py-0.5 rounded border border-indigo-500/10 transition"
-                        >
-                          #{theme}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Rise Reason description */}
-                  <div className="bg-slate-900/50 rounded-lg p-2.5 border border-slate-900 mt-1">
-                    <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
-                      <span className="text-amber-500/90 font-bold shrink-0">💡 급등 재료:</span> {stk.riseReason}
-                    </p>
-                    {stk.supplyDemand && (
-                      <p className="text-[10px] text-slate-400 leading-relaxed font-sans mt-1 flex items-center gap-1">
-                        <span className="text-slate-500 shrink-0">📊 수급:</span>{' '}
-                        {typeof stk.supplyDemand === 'object' ? (
-                          <span>
-                            외인 {stk.supplyDemand.foreigner || 'N/A'} | 기관 {stk.supplyDemand.institution || 'N/A'}
-                          </span>
-                        ) : (
-                          stk.supplyDemand
-                        )}
-                      </p>
-                    )}
+                  {/* Basic Info Badges */}
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    <span className="bg-red-500/10 text-red-400 text-[10px] font-black px-2 py-0.5 rounded-md">
+                      종가: {currentStock.closePrice ? `${currentStock.closePrice.toLocaleString()}원` : '종가 데이터'} (+{currentStock.changeRate?.toFixed(2)}%)
+                    </span>
+                    <span className="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-800">
+                      거래대금: {currentStock.tradeValue ? `${Math.round(currentStock.tradeValue).toLocaleString()}억` : 'N/A'}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Right Column: Start Simulator button */}
-              <div className="flex items-center justify-end shrink-0 self-end lg:self-center w-full lg:w-auto">
-                <button
-                  onClick={() => onSelectStockForReplay(stk.ticker)}
-                  className="w-full lg:w-auto px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-red-950/20"
-                >
-                  <Zap className="w-3.5 h-3.5 fill-current" />
-                  <span>복기 시뮬레이터 시작</span>
-                </button>
-              </div>
+              {/* Launch Chart Simulator Button */}
+              <button
+                onClick={() => onSelectStockForReplay(currentStock.ticker)}
+                className="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-red-950/10 shrink-0"
+              >
+                <Zap className="w-3.5 h-3.5 fill-current" />
+                <span>이 종목으로 복기 시뮬레이터 시작</span>
+                <ArrowRight className="w-3 h-3 ml-0.5" />
+              </button>
             </div>
-          );
-        })}
+
+            {/* Dynamic Theme / Rise Reason Card */}
+            <div className="bg-slate-50 dark:bg-slate-900/60 rounded-xl p-3.5 border border-slate-200/50 dark:border-slate-800 text-left">
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {(currentStock.relatedThemes || []).map((theme: string, tIdx: number) => (
+                  <span 
+                    key={tIdx} 
+                    className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-500/10 transition"
+                  >
+                    #{theme}
+                  </span>
+                ))}
+              </div>
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+                <span className="text-amber-500/90 font-black">💡 급등 재료 팩트:</span> {currentStock.riseReason}
+              </p>
+              {currentStock.supplyDemand && (
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-sans mt-1">
+                  <span className="font-semibold text-slate-400">📊 거래량 및 수급:</span> {typeof currentStock.supplyDemand === 'object' ? `외인 ${currentStock.supplyDemand.foreigner || 'N/A'} | 기관 ${currentStock.supplyDemand.institution || 'N/A'}` : currentStock.supplyDemand}
+                </p>
+              )}
+            </div>
+
+            {/* Interactive Agent Tabs Output */}
+            <div className="mt-2 flex flex-col gap-6">
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                  <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                  <span className="text-xs font-extrabold text-slate-600 dark:text-slate-400">
+                    정량적 시황 분석 에이전트가 가동 중입니다...
+                  </span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-500 max-w-sm text-center">
+                    실시간 거래대금, 주요 이동평균선 격차, 미상환 공시 잔액 및 재무제표 팩트를 검색/연동 중입니다.
+                  </span>
+                </div>
+              ) : error ? (
+                <div className="flex items-center gap-3 bg-red-500/5 border border-red-500/20 rounded-xl p-4 text-red-400 text-xs">
+                  <AlertCircle className="w-5 h-5 shrink-0" />
+                  <div>
+                    <p className="font-bold">분석 보고서를 생성하는 도중 오류가 발생했습니다.</p>
+                    <p className="text-[10px] text-red-500/80 mt-0.5">{error}</p>
+                  </div>
+                </div>
+              ) : activeAnalysis ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left" id="jodoju-analysis-grid-layout">
+                  
+                  {/* Agent 1: Quantitative Technical Agent */}
+                  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4.5 flex flex-col gap-3 relative overflow-hidden group">
+                    <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                      <span className="flex h-2 w-2 rounded-full bg-amber-500" />
+                      <h4 className="text-xs font-extrabold text-slate-800 dark:text-slate-100">
+                        정량적 기술적 분석 에이전트
+                      </h4>
+                    </div>
+                    <div className="text-xs leading-relaxed max-h-[360px] overflow-y-auto pr-1">
+                      <QuickMarkdown text={activeAnalysis.technicalAnalysis} />
+                    </div>
+                  </div>
+
+                  {/* Agent 2: Financial Data / Event Check Agent */}
+                  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4.5 flex flex-col gap-3 relative overflow-hidden group">
+                    <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                      <span className="flex h-2 w-2 rounded-full bg-cyan-500" />
+                      <h4 className="text-xs font-extrabold text-slate-800 dark:text-slate-100">
+                        금융 데이터 및 공시 팩트 에이전트
+                      </h4>
+                    </div>
+                    <div className="text-xs leading-relaxed max-h-[360px] overflow-y-auto pr-1">
+                      <QuickMarkdown text={activeAnalysis.financialAnalysis} />
+                    </div>
+                  </div>
+
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 gap-2 text-slate-400">
+                  <HelpCircle className="w-8 h-8 opacity-40" />
+                  <span className="text-xs">데이터 로딩에 필요한 종목 코드를 검증 중입니다.</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
+// Markdown inline bold parser inside bullet points
+function QuickMarkdown({ text }: { text: string }) {
+  if (!text) return null;
+  const lines = text.split('\n');
+  return (
+    <div className="space-y-2.5 font-sans text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-left">
+      {lines.map((line, idx) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={idx} className="h-1" />;
+        
+        // Skip some main title duplication if exists
+        if (trimmed.startsWith('### [') && idx === 0) return null;
+
+        // Horizontal rule
+        if (trimmed === '---') {
+          return <hr key={idx} className="border-slate-200 dark:border-slate-800 my-3" />;
+        }
+        
+        // Header 3
+        if (trimmed.startsWith('### ')) {
+          return (
+            <h5 key={idx} className="text-xs font-black text-slate-900 dark:text-white tracking-tight border-b border-slate-200 dark:border-slate-800 pb-1 mt-4 mb-2 flex items-center gap-1">
+              <span className="h-1.5 w-1.5 bg-indigo-500 rounded-full" />
+              {trimmed.substring(4)}
+            </h5>
+          );
+        }
+
+        // Header 4
+        if (trimmed.startsWith('#### ')) {
+          return (
+            <h6 key={idx} className="text-xs font-bold text-indigo-500 dark:text-indigo-400 tracking-tight mt-3 mb-1 font-sans">
+              {trimmed.substring(5)}
+            </h6>
+          );
+        }
+
+        // Bullet points (both * and -)
+        if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+          const content = trimmed.substring(2);
+          return (
+            <li key={idx} className="list-none pl-3 relative text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
+              <span className="absolute left-0 top-1.5 h-1 w-1 bg-slate-400 dark:bg-slate-600 rounded-full" />
+              {renderInlineBold(content)}
+            </li>
+          );
+        }
+
+        // Markdown Table Row
+        if (trimmed.startsWith('|')) {
+          if (trimmed.includes('---')) return null;
+          
+          const cells = trimmed.split('|').map(c => c.trim()).filter((_, cIdx, arr) => cIdx > 0 && cIdx < arr.length - 1);
+          const isHeader = idx === 0 || (lines[idx - 1] && lines[idx - 1].trim() === '---') || (lines[idx + 1] && lines[idx + 1].trim().includes('---'));
+          
+          if (isHeader) {
+            return (
+              <div key={idx} className="grid grid-cols-12 gap-1.5 bg-slate-200 dark:bg-slate-900 text-slate-700 dark:text-slate-400 px-2 py-1.5 text-xs font-bold uppercase tracking-wider rounded border border-slate-300 dark:border-slate-800 mt-2">
+                <div className="col-span-4">{cells[0] || '지표'}</div>
+                <div className="col-span-4 text-center">{cells[1] || '수치'}</div>
+                <div className="col-span-4 text-right">{cells[2] || '판정'}</div>
+              </div>
+            );
+          } else {
+            return (
+              <div key={idx} className="grid grid-cols-12 gap-1.5 border-b border-slate-200/50 dark:border-slate-800/60 px-2 py-1.5 text-xs text-slate-600 dark:text-slate-400 font-mono items-center">
+                <div className="col-span-4 font-sans font-bold text-slate-800 dark:text-slate-200">{cells[0]}</div>
+                <div className="col-span-4 text-center font-bold text-indigo-500">{cells[1]}</div>
+                <div className="col-span-4 text-right text-slate-500">{renderInlineBold(cells[2] || '')}</div>
+              </div>
+            );
+          }
+        }
+
+        // Normal Paragraph text
+        return <p key={idx} className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">{renderInlineBold(trimmed)}</p>;
+      })}
+    </div>
+  );
+}
+
+// Sub-component helper to split by ** and highlight bold matches with high contrast styling
+function renderInlineBold(text: string) {
+  if (!text) return '';
+  const parts = text.split('**');
+  return parts.map((part, i) => {
+    if (i % 2 === 1) {
+      return (
+        <strong key={i} className="text-amber-500 dark:text-amber-400 font-extrabold bg-amber-500/5 px-1 rounded border border-amber-500/10 inline-block">
+          {part}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
 
 export const parseSupplyValue = (text: string): number => {
   if (!text) return 0;

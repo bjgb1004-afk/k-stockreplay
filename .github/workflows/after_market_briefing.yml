@@ -1,0 +1,36 @@
+name: Daily After-Market Briefing Automation
+
+on:
+  schedule:
+    # 매일 영업일(월~금) KST 오후 4시 (UTC 기준 07:00)
+    - cron: '0 7 * * 1-5'
+  workflow_dispatch: # 수동 실행 기능 지원
+
+jobs:
+  run-automation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소 체크아웃 (Checkout repository)
+        uses: actions/checkout@v3
+
+      - name: Node.js 환경 설정 (Setup Node.js)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: 의존성 패키지 설치 (Install dependencies)
+        run: npm install
+
+      - name: 장마감 브리핑 스크립트 실행 (Run Briefing Script)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: npx tsx scripts/run_briefing_automation.ts
+
+      - name: 당일 특징주 스크립트 실행 (Run Featured Stocks Script)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: npx tsx scripts/update_featured_stocks.ts
