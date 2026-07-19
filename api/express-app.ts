@@ -3144,6 +3144,13 @@ CREATE TABLE kstock_platform_data (
     try {
       let posts = await getPostsList();
       
+      // 아직 발행되지 않은 가장 빠른 순번의 칼럼 딱 '1개'만 선택하기 위해 ID 순 오름차순 정렬
+      posts.sort((a, b) => {
+        const idA = parseInt(a.id.toString().replace(/[^0-9]/g, '')) || 0;
+        const idB = parseInt(b.id.toString().replace(/[^0-9]/g, '')) || 0;
+        return idA - idB;
+      });
+      
       let targetId = 1;
       let targetTitle = "";
       
@@ -4419,6 +4426,9 @@ CREATE TABLE kstock_platform_data (
       const now = new Date();
       if (!isAdmin) {
         posts = posts.filter(p => {
+          // 오직 명확히 발행된 글(is_published === true)만 노출
+          if (p.is_published === false || p.is_published === undefined) return false;
+          
           // published_at 또는 publishedAt이 존재하면 현재 시간과 비교하여 과거이거나 같을 때만 노출
           const pubAt = p.published_at || p.publishedAt;
           if (!pubAt) return true; // 설정되지 않은 과거 글은 노출
@@ -4448,6 +4458,9 @@ CREATE TABLE kstock_platform_data (
       }
 
       // 상세 조회 시에도 발행 규칙 적용
+      if ((post.is_published === false || post.is_published === undefined) && req.query.admin !== 'true') {
+        return res.status(403).json({ error: '아직 발행되지 않은 비공개 게시글입니다.' });
+      }
       const pubAt = post.published_at || post.publishedAt;
       if (pubAt && new Date(pubAt) > new Date() && req.query.admin !== 'true') {
         return res.status(403).json({ error: '아직 발행되지 않은 비공개 게시글입니다.' });

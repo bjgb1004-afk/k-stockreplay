@@ -17,6 +17,38 @@ export interface BlogPost {
   slug: string;
 }
 
+const stripHtmlTags = (html: string): string => {
+  if (!html) return '';
+  return html
+    .replace(/<[^>]*>/g, '') // strip HTML tags
+    .replace(/<!--[\s\S]*?-->/g, '') // strip HTML comments
+    .replace(/\s+/g, ' ') // collapse multiple spaces
+    .trim();
+};
+
+const renderHtmlWithAds = (content: string): string => {
+  if (!content) {
+    return '<p>작성 중인 칼럼입니다. 조만간 완성된 리포트가 업로드될 예정이니 조금만 기다려주세요!</p>';
+  }
+
+  const adHtml = `
+<div class="my-6 py-4 border-y border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 rounded-xl flex flex-col items-center justify-center text-center overflow-hidden">
+  <span class="text-[9px] font-black text-slate-400 dark:text-slate-600 tracking-widest mb-2.5">ADVERTISEMENT</span>
+  <ins class="adsbygoogle"
+       style="display:block; text-align:center; min-width:250px; min-height:90px;"
+       data-ad-layout="in-article"
+       data-ad-format="fluid"
+       data-ad-client="ca-pub-6302602717163004"
+       data-ad-slot="5043101495"></ins>
+  <script>
+       try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+  </script>
+</div>
+`;
+
+  return content.replace(/<!--\s*애드센스 자동 광고 삽입 위치\s*-->/g, adHtml);
+};
+
 interface BlogCenterProps {
   isAdmin?: boolean;
   onBack?: () => void;
@@ -416,10 +448,11 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
               {/* Injected Google AdSense Top Banner */}
               <div className="h-[90px] w-full" />
 
-              {/* Dynamic content sections separated by paragraphs */}
-              <div className="text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed space-y-4 whitespace-pre-wrap">
-                {activePost.content || '작성 중인 칼럼입니다. 조만간 완성된 리포트가 업로드될 예정이니 조금만 기다려주세요!'}
-              </div>
+              {/* Dynamic content sections rendering HTML safely and injecting AdSense blocks */}
+              <div 
+                className="text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed space-y-4 blog-post-html"
+                dangerouslySetInnerHTML={{ __html: renderHtmlWithAds(activePost.content) }}
+              />
 
               {/* Tags block */}
               {activePost.tags.length > 0 && (
@@ -526,7 +559,7 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
                     </h3>
 
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-3 font-sans">
-                      {(post.content || '작성 중인 칼럼입니다.').replace(/[#*`_]/g, '')}
+                      {stripHtmlTags(post.content || '작성 중인 칼럼입니다.')}
                     </p>
                   </div>
 
