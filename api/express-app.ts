@@ -3269,8 +3269,38 @@ CREATE TABLE kstock_platform_data (
     }
 
     const KIS_API_HOST = process.env.KIS_API_HOST || "https://openapi.koreainvestment.com";
-    const KIS_APP_KEY = process.env.KIS_APPKEY || process.env.KIS_APP_KEY || "";
-    const KIS_APP_SECRET = process.env.KIS_APPSECRET || process.env.KIS_APP_SECRET || "";
+    let KIS_APP_KEY = process.env.KIS_APPKEY || process.env.KIS_APP_KEY || "";
+    let KIS_APP_SECRET = process.env.KIS_APPSECRET || process.env.KIS_APP_SECRET || "";
+
+    // 환경 변수가 비어 있을 경우 .env.example 파일에서 직접 파싱하는 최후의 보루(Fallback) 로직 작동
+    if (!KIS_APP_KEY || !KIS_APP_SECRET) {
+      try {
+        const envExamplePath = path.resolve(process.cwd(), '.env.example');
+        if (fs.existsSync(envExamplePath)) {
+          const envContent = fs.readFileSync(envExamplePath, 'utf-8');
+          const lines = envContent.split('\n');
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('KIS_APPKEY=')) {
+              const val = trimmed.substring('KIS_APPKEY='.length).replace(/['"]/g, '');
+              if (val && !KIS_APP_KEY) KIS_APP_KEY = val;
+            } else if (trimmed.startsWith('KIS_APPSECRET=')) {
+              const val = trimmed.substring('KIS_APPSECRET='.length).replace(/['"]/g, '');
+              if (val && !KIS_APP_SECRET) KIS_APP_SECRET = val;
+            } else if (trimmed.startsWith('KIS_APP_KEY=')) {
+              const val = trimmed.substring('KIS_APP_KEY='.length).replace(/['"]/g, '');
+              if (val && !KIS_APP_KEY) KIS_APP_KEY = val;
+            } else if (trimmed.startsWith('KIS_APP_SECRET=')) {
+              const val = trimmed.substring('KIS_APP_SECRET='.length).replace(/['"]/g, '');
+              if (val && !KIS_APP_SECRET) KIS_APP_SECRET = val;
+            }
+          }
+        }
+      } catch (e: any) {
+        console.warn('[KIS Token Refresh] Failed to read .env.example fallback:', e.message || e);
+      }
+    }
+
     const SUPABASE_URL = process.env.SUPABASE_URL || "";
     const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || "";
 
