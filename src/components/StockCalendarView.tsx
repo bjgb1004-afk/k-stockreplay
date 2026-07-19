@@ -603,7 +603,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
                         </div>
 
                         {/* Jodoju Stock list */}
-                        {selectedReport.jodoju15 && selectedReport.jodoju15.length > 0 ? (
+                        {selectedReport.jodoju15 && selectedReport.jodoju15.length > 0 && (
                           <div className="space-y-2 pt-1">
                             <h5 className="text-xs font-black text-slate-800 dark:text-slate-300 flex items-center gap-1">
                               <Flame className="w-4 h-4 text-rose-500" />
@@ -636,21 +636,6 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
                                 </div>
                               ))}
                             </div>
-                          </div>
-                        ) : (
-                          <div className="py-4 text-center bg-white dark:bg-slate-950/40 border border-dashed border-slate-900/60 rounded-2xl">
-                            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">당일 감지된 급등 주도주 목록이 비어있습니다.</p>
-                            {onSelectHistoricalStock && (
-                              <button
-                                onClick={() => {
-                                  onSelectHistoricalStock({ name: "삼성전자", code: "005930" }, selectedReport.date);
-                                  setSelectedDay(null);
-                                }}
-                                className="mt-2 text-[10px] bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 px-3 py-1.5 rounded-lg font-bold border border-indigo-500/30 cursor-pointer transition-all"
-                              >
-                                삼성전자 차트로 이 날짜 복기하기
-                              </button>
-                            )}
                           </div>
                         )}
                       </div>

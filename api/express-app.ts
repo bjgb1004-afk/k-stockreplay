@@ -4140,7 +4140,12 @@ CREATE TABLE kstock_platform_data (
         .select('key, updated_at')
         .like('key', 'afternoon_report_%');
         
-      if (error) throw error;
+      if (error) {
+        if (error.message && error.message.includes('Could not find the table')) {
+          return res.json([]);
+        }
+        throw error;
+      }
       
       const dates = (data || []).map(row => {
         const dateStr = row.key.replace('afternoon_report_', '');
