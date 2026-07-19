@@ -88,7 +88,7 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
         rightPriceScale: {
           borderColor: 'rgba(51, 65, 85, 0.3)',
           scaleMargins: {
-            top: 0.1,
+            top: 0.15,
             bottom: 0.35, // Keep candlestick in top 65% to prevent overlapping with volume
           },
         },
@@ -436,7 +436,7 @@ export const ReplayChart: React.FC<ReplayChartProps> = ({ candles, trades, avera
             <span className="text-slate-600 dark:text-slate-400 font-bold bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">{activeCandle.date}</span>
             <div className="flex gap-1">
               <span className="text-slate-500 dark:text-slate-500">시:</span>
-              <span className="text-white font-medium">{Math.round(activeCandle.open).toLocaleString()}</span>
+              <span className="text-slate-900 dark:text-white font-medium">{Math.round(activeCandle.open).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
               <span className="text-slate-500 dark:text-slate-500">고:</span>

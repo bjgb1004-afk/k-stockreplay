@@ -1162,8 +1162,8 @@ export default function App() {
         const open = Math.round(currentPrice);
         
         // Compute Daily Limit Up / Limit Down Boundaries
-        const limitUpPrice = roundToTick(open * 1.30);
-        const limitDownPrice = roundToTick(open * 0.70);
+        const limitUpPrice = roundToTick(currentPrice * 1.30);
+        const limitDownPrice = roundToTick(currentPrice * 0.70);
 
         let close = Math.round(currentPrice * (1 + trend));
         if (close > limitUpPrice) close = limitUpPrice;
@@ -1230,9 +1230,19 @@ export default function App() {
         V_day = 1800000;
       }
  
-      const limitUpPct = 0.295;
-      const limitUpPrice = roundToTick(O_day * (1 + limitUpPct));
-      const limitDownPrice = roundToTick(O_day * (1 - limitUpPct));
+      const limitUpPct = 0.30;
+      const limitUpPrice = roundToTick(basePrice * (1 + limitUpPct));
+      const limitDownPrice = roundToTick(basePrice * (1 - limitUpPct));
+
+      // Strictly clamp all skeleton parameters to limit boundaries
+      if (O_day > limitUpPrice) O_day = limitUpPrice;
+      if (O_day < limitDownPrice) O_day = limitDownPrice;
+      if (H_day > limitUpPrice) H_day = limitUpPrice;
+      if (H_day < limitDownPrice) H_day = limitDownPrice;
+      if (L_day > limitUpPrice) L_day = limitUpPrice;
+      if (L_day < limitDownPrice) L_day = limitDownPrice;
+      if (C_day > limitUpPrice) C_day = limitUpPrice;
+      if (C_day < limitDownPrice) C_day = limitDownPrice;
  
       // 2. Fetch milestones
       const milestones = getMilestonesForStock(code, symbolName, ((C_day - O_day) / O_day) * 100);
@@ -1430,29 +1440,7 @@ export default function App() {
         resetSimulation(sorted[initialIndex]?.open || sorted[0]?.open || 0);
       } else {
         // gameMode === 'minute'
-        // First try to fetch actual 1-minute raw candles from Naver/Gzip proxy route!
-        try {
-          const apiRes = await fetch(`/api/stock-data?ticker=${selectedStock.code}&timeframe=minute&providerIndex=${providerIndex}`);
-          if (apiRes.ok) {
-            const apiData = await apiRes.json();
-            if (Array.isArray(apiData.candles) && apiData.candles.length > 0) {
-              // Apply our 3-stage mathematical noise-masking filter for 100% legal compliance & high resolution simulation!
-              const mutated = mutateMinuteCandles(apiData.candles);
-              const sorted = sortAndValidateCandles(mutated).slice(-390);
-              const initialIndex = Math.min(targetStartingIndex, sorted.length - 1);
-              setStockData(sorted);
-              setDataProviderSource('Precision 3-Stage Masking Pipeline (Real 1m Source)');
-              setWigglingPrice(sorted[initialIndex]?.open || sorted[0]?.open || 0);
-              setCurrentIndex(initialIndex);
-              resetSimulation(sorted[initialIndex]?.open || sorted[0]?.open || 0);
-              return;
-            }
-          }
-        } catch (apiErr) {
-          console.warn('Failed to fetch actual minute data, falling back to milestone generation', apiErr);
-        }
-
-        // Safe generated fallback
+        // First fetch daily data to establish baseline for limit prices!
         let lastDailyClosePrice = 0;
         let lastDailyCandle: Candle | null = null;
         try {
@@ -1468,9 +1456,41 @@ export default function App() {
           console.warn('Failed to fetch daily close price for minute fallback base', apiErr);
         }
 
+        let limitUpPrice: number | undefined;
+        let limitDownPrice: number | undefined;
+        if (lastDailyClosePrice > 0) {
+          const limitUpPct = 0.30;
+          limitUpPrice = roundToTick(lastDailyClosePrice * (1 + limitUpPct));
+          limitDownPrice = roundToTick(lastDailyClosePrice * (1 - limitUpPct));
+        }
+
+        // First try to fetch actual 1-minute raw candles from Naver/Gzip proxy route!
+        try {
+          const apiRes = await fetch(`/api/stock-data?ticker=${selectedStock.code}&timeframe=minute&providerIndex=${providerIndex}`);
+          if (apiRes.ok) {
+            const apiData = await apiRes.json();
+            if (Array.isArray(apiData.candles) && apiData.candles.length > 0) {
+              // Apply our 3-stage mathematical noise-masking filter for 100% legal compliance & high resolution simulation!
+              const mutated = mutateMinuteCandles(apiData.candles, limitUpPrice, limitDownPrice);
+              const sorted = sortAndValidateCandles(mutated).slice(-390);
+              const initialIndex = Math.min(targetStartingIndex, sorted.length - 1);
+              setStockData(sorted);
+              setDataProviderSource('Precision 3-Stage Masking Pipeline (Real 1m Source)');
+              setWigglingPrice(sorted[initialIndex]?.open || sorted[0]?.open || 0);
+              setCurrentIndex(initialIndex);
+              resetSimulation(sorted[initialIndex]?.open || sorted[0]?.open || 0);
+              return;
+            }
+          }
+        } catch (apiErr) {
+          console.warn('Failed to fetch actual minute data, falling back to milestone generation', apiErr);
+        }
+
+        // Safe generated fallback
+
         const data = generateFallbackData(selectedStock.name, selectedStock.code, 'minute', lastDailyClosePrice || undefined, lastDailyCandle);
         // Also apply the 3-stage pipeline on the fallback data to maintain legal safety under all pathways!
-        const mutatedFallback = mutateMinuteCandles(data);
+        const mutatedFallback = mutateMinuteCandles(data, limitUpPrice, limitDownPrice);
         const sorted = sortAndValidateCandles(mutatedFallback).slice(-390);
         const initialIndex = Math.min(targetStartingIndex, sorted.length - 1);
         setStockData(sorted);

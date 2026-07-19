@@ -145,6 +145,13 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
   const priceLineRef = useRef<any>(null);
   const firstCandleDateRef = useRef<string | null>(null);
   const lastCandlesLengthRef = useRef<number>(0);
+  const candlesRef = useRef(candles);
+  useEffect(() => {
+    candlesRef.current = candles;
+  }, [candles]);
+
+  const lastClickedRef = useRef<{ time: any; x: number; y: number } | null>(null);
+
   const [tooltipData, setTooltipData] = useState<{
     open: number;
     high: number;
@@ -239,8 +246,8 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
           borderColor: 'rgba(51, 65, 85, 0.3)',
           minimumWidth: 110,
           scaleMargins: {
-            top: 0.1,
-            bottom: 0.1,
+            top: 0.15,
+            bottom: 0.15,
           },
         },
         timeScale: {
@@ -351,19 +358,59 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
         rightOffset: 5,
       });
 
-      // Subscribe to Hover
+      // Subscribe to Hover / Crosshair Move
       chart.subscribeCrosshairMove((param: any) => {
         if (!isChartActive || !chartRef.current) return;
         if (!param || !param.time || param.point === undefined) {
           setHoverIndex(null);
           setTooltipData(null);
+          lastClickedRef.current = null;
           return;
         }
-        const matchedIndex = candles.findIndex(c => parseTimeToChart(c.date) === param.time);
+
+        // If we have an active click and the mouse is still on/near that clicked candle, keep it.
+        // If the mouse moves to a different candle, clear the tooltip.
+        if (lastClickedRef.current) {
+          if (param.time !== lastClickedRef.current.time) {
+            setHoverIndex(null);
+            setTooltipData(null);
+            lastClickedRef.current = null;
+          } else {
+            const currentCandles = candlesRef.current;
+            const matchedIndex = currentCandles.findIndex(c => parseTimeToChart(c.date) === param.time);
+            if (matchedIndex !== -1) {
+              setHoverIndex(matchedIndex);
+            }
+          }
+        } else {
+          setHoverIndex(null);
+          setTooltipData(null);
+        }
+      });
+
+      // Subscribe to Click
+      chart.subscribeClick((param: any) => {
+        if (!isChartActive || !chartRef.current) return;
+        if (!param || !param.time || param.point === undefined) {
+          setHoverIndex(null);
+          setTooltipData(null);
+          lastClickedRef.current = null;
+          return;
+        }
+
+        const currentCandles = candlesRef.current;
+        const matchedIndex = currentCandles.findIndex(c => parseTimeToChart(c.date) === param.time);
         if (matchedIndex !== -1) {
           setHoverIndex(matchedIndex);
-          const candle = candles[matchedIndex];
-          const prevCandle = matchedIndex > 0 ? candles[matchedIndex - 1] : null;
+          const candle = currentCandles[matchedIndex];
+          const prevCandle = matchedIndex > 0 ? currentCandles[matchedIndex - 1] : null;
+          
+          lastClickedRef.current = {
+            time: param.time,
+            x: param.point.x,
+            y: param.point.y,
+          };
+
           setTooltipData({
             open: candle.open,
             high: candle.high,
@@ -378,6 +425,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
         } else {
           setHoverIndex(null);
           setTooltipData(null);
+          lastClickedRef.current = null;
         }
       });
 
@@ -681,7 +729,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
           
           return (
             <div
-              className="absolute bg-slate-905/95 backdrop-blur-md border border-slate-300 dark:border-slate-700/70 rounded-xl p-3 shadow-2xl z-50 pointer-events-none text-xs font-mono text-slate-800 dark:text-slate-200 min-w-[210px] flex flex-col gap-1.5"
+              className="absolute bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-300 dark:border-slate-700/70 rounded-xl p-3 shadow-2xl z-50 pointer-events-none text-xs font-mono text-slate-800 dark:text-slate-200 min-w-[210px] flex flex-col gap-1.5"
               style={{
                 left: `${Math.min(tooltipData.x + 15, (containerRef.current?.clientWidth || 300) - 230)}px`,
                 top: `${Math.max(tooltipData.y - 140, 10)}px`,
@@ -694,7 +742,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
               <div className="flex justify-between items-center gap-4" id="tooltip-open">
                 <span className="text-slate-600 dark:text-slate-400">시가</span>
                 <div className="flex items-center gap-1 font-semibold">
-                  <span className="text-white">{Math.round(tooltipData.open).toLocaleString()}원</span>
+                  <span className="text-slate-900 dark:text-white">{Math.round(tooltipData.open).toLocaleString()}원</span>
                   <span className={`text-[10px] ${openPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
                     ({openPct >= 0 ? '+' : ''}{openPct.toFixed(2)}%)
                   </span>
@@ -703,7 +751,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
               <div className="flex justify-between items-center gap-4" id="tooltip-high">
                 <span className="text-slate-600 dark:text-slate-400">고가</span>
                 <div className="flex items-center gap-1 font-semibold">
-                  <span className="text-white">{Math.round(tooltipData.high).toLocaleString()}원</span>
+                  <span className="text-slate-900 dark:text-white">{Math.round(tooltipData.high).toLocaleString()}원</span>
                   <span className={`text-[10px] ${highPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
                     ({highPct >= 0 ? '+' : ''}{highPct.toFixed(2)}%)
                   </span>
@@ -712,7 +760,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
               <div className="flex justify-between items-center gap-4" id="tooltip-low">
                 <span className="text-slate-600 dark:text-slate-400">저가</span>
                 <div className="flex items-center gap-1 font-semibold">
-                  <span className="text-white">{Math.round(tooltipData.low).toLocaleString()}원</span>
+                  <span className="text-slate-900 dark:text-white">{Math.round(tooltipData.low).toLocaleString()}원</span>
                   <span className={`text-[10px] ${lowPct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
                     ({lowPct >= 0 ? '+' : ''}{lowPct.toFixed(2)}%)
                   </span>
@@ -721,7 +769,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
               <div className="flex justify-between items-center gap-4" id="tooltip-close">
                 <span className="text-slate-600 dark:text-slate-400">종가</span>
                 <div className="flex items-center gap-1 font-semibold">
-                  <span className="text-white">{Math.round(tooltipData.close).toLocaleString()}원</span>
+                  <span className="text-slate-900 dark:text-white">{Math.round(tooltipData.close).toLocaleString()}원</span>
                   <span className={`text-[10px] ${closePct >= 0 ? 'text-rose-400' : 'text-sky-400'}`}>
                     ({closePct >= 0 ? '+' : ''}{closePct.toFixed(2)}%)
                   </span>

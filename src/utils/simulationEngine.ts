@@ -66,7 +66,7 @@ export function roundToKoreanTick(price: number): number {
  * @param originalCandles Array of 1-minute candles
  * @returns Array of masked/mutated candles
  */
-export function mutateMinuteCandles(originalCandles: InputCandle[]): MutatedCandle[] {
+export function mutateMinuteCandles(originalCandles: InputCandle[], limitUpPrice?: number, limitDownPrice?: number): MutatedCandle[] {
   const mutated: MutatedCandle[] = [];
   
   // Find the absolute maximum high and minimum low in the original candles
@@ -79,6 +79,14 @@ export function mutateMinuteCandles(originalCandles: InputCandle[]): MutatedCand
     if (c.low < minOriginalLow) {
       minOriginalLow = c.low;
     }
+  }
+
+  // Strictly cap the reference boundaries if limit constraints are provided
+  if (limitUpPrice !== undefined && maxOriginalHigh > limitUpPrice) {
+    maxOriginalHigh = limitUpPrice;
+  }
+  if (limitDownPrice !== undefined && minOriginalLow < limitDownPrice) {
+    minOriginalLow = limitDownPrice;
   }
   
   // High-performance deterministic pseudorandom seed generator based on the initial dataset size

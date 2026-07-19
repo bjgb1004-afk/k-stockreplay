@@ -38,7 +38,7 @@ function generateLocalFallbackJodojuAnalysis(
   const rsi = getVal(68.1, 84.5, 9).toFixed(1);
   const rsiStatus = parseFloat(rsi) > 75 ? '과매수 진입 상태 (강한 추세)' : '정상 영역 내 강한 매수세 유입';
   const bbPct = Math.round(getVal(10, 28, 10));
-  const bbStatus = `상단 돌파 (밴드폭 ${bbPct}%)`;
+  const bbStatus = `상단 돌파<br/>(밴드폭 ${bbPct}%)`;
 
   const technicalAnalysis = `### [정량적 기술적 분석 보고서 - ${n}]
 
@@ -53,8 +53,8 @@ function generateLocalFallbackJodojuAnalysis(
 #### 3. 변동성 지표 (Technical Ranges)
 | 지표명 | 현재 수치 | 통계적 위치 (과매수 / 과매도 / 정상) |
 | :--- | :--- | :--- |
-| RSI (14) | **${rsi}** | ${rsiStatus} |
-| 볼린저 밴드 | **${bbStatus}** | 밴드 상단 부근 돌파 시도로 변동성 극대화 영역 진입 |`;
+| RSI (14) | ${rsi} | ${rsiStatus} |
+| 볼린저 밴드 | ${bbStatus} | 밴드 상단 부근 돌파 시도로 변동성 극대화 영역 진입 |`;
 
   const stockFinancials: Record<string, {
     sales: string;
@@ -641,7 +641,7 @@ function QuickMarkdown({ text }: { text: string }) {
             return (
               <div key={idx} className="flex items-center justify-between gap-2 border-b border-slate-200/50 dark:border-slate-800/60 px-3 py-2 text-xs text-slate-600 dark:text-slate-400 font-mono items-center w-full">
                 <div className="w-[30%] text-left font-sans font-bold text-slate-800 dark:text-slate-200">{cells[0]}</div>
-                <div className="w-[25%] text-center font-bold text-indigo-600 dark:text-indigo-400">{cells[1]}</div>
+                <div className="w-[25%] text-center font-bold text-indigo-600 dark:text-indigo-400">{renderInlineBold(cells[1] || '')}</div>
                 <div className="w-[45%] text-right text-slate-500 dark:text-slate-400">{renderInlineBold(cells[2] || '')}</div>
               </div>
             );
@@ -658,16 +658,27 @@ function QuickMarkdown({ text }: { text: string }) {
 // Sub-component helper to split by ** and highlight bold matches with high contrast styling
 function renderInlineBold(text: string) {
   if (!text) return '';
-  const parts = text.split('**');
-  return parts.map((part, i) => {
-    if (i % 2 === 1) {
-      return (
-        <strong key={i} className="text-amber-500 dark:text-amber-400 font-extrabold bg-amber-500/5 px-1 rounded border border-amber-500/10 inline-block">
-          {part}
-        </strong>
-      );
-    }
-    return part;
+  const lines = text.split(/<br\s*\/?>/i);
+  
+  return lines.map((line, lineIdx) => {
+    const parts = line.split('**');
+    const renderedLine = parts.map((part, i) => {
+      if (i % 2 === 1) {
+        return (
+          <strong key={`${lineIdx}-${i}`} className="text-amber-500 dark:text-amber-400 font-extrabold bg-amber-500/5 px-1 rounded border border-amber-500/10 inline-block">
+            {part}
+          </strong>
+        );
+      }
+      return part;
+    });
+
+    return (
+      <React.Fragment key={lineIdx}>
+        {renderedLine}
+        {lineIdx < lines.length - 1 && <br />}
+      </React.Fragment>
+    );
   });
 }
 

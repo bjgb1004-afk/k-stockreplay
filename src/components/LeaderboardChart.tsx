@@ -410,7 +410,7 @@ export const LeaderboardChart: React.FC<LeaderboardChartProps> = ({ candles, tra
             <span className="text-slate-600 dark:text-slate-400 font-bold bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">{activeCandle.date}</span>
             <div className="flex gap-1">
               <span className="text-slate-500 dark:text-slate-500">시:</span>
-              <span className="text-white font-medium">{Math.round(activeCandle.open).toLocaleString()}</span>
+              <span className="text-slate-900 dark:text-white font-medium">{Math.round(activeCandle.open).toLocaleString()}</span>
             </div>
             <div className="flex gap-1">
               <span className="text-slate-500 dark:text-slate-500">고:</span>

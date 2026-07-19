@@ -38,8 +38,11 @@ export async function GET(request: Request) {
   });
 
   try {
+    let targetPost: any = null;
+    let useFallback = false;
+
     // [단계 1] is_published 가 false인 행 중 id가 가장 낮은 행 1개 조회
-    let { data: targetPost, error: selectError } = await supabase
+    const { data: maybeTargetPost, error: selectError } = await supabase
       .from('posts')
       .select('id, title')
       .eq('is_published', false)
@@ -48,11 +51,24 @@ export async function GET(request: Request) {
       .maybeSingle();
 
     if (selectError) {
-      throw new Error(`Supabase 조회 실패: ${selectError.message}`);
+      const errMsg = selectError.message || '';
+      if (
+        errMsg.includes('relation') ||
+        errMsg.includes('posts') ||
+        errMsg.includes('schema cache') ||
+        errMsg.includes('does not exist')
+      ) {
+        console.warn('[Auto-Writer] posts table not found in Supabase. Switching to kstock_platform_data fallback...');
+        useFallback = true;
+      } else {
+        throw new Error(`Supabase 조회 실패: ${selectError.message}`);
+      }
+    } else {
+      targetPost = maybeTargetPost;
     }
 
     // 만약 21번까지 모두 발행 완료되어 조회할 대상이 없는 경우 (안전장치 발동)
-    if (!targetPost) {
+    if (!useFallback && !targetPost) {
       console.log('★ 모든 칼럼이 발행 완료되었습니다. 테이블 상태를 초기화하고 1번부터 재시작합니다.');
       
       const { error: resetError } = await supabase
@@ -84,8 +100,67 @@ export async function GET(request: Request) {
       targetPost = restartedPost;
     }
 
-    const { id, title } = targetPost;
-    console.log(`[Auto-Writer] 대상 칼럼 선정 -> ID: ${id} | 제목: ${title}`);
+    const allTopics = [
+      "한국 증시 주도주 패턴 분석 및 매매 기법",
+      "거래량 터진 장대양봉의 숨겨진 의미와 타점",
+      "세력 매집 패턴과 이평선 정배열 초기 공략법",
+      "외국인 및 기관 수급 연속성과 주가 상승의 상관관계",
+      "단기 급등주 눌림목 매매 공식",
+      "박스권 돌파 매매의 핵심 지표 분석",
+      "금리 인하기, 한국 증시 수혜 섹터 해부",
+      "반도체 슈퍼 사이클과 소부장 대장주 발굴법",
+      "바이오/제약 랠리의 신호탄, 임상 모멘텀 분석",
+      "이차전지 섹터 바닥 탈출 시그널 확인법",
+      "환율 1300원 시대, 수출 주도주의 기회",
+      "시가총액 상위주 흐름으로 보는 코스피 방향성",
+      "급락장 속 살아남는 방어주와 헷지 전략",
+      "상한가 다음날 갭상승 종목의 단타 매매 전략",
+      "볼린저 밴드와 RSI를 활용한 스윙 투자 완벽 가이드",
+      "배당 수익률과 가치투자의 정석",
+      "신재생 에너지 정책 수혜주 분석",
+      "AI 인공지능 시대, 국내 소프트웨어 기업 전망",
+      "엔터/콘텐츠 K-컬처 수출 확대에 따른 밸류에이션 재평가",
+      "장중 프로그램 매수세가 암시하는 스윙 타점",
+      "텐배거(10루타) 종목의 재무적, 기술적 공통점"
+    ];
+
+    let fallbackPostsList: any[] = [];
+    let fallbackTargetId = 1;
+    let fallbackTargetTitle = "";
+
+    if (useFallback) {
+      // kstock_platform_data에서 posts_list 키로 데이터 조회
+      const { data: dbRecord, error: dbError } = await supabase
+        .from('kstock_platform_data')
+        .select('data')
+        .eq('key', 'posts_list')
+        .maybeSingle();
+
+      if (!dbError && dbRecord && Array.isArray(dbRecord.data)) {
+        fallbackPostsList = dbRecord.data;
+      }
+
+      for (let i = 1; i <= 21; i++) {
+        const autoId = `auto-${i}`;
+        if (!fallbackPostsList.some((p: any) => p.id === autoId)) {
+          fallbackTargetId = i;
+          fallbackTargetTitle = allTopics[i - 1];
+          break;
+        }
+      }
+
+      if (fallbackTargetTitle === "") {
+        console.log('[Fallback] 모든 칼럼이 발행 완료되었습니다. 상태를 초기화하고 1번부터 재시작합니다.');
+        fallbackPostsList = fallbackPostsList.filter((p: any) => !p.id.toString().startsWith('auto-'));
+        fallbackTargetId = 1;
+        fallbackTargetTitle = allTopics[0];
+      }
+
+      console.log(`[Fallback] 대상 칼럼 선정 -> ID: auto-${fallbackTargetId} | 제목: ${fallbackTargetTitle}`);
+    }
+
+    const finalId = useFallback ? `auto-${fallbackTargetId}` : targetPost.id;
+    const finalTitle = useFallback ? fallbackTargetTitle : targetPost.title;
 
     // [기존 2단계 코드 수정] 
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -100,7 +175,7 @@ export async function GET(request: Request) {
       "마크다운(#, **)은 금지하며 HTML 태그(<h2>, <h3>, <p>, <strong>)만 사용하라. " +
       "글의 흐름이 끊기지 않는 위치에 `<!-- 애드센스 자동 광고 삽입 위치 -->` 주석을 정확히 3번 분산하여 삽입하라.";
 
-    const prompt = `[분석 요청 주제]: "${title}" (시리즈 번호: ${id}/21)
+    const prompt = `[분석 요청 주제]: "${finalTitle}" (시리즈 번호: ${useFallback ? fallbackTargetId : finalId}/21)
 
 위 주제에 대해 개인 투자자들이 눈이 번쩍 뜨일 만한 실전 투자용 칼럼을 작성하라. 
 형식적인 개념 설명을 넘어, 다음 4가지 핵심 요소를 본론에 반드시 포함하여 글을 길고 풍부하게 전개하라:
@@ -129,31 +204,72 @@ export async function GET(request: Request) {
       throw new Error('Gemini 콘텐츠 생성 실패: 빈 텍스트 반환');
     }
 
-    // [단계 3] 생성된 본문을 Supabase에 업데이트 및 발행 처리
-    const { error: updateError } = await supabase
-      .from('posts')
-      .update({
+    if (useFallback) {
+      const newPost = {
+        id: `auto-${fallbackTargetId}`,
+        title: fallbackTargetTitle,
         content: generatedHtml,
-        is_published: true,
-        published_at: new Date().toISOString()
-      })
-      .eq('id', id);
+        category: 'blog',
+        author: 'AI 마켓 리서치',
+        tags: ['마켓 리포트', '주도주 분석', '실전 매매'],
+        slug: `auto-report-${fallbackTargetId}`,
+        createdAt: new Date().toISOString(),
+        published_at: new Date().toISOString(),
+        views: 0
+      };
 
-    if (updateError) {
-      throw new Error(`Supabase 업데이트 실패: ${updateError.message}`);
-    }
+      fallbackPostsList.unshift(newPost);
 
-    // [단계 4] 성공 결과 반환
-    return NextResponse.json({
-      success: true,
-      message: `성공적으로 ${id}번 칼럼이 발행되었습니다.`,
-      data: {
-        id,
-        title,
-        publishedAt: new Date().toISOString(),
-        contentLength: generatedHtml.length
+      const { error: upsertError } = await supabase
+        .from('kstock_platform_data')
+        .upsert({
+          key: 'posts_list',
+          data: fallbackPostsList,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'key' });
+
+      if (upsertError) {
+        throw new Error(`Fallback kstock_platform_data 저장 실패: ${upsertError.message}`);
       }
-    });
+
+      // [단계 4] 성공 결과 반환
+      return NextResponse.json({
+        success: true,
+        message: `성공적으로 auto-${fallbackTargetId}번 칼럼이 발행되었습니다. (kstock_platform_data Fallback)`,
+        data: {
+          id: `auto-${fallbackTargetId}`,
+          title: fallbackTargetTitle,
+          publishedAt: newPost.published_at,
+          contentLength: generatedHtml.length
+        }
+      });
+    } else {
+      // [단계 3] 생성된 본문을 Supabase에 업데이트 및 발행 처리
+      const { error: updateError } = await supabase
+        .from('posts')
+        .update({
+          content: generatedHtml,
+          is_published: true,
+          published_at: new Date().toISOString()
+        })
+        .eq('id', finalId);
+
+      if (updateError) {
+        throw new Error(`Supabase 업데이트 실패: ${updateError.message}`);
+      }
+
+      // [단계 4] 성공 결과 반환
+      return NextResponse.json({
+        success: true,
+        message: `성공적으로 ${finalId}번 칼럼이 발행되었습니다.`,
+        data: {
+          id: finalId,
+          title: finalTitle,
+          publishedAt: new Date().toISOString(),
+          contentLength: generatedHtml.length
+        }
+      });
+    }
 
   } catch (error: any) {
     console.error('[Auto-Writer Exception]', error);

@@ -3139,71 +3139,60 @@ CREATE TABLE kstock_platform_data (
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const url = process.env.SUPABASE_URL || '';
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
     const geminiKey = process.env.GEMINI_API_KEY || '';
-
-    if (!url || !key) {
-      return res.status(500).json({ error: 'Supabase credentials are missing.' });
-    }
 
     if (!geminiKey) {
       return res.status(500).json({ error: 'Gemini API Key is missing.' });
     }
 
-    const supabase = createClient(url, key, {
-      auth: { persistSession: false }
-    });
-
     try {
-      // 1. is_published 가 false인 행 중 id가 가장 낮은 행 1개 조회
-      let { data: targetPost, error: selectError } = await supabase
-        .from('posts')
-        .select('id, title')
-        .eq('is_published', false)
-        .order('id', { ascending: true })
-        .limit(1)
-        .maybeSingle();
+      const allTopics = [
+        "한국 증시 주도주 패턴 분석 및 매매 기법",
+        "거래량 터진 장대양봉의 숨겨진 의미와 타점",
+        "세력 매집 패턴과 이평선 정배열 초기 공략법",
+        "외국인 및 기관 수급 연속성과 주가 상승의 상관관계",
+        "단기 급등주 눌림목 매매 공식",
+        "박스권 돌파 매매의 핵심 지표 분석",
+        "금리 인하기, 한국 증시 수혜 섹터 해부",
+        "반도체 슈퍼 사이클과 소부장 대장주 발굴법",
+        "바이오/제약 랠리의 신호탄, 임상 모멘텀 분석",
+        "이차전지 섹터 바닥 탈출 시그널 확인법",
+        "환율 1300원 시대, 수출 주도주의 기회",
+        "시가총액 상위주 흐름으로 보는 코스피 방향성",
+        "급락장 속 살아남는 방어주와 헷지 전략",
+        "상한가 다음날 갭상승 종목의 단타 매매 전략",
+        "볼린저 밴드와 RSI를 활용한 스윙 투자 완벽 가이드",
+        "배당 수익률과 가치투자의 정석",
+        "신재생 에너지 정책 수혜주 분석",
+        "AI 인공지능 시대, 국내 소프트웨어 기업 전망",
+        "엔터/콘텐츠 K-컬처 수출 확대에 따른 밸류에이션 재평가",
+        "장중 프로그램 매수세가 암시하는 스윙 타점",
+        "텐배거(10루타) 종목의 재무적, 기술적 공통점"
+      ];
 
-      if (selectError) {
-        throw new Error(`Supabase 조회 실패: ${selectError.message}`);
+      let posts = await getPostsList();
+      
+      let targetId = 1;
+      let targetTitle = "";
+      
+      for (let i = 1; i <= 21; i++) {
+        const autoId = `auto-${i}`;
+        if (!posts.some((p: any) => p.id === autoId)) {
+          targetId = i;
+          targetTitle = allTopics[i - 1];
+          break;
+        }
       }
 
-      // 만약 21번까지 모두 발행 완료되어 조회할 대상이 없는 경우 (안전장치 발동)
-      if (!targetPost) {
-        console.log('★ 모든 칼럼이 발행 완료되었습니다. 테이블 상태를 초기화하고 1번부터 재시작합니다.');
-        
-        const { error: resetError } = await supabase
-          .from('posts')
-          .update({
-            content: null,
-            is_published: false,
-            published_at: null
-          })
-          .neq('id', 0); // 모든 행 업데이트
-
-        if (resetError) {
-          throw new Error(`Supabase 상태 초기화 실패: ${resetError.message}`);
-        }
-
-        // 초기화 후 다시 1번 행 조회
-        const { data: restartedPost, error: reselectError } = await supabase
-          .from('posts')
-          .select('id, title')
-          .eq('is_published', false)
-          .order('id', { ascending: true })
-          .limit(1)
-          .maybeSingle();
-
-        if (reselectError || !restartedPost) {
-          throw new Error(`초기화 후 재조회 실패: ${reselectError?.message || '데이터 없음'}`);
-        }
-
-        targetPost = restartedPost;
+      if (targetTitle === "") {
+        console.log('★ 모든 칼럼이 발행 완료되었습니다. 상태를 초기화하고 1번부터 재시작합니다.');
+        posts = posts.filter((p: any) => !p.id.toString().startsWith('auto-'));
+        await savePostsList(posts);
+        targetId = 1;
+        targetTitle = allTopics[0];
       }
 
-      const { id, title } = targetPost;
-      console.log(`[Auto-Writer] 대상 칼럼 선정 -> ID: ${id} | 제목: ${title}`);
+      console.log(`[Auto-Writer] 대상 칼럼 선정 -> ID: auto-${targetId} | 제목: ${targetTitle}`);
 
       const ai = new GoogleGenAI({ apiKey: geminiKey });
 
@@ -3216,19 +3205,10 @@ CREATE TABLE kstock_platform_data (
         "마크다운(#, **)은 금지하며 HTML 태그(<h2>, <h3>, <p>, <strong>)만 사용하라. " +
         "글의 흐름이 끊기지 않는 위치에 `<!-- 애드센스 자동 광고 삽입 위치 -->` 주석을 정확히 3번 분산하여 삽입하라.";
 
-      const prompt = `[분석 요청 주제]: "${title}" (시리즈 번호: ${id}/21)
-
-위 주제에 대해 개인 투자자들이 눈이 번쩍 뜨일 만한 실전 투자용 칼럼을 작성하라. 
-형식적인 개념 설명을 넘어, 다음 4가지 핵심 요소를 본론에 반드시 포함하여 글을 길고 풍부하게 전개하라:
-1. 해당 개념/섹터가 현재 한국 증시 주도주 흐름에 미치는 구체적인 영향력 분석
-2. 실전 차트 복기 시 거래량, 이평선, 지지/저항을 결합하여 매수 타점을 잡는 명확한 공식 및 팁
-3. 거시경제(금리, 환율, 유가 등) 및 글로벌 공급망과의 긴밀한 상관관계 설명
-4. 관련된 한국 증시 대표 종목(대장주 및 수혜주)들의 실명과 그들의 핵심 모멘텀 기술
-
-각 문단은 정보의 밀도가 매우 높아야 하며, 뻔한 소리는 배제하고 철저히 데이터와 논리에 기반하여 전개하라.`;
+      const prompt = `[분석 요청 주제]: "${targetTitle}" (시리즈 번호: ${targetId}/21)\n\n위 주제에 대해 개인 투자자들이 눈이 번쩍 뜨일 만한 실전 투자용 칼럼을 작성하라. \n형식적인 개념 설명을 넘어, 다음 4가지 핵심 요소를 본론에 반드시 포함하여 글을 길고 풍부하게 전개하라:\n1. 해당 개념/섹터가 현재 한국 증시 주도주 흐름에 미치는 구체적인 영향력 분석\n2. 실전 차트 복기 시 거래량, 이평선, 지지/저항을 결합하여 매수 타점을 잡는 명확한 공식 및 팁\n3. 거시경제(금리, 환율, 유가 등) 및 글로벌 공급망과의 긴밀한 상관관계 설명\n4. 관련된 한국 증시 대표 종목(대장주 및 수혜주)들의 실명과 그들의 핵심 모멘텀 기술\n\n각 문단은 정보의 밀도가 매우 높아야 하며, 뻔한 소리는 배제하고 철저히 데이터와 논리에 기반하여 전개하라.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-1.5-pro', 
+        model: 'gemini-pro-latest', 
         contents: prompt,
         config: {
           systemInstruction: systemInstruction,
@@ -3243,27 +3223,29 @@ CREATE TABLE kstock_platform_data (
         throw new Error('Gemini 콘텐츠 생성 실패: 빈 텍스트 반환');
       }
 
-      // 3. 생성된 본문을 Supabase에 업데이트 및 발행 처리
-      const { error: updateError } = await supabase
-        .from('posts')
-        .update({
-          content: generatedHtml,
-          is_published: true,
-          published_at: new Date().toISOString()
-        })
-        .eq('id', id);
+      const newPost = {
+        id: `auto-${targetId}`,
+        title: targetTitle,
+        content: generatedHtml,
+        category: 'blog',
+        author: 'AI 마켓 리서치',
+        tags: ['마켓 리포트', '주도주 분석', '실전 매매'],
+        slug: `auto-report-${targetId}`,
+        createdAt: new Date().toISOString(),
+        published_at: new Date().toISOString(),
+        views: 0
+      };
 
-      if (updateError) {
-        throw new Error(`Supabase 업데이트 실패: ${updateError.message}`);
-      }
+      posts.unshift(newPost);
+      await savePostsList(posts);
 
       return res.json({
         success: true,
-        message: `성공적으로 ${id}번 칼럼이 발행되었습니다.`,
+        message: `성공적으로 auto-${targetId}번 칼럼이 발행되었습니다.`,
         data: {
-          id,
-          title,
-          publishedAt: new Date().toISOString(),
+          id: newPost.id,
+          title: newPost.title,
+          publishedAt: newPost.published_at,
           contentLength: generatedHtml.length
         }
       });
@@ -4325,27 +4307,26 @@ CREATE TABLE kstock_platform_data (
     console.warn('[Writable Storage] Failed to initialize CONTENT_DIR or clean old posts:', err.message || err);
   }
 
-  function getPostsList(): any[] {
-    if (!fs.existsSync(POSTS_FILE)) {
-      const seedPosts: any[] = [];
-      fs.writeFileSync(POSTS_FILE, JSON.stringify(seedPosts, null, 2));
-    }
+  async function getPostsList(): Promise<any[]> {
     try {
-      const data = fs.readFileSync(POSTS_FILE, 'utf-8');
-      return JSON.parse(data);
+      const data = await getPlatformDataFromSupabase('posts_list');
+      if (data && Array.isArray(data)) {
+        return data;
+      }
+      return [];
     } catch (e) {
-      console.error('Failed to parse posts file', e);
+      console.error('Failed to parse posts from Supabase', e);
       return [];
     }
   }
 
-  function savePostsList(posts: any[]) {
-    fs.writeFileSync(POSTS_FILE, JSON.stringify(posts, null, 2));
+  async function savePostsList(posts: any[]) {
+    await savePlatformDataToSupabase('posts_list', posts);
   }
 
-  app.get('/api/posts', (req, res) => {
+  app.get('/api/posts', async (req, res) => {
     try {
-      let posts = getPostsList();
+      let posts = await getPostsList();
       const isAdmin = req.query.admin === 'true';
 
       // 현재 시간보다 발행 예정 시간(published_at)이 과거이거나 같은 글만 노출하는 규칙 적용
@@ -4372,9 +4353,9 @@ CREATE TABLE kstock_platform_data (
     }
   });
 
-  app.get('/api/posts/slug/:slug', (req, res) => {
+  app.get('/api/posts/slug/:slug', async (req, res) => {
     try {
-      const posts = getPostsList();
+      const posts = await getPostsList();
       const post = posts.find(p => p.slug === req.params.slug);
       if (!post) {
         return res.status(404).json({ error: '게시글을 찾을 수 없습니다.' });
@@ -4392,13 +4373,13 @@ CREATE TABLE kstock_platform_data (
     }
   });
 
-  app.post('/api/posts', (req, res) => {
+  app.post('/api/posts', async (req, res) => {
     try {
       const { title, content, category, author, tags, slug, published_at, publishedAt } = req.body;
       if (!title || !content) {
         return res.status(400).json({ error: '제목과 내용을 채워주세요.' });
       }
-      const posts = getPostsList();
+      const posts = await getPostsList();
       const newPost = {
         id: 'post_' + Date.now(),
         title,
@@ -4412,21 +4393,22 @@ CREATE TABLE kstock_platform_data (
         views: 0
       };
       posts.unshift(newPost);
-      savePostsList(posts);
+      await savePostsList(posts);
       res.json(newPost);
     } catch (e: any) {
       res.status(500).json({ error: e.message || '게시글 추가 실패' });
     }
   });
 
-  app.put('/api/posts/:id', (req, res) => {
+  app.put('/api/posts/:id', async (req, res) => {
     try {
       const { title, content, category, author, tags, slug, published_at, publishedAt } = req.body;
-      const posts = getPostsList();
+      const posts = await getPostsList();
       const index = posts.findIndex(p => p.id === req.params.id);
       if (index === -1) {
         return res.status(404).json({ error: '수정할 게시글을 찾을 수 없습니다.' });
       }
+
       posts[index] = {
         ...posts[index],
         title: title || posts[index].title,
@@ -4437,45 +4419,42 @@ CREATE TABLE kstock_platform_data (
         slug: slug || posts[index].slug,
         published_at: published_at !== undefined ? published_at : (publishedAt !== undefined ? publishedAt : posts[index].published_at)
       };
-      savePostsList(posts);
+
+      await savePostsList(posts);
       res.json(posts[index]);
     } catch (e: any) {
       res.status(500).json({ error: e.message || '게시글 수정 실패' });
     }
   });
 
-  app.delete('/api/posts/:id', (req, res) => {
+  app.delete('/api/posts/:id', async (req, res) => {
     try {
-      let posts = getPostsList();
+      let posts = await getPostsList();
       const initialLength = posts.length;
       posts = posts.filter(p => p.id !== req.params.id);
       if (posts.length === initialLength) {
         return res.status(404).json({ error: '삭제할 게시글을 찾을 수 없습니다.' });
       }
-      savePostsList(posts);
+      await savePostsList(posts);
       res.json({ success: true, message: '게시글이 성공적으로 삭제되었습니다.' });
     } catch (e: any) {
       res.status(500).json({ error: e.message || '게시글 삭제 실패' });
     }
   });
 
-  app.post('/api/posts/view/:id', (req, res) => {
+  app.post('/api/posts/view/:id', async (req, res) => {
     try {
-      const posts = getPostsList();
+      const posts = await getPostsList();
       const index = posts.findIndex(p => p.id === req.params.id);
       if (index !== -1) {
         posts[index].views = (posts[index].views || 0) + 1;
-        savePostsList(posts);
+        await savePostsList(posts);
       }
       res.json({ success: true });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
     }
   });
-
-  // ==========================================
-  // 📈 Advanced Search Engine Optimization (SEO) & Sitemap/Robots Generation
-  // ==========================================
   
   // Dynamic SEO rendering helper for all pages (Home, Replay, Briefing, Report, Blog, Blog Posts)
   function generateSeoHtml(route: string, data?: any): string {
@@ -4797,9 +4776,9 @@ Sitemap: https://kstock-replay.com/sitemap.xml
   });
 
   // Dynamic XML Sitemap
-  app.get('/sitemap.xml', (req, res) => {
+  app.get('/sitemap.xml', async (req, res) => {
     try {
-      const posts = getPostsList();
+      const posts = await getPostsList();
       const baseUrl = 'https://kstock-replay.com';
       
       const staticUrls = [
@@ -4871,7 +4850,7 @@ ${allUrls.map(u => `  <url>
         // Development dynamic route catchers
         app.get('/blog/:slug', async (req, res, next) => {
           const { slug } = req.params;
-          const posts = getPostsList();
+          const posts = await getPostsList();
           const post = posts.find(p => p.slug === slug);
           await handleSeoRouteDev(`/blog/${slug}`, { post }, req, res, next);
         });
@@ -4938,9 +4917,9 @@ ${allUrls.map(u => `  <url>
         };
 
         // Production dynamic route catchers
-        app.get('/blog/:slug', (req, res) => {
+        app.get('/blog/:slug', async (req, res) => {
           const { slug } = req.params;
-          const posts = getPostsList();
+          const posts = await getPostsList();
           const post = posts.find(p => p.slug === slug);
           handleSeoRouteProd(`/blog/${slug}`, { post }, req, res);
         });
