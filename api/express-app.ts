@@ -313,7 +313,9 @@ async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<bo
       }, { onConflict: 'key' });
     
     if (error) {
-      console.warn(`Supabase Platform Data save note for '${key}' (table might not exist yet):`, error.message || error);
+      if (!error.message.includes('Could not find the table')) {
+        console.warn(`Supabase Platform Data save note for '${key}':`, error.message || error);
+      }
       return false;
     }
 
@@ -327,13 +329,16 @@ async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<bo
         await saveToSupabaseStorage(`reports/${backupKey}.json`, jsonStr);
       } catch (_) {}
 
-      await supabase
+      const { error: backupError } = await supabase
         .from('kstock_platform_data')
         .upsert({
           key: backupKey,
           data: dataVal,
           updated_at: new Date().toISOString()
         }, { onConflict: 'key' });
+      if (backupError && !backupError.message.includes('Could not find the table')) {
+        console.warn(`Supabase backup save error for '${backupKey}':`, backupError.message);
+      }
     }
 
     return true;
@@ -417,7 +422,9 @@ async function cleanupOldSupabaseData() {
       .lt('updated_at', oneYearAgo.toISOString());
       
     if (error) {
-      console.warn('[Cleanup Engine] Failed to delete old records from kstock_platform_data:', error.message);
+      if (!error.message.includes('Could not find the table')) {
+        console.warn('[Cleanup Engine] Failed to delete old records from kstock_platform_data:', error.message);
+      }
     } else {
       console.log('[Cleanup Engine] Successfully cleaned up kstock_platform_data records older than 1 year.');
     }

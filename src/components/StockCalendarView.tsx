@@ -589,7 +589,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
                   </div>
                 ) : (
                   <>
-                    {selectedReport && (
+                    {selectedReport && !selectedReport.isFallback && (
                       <div className="space-y-3.5 select-text text-left">
                         {/* Briefing summary card */}
                         <div className="bg-slate-100 dark:bg-slate-950/80 p-3.5 rounded-2xl border border-slate-900/60">

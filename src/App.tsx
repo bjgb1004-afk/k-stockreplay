@@ -58,6 +58,7 @@ import { AdminConsole } from './components/AdminConsole';
 import { BlogCenter } from './components/BlogCenter';
 import { JodojuAnalysisView, JODOJU_STATIC_DETAILS, parseSupplyValue, formatSupplyText, getDetailedAnalysisText } from './components/JodojuAnalysisView';
 import { StockCalendarView } from './components/StockCalendarView';
+import { OneLineCalendar } from './components/OneLineCalendar';
 
 // 10 Jodoju Stocks List (Leading Stocks in K-Stock for July 15th)
 export const JODOJU_STOCKS = [
@@ -530,7 +531,8 @@ export default function App() {
   const fetchAfterMarketReport = async () => {
     setReportLoading(true);
     try {
-      const res = await fetch('/api/platform/report');
+      const dateParam = replayDate ? `?date=${replayDate}` : '';
+      const res = await fetch(`/api/platform/report${dateParam}`);
       if (res.ok) {
         const data = await res.json();
         
@@ -1062,6 +1064,12 @@ export default function App() {
     fetchLunchBriefing();
     fetchEveningColumn();
   }, []);
+
+  useEffect(() => {
+    if (replayDate) {
+      fetchAfterMarketReport();
+    }
+  }, [replayDate]);
 
   // Fetch Leaderboard from backend
   const fetchLeaderboard = async (modeType: 'daily' | 'minute') => {
@@ -2280,6 +2288,12 @@ export default function App() {
 
         {platformTab === 'replay' ? (
           <>
+            <div className="lg:col-span-12">
+              <OneLineCalendar selectedDate={replayDate} onSelectDate={(date) => {
+                setReplayDate(date);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }} />
+            </div>
             {replayDate && (
               <div id="historical-replay-banner" className="lg:col-span-12 bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-indigo-300">
                 <div className="flex items-center gap-2">
@@ -2761,16 +2775,22 @@ export default function App() {
         </div>
           </>
         ) : platformTab === 'jodoju' ? (
-          <JodojuAnalysisView 
-            report={afterMarketReport} 
-            onSelectStockForReplay={(code) => {
-              const match = findStockByCode(code);
-              if (match) {
-                setSelectedStock(match);
-                setPlatformTab('replay');
-              }
-            }}
-          />
+          <div className="lg:col-span-12 w-full">
+            <OneLineCalendar selectedDate={replayDate} onSelectDate={(date) => {
+              setReplayDate(date);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }} />
+            <JodojuAnalysisView 
+              report={afterMarketReport} 
+              onSelectStockForReplay={(code) => {
+                const match = findStockByCode(code);
+                if (match) {
+                  setSelectedStock(match);
+                  setPlatformTab('replay');
+                }
+              }}
+            />
+          </div>
         ) : platformTab === 'blog' ? (
           <BlogCenter onBack={() => {
             setPlatformTab('replay');

@@ -172,10 +172,12 @@ function generateLocalFallbackJodojuAnalysis(
   };
 
   const financialAnalysis = `### 1. 3개년 재무 펀더멘탈 추이 (Financial Growth)
-- **매출액 및 영업이익:** 최근 3개년 매출액은 **[${f.sales}]**으로 변동했으며, 영업이익률은 당기 기준 **[${f.opMargin}]**임. (${f.changeMsg})
+- **수치 기준:** 2025년 말 (2025-12) 결산 기준
+- **매출액 및 영업이익:** 최근 3개년(2023~2025) 매출액은 **[${f.sales}]**으로 변동했으며, 영업이익률은 2025년 당기 기준 **[${f.opMargin}]**임. (${f.changeMsg})
 - **수익성 및 효율성:** ROE(자기자본이익률)는 **[${f.roe}]**이며, 이는 해당 섹터 평균(**[${f.sectorAvg}]**) 대비 **[${f.roeCompare}]** 스코어를 기록함.
 
 ### 2. 안전성 및 현금 흐름 검증 (Solvency & Cash Flow)
+- **수치 기준:** 2025년 말 (2025-12) 결산 기준
 - **재무 안전성:** 부채비율 **[${f.debtRatio}]**, 유보율 **[${f.reserveRatio}]**로 단기 부도 위험 및 재무적 완충력 수준을 평가함.
 - **현금흐름의 질:** 
   * 영업활동현금흐름: **[${f.opCash}]**
