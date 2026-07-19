@@ -90,7 +90,7 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
     const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
     const matchesSearch = 
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (post.content || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
@@ -130,7 +130,7 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
   const handleEditClick = (post: BlogPost) => {
     setEditId(post.id);
     setFormTitle(post.title);
-    setFormContent(post.content);
+    setFormContent(post.content || '');
     setFormCategory(post.category);
     setFormAuthor(post.author);
     setFormTags(post.tags.join(', '));
@@ -418,7 +418,7 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
 
               {/* Dynamic content sections separated by paragraphs */}
               <div className="text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed space-y-4 whitespace-pre-wrap">
-                {activePost.content}
+                {activePost.content || '작성 중인 칼럼입니다. 조만간 완성된 리포트가 업로드될 예정이니 조금만 기다려주세요!'}
               </div>
 
               {/* Tags block */}
@@ -526,7 +526,7 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
                     </h3>
 
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-3 font-sans">
-                      {post.content.replace(/[#*`_]/g, '')}
+                      {(post.content || '작성 중인 칼럼입니다.').replace(/[#*`_]/g, '')}
                     </p>
                   </div>
 

@@ -4571,7 +4571,8 @@ CREATE TABLE kstock_platform_data (
       const post = data?.post;
       if (post) {
         title = `${post.title} - K-Stock Replay 공식 블로그`;
-        desc = post.content.slice(0, 150).replace(/"/g, '&quot;').replace(/\n/g, ' ') + '...';
+        const postContent = post.content || '작성 중인 칼럼입니다.';
+        desc = postContent.slice(0, 150).replace(/"/g, '&quot;').replace(/\n/g, ' ') + '...';
         keywords = Array.isArray(post.tags) ? post.tags.join(', ') : '주식블로그, 매매법, 주도주';
         canonical = `https://kstock-replay.com/blog/${post.slug}`;
         ogType = 'article';
