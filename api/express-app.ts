@@ -12,6 +12,7 @@ import * as cheerio from 'cheerio';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import { PlatformEngine } from '../server-core/platform_engine.js';
+import { GoogleGenAI } from '@google/genai';
 
 dotenv.config();
 
@@ -3098,6 +3099,269 @@ CREATE TABLE kstock_platform_data (
       return res.status(500).json({ error: err.message || err });
     }
   });
+
+  // Secure cron authorization check
+  const checkCronAuth = (req: express.Request): boolean => {
+    if (process.env.NODE_ENV === 'production' && process.env.CRON_SECRET) {
+      const authHeader = req.headers.authorization;
+      if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // AI 무인 자동 칼럼 작성 크론 (GET & POST)
+  const handleAutoWriter = async (req: express.Request, res: express.Response) => {
+    if (!checkCronAuth(req)) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const url = process.env.SUPABASE_URL || '';
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
+    const geminiKey = process.env.GEMINI_API_KEY || '';
+
+    if (!url || !key) {
+      return res.status(500).json({ error: 'Supabase credentials are missing.' });
+    }
+
+    if (!geminiKey) {
+      return res.status(500).json({ error: 'Gemini API Key is missing.' });
+    }
+
+    const supabase = createClient(url, key, {
+      auth: { persistSession: false }
+    });
+
+    try {
+      // 1. is_published 가 false인 행 중 id가 가장 낮은 행 1개 조회
+      let { data: targetPost, error: selectError } = await supabase
+        .from('posts')
+        .select('id, title')
+        .eq('is_published', false)
+        .order('id', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (selectError) {
+        throw new Error(`Supabase 조회 실패: ${selectError.message}`);
+      }
+
+      // 만약 21번까지 모두 발행 완료되어 조회할 대상이 없는 경우 (안전장치 발동)
+      if (!targetPost) {
+        console.log('★ 모든 칼럼이 발행 완료되었습니다. 테이블 상태를 초기화하고 1번부터 재시작합니다.');
+        
+        const { error: resetError } = await supabase
+          .from('posts')
+          .update({
+            content: null,
+            is_published: false,
+            published_at: null
+          })
+          .neq('id', 0); // 모든 행 업데이트
+
+        if (resetError) {
+          throw new Error(`Supabase 상태 초기화 실패: ${resetError.message}`);
+        }
+
+        // 초기화 후 다시 1번 행 조회
+        const { data: restartedPost, error: reselectError } = await supabase
+          .from('posts')
+          .select('id, title')
+          .eq('is_published', false)
+          .order('id', { ascending: true })
+          .limit(1)
+          .maybeSingle();
+
+        if (reselectError || !restartedPost) {
+          throw new Error(`초기화 후 재조회 실패: ${reselectError?.message || '데이터 없음'}`);
+        }
+
+        targetPost = restartedPost;
+      }
+
+      const { id, title } = targetPost;
+      console.log(`[Auto-Writer] 대상 칼럼 선정 -> ID: ${id} | 제목: ${title}`);
+
+      const ai = new GoogleGenAI({ apiKey: geminiKey });
+
+      const systemInstruction = 
+        "너는 대한민국 최상위 증권사의 수석 이코노미스트이자 주식 전문 수석 에디터다. " +
+        "가벼운 블로그 글이 아니라, 기관 투자자들이 유료로 구독하는 '심층 마켓 리포트' 수준으로 작성하라. " +
+        "인사말이나 AI 특유의 상투적인 서두는 절대 금지하며, 첫 문장부터 날카로운 통찰로 본론을 개시하라. " +
+        "문체는 철저하게 단호하고 전문적인 리포트 어조(~다, ~임에 틀림없다, 분석된다)를 유지하라. " +
+        "구글 애드센스 수익화를 위해 각 섹션을 매우 세부적으로 쪼개어 공백 제외 최소 2,500자 이상의 압도적인 분량으로 서술하라. " +
+        "마크다운(#, **)은 금지하며 HTML 태그(<h2>, <h3>, <p>, <strong>)만 사용하라. " +
+        "글의 흐름이 끊기지 않는 위치에 `<!-- 애드센스 자동 광고 삽입 위치 -->` 주석을 정확히 3번 분산하여 삽입하라.";
+
+      const prompt = `[분석 요청 주제]: "${title}" (시리즈 번호: ${id}/21)
+
+위 주제에 대해 개인 투자자들이 눈이 번쩍 뜨일 만한 실전 투자용 칼럼을 작성하라. 
+형식적인 개념 설명을 넘어, 다음 4가지 핵심 요소를 본론에 반드시 포함하여 글을 길고 풍부하게 전개하라:
+1. 해당 개념/섹터가 현재 한국 증시 주도주 흐름에 미치는 구체적인 영향력 분석
+2. 실전 차트 복기 시 거래량, 이평선, 지지/저항을 결합하여 매수 타점을 잡는 명확한 공식 및 팁
+3. 거시경제(금리, 환율, 유가 등) 및 글로벌 공급망과의 긴밀한 상관관계 설명
+4. 관련된 한국 증시 대표 종목(대장주 및 수혜주)들의 실명과 그들의 핵심 모멘텀 기술
+
+각 문단은 정보의 밀도가 매우 높아야 하며, 뻔한 소리는 배제하고 철저히 데이터와 논리에 기반하여 전개하라.`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-1.5-pro', 
+        contents: prompt,
+        config: {
+          systemInstruction: systemInstruction,
+          temperature: 0.65,
+          maxOutputTokens: 8192, 
+        }
+      });
+
+      const generatedHtml = response.text;
+
+      if (!generatedHtml || generatedHtml.trim().length === 0) {
+        throw new Error('Gemini 콘텐츠 생성 실패: 빈 텍스트 반환');
+      }
+
+      // 3. 생성된 본문을 Supabase에 업데이트 및 발행 처리
+      const { error: updateError } = await supabase
+        .from('posts')
+        .update({
+          content: generatedHtml,
+          is_published: true,
+          published_at: new Date().toISOString()
+        })
+        .eq('id', id);
+
+      if (updateError) {
+        throw new Error(`Supabase 업데이트 실패: ${updateError.message}`);
+      }
+
+      return res.json({
+        success: true,
+        message: `성공적으로 ${id}번 칼럼이 발행되었습니다.`,
+        data: {
+          id,
+          title,
+          publishedAt: new Date().toISOString(),
+          contentLength: generatedHtml.length
+        }
+      });
+
+    } catch (error: any) {
+      console.error('[Auto-Writer Exception]', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Unknown Server Error'
+      });
+    }
+  };
+
+  app.get('/api/cron/auto-writer', handleAutoWriter);
+  app.post('/api/cron/auto-writer', handleAutoWriter);
+
+  // KIS API 토큰 자동 갱신 크론 (GET & POST)
+  const handleKisTokenRefresh = async (req: express.Request, res: express.Response) => {
+    if (!checkCronAuth(req)) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const KIS_API_HOST = process.env.KIS_API_HOST || "https://openapi.koreainvestment.com";
+    const KIS_APP_KEY = process.env.KIS_APPKEY || process.env.KIS_APP_KEY || "";
+    const KIS_APP_SECRET = process.env.KIS_APPSECRET || process.env.KIS_APP_SECRET || "";
+    const SUPABASE_URL = process.env.SUPABASE_URL || "";
+    const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || "";
+
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      return res.status(500).json({ error: "Supabase credentials are missing" });
+    }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { persistSession: false }
+    });
+
+    try {
+      const nowISO = new Date().toISOString();
+
+      // 1. 만료되지 않은 기존 KIS 토큰 조회
+      const { data: existingToken, error: dbError } = await supabase
+        .from("kis_tokens")
+        .select("*")
+        .gt("expires_at", nowISO)
+        .order("expires_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (dbError) {
+        console.warn("DB Query Warning:", dbError.message);
+      }
+
+      // 2. 유효 토큰이 이미 존재하면 KIS 연동 요청을 생략하여 문자 오발송을 완벽히 방지!
+      if (existingToken) {
+        return res.json({
+          success: true,
+          source: "DATABASE_CACHE",
+          token: existingToken.access_token,
+          expires_at: existingToken.expires_at,
+          message: "Existing active token reused. SMS trigger avoided successfully."
+        });
+      }
+
+      // 3. 신규 토큰 발급 요청
+      if (!KIS_APP_KEY || !KIS_APP_SECRET) {
+        return res.status(500).json({ error: "KIS App Credentials are missing in env" });
+      }
+
+      const kisRes = await fetch(`${KIS_API_HOST}/oauth2/tokenP`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          grant_type: "client_credentials",
+          appkey: KIS_APP_KEY,
+          appsecret: KIS_APP_SECRET,
+        }),
+      });
+
+      if (!kisRes.ok) {
+        const errText = await kisRes.text();
+        return res.status(500).json({ error: `KIS OAuth request failed: ${errText}` });
+      }
+
+      const kisData: any = await kisRes.json();
+      const newAccessToken = kisData.access_token;
+      
+      const expiresInSeconds = kisData.expires_in || 82800;
+      const expiresAtISO = new Date(Date.now() + expiresInSeconds * 1000).toISOString();
+
+      // 4. 새 토큰 정보를 Supabase에 보관
+      const { error: insertError } = await supabase.from("kis_tokens").insert([
+        {
+          access_token: newAccessToken,
+          expires_at: expiresAtISO,
+          created_at: nowISO,
+        }
+      ]);
+
+      if (insertError) {
+        throw new Error(`Supabase insert failed: ${insertError.message}`);
+      }
+
+      return res.json({
+        success: true,
+        source: "KIS_API_ISSUED",
+        token: newAccessToken,
+        expires_at: expiresAtISO,
+        message: "New KIS Access Token generated and saved to Supabase."
+      });
+
+    } catch (err: any) {
+      console.error('[KIS Token Refresh Exception]', err);
+      return res.status(500).json({ success: false, error: err.message || err });
+    }
+  };
+
+  app.get('/api/cron/kis-token-refresh', handleKisTokenRefresh);
+  app.post('/api/cron/kis-token-refresh', handleKisTokenRefresh);
 
   // GZIP Compressed Replay Database Stats Endpoint
   app.get('/api/gzip-info', async (req, res) => {

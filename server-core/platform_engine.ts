@@ -27,6 +27,106 @@ function getGeminiClient(): GoogleGenAI | null {
   });
 }
 
+// Helper to escape unescaped newline characters in JSON string values
+function escapeNewlinesInJsonStrings(str: string): string {
+  let result = '';
+  let inString = false;
+  let escape = false;
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (char === '"' && !escape) {
+      inString = !inString;
+    }
+    if (char === '\\' && !escape) {
+      escape = true;
+    } else {
+      escape = false;
+    }
+    
+    if (inString && (char === '\n' || char === '\r')) {
+      result += '\\n';
+    } else {
+      result += char;
+    }
+  }
+  return result;
+}
+
+// Helper to repair truncated JSON if it ends prematurely
+function repairTruncatedJson(str: string): string {
+  let inString = false;
+  let escape = false;
+  const openBrackets: ('{' | '[')[] = [];
+  
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (char === '"' && !escape) {
+      inString = !inString;
+    }
+    if (char === '\\' && !escape) {
+      escape = true;
+    } else {
+      escape = false;
+    }
+    
+    if (!inString) {
+      if (char === '{') openBrackets.push('{');
+      else if (char === '[') openBrackets.push('[');
+      else if (char === '}') {
+        if (openBrackets[openBrackets.length - 1] === '{') openBrackets.pop();
+      }
+      else if (char === ']') {
+        if (openBrackets[openBrackets.length - 1] === '[') openBrackets.pop();
+      }
+    }
+  }
+  
+  let repaired = str;
+  if (inString) {
+    repaired += '"'; // Close the open string
+  }
+  
+  while (openBrackets.length > 0) {
+    const lastOpen = openBrackets.pop();
+    repaired = repaired.trim();
+    if (repaired.endsWith(',')) {
+      repaired = repaired.slice(0, -1);
+    }
+    if (lastOpen === '{') {
+      repaired += '}';
+    } else if (lastOpen === '[') {
+      repaired += ']';
+    }
+  }
+  
+  return repaired;
+}
+
+// Clean and Parse JSON robustly
+function cleanAndParseJson(rawText: string): any {
+  let cleaned = rawText.trim();
+  // Strip markdown code block wrappers
+  cleaned = cleaned.replace(/^```(json)?\s*/i, '').replace(/\s*```$/, '');
+  
+  // Escape literal newlines inside double-quoted strings
+  cleaned = escapeNewlinesInJsonStrings(cleaned);
+  
+  // Clean trailing commas before closing brackets/braces
+  cleaned = cleaned.replace(/,\s*([\]}])/g, '$1');
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (err: any) {
+    console.warn('[JSON Repair] Initial parse failed. Trying truncated JSON repair...', err.message || err);
+    try {
+      const repaired = repairTruncatedJson(cleaned);
+      return JSON.parse(repaired);
+    } catch (repairErr: any) {
+      throw new Error(`JSON parse and repair failed: ${err.message}. Repair error: ${repairErr.message}`);
+    }
+  }
+}
+
 // Robust retry utility with backoff to handle transient 503/429 Gemini API errors
 async function retryWithBackoff<T>(
   fn: () => Promise<T>,
@@ -890,7 +990,7 @@ JSON 구조 스키마:
       }, 3, 1000);
 
       console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON...');
-      const parsed = JSON.parse(responseText.trim());
+      const parsed = cleanAndParseJson(responseText);
       
       const newBriefing: PreMarketBriefing = {
         id: `briefing_${todayDateStr}`,
@@ -1228,7 +1328,7 @@ JSON 구조 스키마:
       }, 3, 1000);
 
       console.log('[Gemini SDK] After-Market report text received. Parsing JSON...');
-      const parsed = JSON.parse(responseText.trim());
+      const parsed = cleanAndParseJson(responseText);
 
       const newReport: AfterMarketReport = {
         id: `report_${todayDateStr}`,
