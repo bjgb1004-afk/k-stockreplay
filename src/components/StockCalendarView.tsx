@@ -14,7 +14,8 @@ import {
   TrendingDown,
   CheckCircle2,
   HelpCircle,
-  Sparkles
+  Sparkles,
+  ArrowLeft
 } from 'lucide-react';
 
 export interface CalendarEvent {
@@ -211,7 +212,11 @@ export const JULY_2026_EVENTS: CalendarEvent[] = [
   }
 ];
 
-export const StockCalendarView: React.FC = () => {
+interface StockCalendarViewProps {
+  onBack?: () => void;
+}
+
+export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack }) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [filterType, setFilterType] = useState<string>('all');
   const [hoveredEvent, setHoveredEvent] = useState<CalendarEvent | null>(null);
@@ -252,21 +257,32 @@ export const StockCalendarView: React.FC = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Upper Brand / SEO Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-900 pb-6 select-none">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-indigo-400 font-mono text-xs font-black tracking-widest uppercase">
-              <CalendarIcon className="w-4 h-4 text-indigo-400" />
-              <span>Institutional Calendar System</span>
-              <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[9px] px-1.5 py-0.5 rounded font-black">
-                JULY 2026
-              </span>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6 select-none">
+          <div className="flex items-start gap-3">
+            {onBack && (
+              <button
+                onClick={onBack}
+                title="뒤로가기"
+                className="mt-1 flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-indigo-400 cursor-pointer transition-all hover:scale-105 active:scale-95 shadow-sm shrink-0"
+              >
+                <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            )}
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-indigo-400 font-mono text-xs font-black tracking-widest uppercase">
+                <CalendarIcon className="w-4 h-4 text-indigo-400" />
+                <span>Institutional Calendar System</span>
+                <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[9px] px-1.5 py-0.5 rounded font-black">
+                  JULY 2026
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+                K-STOCK <span className="text-indigo-500">증시 캘린더</span>
+              </h1>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                국내외 증시의 변동성을 좌우하는 핵심 금리, 만기일, 매크로 지표, 그리고 실적 발표 실시간 일정을 완전 해부합니다.
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
-              K-STOCK <span className="text-indigo-500">증시 캘린더</span>
-            </h1>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-              국내외 증시의 변동성을 좌우하는 핵심 금리, 만기일, 매크로 지표, 그리고 실적 발표 실시간 일정을 완전 해부합니다.
-            </p>
           </div>
 
           {/* Quick Stats Summary */}

@@ -9,23 +9,23 @@ export const AfterMarketNews = () => {
   return (
     <div className="space-y-4 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="bg-slate-900 rounded-2xl p-6 relative overflow-hidden border border-slate-800 shadow-xl">
-        <div className="absolute top-0 right-0 p-6 opacity-10">
+      <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 relative overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl">
+        <div className="absolute top-0 right-0 p-6 opacity-10 dark:opacity-20">
           <ActivitySquare className="w-32 h-32 text-indigo-400" />
         </div>
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
-            <span className="bg-indigo-500/20 text-indigo-400 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
+            <span className="bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
               DAILY AFTER-MARKET BRIEFING
             </span>
-            <span className="text-slate-400 text-xs font-mono flex items-center gap-1">
+            <span className="text-slate-600 dark:text-slate-400 text-xs font-mono flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5" /> {dateStr}
             </span>
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight mb-2">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-2">
             K-Stock 장마감 통합 분석 브리핑
           </h2>
-          <p className="text-slate-400 text-xs font-medium">
+          <p className="text-slate-600 dark:text-slate-400 text-xs font-medium">
             AI 기반 실시간 지수, 수급, 매크로 및 특징주 심층 분석 리포트
           </p>
         </div>

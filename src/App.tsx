@@ -2691,9 +2691,17 @@ export default function App() {
             }}
           />
         ) : platformTab === 'blog' ? (
-          <BlogCenter />
+          <BlogCenter onBack={() => {
+            setPlatformTab('replay');
+            setShowLauncherMenu(true);
+            window.history.pushState(null, '', '/');
+          }} />
         ) : platformTab === 'calendar' ? (
-          <StockCalendarView />
+          <StockCalendarView onBack={() => {
+            setPlatformTab('replay');
+            setShowLauncherMenu(true);
+            window.history.pushState(null, '', '/');
+          }} />
         ) : (
           <AdminConsole 
             briefing={preMarketBriefing}
@@ -4532,7 +4540,7 @@ export default function App() {
                   }}
                   title="뒤로가기"
                   aria-label="뒤로가기"
-                  className="flex items-center justify-center w-9 h-9 rounded-full border border-slate-700 bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 hover:border-indigo-500/30 cursor-pointer transition-all shadow-lg hover:scale-110 active:scale-95"
+                  className="flex items-center justify-center w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-indigo-400 hover:text-slate-900 dark:hover:text-indigo-300 hover:border-slate-300 dark:hover:border-indigo-500/30 cursor-pointer transition-all shadow-lg hover:scale-110 active:scale-95"
                 >
                   <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
                 </button>

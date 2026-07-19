@@ -19,9 +19,10 @@ export interface BlogPost {
 
 interface BlogCenterProps {
   isAdmin?: boolean;
+  onBack?: () => void;
 }
 
-export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true }) => {
+export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }) => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -226,11 +227,22 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true }) => {
       {/* Blog Center Hero Banner with Google AdSense Optimization */}
       <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 pointer-events-none" />
-        <div className="space-y-1.5 z-10">
-          <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-indigo-400" />
-            <span>인사이트</span>
-          </h2>
+        <div className="flex items-center gap-3 z-10">
+          {onBack && (
+            <button
+              onClick={onBack}
+              title="뒤로가기"
+              className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-indigo-400 cursor-pointer transition-all hover:scale-105 active:scale-95 shadow-sm"
+            >
+              <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          )}
+          <div className="space-y-1.5">
+            <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <BookOpen className="w-6 h-6 text-indigo-400" />
+              <span>인사이트</span>
+            </h2>
+          </div>
         </div>
       </div>
 

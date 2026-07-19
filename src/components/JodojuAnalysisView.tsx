@@ -336,7 +336,7 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
                         정량적 기술적 분석 에이전트
                       </h4>
                     </div>
-                    <div className="text-xs leading-relaxed max-h-[360px] overflow-y-auto pr-1">
+                    <div className="text-xs leading-relaxed pr-1">
                       <QuickMarkdown text={activeAnalysis.technicalAnalysis} />
                     </div>
                   </div>
@@ -349,7 +349,7 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
                         금융 데이터 및 공시 팩트 에이전트
                       </h4>
                     </div>
-                    <div className="text-xs leading-relaxed max-h-[360px] overflow-y-auto pr-1">
+                    <div className="text-xs leading-relaxed pr-1">
                       <QuickMarkdown text={activeAnalysis.financialAnalysis} />
                     </div>
                   </div>
