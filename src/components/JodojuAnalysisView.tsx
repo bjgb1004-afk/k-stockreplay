@@ -278,54 +278,54 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
   report,
   onSelectStockForReplay
 }) => {
-  // Extract jodoju list based on report.jodoju15 if available, falling back to static JODOJU_STOCKS
-  let rawJodojuList: any[] = [];
-  if (report?.jodoju15 && report.jodoju15.length > 0) {
-    const seenTickers = new Set<string>();
-    const uniqueJodoju15 = report.jodoju15.filter((r: any) => {
-      const ticker = r.ticker || r.code;
-      if (!ticker) return false;
-      if (seenTickers.has(ticker)) return false;
-      seenTickers.add(ticker);
-      return true;
-    });
-
-    rawJodojuList = uniqueJodoju15.map((r: any) => ({
-      ticker: r.ticker || r.code,
-      name: r.name,
-      closePrice: r.closePrice,
-      changeRate: r.changeRate,
-      tradeValue: r.tradeValuePct || r.tradeValue,
-      relatedThemes: r.relatedThemes,
-      riseReason: r.riseReason,
-      supplyDemand: r.supplyDemand,
-      aiSummary: r.aiSummary,
-      aiAnalysis: r.aiAnalysis
-    }));
-  } else {
-    rawJodojuList = JODOJU_STOCKS.map(stk => {
-      const details = JODOJU_STATIC_DETAILS[stk.ticker] || {};
-      return {
-        ticker: stk.ticker,
-        name: stk.name,
-        closePrice: details.closePrice || 1000,
-        changeRate: stk.changeRate,
-        tradeValue: stk.tradeValuePct,
-        relatedThemes: stk.relatedThemes || details.relatedThemes || [],
-        riseReason: details.riseReason || '당일 주도주 급등',
-        supplyDemand: details.foreigner || '',
-        aiSummary: details.aiSummary || '',
-        aiAnalysis: details
-      };
-    });
-  }
-
-  // Force sort by changeRate (상승률) descending and limit to exactly 10 stocks as requested!
+  // Extract and memoize jodoju list based on report.jodoju15 if available, falling back to static JODOJU_STOCKS
   const jodojuList = React.useMemo(() => {
-    return [...rawJodojuList]
+    let rawList: any[] = [];
+    if (report?.jodoju15 && report.jodoju15.length > 0) {
+      const seenTickers = new Set<string>();
+      const uniqueJodoju15 = report.jodoju15.filter((r: any) => {
+        const ticker = r.ticker || r.code;
+        if (!ticker) return false;
+        if (seenTickers.has(ticker)) return false;
+        seenTickers.add(ticker);
+        return true;
+      });
+
+      rawList = uniqueJodoju15.map((r: any) => ({
+        ticker: r.ticker || r.code,
+        name: r.name,
+        closePrice: r.closePrice,
+        changeRate: r.changeRate,
+        tradeValue: r.tradeValuePct || r.tradeValue,
+        relatedThemes: r.relatedThemes,
+        riseReason: r.riseReason,
+        supplyDemand: r.supplyDemand,
+        aiSummary: r.aiSummary,
+        aiAnalysis: r.aiAnalysis
+      }));
+    } else {
+      rawList = JODOJU_STOCKS.map(stk => {
+        const details = JODOJU_STATIC_DETAILS[stk.ticker] || {};
+        return {
+          ticker: stk.ticker,
+          name: stk.name,
+          closePrice: details.closePrice || 1000,
+          changeRate: stk.changeRate,
+          tradeValue: stk.tradeValuePct,
+          relatedThemes: stk.relatedThemes || details.relatedThemes || [],
+          riseReason: details.riseReason || '당일 주도주 급등',
+          supplyDemand: details.foreigner || '',
+          aiSummary: details.aiSummary || '',
+          aiAnalysis: details
+        };
+      });
+    }
+
+    // Force sort by changeRate (상승률) descending and limit to exactly 10 stocks as requested!
+    return [...rawList]
       .sort((a, b) => b.changeRate - a.changeRate)
       .slice(0, 10);
-  }, [rawJodojuList]);
+  }, [report]);
 
   // Selection states
   const [selectedTicker, setSelectedTicker] = useState<string>('');
@@ -340,14 +340,26 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
     }
   }, [jodojuList, selectedTicker]);
 
+  // Find the currently selected stock details safely
+  const currentStock = React.useMemo(() => {
+    return jodojuList.find(s => s.ticker === selectedTicker) || jodojuList[0];
+  }, [jodojuList, selectedTicker]);
+
+  // Destructure primitives from currentStock for stable useEffect dependency tracking
+  const stockTicker = currentStock?.ticker;
+  const stockName = currentStock?.name;
+  const stockClosePrice = currentStock?.closePrice;
+  const stockChangeRate = currentStock?.changeRate;
+  const stockTradeValue = currentStock?.tradeValue;
+
   // Fetch quantitative analysis when selected stock changes
   useEffect(() => {
-    if (!selectedTicker) return;
+    if (!stockTicker) return;
 
-    // Check from current state/ref without putting the entire cache in dependencies
+    // Check if we already have cache for this ticker
     let alreadyHasCache = false;
     setAnalysisCache(prev => {
-      if (prev[selectedTicker]) {
+      if (prev[stockTicker]) {
         alreadyHasCache = true;
       }
       return prev;
@@ -357,21 +369,18 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
       return;
     }
 
-    const currentStock = jodojuList.find(s => s.ticker === selectedTicker);
-    if (!currentStock) return;
-
     const fetchAnalysis = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/platform/jodoju-analysis?ticker=${currentStock.ticker}&name=${encodeURIComponent(currentStock.name)}&closePrice=${currentStock.closePrice || 0}&changeRate=${currentStock.changeRate || 0}&tradeValue=${currentStock.tradeValue || 0}`);
+        const res = await fetch(`/api/platform/jodoju-analysis?ticker=${stockTicker}&name=${encodeURIComponent(stockName || '')}&closePrice=${stockClosePrice || 0}&changeRate=${stockChangeRate || 0}&tradeValue=${stockTradeValue || 0}`);
         if (!res.ok) {
           throw new Error('AI 분석 정보를 가져오지 못했습니다.');
         }
         const data = await res.json();
         setAnalysisCache(prev => ({
           ...prev,
-          [selectedTicker]: {
+          [stockTicker]: {
             technicalAnalysis: data.technicalAnalysis,
             financialAnalysis: data.financialAnalysis
           }
@@ -379,15 +388,15 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
       } catch (err: any) {
         console.warn('[Jodoju View] Failed to fetch dynamic AI analysis, using client-side fallback:', err);
         const fallbackData = generateLocalFallbackJodojuAnalysis(
-          currentStock.ticker,
-          currentStock.name,
-          currentStock.closePrice || 10000,
-          currentStock.changeRate || 10,
-          currentStock.tradeValue || 500
+          stockTicker,
+          stockName || '',
+          stockClosePrice || 10000,
+          stockChangeRate || 10,
+          stockTradeValue || 500
         );
         setAnalysisCache(prev => ({
           ...prev,
-          [selectedTicker]: fallbackData
+          [stockTicker]: fallbackData
         }));
       } finally {
         setLoading(false);
@@ -395,9 +404,8 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
     };
 
     fetchAnalysis();
-  }, [selectedTicker, jodojuList]);
+  }, [stockTicker, stockName, stockClosePrice, stockChangeRate, stockTradeValue]);
 
-  const currentStock = jodojuList.find(s => s.ticker === selectedTicker) || jodojuList[0];
   const activeAnalysis = selectedTicker ? analysisCache[selectedTicker] : null;
 
   if (jodojuList.length === 0) {
