@@ -3142,53 +3142,29 @@ CREATE TABLE kstock_platform_data (
     }
 
     try {
-      const allTopics = [
-        "한국 증시 주도주 패턴 분석 및 매매 기법",
-        "거래량 터진 장대양봉의 숨겨진 의미와 타점",
-        "세력 매집 패턴과 이평선 정배열 초기 공략법",
-        "외국인 및 기관 수급 연속성과 주가 상승의 상관관계",
-        "단기 급등주 눌림목 매매 공식",
-        "박스권 돌파 매매의 핵심 지표 분석",
-        "금리 인하기, 한국 증시 수혜 섹터 해부",
-        "반도체 슈퍼 사이클과 소부장 대장주 발굴법",
-        "바이오/제약 랠리의 신호탄, 임상 모멘텀 분석",
-        "이차전지 섹터 바닥 탈출 시그널 확인법",
-        "환율 1300원 시대, 수출 주도주의 기회",
-        "시가총액 상위주 흐름으로 보는 코스피 방향성",
-        "급락장 속 살아남는 방어주와 헷지 전략",
-        "상한가 다음날 갭상승 종목의 단타 매매 전략",
-        "볼린저 밴드와 RSI를 활용한 스윙 투자 완벽 가이드",
-        "배당 수익률과 가치투자의 정석",
-        "신재생 에너지 정책 수혜주 분석",
-        "AI 인공지능 시대, 국내 소프트웨어 기업 전망",
-        "엔터/콘텐츠 K-컬처 수출 확대에 따른 밸류에이션 재평가",
-        "장중 프로그램 매수세가 암시하는 스윙 타점",
-        "텐배거(10루타) 종목의 재무적, 기술적 공통점"
-      ];
-
       let posts = await getPostsList();
       
       let targetId = 1;
       let targetTitle = "";
       
-      for (let i = 1; i <= 21; i++) {
-        const autoId = `auto-${i}`;
-        if (!posts.some((p: any) => p.id === autoId)) {
-          targetId = i;
-          targetTitle = allTopics[i - 1];
-          break;
-        }
-      }
-
-      if (targetTitle === "") {
+      const targetPost = posts.find(p => !p.is_published || !p.content);
+      
+      if (targetPost) {
+        targetId = parseInt(targetPost.id.toString().replace(/[^0-9]/g, '')) || 1;
+        targetTitle = targetPost.title;
+      } else {
         console.log('★ 모든 칼럼이 발행 완료되었습니다. 상태를 초기화하고 1번부터 재시작합니다.');
-        posts = posts.filter((p: any) => !p.id.toString().startsWith('auto-'));
+        posts.forEach(p => {
+          p.is_published = false;
+          p.content = null;
+          p.published_at = null;
+        });
         await savePostsList(posts);
         targetId = 1;
-        targetTitle = allTopics[0];
+        targetTitle = posts[0]?.title || "K-STOCK REPLAY가 시장을 복기하는 이유에 대해서";
       }
 
-      console.log(`[Auto-Writer] 대상 칼럼 선정 -> ID: auto-${targetId} | 제목: ${targetTitle}`);
+      console.log(`[Auto-Writer] 대상 칼럼 선정 -> ID: ${targetId} | 제목: ${targetTitle}`);
 
       const ai = new GoogleGenAI({ apiKey: geminiKey });
 
@@ -3219,8 +3195,8 @@ CREATE TABLE kstock_platform_data (
         throw new Error('Gemini 콘텐츠 생성 실패: 빈 텍스트 반환');
       }
 
-      const newPost = {
-        id: `auto-${targetId}`,
+      const updatedPost = {
+        id: targetId,
         title: targetTitle,
         content: generatedHtml,
         category: 'blog',
@@ -3229,19 +3205,30 @@ CREATE TABLE kstock_platform_data (
         slug: `auto-report-${targetId}`,
         createdAt: new Date().toISOString(),
         published_at: new Date().toISOString(),
+        is_published: true,
         views: 0
       };
 
-      posts.unshift(newPost);
+      const existingIndex = posts.findIndex(p => {
+        const pId = parseInt(p.id.toString().replace(/[^0-9]/g, '')) || 0;
+        return pId === targetId;
+      });
+
+      if (existingIndex !== -1) {
+        posts[existingIndex] = updatedPost;
+      } else {
+        posts.unshift(updatedPost);
+      }
+
       await savePostsList(posts);
 
       return res.json({
         success: true,
-        message: `성공적으로 auto-${targetId}번 칼럼이 발행되었습니다.`,
+        message: `성공적으로 ${targetId}번 칼럼이 발행되었습니다.`,
         data: {
-          id: newPost.id,
-          title: newPost.title,
-          publishedAt: newPost.published_at,
+          id: targetId,
+          title: targetTitle,
+          publishedAt: updatedPost.published_at,
           contentLength: generatedHtml.length
         }
       });
@@ -4341,20 +4328,86 @@ CREATE TABLE kstock_platform_data (
   }
 
   async function getPostsList(): Promise<any[]> {
-    try {
-      const data = await getPlatformDataFromSupabase('posts_list');
-      if (data && Array.isArray(data)) {
-        return data;
+    const supabase = getSupabase();
+    if (!supabase) {
+      console.warn('Supabase client not initialized, trying local posts.json');
+      if (fs.existsSync(POSTS_FILE)) {
+        try {
+          return JSON.parse(fs.readFileSync(POSTS_FILE, 'utf-8'));
+        } catch (_) {}
       }
       return [];
-    } catch (e) {
-      console.error('Failed to parse posts from Supabase', e);
+    }
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*');
+        
+      if (error) {
+        throw error;
+      }
+      
+      return (data || []).map(row => ({
+        id: row.id,
+        title: row.title,
+        content: row.content,
+        category: 'blog',
+        author: 'AI 마켓 리서치',
+        tags: ['마켓 리포트', '주도주 분석', '실전 매매'],
+        slug: `auto-report-${row.id}`,
+        createdAt: row.created_at || new Date().toISOString(),
+        published_at: row.published_at,
+        is_published: row.is_published,
+        views: row.views || 0
+      }));
+    } catch (e: any) {
+      console.error('Failed to fetch posts from Supabase posts table:', e.message || e);
+      if (fs.existsSync(POSTS_FILE)) {
+        try {
+          return JSON.parse(fs.readFileSync(POSTS_FILE, 'utf-8'));
+        } catch (_) {}
+      }
       return [];
     }
   }
 
   async function savePostsList(posts: any[]) {
-    await savePlatformDataToSupabase('posts_list', posts);
+    try {
+      fs.writeFileSync(POSTS_FILE, JSON.stringify(posts, null, 2), 'utf-8');
+      const originalWorkspacePath = path.resolve(process.cwd(), 'data/content/posts.json');
+      fs.writeFileSync(originalWorkspacePath, JSON.stringify(posts, null, 2), 'utf-8');
+    } catch (err) {}
+
+    const supabase = getSupabase();
+    if (!supabase) return;
+
+    try {
+      const rows = posts.map(p => {
+        let numericId: number;
+        if (typeof p.id === 'number') {
+          numericId = p.id;
+        } else {
+          numericId = parseInt(p.id.toString().replace(/[^0-9]/g, '')) || 1;
+        }
+        return {
+          id: numericId,
+          title: p.title,
+          content: p.content,
+          is_published: p.is_published !== undefined ? p.is_published : (p.published_at ? true : false),
+          published_at: p.published_at || (p.is_published ? new Date().toISOString() : null)
+        };
+      });
+
+      const { error } = await supabase
+        .from('posts')
+        .upsert(rows, { onConflict: 'id' });
+
+      if (error) {
+        throw error;
+      }
+    } catch (e: any) {
+      console.error('Failed to upsert posts to Supabase posts table:', e.message || e);
+    }
   }
 
   app.get('/api/posts', async (req, res) => {
