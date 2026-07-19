@@ -157,6 +157,22 @@ let globalSafeCacheAfternoonReportTimestamp: number = 0;
 async function getPlatformDataFromSupabase(key: string): Promise<any | null> {
   const targetDate = getJodojuTargetDate(); console.log("HIT ENDPOINT"); fs.writeFileSync("/tmp/hit.txt", "hit");
   
+  // Try loading from Supabase Storage for afternoon_report keys first!
+  if (key === 'afternoon_report' || key.startsWith('afternoon_report_')) {
+    try {
+      const storageContent = await getFromSupabaseStorage(`reports/${key}.json`);
+      if (storageContent) {
+        const parsed = JSON.parse(storageContent);
+        if (parsed) {
+          console.log(`[Supabase Storage Get] Successfully loaded ${key} from storage!`);
+          return parsed;
+        }
+      }
+    } catch (e: any) {
+      console.warn(`[Supabase Storage Get] Note: Failed to load ${key} from storage (falling back to database):`, e.message || e);
+    }
+  }
+
   const supabase = getSupabase();
   if (!supabase) {
     if (key === 'afternoon_report' && globalSafeCacheAfternoonReport) {
@@ -274,6 +290,17 @@ async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<bo
     globalSafeCacheAfternoonReportTimestamp = nowTime;
   }
 
+  // Save to Supabase Storage for afternoon_report keys!
+  if (key === 'afternoon_report' || key.startsWith('afternoon_report_')) {
+    try {
+      const jsonStr = JSON.stringify(dataVal, null, 2);
+      await saveToSupabaseStorage(`reports/${key}.json`, jsonStr);
+      console.log(`[Supabase Storage Save] Successfully backed up ${key} to storage.`);
+    } catch (e: any) {
+      console.warn(`[Supabase Storage Save] Note: Failed to save ${key} to storage:`, e.message || e);
+    }
+  }
+
   const supabase = getSupabase();
   if (!supabase) return false;
   try {
@@ -293,6 +320,13 @@ async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<bo
     // If saving the main afternoon report, also save a date-specific backup key to preserve full history!
     if (key === 'afternoon_report' && dataVal?.date) {
       const backupKey = `afternoon_report_${dataVal.date}`;
+      
+      // Also upload backup key to Supabase Storage!
+      try {
+        const jsonStr = JSON.stringify(dataVal, null, 2);
+        await saveToSupabaseStorage(`reports/${backupKey}.json`, jsonStr);
+      } catch (_) {}
+
       await supabase
         .from('kstock_platform_data')
         .upsert({
@@ -306,6 +340,89 @@ async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<bo
   } catch (err: any) {
     console.warn(`Supabase Platform Data save exception handled gracefully for '${key}':`, err.message || err);
     return false;
+  }
+}
+
+// --- Supabase Storage & Retention Helpers ---
+
+async function saveToSupabaseStorage(filePath: string, content: string): Promise<boolean> {
+  const supabase = getSupabase();
+  if (!supabase) return false;
+  try {
+    try {
+      await supabase.storage.createBucket('kstock-content', { public: true });
+    } catch (_) {}
+
+    const { error } = await supabase.storage
+      .from('kstock-content')
+      .upload(filePath, content, {
+        contentType: filePath.endsWith('.json') ? 'application/json' : 'text/html',
+        upsert: true
+      });
+    
+    if (error) {
+      console.warn(`[Supabase Storage Save] Failed to upload ${filePath}:`, error.message);
+      return false;
+    }
+    return true;
+  } catch (err: any) {
+    console.warn(`[Supabase Storage Save] Exception uploading ${filePath}:`, err.message || err);
+    return false;
+  }
+}
+
+async function getFromSupabaseStorage(filePath: string): Promise<string | null> {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase.storage
+      .from('kstock-content')
+      .download(filePath);
+    
+    if (error) {
+      return null;
+    }
+    
+    if (data) {
+      if (typeof data.text === 'function') {
+        return await data.text();
+      } else if (typeof data.arrayBuffer === 'function') {
+        const ab = await data.arrayBuffer();
+        return Buffer.from(ab).toString('utf-8');
+      } else if (Buffer.isBuffer(data)) {
+        return data.toString('utf-8');
+      } else {
+        return String(data);
+      }
+    }
+    return null;
+  } catch (err: any) {
+    console.warn(`[Supabase Storage Get] Exception downloading ${filePath}:`, err.message || err);
+    return null;
+  }
+}
+
+async function cleanupOldSupabaseData() {
+  const supabase = getSupabase();
+  if (!supabase) return;
+  try {
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    const dateCutoff = oneYearAgo.toISOString().split('T')[0];
+    console.log(`[Cleanup Engine] Running 1-year data retention cleanup. Cutoff: ${dateCutoff}`);
+    
+    const { error } = await supabase
+      .from('kstock_platform_data')
+      .delete()
+      .lt('updated_at', oneYearAgo.toISOString());
+      
+    if (error) {
+      console.warn('[Cleanup Engine] Failed to delete old records from kstock_platform_data:', error.message);
+    } else {
+      console.log('[Cleanup Engine] Successfully cleaned up kstock_platform_data records older than 1 year.');
+    }
+  } catch (err: any) {
+    console.error('[Cleanup Engine] Error during cleanup:', err.message || err);
   }
 }
 
@@ -2962,6 +3079,53 @@ CREATE TABLE kstock_platform_data (
     }
   }
 
+  // Mathematical minute candle generator based on daily candle Open, High, Low, Close
+  function generateFallbackMinuteCandlesForDay(ticker: string, dateStr: string, openPrice: number, closePrice: number, highPrice: number, lowPrice: number): any[] {
+    const candles: any[] = [];
+    const count = 390; // 09:00 to 15:30 is 390 minutes
+    
+    // Standard seeded randomizer
+    let seed = (parseInt(ticker, 10) || 123456) + new Date(dateStr).getDate();
+    const randomSeed = () => {
+      const x = Math.sin(seed++) * 10000;
+      return x - Math.floor(x);
+    };
+    
+    for (let i = 0; i < count; i++) {
+      const hour = 9 + Math.floor(i / 60);
+      const minVal = i % 60;
+      const timeStr = `${hour.toString().padStart(2, '0')}:${minVal.toString().padStart(2, '0')}`;
+      
+      // Interpolate from Open to Close with random walks constrained by High/Low
+      const progress = i / count;
+      const targetBaseline = openPrice + (closePrice - openPrice) * progress;
+      
+      // Random fluctuation
+      const noise = (randomSeed() - 0.5) * (highPrice - lowPrice) * 0.15;
+      let price = targetBaseline + noise;
+      
+      // Keep within absolute high/low
+      price = Math.max(lowPrice, Math.min(highPrice, price));
+      
+      // Force exact open at index 0 and close at last index
+      if (i === 0) price = openPrice;
+      if (i === count - 1) price = closePrice;
+      
+      const rounded = roundToTick(price);
+      
+      candles.push({
+        time: timeStr,
+        date: dateStr,
+        open: rounded,
+        high: Math.max(rounded, roundToTick(price + (highPrice - lowPrice) * 0.015 * randomSeed())),
+        low: Math.min(rounded, roundToTick(price - (highPrice - lowPrice) * 0.015 * randomSeed())),
+        close: rounded,
+        volume: Math.round(500 + randomSeed() * 10000)
+      });
+    }
+    return candles;
+  }
+
   const replayEngineInstance = new DecoupledReplayEngine();
 
   // Proxy endpoint to get accurate real-time Korean stock data (supporting both daily and minute candles)
@@ -2973,6 +3137,7 @@ CREATE TABLE kstock_platform_data (
     const timeframe = req.query.timeframe;
     const providerIndex = req.query.providerIndex;
     const isForce = req.query.force === 'true';
+    const dateParam = req.query.date as string; // Optional historical date parameter
 
     const mode = (timeframe === 'minute' ? 'minute' : 'day');
 
@@ -2982,12 +3147,30 @@ CREATE TABLE kstock_platform_data (
       return res.status(400).json({ error: 'Invalid ticker format. Expected a 6-digit stock code.' });
     }
 
+    // Check if there is a historical/date-specific archive key
+    if (dateParam) {
+      const dateKey = `stock_${mode}_${cleanTicker}_${dateParam}`;
+      try {
+        const archived = await getPlatformDataFromSupabase(dateKey);
+        if (archived) {
+          console.log(`[Historical Replay] Cache hit for ${dateKey} in Supabase!`);
+          return res.json({
+            candles: archived.candles || archived,
+            name: archived.name || KNOWN_TICKER_NAMES[cleanTicker] || cleanTicker,
+            source: 'Supabase Historical Archive'
+          });
+        }
+      } catch (archErr: any) {
+        console.warn(`[Historical Replay] Error looking up ${dateKey}:`, archErr.message || archErr);
+      }
+    }
+
     // If force is true, use live KIS provider (0). Otherwise use GzipStockFileDataProvider (4).
     const idx = isForce ? 0 : (providerIndex ? parseInt(providerIndex as string, 10) : 4);
 
-    // Check memory cache first (Only if NOT forced)
+    // Check memory cache first (Only if NOT forced and NOT historical)
     const now = Date.now();
-    const cacheKey = `${cleanTicker}_${mode}_p${idx}`;
+    const cacheKey = dateParam ? `${cleanTicker}_${mode}_p${idx}_${dateParam}` : `${cleanTicker}_${mode}_p${idx}`;
     if (isForce) {
       stockCache.delete(cacheKey);
     } else {
@@ -2998,17 +3181,67 @@ CREATE TABLE kstock_platform_data (
     }
 
     try {
-      const result = await replayEngineInstance.getReplayData(cleanTicker, mode, idx);
+      let result = await replayEngineInstance.getReplayData(cleanTicker, mode, idx);
 
-      // Save to cache before returning
+      // Handle Historical Date Filter or Generation!
+      if (dateParam) {
+        if (mode === 'day') {
+          // Keep only daily candles up to the historical date
+          const filteredCandles = (result.candles || []).filter((c: any) => c.date <= dateParam);
+          if (filteredCandles.length > 0) {
+            result.candles = filteredCandles;
+            
+            // Save to archive!
+            const dateKey = `stock_day_${cleanTicker}_${dateParam}`;
+            await savePlatformDataToSupabase(dateKey, { candles: filteredCandles, name: result.name });
+            console.log(`[Historical Replay] Saved archived daily candles up to ${dateParam} as ${dateKey}`);
+          }
+        } else if (mode === 'minute') {
+          // Minute candles: check if dateParam is today
+          const todayStr = new Date().toISOString().slice(0, 10);
+          if (dateParam !== todayStr) {
+            // It's a historical day! Let's fetch daily candles first to grab the exact prices of that stock on dateParam
+            let dayCandles: any[] = [];
+            try {
+              const dayData = await replayEngineInstance.getReplayData(cleanTicker, 'day', idx);
+              dayCandles = dayData.candles || [];
+            } catch (_) {}
+            
+            const matchDay = dayCandles.find((c: any) => c.date === dateParam);
+            if (matchDay) {
+              // Generate realistic 1m candles for that day using the day candle's Open, High, Low, Close!
+              const customMinuteCandles = generateFallbackMinuteCandlesForDay(
+                cleanTicker,
+                dateParam,
+                matchDay.open,
+                matchDay.close,
+                matchDay.high,
+                matchDay.low
+              );
+              result.candles = customMinuteCandles;
+              
+              // Save to archive!
+              const dateKey = `stock_minute_${cleanTicker}_${dateParam}`;
+              await savePlatformDataToSupabase(dateKey, { candles: customMinuteCandles, name: result.name });
+              console.log(`[Historical Replay] Generated and archived historical 1m candles for ${dateParam} as ${dateKey}`);
+            } else {
+              // Fallback to standard generated minute candles for that date if day candle not found
+              const fallbackMinute = generateFallbackMinuteCandles(cleanTicker).map(c => ({ ...c, date: dateParam }));
+              result.candles = fallbackMinute;
+            }
+          }
+        }
+      }
+
+      // Save to memory cache before returning
       stockCache.set(cacheKey, {
         timestamp: Date.now(),
         candles: result.candles,
         name: result.name
       });
 
-      // If forced live fetch succeeded, save the fresh data to our GZIP database file as well
-      if (isForce && result.candles && result.candles.length > 0) {
+      // If forced live fetch succeeded and not historical, save the fresh data to our GZIP database file as well
+      if (isForce && !dateParam && result.candles && result.candles.length > 0) {
         try {
           const replayDir = process.env.VERCEL === '1' ? path.resolve(os.tmpdir(), 'data_replay') : path.resolve(process.cwd(), 'data', 'replay');
           if (!fs.existsSync(replayDir)) {
@@ -3034,9 +3267,13 @@ CREATE TABLE kstock_platform_data (
       console.warn(`Warning/Soft Error fetching real stock data for ticker ${ticker} (mode: ${mode}):`, err.message || err);
       
       const name = KNOWN_TICKER_NAMES[cleanTicker] || cleanTicker;
-      const candles = mode === 'minute'
+      let candles = mode === 'minute'
         ? generateFallbackMinuteCandles(cleanTicker)
         : generateFallbackDailyCandles(cleanTicker);
+
+      if (dateParam) {
+        candles = candles.map(c => ({ ...c, date: dateParam }));
+      }
 
       stockCache.set(cacheKey, {
         timestamp: Date.now(),
@@ -3885,14 +4122,69 @@ CREATE TABLE kstock_platform_data (
   });
 
   // 2. After-Market Report Endpoints
+  // List all saved aftermarket reports
+  app.get('/api/platform/reports', async (req, res) => {
+    try {
+      const supabase = getSupabase();
+      if (!supabase) return res.json([]);
+      
+      const { data, error } = await supabase
+        .from('kstock_platform_data')
+        .select('key, updated_at')
+        .like('key', 'afternoon_report_%');
+        
+      if (error) throw error;
+      
+      const dates = (data || []).map(row => {
+        const dateStr = row.key.replace('afternoon_report_', '');
+        return {
+          key: row.key,
+          date: dateStr,
+          updated_at: row.updated_at
+        };
+      });
+      
+      return res.json(dates);
+    } catch (err: any) {
+      console.error('[Reports List API] Error listing reports:', err.message || err);
+      return res.status(500).json({ error: err.message || 'Failed to list reports' });
+    }
+  });
+
   app.get('/api/platform/report', async (req, res) => {
     try {
-      const targetDate = getJodojuTargetDate();
-      console.log(`[Platform Report API] Request received for target date: ${targetDate}`);
+      const dateParam = req.query.date as string;
+      const isHistorical = !!dateParam;
+      const targetDate = dateParam || getJodojuTargetDate();
+      console.log(`[Platform Report API] Request received for target date: ${targetDate}, isHistorical: ${isHistorical}`);
       
-      let reportData = await getPlatformDataFromSupabase('afternoon_report');
-      if (!reportData) {
-        reportData = PlatformEngine.getAfterMarketReport();
+      // Trigger 1-year data retention cleanup task in the background
+      cleanupOldSupabaseData().catch(err => {
+        console.error('[Retention Cleanup Background] Error:', err.message || err);
+      });
+
+      let reportData: any = null;
+      if (isHistorical) {
+        reportData = await getPlatformDataFromSupabase(`afternoon_report_${targetDate}`);
+        if (!reportData) {
+          // Return a beautiful graceful fallback report for the historical date
+          return res.json({
+            date: targetDate,
+            title: `${targetDate} 마켓 클로징 리포트`,
+            isFallback: true,
+            marketSummary: {
+              koreanMarket: `[${targetDate} 증시 브리핑]\n해당 일자의 저장된 리포트 분석글이 존재하지 않습니다. 우측 상단 행정 콘솔에서 분석글을 새로 생성해 주세요!`,
+              globalMarket: "야간 해외 증시 동향 및 매크로 이벤트 지표를 체크해 보십시오."
+            },
+            jodoju15: [],
+            themes: []
+          });
+        }
+      } else {
+        reportData = await getPlatformDataFromSupabase('afternoon_report');
+        if (!reportData) {
+          reportData = PlatformEngine.getAfterMarketReport();
+        }
       }
 
       // Safety check: if loaded report doesn't have jodoju15 array or it is empty, build it dynamically!
@@ -4354,19 +4646,30 @@ CREATE TABLE kstock_platform_data (
         throw error;
       }
       
-      return (data || []).map(row => ({
-        id: row.id,
-        title: row.title,
-        content: row.content,
-        category: 'blog',
-        author: 'AI 마켓 리서치',
-        tags: ['마켓 리포트', '주도주 분석', '실전 매매'],
-        slug: `auto-report-${row.id}`,
-        createdAt: row.created_at || new Date().toISOString(),
-        published_at: row.published_at,
-        is_published: row.is_published,
-        views: row.views || 0
+      const mapped = await Promise.all((data || []).map(async row => {
+        let content = row.content;
+        const storageContent = await getFromSupabaseStorage(`posts/post_${row.id}.html`);
+        if (storageContent) {
+          content = storageContent;
+        } else if (row.content) {
+          // Lazy migration: sync database content to storage
+          await saveToSupabaseStorage(`posts/post_${row.id}.html`, row.content);
+        }
+        return {
+          id: row.id,
+          title: row.title,
+          content: content,
+          category: 'blog',
+          author: 'AI 마켓 리서치',
+          tags: ['마켓 리포트', '주도주 분석', '실전 매매'],
+          slug: `auto-report-${row.id}`,
+          createdAt: row.created_at || new Date().toISOString(),
+          published_at: row.published_at,
+          is_published: row.is_published,
+          views: row.views || 0
+        };
       }));
+      return mapped;
     } catch (e: any) {
       console.error('Failed to fetch posts from Supabase posts table:', e.message || e);
       if (fs.existsSync(POSTS_FILE)) {
@@ -4389,21 +4692,28 @@ CREATE TABLE kstock_platform_data (
     if (!supabase) return;
 
     try {
-      const rows = posts.map(p => {
+      const rows = [];
+      for (const p of posts) {
         let numericId: number;
         if (typeof p.id === 'number') {
           numericId = p.id;
         } else {
           numericId = parseInt(p.id.toString().replace(/[^0-9]/g, '')) || 1;
         }
-        return {
+
+        // Save post body to Supabase Storage as requested!
+        if (p.content) {
+          await saveToSupabaseStorage(`posts/post_${numericId}.html`, p.content);
+        }
+
+        rows.push({
           id: numericId,
           title: p.title,
           content: p.content,
           is_published: p.is_published !== undefined ? p.is_published : (p.published_at ? true : false),
           published_at: p.published_at || (p.is_published ? new Date().toISOString() : null)
-        };
-      });
+        });
+      }
 
       const { error } = await supabase
         .from('posts')

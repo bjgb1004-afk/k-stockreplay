@@ -15,7 +15,8 @@ import {
   CheckCircle2,
   HelpCircle,
   Sparkles,
-  ArrowLeft
+  ArrowLeft,
+  Loader2
 } from 'lucide-react';
 
 export interface CalendarEvent {
@@ -214,18 +215,66 @@ export const JULY_2026_EVENTS: CalendarEvent[] = [
 
 interface StockCalendarViewProps {
   onBack?: () => void;
+  onSelectHistoricalStock?: (stock: any, date: string) => void;
 }
 
-export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack }) => {
+export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, onSelectHistoricalStock }) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [filterType, setFilterType] = useState<string>('all');
   const [hoveredEvent, setHoveredEvent] = useState<CalendarEvent | null>(null);
+
+  const [savedReports, setSavedReports] = useState<any[]>([]);
+  const [loadingReports, setLoadingReports] = useState<boolean>(true);
+  const [selectedReport, setSelectedReport] = useState<any | null>(null);
+  const [loadingReportDetail, setLoadingReportDetail] = useState<boolean>(false);
 
   // 2026년 7월 고정값들 (수요일 시작, 31일 구성)
   const currentYear = 2026;
   const currentMonth = 7; // July
   const daysInMonth = 31;
   const startDayOffset = 3; // 수요일 시작 (0: Sun, 1: Mon, 2: Tue, 3: Wed, ...)
+
+  // Fetch reports list on mount
+  React.useEffect(() => {
+    fetch('/api/platform/reports')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setSavedReports(data);
+        }
+        setLoadingReports(false);
+      })
+      .catch(err => {
+        console.error('Failed to load reports:', err);
+        setLoadingReports(false);
+      });
+  }, []);
+
+  const handleDayClick = async (day: number) => {
+    setSelectedDay(day);
+    setSelectedReport(null);
+    setLoadingReportDetail(true);
+    
+    // Construct clicked date string: "2026-07-XX"
+    const dateStr = `2026-07-${day.toString().padStart(2, '0')}`;
+    try {
+      const res = await fetch(`/api/platform/report?date=${dateStr}`);
+      if (res.ok) {
+        const data = await res.json();
+        setSelectedReport(data);
+      }
+    } catch (err) {
+      console.error('Failed to load report detail:', err);
+    } finally {
+      setLoadingReportDetail(false);
+    }
+  };
+
+  // Check if a specific day has a saved aftermarket report
+  const hasSavedReport = (day: number) => {
+    const dateStr = `2026-07-${day.toString().padStart(2, '0')}`;
+    return savedReports.some(r => r.date === dateStr);
+  };
 
   // 해당 일자의 이벤트 배열 추출
   const getDayEvents = (day: number) => {
@@ -407,7 +456,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack }) 
                     key={index}
                     onClick={() => {
                       if (day) {
-                        setSelectedDay(day);
+                        handleDayClick(day);
                       }
                     }}
                     className={`relative min-h-[72px] sm:min-h-[84px] rounded-2xl p-1.5 flex flex-col justify-between transition-all select-none border group ${
@@ -433,10 +482,14 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack }) 
                           {day}
                         </span>
 
-                        {/* High Impact Icon Dot */}
-                        {dayEvents.some(e => e.impact === 'HIGH') && (
+                        {/* Saved Report or Impact Icon Dot */}
+                        {hasSavedReport(day) ? (
+                          <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[8px] font-bold px-1 rounded scale-90 sm:scale-100">
+                            📄 분석글
+                          </span>
+                        ) : dayEvents.some(e => e.impact === 'HIGH') ? (
                           <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                        )}
+                        ) : null}
                       </div>
                     )}
 
@@ -517,91 +570,175 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack }) 
                 </svg>
               </button>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div className="flex items-center justify-between select-none pr-8">
                   <span className="text-base font-black text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                     <CalendarIcon className="w-5 h-5 text-indigo-400" />
-                    <span>7월 {selectedDay}일 상세 일정</span>
+                    <span>7월 {selectedDay}일 리포트 및 일정</span>
                   </span>
                   <span className="text-[10px] font-mono font-extrabold bg-white dark:bg-slate-950 px-2 py-0.5 border border-slate-900 text-indigo-400 rounded-md">
-                    {activeEvents.length}개 발견
+                    {activeEvents.length}개 일정
                   </span>
                 </div>
 
-                {activeEvents.length === 0 ? (
-                  <div className="py-12 text-center text-xs text-slate-500 dark:text-slate-500 space-y-2">
-                    <HelpCircle className="w-8 h-8 mx-auto text-slate-600 stroke-1" />
-                    <p>해당 일자에는 필터링된 일정 및 주요 이벤트가 없습니다.</p>
+                {/* Afternoon Report & Jodoju Dynamic Section */}
+                {loadingReportDetail ? (
+                  <div className="py-8 text-center text-xs text-slate-500 dark:text-slate-400 space-y-2 flex flex-col items-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                    <p className="font-extrabold text-[11px]">당일 주도주 및 마켓 보고서를 불러오는 중...</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    {activeEvents.map((ev) => (
-                      <div
-                        key={ev.id}
-                        className="bg-white dark:bg-slate-950 p-4 rounded-2xl border border-slate-900 hover:border-slate-200 dark:border-slate-850 transition-colors select-text"
-                      >
-                        {/* Event Type & Impact Badges */}
-                        <div className="flex items-center justify-between mb-2">
-                          <span className={`text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider font-mono ${
-                            ev.type === 'kr-market' ? 'bg-rose-500/10 text-rose-400' :
-                            ev.type === 'us-market' ? 'bg-sky-500/10 text-sky-400' :
-                            ev.type === 'macro' ? 'bg-emerald-500/10 text-emerald-400' :
-                            ev.type === 'option' ? 'bg-amber-500/10 text-amber-400' :
-                            'bg-purple-500/10 text-purple-400'
-                          }`}>
-                            {ev.type === 'kr-market' ? '국내 증시' :
-                             ev.type === 'us-market' ? '해외 증시' :
-                             ev.type === 'macro' ? '금리·지표' :
-                             ev.type === 'option' ? '옵션 만기' : '기업 실적'}
-                          </span>
-
-                          <div className="flex items-center gap-1.5">
-                            {ev.time && (
-                              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-500 font-mono">
-                                {ev.time}
-                              </span>
-                            )}
-                            <span className={`text-[8px] sm:text-[9px] font-extrabold px-1.5 py-0.5 rounded-md font-mono ${
-                              ev.impact === 'HIGH' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
-                              ev.impact === 'MEDIUM' ? 'bg-amber-500/15 text-amber-300 border border-amber-500/20' :
-                              'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
-                            }`}>
-                              {ev.impact} IMPACT
-                            </span>
-                          </div>
+                  <>
+                    {selectedReport && (
+                      <div className="space-y-3.5 select-text text-left">
+                        {/* Briefing summary card */}
+                        <div className="bg-slate-100 dark:bg-slate-950/80 p-3.5 rounded-2xl border border-slate-900/60">
+                          <h5 className="text-xs font-black text-slate-800 dark:text-slate-300 flex items-center gap-1 mb-2">
+                            <Globe className="w-4 h-4 text-indigo-400" />
+                            <span>{selectedReport.date} 시황 분석 요약</span>
+                          </h5>
+                          <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line font-medium">
+                            {selectedReport.marketSummary?.koreanMarket || "해당 일자의 주도주 차트와 일정 정보 분석 데이터가 준비되어 있습니다."}
+                          </p>
                         </div>
 
-                        {/* Event Title */}
-                        <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-slate-100 mb-1.5">
-                          {ev.title}
-                        </h4>
-
-                        {/* Description */}
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
-                          {ev.description}
-                        </p>
-
-                        {/* Market Reaction Tip */}
-                        {ev.marketReaction && (
-                          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-2.5 rounded-xl text-[10px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                            <span className="font-extrabold text-indigo-400 flex items-center gap-1 mb-1 select-none">
-                              <AlertCircle className="w-3.5 h-3.5" />
-                              매매 가이드 및 영향
-                            </span>
-                            {ev.marketReaction}
+                        {/* Jodoju Stock list */}
+                        {selectedReport.jodoju15 && selectedReport.jodoju15.length > 0 ? (
+                          <div className="space-y-2 pt-1">
+                            <h5 className="text-xs font-black text-slate-800 dark:text-slate-300 flex items-center gap-1">
+                              <Flame className="w-4 h-4 text-rose-500" />
+                              <span>오늘의 주도주 및 상승 사유 (15% 이상)</span>
+                            </h5>
+                            <div className="grid grid-cols-1 gap-2 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
+                              {selectedReport.jodoju15.map((stock: any) => (
+                                <div key={stock.code} className="bg-white dark:bg-slate-950 p-3 rounded-xl border border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 transition-all flex items-center justify-between gap-3">
+                                  <div className="space-y-1 text-left">
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                      <span className="text-xs font-black text-slate-900 dark:text-slate-100">{stock.name}</span>
+                                      <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-500">{stock.code}</span>
+                                      <span className="text-[10px] font-black text-rose-400">+{stock.changeRatio || stock.pct}%</span>
+                                    </div>
+                                    <p className="text-[10px] text-slate-600 dark:text-slate-400 leading-normal">
+                                      <strong className="text-indigo-400">[{stock.theme || "테마 미확정"}]</strong> {stock.reason || "급등 사유 분석 요약 중"}
+                                    </p>
+                                  </div>
+                                  {onSelectHistoricalStock && (
+                                    <button
+                                      onClick={() => {
+                                        onSelectHistoricalStock(stock, selectedReport.date);
+                                        setSelectedDay(null);
+                                      }}
+                                      className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-2.5 py-1.5 rounded-lg transition-colors shrink-0 cursor-pointer"
+                                    >
+                                      차트 복기
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="py-4 text-center bg-white dark:bg-slate-950/40 border border-dashed border-slate-900/60 rounded-2xl">
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">당일 감지된 급등 주도주 목록이 비어있습니다.</p>
+                            {onSelectHistoricalStock && (
+                              <button
+                                onClick={() => {
+                                  onSelectHistoricalStock({ name: "삼성전자", code: "005930" }, selectedReport.date);
+                                  setSelectedDay(null);
+                                }}
+                                className="mt-2 text-[10px] bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 px-3 py-1.5 rounded-lg font-bold border border-indigo-500/30 cursor-pointer transition-all"
+                              >
+                                삼성전자 차트로 이 날짜 복기하기
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
+
+                <div className="border-t border-slate-200 dark:border-slate-800 pt-3 select-none">
+                  <h5 className="text-xs font-black text-slate-800 dark:text-slate-300 flex items-center gap-1 mb-2.5">
+                    <CalendarIcon className="w-4 h-4 text-slate-400" />
+                    <span>📅 거시경제 매크로 주요 일정</span>
+                  </h5>
+                  
+                  {activeEvents.length === 0 ? (
+                    <div className="py-4 text-center text-[11px] text-slate-500 dark:text-slate-500 space-y-1">
+                      <HelpCircle className="w-6 h-6 mx-auto text-slate-600 stroke-1" />
+                      <p>해당 일자에는 거시경제 일정이 예정되어 있지 않습니다.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 max-h-[160px] overflow-y-auto custom-scrollbar pr-1">
+                      {activeEvents.map((ev) => (
+                        <div
+                          key={ev.id}
+                          className="bg-white dark:bg-slate-950 p-4 rounded-2xl border border-slate-900 hover:border-slate-200 dark:border-slate-850 transition-colors select-text"
+                        >
+                          {/* Event Type & Impact Badges */}
+                          <div className="flex items-center justify-between mb-2">
+                            <span className={`text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider font-mono ${
+                              ev.type === 'kr-market' ? 'bg-rose-500/10 text-rose-400' :
+                              ev.type === 'us-market' ? 'bg-sky-500/10 text-sky-400' :
+                              ev.type === 'macro' ? 'bg-emerald-500/10 text-emerald-400' :
+                              ev.type === 'option' ? 'bg-amber-500/10 text-amber-400' :
+                              'bg-purple-500/10 text-purple-400'
+                            }`}>
+                              {ev.type === 'kr-market' ? '국내 증시' :
+                               ev.type === 'us-market' ? '해외 증시' :
+                               ev.type === 'macro' ? '금리·지표' :
+                               ev.type === 'option' ? '옵션 만기' : '기업 실적'}
+                            </span>
+
+                            <div className="flex items-center gap-1.5">
+                              {ev.time && (
+                                <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-500 font-mono">
+                                  {ev.time}
+                                </span>
+                              )}
+                              <span className={`text-[8px] sm:text-[9px] font-extrabold px-1.5 py-0.5 rounded-md font-mono ${
+                                ev.impact === 'HIGH' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
+                                ev.impact === 'MEDIUM' ? 'bg-amber-500/15 text-amber-300 border border-amber-500/20' :
+                                'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400'
+                              }`}>
+                                {ev.impact} IMPACT
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Event Title */}
+                          <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-slate-100 mb-1.5">
+                            {ev.title}
+                          </h4>
+
+                          {/* Description */}
+                          <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                            {ev.description}
+                          </p>
+
+                          {/* Market Reaction Tip */}
+                          {ev.marketReaction && (
+                            <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-2.5 rounded-xl text-[10px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                              <span className="font-extrabold text-indigo-400 flex items-center gap-1 mb-1 select-none">
+                                <AlertCircle className="w-3.5 h-3.5" />
+                                매매 가이드 및 영향
+                              </span>
+                              {ev.marketReaction}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 
                 <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
                   <button
                     onClick={() => setSelectedDay(null)}
                     className="px-4 py-2 rounded-xl text-xs font-black bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 transition-colors cursor-pointer select-none"
                   >
-                    확인
+                    닫기
                   </button>
                 </div>
               </div>

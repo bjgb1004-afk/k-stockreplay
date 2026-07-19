@@ -243,6 +243,7 @@ export default function App() {
   // Replay Engine Decoupled Provider Index (0: Auto/Naver, 1: Simulated Real-time Fallback, 2: Mock Static)
   const [providerIndex, setProviderIndex] = useState<number>(4); // Use Naver (4) by default to get 120 candles
   const [dataProviderSource, setDataProviderSource] = useState<string>('Naver Financial API');
+  const [replayDate, setReplayDate] = useState<string | null>(null);
 
   // Launcher menu states
   const [showLauncherMenu, setShowLauncherMenu] = useState(false);
@@ -1411,7 +1412,8 @@ export default function App() {
       if (gameMode === 'daily') {
         // Safe live dynamic API fallback if daily
         try {
-          const apiRes = await fetch(`/api/stock-data?ticker=${selectedStock.code}&providerIndex=${providerIndex}`);
+          const dateParam = replayDate ? `&date=${replayDate}` : '';
+          const apiRes = await fetch(`/api/stock-data?ticker=${selectedStock.code}&providerIndex=${providerIndex}${dateParam}`);
           if (apiRes.ok) {
             const apiData = await apiRes.json();
             if (Array.isArray(apiData.candles) && apiData.candles.length > 0) {
@@ -1444,7 +1446,8 @@ export default function App() {
         let lastDailyClosePrice = 0;
         let lastDailyCandle: Candle | null = null;
         try {
-          const apiRes = await fetch(`/api/stock-data?ticker=${selectedStock.code}&providerIndex=${providerIndex}`);
+          const dateParam = replayDate ? `&date=${replayDate}` : '';
+          const apiRes = await fetch(`/api/stock-data?ticker=${selectedStock.code}&providerIndex=${providerIndex}${dateParam}`);
           if (apiRes.ok) {
             const apiData = await apiRes.json();
             if (Array.isArray(apiData.candles) && apiData.candles.length > 0) {
@@ -1466,7 +1469,8 @@ export default function App() {
 
         // First try to fetch actual 1-minute raw candles from Naver/Gzip proxy route!
         try {
-          const apiRes = await fetch(`/api/stock-data?ticker=${selectedStock.code}&timeframe=minute&providerIndex=${providerIndex}`);
+          const dateParam = replayDate ? `&date=${replayDate}` : '';
+          const apiRes = await fetch(`/api/stock-data?ticker=${selectedStock.code}&timeframe=minute&providerIndex=${providerIndex}${dateParam}`);
           if (apiRes.ok) {
             const apiData = await apiRes.json();
             if (Array.isArray(apiData.candles) && apiData.candles.length > 0) {
@@ -2276,6 +2280,30 @@ export default function App() {
 
         {platformTab === 'replay' ? (
           <>
+            {replayDate && (
+              <div id="historical-replay-banner" className="lg:col-span-12 bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-indigo-300">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-indigo-400 animate-pulse shrink-0" />
+                  <div className="text-left">
+                    <span className="text-sm font-black block sm:inline">
+                      📅 {replayDate} 역사적 복기 모드 가동 중
+                    </span>
+                    <span className="text-xs text-slate-400 font-medium ml-0 sm:ml-2 block sm:inline">
+                      (선택한 일자의 실제 주도주 캔들과 분석 리포트로 시뮬레이션이 자동 설정됩니다)
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setReplayDate(null);
+                    window.location.reload();
+                  }}
+                  className="text-xs bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-100 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 cursor-pointer font-extrabold transition-all shrink-0"
+                >
+                  실시간 최신 모드로 복귀
+                </button>
+              </div>
+            )}
             {/* Left Side: Chart Section (Col span 12 on mobile, 8 on desktop) */}
         <div className="lg:col-span-8 flex flex-col gap-3">
           
@@ -2750,11 +2778,27 @@ export default function App() {
             window.history.pushState(null, '', '/');
           }} />
         ) : platformTab === 'calendar' ? (
-          <StockCalendarView onBack={() => {
-            setPlatformTab('replay');
-            setShowLauncherMenu(true);
-            window.history.pushState(null, '', '/');
-          }} />
+          <StockCalendarView 
+            onBack={() => {
+              setPlatformTab('replay');
+              setShowLauncherMenu(true);
+              window.history.pushState(null, '', '/');
+            }} 
+            onSelectHistoricalStock={(stock, date) => {
+              setReplayDate(date);
+              const match = stockList.find(s => s.code === stock.code) || {
+                name: stock.name,
+                code: stock.code,
+                theme: stock.theme || '역사적 테마',
+                reason: stock.reason || '상승 사유',
+                changeRatio: parseFloat(stock.changeRatio || stock.pct || '15'),
+                tradeValue: parseFloat(stock.tradeValue || '1000')
+              };
+              setSelectedStock(match);
+              setPlatformTab('replay');
+              window.history.pushState(null, '', '/');
+            }}
+          />
         ) : (
           <AdminConsole 
             briefing={preMarketBriefing}
