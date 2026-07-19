@@ -187,8 +187,8 @@ export async function GET(request: Request) {
 각 문단은 정보의 밀도가 매우 높아야 하며, 뻔한 소리는 배제하고 철저히 데이터와 논리에 기반하여 전개하라.`;
 
     const response = await ai.models.generateContent({
-      // ★ 중요: 모델을 flash에서 pro로 변경하여 지능과 글쓰기 능력 극대화
-      model: 'gemini-1.5-pro', 
+      // ★ 중요: 모델을 최신 호환성 및 최고 성능의 gemini-3.5-flash로 지정
+      model: 'gemini-3.5-flash', 
       contents: prompt,
       config: {
         systemInstruction: systemInstruction,

@@ -3208,7 +3208,7 @@ CREATE TABLE kstock_platform_data (
       const prompt = `[분석 요청 주제]: "${targetTitle}" (시리즈 번호: ${targetId}/21)\n\n위 주제에 대해 개인 투자자들이 눈이 번쩍 뜨일 만한 실전 투자용 칼럼을 작성하라. \n형식적인 개념 설명을 넘어, 다음 4가지 핵심 요소를 본론에 반드시 포함하여 글을 길고 풍부하게 전개하라:\n1. 해당 개념/섹터가 현재 한국 증시 주도주 흐름에 미치는 구체적인 영향력 분석\n2. 실전 차트 복기 시 거래량, 이평선, 지지/저항을 결합하여 매수 타점을 잡는 명확한 공식 및 팁\n3. 거시경제(금리, 환율, 유가 등) 및 글로벌 공급망과의 긴밀한 상관관계 설명\n4. 관련된 한국 증시 대표 종목(대장주 및 수혜주)들의 실명과 그들의 핵심 모멘텀 기술\n\n각 문단은 정보의 밀도가 매우 높아야 하며, 뻔한 소리는 배제하고 철저히 데이터와 논리에 기반하여 전개하라.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-pro-latest', 
+        model: 'gemini-3.5-flash', 
         contents: prompt,
         config: {
           systemInstruction: systemInstruction,

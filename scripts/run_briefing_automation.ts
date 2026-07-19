@@ -107,14 +107,14 @@ ${JSON.stringify(rawData, null, 2)}
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-pro',
+      model: 'gemini-3.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
       }
     });
 
-    const text = response.text();
+    const text = response.text;
     if (!text) {
       throw new Error("Gemini AI로부터 빈 응답이 반환되었습니다.");
     }

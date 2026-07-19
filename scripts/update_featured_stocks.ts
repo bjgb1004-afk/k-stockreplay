@@ -51,14 +51,14 @@ async function runFeaturedStocks() {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-pro',
+      model: 'gemini-3.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
       }
     });
 
-    const text = response.text();
+    const text = response.text;
     if (!text) throw new Error("Empty response");
 
     const featuredData = JSON.parse(text);
