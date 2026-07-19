@@ -58,7 +58,7 @@ import { AdminConsole } from './components/AdminConsole';
 import { BlogCenter } from './components/BlogCenter';
 import { JodojuAnalysisView, JODOJU_STATIC_DETAILS, parseSupplyValue, formatSupplyText, getDetailedAnalysisText } from './components/JodojuAnalysisView';
 import { StockCalendarView } from './components/StockCalendarView';
-import { OneLineCalendar } from './components/OneLineCalendar';
+import { ReportDatePicker } from './components/ReportDatePicker';
 
 // 10 Jodoju Stocks List (Leading Stocks in K-Stock for July 15th)
 export const JODOJU_STOCKS = [
@@ -2289,7 +2289,7 @@ export default function App() {
         {platformTab === 'replay' ? (
           <>
             <div className="lg:col-span-12">
-              <OneLineCalendar selectedDate={replayDate} onSelectDate={(date) => {
+              <ReportDatePicker selectedDate={replayDate} onSelectDate={(date) => {
                 setReplayDate(date);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }} />
@@ -2776,7 +2776,7 @@ export default function App() {
           </>
         ) : platformTab === 'jodoju' ? (
           <div className="lg:col-span-12 w-full">
-            <OneLineCalendar selectedDate={replayDate} onSelectDate={(date) => {
+            <ReportDatePicker selectedDate={replayDate} onSelectDate={(date) => {
               setReplayDate(date);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }} />

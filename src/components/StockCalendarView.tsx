@@ -557,7 +557,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.4 }}
-              className="relative w-full max-w-lg bg-slate-50 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl z-10 max-h-[85vh] overflow-y-auto custom-scrollbar"
+              className="relative w-full max-w-lg bg-slate-50 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl z-10 "
             >
               {/* Close Button */}
               <button
@@ -609,7 +609,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
                               <Flame className="w-4 h-4 text-rose-500" />
                               <span>오늘의 주도주 및 상승 사유 (15% 이상)</span>
                             </h5>
-                            <div className="grid grid-cols-1 gap-2 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
+                            <div className="grid grid-cols-1 gap-2 pr-1">
                               {selectedReport.jodoju15.map((stock: any) => (
                                 <div key={stock.code} className="bg-white dark:bg-slate-950 p-3 rounded-xl border border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 transition-all flex items-center justify-between gap-3">
                                   <div className="space-y-1 text-left">
@@ -655,7 +655,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
                       <p>해당 일자에는 거시경제 일정이 예정되어 있지 않습니다.</p>
                     </div>
                   ) : (
-                    <div className="space-y-3 max-h-[160px] overflow-y-auto custom-scrollbar pr-1">
+                    <div className="space-y-3 pr-1">
                       {activeEvents.map((ev) => (
                         <div
                           key={ev.id}
