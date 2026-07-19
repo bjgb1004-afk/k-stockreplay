@@ -366,7 +366,9 @@ async function saveToSupabaseStorage(filePath: string, content: string): Promise
       });
     
     if (error) {
-      console.warn(`[Supabase Storage Save] Failed to upload ${filePath}:`, error.message);
+      if (!error.message.includes('Bucket not found')) {
+        console.warn(`[Supabase Storage Save] Failed to upload ${filePath}:`, error.message);
+      }
       return false;
     }
     return true;
