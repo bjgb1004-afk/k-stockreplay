@@ -32,8 +32,7 @@ const renderHtmlWithAds = (content: string): string => {
   }
 
   const adHtml = `
-<div class="my-6 py-4 border-y border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 rounded-xl flex flex-col items-center justify-center text-center overflow-hidden">
-  <span class="text-[9px] font-black text-slate-400 dark:text-slate-600 tracking-widest mb-2.5">ADVERTISEMENT</span>
+<div class="my-6 min-h-[90px] w-full flex flex-col items-center justify-center overflow-hidden">
   <ins class="adsbygoogle"
        style="display:block; text-align:center; min-width:250px; min-height:90px;"
        data-ad-layout="in-article"
@@ -465,26 +464,6 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* Injected Google AdSense Related Matching Banner */}
-            <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
-              <div className="flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2.5 text-indigo-400">
-                <Sparkles className="w-4 h-4 text-indigo-400" />
-                <span className="text-xs font-black">독자를 위한 추천 정보 (AdSense Multi-Grid)</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {[
-                  { title: "오늘 장전에 꼭 봐야할 HBM 핵심 밸류체인 수혜주 대공개", author: "인공지능 연구소" },
-                  { title: "초보 트레이더가 가장 많이 실수하는 주도주 매매 손절 타점 5가지", author: "실전투자 멘토" },
-                  { title: "K-Stock Replay 명예의 전당 랭커들이 공유하는 실전 복기 방법", author: "운영팀" }
-                ].map((rec, idx) => (
-                  <div key={idx} className="bg-white dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-850 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer min-h-[90px]">
-                    <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 line-clamp-2 leading-snug">{rec.title}</span>
-                    <span className="text-[9px] text-slate-500 dark:text-slate-500 mt-2 block">{rec.author}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 
