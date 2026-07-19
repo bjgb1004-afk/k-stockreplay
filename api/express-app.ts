@@ -1,7 +1,3 @@
-import dns from 'dns';
-if (typeof dns.setDefaultResultOrder === 'function') {
-  dns.setDefaultResultOrder('ipv4first');
-}
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
@@ -3390,7 +3386,14 @@ CREATE TABLE kstock_platform_data (
 
     } catch (err: any) {
       console.error('[KIS Token Refresh Exception]', err);
-      return res.status(500).json({ success: false, error: err.message || err });
+      const errorMessage = err.message || err;
+      const errorCause = err.cause ? (err.cause.message || String(err.cause)) : null;
+      return res.status(500).json({ 
+        success: false, 
+        error: errorMessage,
+        cause: errorCause,
+        stack: err.stack ? err.stack.split('\n')[0] : null
+      });
     }
   };
 
