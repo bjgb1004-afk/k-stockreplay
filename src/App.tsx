@@ -200,7 +200,7 @@ export default function App() {
   // Mode Selection: 'daily' (일봉) | 'minute' (분봉)
   const [gameMode, setGameMode] = useState<'daily' | 'minute'>('daily');
 
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   
   useEffect(() => {
     if (isDarkMode) {
@@ -1204,6 +1204,7 @@ export default function App() {
  
       const limitUpPct = 0.295;
       const limitUpPrice = roundToTick(O_day * (1 + limitUpPct));
+      const limitDownPrice = roundToTick(O_day * (1 - limitUpPct));
  
       // 2. Fetch milestones
       const milestones = getMilestonesForStock(code, symbolName, ((C_day - O_day) / O_day) * 100);
@@ -1279,6 +1280,10 @@ export default function App() {
         const open = i === 0 ? roundToTick(O_day) : candles[i - 1].close;
         let high = roundToTick(Math.max(open, close) + Math.abs(randomSeed() * priceTrend * 0.001));
         let low = roundToTick(Math.min(open, close) - Math.abs(randomSeed() * priceTrend * 0.001));
+
+        // Clamping to limit constraints
+        if (high > limitUpPrice) high = limitUpPrice;
+        if (low < limitDownPrice) low = limitDownPrice;
  
         // Clamping to extreme session constraints
         if (high > H_day) high = H_day;

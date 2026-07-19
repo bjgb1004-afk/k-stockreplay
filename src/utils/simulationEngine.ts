@@ -69,6 +69,18 @@ export function roundToKoreanTick(price: number): number {
 export function mutateMinuteCandles(originalCandles: InputCandle[]): MutatedCandle[] {
   const mutated: MutatedCandle[] = [];
   
+  // Find the absolute maximum high and minimum low in the original candles
+  let maxOriginalHigh = 0;
+  let minOriginalLow = Infinity;
+  for (const c of originalCandles) {
+    if (c.high > maxOriginalHigh) {
+      maxOriginalHigh = c.high;
+    }
+    if (c.low < minOriginalLow) {
+      minOriginalLow = c.low;
+    }
+  }
+  
   // High-performance deterministic pseudorandom seed generator based on the initial dataset size
   let seed = originalCandles.length + 42;
   const nextRandom = (): number => {
@@ -88,6 +100,12 @@ export function mutateMinuteCandles(originalCandles: InputCandle[]): MutatedCand
     let mutatedOpen = roundToKoreanTick(original.open * priceNoiseRatio);
     let mutatedClose = roundToKoreanTick(original.close * priceNoiseRatio);
 
+    // Clamp to original day high/low boundaries to prevent exceeding limit up or falling below limit down
+    if (mutatedOpen > maxOriginalHigh) mutatedOpen = maxOriginalHigh;
+    if (mutatedOpen < minOriginalLow) mutatedOpen = minOriginalLow;
+    if (mutatedClose > maxOriginalHigh) mutatedClose = maxOriginalHigh;
+    if (mutatedClose < minOriginalLow) mutatedClose = minOriginalLow;
+
     // Ensure continuous pricing if wanted (close of t-1 ~= open of t)
     if (i > 0 && Math.abs(mutatedOpen - mutated[i - 1].close) / mutated[i - 1].close < 0.003) {
       mutatedOpen = mutated[i - 1].close; // preserve continuity
@@ -96,6 +114,9 @@ export function mutateMinuteCandles(originalCandles: InputCandle[]): MutatedCand
     // Mutate High and Low prices
     let mutatedHigh = roundToKoreanTick(original.high * priceNoiseRatio);
     let mutatedLow = roundToKoreanTick(original.low * priceNoiseRatio);
+
+    if (mutatedHigh > maxOriginalHigh) mutatedHigh = maxOriginalHigh;
+    if (mutatedLow < minOriginalLow) mutatedLow = minOriginalLow;
 
     // Maintain mathematical sanity: High >= Max(O, C) and Low <= Min(O, C)
     const currentMax = Math.max(mutatedOpen, mutatedClose);

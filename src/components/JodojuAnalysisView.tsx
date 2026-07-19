@@ -144,9 +144,11 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
   }
 
   // Force sort by changeRate (상승률) descending and limit to exactly 10 stocks as requested!
-  const jodojuList = [...rawJodojuList]
-    .sort((a, b) => b.changeRate - a.changeRate)
-    .slice(0, 10);
+  const jodojuList = React.useMemo(() => {
+    return [...rawJodojuList]
+      .sort((a, b) => b.changeRate - a.changeRate)
+      .slice(0, 10);
+  }, [rawJodojuList]);
 
   // Selection states
   const [selectedTicker, setSelectedTicker] = useState<string>('');
@@ -165,13 +167,21 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
   useEffect(() => {
     if (!selectedTicker) return;
 
-    const currentStock = jodojuList.find(s => s.ticker === selectedTicker);
-    if (!currentStock) return;
+    // Check from current state/ref without putting the entire cache in dependencies
+    let alreadyHasCache = false;
+    setAnalysisCache(prev => {
+      if (prev[selectedTicker]) {
+        alreadyHasCache = true;
+      }
+      return prev;
+    });
 
-    if (analysisCache[selectedTicker]) {
-      // Load from cache directly
+    if (alreadyHasCache) {
       return;
     }
+
+    const currentStock = jodojuList.find(s => s.ticker === selectedTicker);
+    if (!currentStock) return;
 
     const fetchAnalysis = async () => {
       setLoading(true);
@@ -198,7 +208,7 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
     };
 
     fetchAnalysis();
-  }, [selectedTicker, analysisCache, jodojuList]);
+  }, [selectedTicker, jodojuList]);
 
   const currentStock = jodojuList.find(s => s.ticker === selectedTicker) || jodojuList[0];
   const activeAnalysis = selectedTicker ? analysisCache[selectedTicker] : null;

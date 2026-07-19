@@ -644,9 +644,9 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
               </span>
             </div>
             {/* Progress Badge */}
-            <div className="flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/30 text-white font-extrabold text-[10px] px-2.5 py-0.5 rounded-full shadow-sm">
-              <span className="animate-pulse h-1.5 w-1.5 rounded-full bg-indigo-400" />
-              <span className="text-white">진행 {totalCandles > 0 ? `${currentIndex + 1}/${totalCandles}` : '로딩 중...'}</span>
+            <div className="flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-300 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full shadow-sm">
+              <span className="animate-pulse h-1.5 w-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400" />
+              <span className="text-indigo-700 dark:text-indigo-200">진행 {totalCandles > 0 ? `${currentIndex + 1}/${totalCandles}` : '로딩 중...'}</span>
             </div>
           </div>
         </div>
