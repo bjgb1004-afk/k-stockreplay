@@ -436,18 +436,18 @@ function QuickMarkdown({ text }: { text: string }) {
           
           if (isHeader) {
             return (
-              <div key={idx} className="grid grid-cols-12 gap-1.5 bg-slate-200 dark:bg-slate-900 text-slate-700 dark:text-slate-400 px-2 py-1.5 text-xs font-bold uppercase tracking-wider rounded border border-slate-300 dark:border-slate-800 mt-2">
-                <div className="col-span-4">{cells[0] || '지표'}</div>
-                <div className="col-span-4 text-center">{cells[1] || '수치'}</div>
-                <div className="col-span-4 text-right">{cells[2] || '판정'}</div>
+              <div key={idx} className="flex items-center justify-between gap-2 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400 px-3 py-2 text-xs font-bold uppercase tracking-wider rounded border border-slate-200 dark:border-slate-800 mt-2 w-full">
+                <div className="w-[30%] text-left">{cells[0] || '지표'}</div>
+                <div className="w-[25%] text-center">{cells[1] || '수치'}</div>
+                <div className="w-[45%] text-right">{cells[2] || '판정'}</div>
               </div>
             );
           } else {
             return (
-              <div key={idx} className="grid grid-cols-12 gap-1.5 border-b border-slate-200/50 dark:border-slate-800/60 px-2 py-1.5 text-xs text-slate-600 dark:text-slate-400 font-mono items-center">
-                <div className="col-span-4 font-sans font-bold text-slate-800 dark:text-slate-200">{cells[0]}</div>
-                <div className="col-span-4 text-center font-bold text-indigo-500">{cells[1]}</div>
-                <div className="col-span-4 text-right text-slate-500">{renderInlineBold(cells[2] || '')}</div>
+              <div key={idx} className="flex items-center justify-between gap-2 border-b border-slate-200/50 dark:border-slate-800/60 px-3 py-2 text-xs text-slate-600 dark:text-slate-400 font-mono items-center w-full">
+                <div className="w-[30%] text-left font-sans font-bold text-slate-800 dark:text-slate-200">{cells[0]}</div>
+                <div className="w-[25%] text-center font-bold text-indigo-600 dark:text-indigo-400">{cells[1]}</div>
+                <div className="w-[45%] text-right text-slate-500 dark:text-slate-400">{renderInlineBold(cells[2] || '')}</div>
               </div>
             );
           }

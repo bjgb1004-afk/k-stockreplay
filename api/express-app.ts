@@ -1729,9 +1729,31 @@ CREATE TABLE kstock_platform_data (
       
       const change = currentPrice * 0.02 * (Math.random() - 0.48); // Slight upward bias
       const open = roundToTick(currentPrice);
-      const close = roundToTick(currentPrice + change);
-      const high = roundToTick(Math.max(open, close) + Math.random() * (currentPrice * 0.015));
-      const low = roundToTick(Math.min(open, close) - Math.random() * (currentPrice * 0.015));
+      
+      const limitUpPrice = roundToTick(open * 1.30);
+      const limitDownPrice = roundToTick(open * 0.70);
+
+      let close = roundToTick(currentPrice + change);
+      if (close > limitUpPrice) close = limitUpPrice;
+      if (close < limitDownPrice) close = limitDownPrice;
+
+      let high = roundToTick(Math.max(open, close) + Math.random() * (currentPrice * 0.015));
+      let low = roundToTick(Math.min(open, close) - Math.random() * (currentPrice * 0.015));
+
+      if (high > limitUpPrice) high = limitUpPrice;
+      if (low < limitDownPrice) low = limitDownPrice;
+
+      if (high < Math.max(open, close)) high = Math.max(open, close);
+      if (low > Math.min(open, close)) low = Math.min(open, close);
+
+      // Force exactly zero upper shadow on limit up day for the last day (i === 0)
+      const isLastDay = i === 0;
+      const isLimitUpDay = close >= limitUpPrice || (isLastDay && true); // default to limit up on last day for active jodoju replay stocks
+      if (isLimitUpDay) {
+        close = limitUpPrice;
+        high = limitUpPrice;
+      }
+
       const volume = Math.round(100000 + Math.random() * 900000);
       
       candles.push({

@@ -1160,12 +1160,40 @@ export default function App() {
       for (let i = 0; i < 120; i++) {
         const trend = Math.sin(i / 15) * 0.005 + Math.cos(i / 40) * 0.008 + (randomSeed() - 0.48) * 0.012;
         const open = Math.round(currentPrice);
-        const close = Math.round(currentPrice * (1 + trend));
+        
+        // Compute Daily Limit Up / Limit Down Boundaries
+        const limitUpPrice = roundToTick(open * 1.30);
+        const limitDownPrice = roundToTick(open * 0.70);
+
+        let close = Math.round(currentPrice * (1 + trend));
+        if (close > limitUpPrice) close = limitUpPrice;
+        if (close < limitDownPrice) close = limitDownPrice;
+        close = roundToTick(close);
          
         const priceMin = Math.min(open, close);
         const priceMax = Math.max(open, close);
-        const high = Math.round(priceMax * (1 + randomSeed() * volatility * 0.6));
-        const low = Math.round(priceMin * (1 - randomSeed() * volatility * 0.6));
+        
+        let high = Math.round(priceMax * (1 + randomSeed() * volatility * 0.6));
+        let low = Math.round(priceMin * (1 - randomSeed() * volatility * 0.6));
+        
+        if (high > limitUpPrice) high = limitUpPrice;
+        if (low < limitDownPrice) low = limitDownPrice;
+        
+        high = roundToTick(high);
+        low = roundToTick(low);
+
+        // Maintain mathematical correctness
+        if (high < priceMax) high = priceMax;
+        if (low > priceMin) low = priceMin;
+
+        // Force exactly zero upper shadow on limit up close day
+        const isLastDay = i === 119;
+        const isLimitUpDay = close >= limitUpPrice || (isLastDay && (symbolName.includes('상한가') || JODOJU_STOCKS.some(s => s.code === code)));
+        if (isLimitUpDay) {
+          close = limitUpPrice;
+          high = limitUpPrice;
+        }
+
         const volume = Math.round(100000 + randomSeed() * 2000000);
  
         const d = new Date(startDate.getTime());
@@ -2911,10 +2939,10 @@ export default function App() {
               </div>
 
               {/* AI Trading Critique Segment */}
-              <div className="bg-gradient-to-br from-slate-950 to-indigo-950/20 border border-indigo-500/10 rounded-xl p-3.5 mb-4 text-left space-y-2 max-h-[160px] overflow-y-auto custom-scrollbar">
-                <div className="flex items-center gap-1.5 border-b border-slate-900 pb-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
-                  <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">AI 실시간 거래 분석 피드백</span>
+              <div className="bg-gradient-to-br from-slate-50 to-indigo-50/50 dark:from-slate-950 dark:to-indigo-950/20 border border-indigo-100 dark:border-indigo-500/10 rounded-xl p-3.5 mb-4 text-left space-y-2 max-h-[160px] overflow-y-auto custom-scrollbar">
+                <div className="flex items-center gap-1.5 border-b border-indigo-100/50 dark:border-slate-900 pb-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 animate-pulse" />
+                  <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">AI 실시간 거래 분석 피드백</span>
                 </div>
                 {critiqueLoading ? (
                   <div className="flex items-center gap-2 py-3 text-xs text-slate-500 dark:text-slate-500 font-mono">
@@ -2924,15 +2952,15 @@ export default function App() {
                 ) : replayCritique ? (
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-[10px] font-mono">
-                      <span className="text-slate-600 dark:text-slate-400 font-bold">학습 평점: <strong className="text-amber-400 font-black text-xs">{replayCritique.score}등급</strong></span>
-                      <span className="text-slate-600 dark:text-slate-400 font-bold">매매 일치도: <strong className="text-indigo-400 font-black">{replayCritique.fitIndex}%</strong></span>
+                      <span className="text-slate-700 dark:text-slate-400 font-bold">학습 평점: <strong className="text-amber-600 dark:text-amber-400 font-black text-xs">{replayCritique.score}등급</strong></span>
+                      <span className="text-slate-700 dark:text-slate-400 font-bold">매매 일치도: <strong className="text-indigo-600 dark:text-indigo-400 font-black">{replayCritique.fitIndex}%</strong></span>
                     </div>
-                    <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed font-sans break-keep break-words whitespace-normal">
+                    <p className="text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed font-sans break-keep break-words whitespace-normal">
                       {replayCritique.adviceText}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-[11px] text-slate-500 dark:text-slate-500 italic">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 italic font-medium">
                     매매 기록이 존재하지 않아 AI 점수를 부여하지 않았습니다. 최소 1회 매매를 진행하세요.
                   </p>
                 )}
