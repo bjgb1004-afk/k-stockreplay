@@ -56,12 +56,28 @@ function sleepRandomTime(minMin = 5, maxMin = 15) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Helper: Get current Date object converted to KST
+function getKstNow() {
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  return new Date(utc + (3600000 * 9));
+}
+
+// Helper: Get KST date string (YYYY-MM-DD)
+function getKstDateStr() {
+  const kst = getKstNow();
+  const year = kst.getFullYear();
+  const month = (kst.getMonth() + 1).toString().padStart(2, '0');
+  const day = kst.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 // Helper: Dynamically get dated storage path (data/content/YYYY/MM/DD/filename)
 function getDatedStoragePath(filename) {
-  const now = new Date();
-  const year = now.getFullYear().toString();
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
+  const kst = getKstNow();
+  const year = kst.getFullYear().toString();
+  const month = (kst.getMonth() + 1).toString().padStart(2, '0');
+  const day = kst.getDate().toString().padStart(2, '0');
   
   const dirPath = path.resolve(process.cwd(), 'data', 'content', year, month, day);
   try {
@@ -656,9 +672,17 @@ ${newsContext || '미국 기술주 중심 추가 급등세, 금리 인하 기대
   }
 
   try {
+    const todayStr = getKstDateStr();
+    const enrichedData = {
+      id: `briefing_${todayStr}`,
+      date: todayStr,
+      published: true,
+      ...parsed
+    };
+
     // 3. Save to dated storage structure (data/content/YYYY/MM/DD/morning_briefing.json)
     const datedPath = getDatedStoragePath('morning_briefing.json');
-    fs.writeFileSync(datedPath, JSON.stringify(parsed, null, 2), 'utf-8');
+    fs.writeFileSync(datedPath, JSON.stringify(enrichedData, null, 2), 'utf-8');
     console.log(`[Dated Storage] Successfully saved data to ${datedPath}`);
     
     // 4. Sync with Express and Supabase backend
@@ -666,7 +690,7 @@ ${newsContext || '미국 기술주 중심 추가 급등세, 금리 인하 기대
       const apiRes = await fetch(`${APP_URL}/api/platform/briefing/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parsed)
+        body: JSON.stringify(enrichedData)
       });
       if (apiRes.ok) {
         console.log('[Morning Mode] Successfully synced briefing with Supabase/Express API.');
@@ -678,7 +702,7 @@ ${newsContext || '미국 기술주 중심 추가 급등세, 금리 인하 기대
     }
 
     // 5. Save to Website CMS Blog
-    await saveToWebsiteCMS(parsed.title, parsed.koreanImpact, 'Briefing', ['장전전망', '수급이동']);
+    await saveToWebsiteCMS(enrichedData.title, enrichedData.koreanImpact, 'Briefing', ['장전전망', '수급이동']);
     
     // 6. Publish to Threads with random delay (5 to 15 mins)
     await sleepRandomTime(5, 15);
@@ -757,9 +781,17 @@ ${newsContext || '오전 중 반도체 테마 강세 및 2차전지 반발 매�
   }
 
   try {
+    const todayStr = getKstDateStr();
+    const enrichedData = {
+      id: `lunch_${todayStr}`,
+      date: todayStr,
+      published: true,
+      ...parsed
+    };
+
     // 3. Save to dated storage structure (data/content/YYYY/MM/DD/lunch_briefing.json)
     const datedPath = getDatedStoragePath('lunch_briefing.json');
-    fs.writeFileSync(datedPath, JSON.stringify(parsed, null, 2), 'utf-8');
+    fs.writeFileSync(datedPath, JSON.stringify(enrichedData, null, 2), 'utf-8');
     console.log(`[Dated Storage] Successfully saved lunch data to ${datedPath}`);
     
     // 4. Sync with Express and Supabase backend
@@ -767,7 +799,7 @@ ${newsContext || '오전 중 반도체 테마 강세 및 2차전지 반발 매�
       const apiRes = await fetch(`${APP_URL}/api/platform/lunch/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parsed)
+        body: JSON.stringify(enrichedData)
       });
       if (apiRes.ok) {
         console.log('[Lunch Mode] Successfully synced lunch briefing with Supabase/Express API.');
@@ -779,7 +811,7 @@ ${newsContext || '오전 중 반도체 테마 강세 및 2차전지 반발 매�
     }
 
     // 5. Save to Website CMS Blog
-    await saveToWebsiteCMS(parsed.title, parsed.midDayAnalysis, 'Briefing', ['장중체크', '오전장결산']);
+    await saveToWebsiteCMS(enrichedData.title, enrichedData.midDayAnalysis, 'Briefing', ['장중체크', '오전장결산']);
     
     // 6. Publish to Threads with random delay
     await sleepRandomTime(5, 15);
@@ -902,7 +934,7 @@ JSON 오브젝트 하나만 반환하며 다른 설명은 배제하십시오:
     };
   }
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = getKstDateStr();
   const reportData = {
     id: `report_${todayStr}`,
     date: todayStr,
@@ -1008,9 +1040,17 @@ JSON 형식 하나만 설명 없이 출력해야 합니다:
   }
 
   try {
+    const todayStr = getKstDateStr();
+    const enrichedData = {
+      id: `evening_${todayStr}`,
+      date: todayStr,
+      published: true,
+      ...parsed
+    };
+
     // 3. Save to dated storage structure (data/content/YYYY/MM/DD/evening_column.json)
     const datedPath = getDatedStoragePath('evening_column.json');
-    fs.writeFileSync(datedPath, JSON.stringify(parsed, null, 2), 'utf-8');
+    fs.writeFileSync(datedPath, JSON.stringify(enrichedData, null, 2), 'utf-8');
     console.log(`[Dated Storage] Successfully saved evening data to ${datedPath}`);
     
     // 4. Sync with Express and Supabase backend
@@ -1018,7 +1058,7 @@ JSON 형식 하나만 설명 없이 출력해야 합니다:
       const apiRes = await fetch(`${APP_URL}/api/platform/evening/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parsed)
+        body: JSON.stringify(enrichedData)
       });
       if (apiRes.ok) {
         console.log('[Evening Mode] Successfully synced evening column with Supabase/Express API.');
@@ -1030,7 +1070,7 @@ JSON 형식 하나만 설명 없이 출력해야 합니다:
     }
 
     // 5. Save to Website CMS Blog
-    await saveToWebsiteCMS(parsed.columnTitle, parsed.columnContentMarkdown, 'Column', ['메가트렌드', '경제칼럼']);
+    await saveToWebsiteCMS(enrichedData.columnTitle, enrichedData.columnContentMarkdown, 'Column', ['메가트렌드', '경제칼럼']);
     
     // 6. Publish to Threads with random delay
     await sleepRandomTime(5, 15);
