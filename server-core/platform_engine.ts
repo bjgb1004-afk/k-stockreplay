@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { GoogleGenAI, Type } from '@google/genai';
 import { PreMarketBriefing, AfterMarketReport, JodojuAnalysis, FeatureStock, ReplayReviewReport, AiReplayStudyGuide, ReplayGuideInterval, Candle, Trade } from '../src/types.js';
+import { getRotatedGeminiClient } from './gemini_rotator.js';
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'platform');
 
@@ -10,21 +11,9 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Helper to initialize Gemini Client safely
+// Helper to initialize Gemini Client safely with robust model fallback and key rotation
 function getGeminiClient(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn('[Gemini Service] GEMINI_API_KEY environment variable is not defined.');
-    return null;
-  }
-  return new GoogleGenAI({
-    apiKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
-      }
-    }
-  });
+  return getRotatedGeminiClient();
 }
 
 // Helper to escape unescaped newline characters in JSON string values

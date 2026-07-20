@@ -163,7 +163,38 @@ export async function GET(request: Request) {
     const finalTitle = useFallback ? fallbackTargetTitle : targetPost.title;
 
     // [기존 2단계 코드 수정] 
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const rawAi = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+
+    // Proxy the generateContent method to handle RESOURCE_EXHAUSTED (429) quota errors elegantly
+    const originalGenerateContent = rawAi.models.generateContent.bind(rawAi.models);
+    rawAi.models.generateContent = async function(params: any, ...args: any[]) {
+      try {
+        return await originalGenerateContent(params, ...args);
+      } catch (err: any) {
+        const errStr = JSON.stringify(err);
+        const isQuotaExceeded = errStr.includes('RESOURCE_EXHAUSTED') || 
+                                errStr.includes('429') || 
+                                errStr.includes('quota') || 
+                                (err.message && (
+                                  err.message.includes('429') || 
+                                  err.message.toLowerCase().includes('quota') || 
+                                  err.message.toLowerCase().includes('resource_exhausted')
+                                ));
+        
+        if (isQuotaExceeded && params && params.model === 'gemini-3.5-flash') {
+          console.warn(`[Gemini SDK Fallback] 'gemini-3.5-flash' quota exceeded or rate limited. Falling back to 'gemini-3.1-flash-lite'...`);
+          const fallbackParams = { ...params, model: 'gemini-3.1-flash-lite' };
+          try {
+            return await originalGenerateContent(fallbackParams, ...args);
+          } catch (fallbackErr: any) {
+            console.error(`[Gemini SDK Fallback] Fallback to 'gemini-3.1-flash-lite' also failed:`, fallbackErr.message || fallbackErr);
+            throw fallbackErr;
+          }
+        }
+        throw err;
+      }
+    } as any;
+    const ai = rawAi;
 
     // 시스템 지침을 훨씬 더 구체적이고 엄격하게 변경
     const systemInstruction = 

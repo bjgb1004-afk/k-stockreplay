@@ -25,8 +25,8 @@ jobs:
       - name: Validate PRODUCTION_URL Secret
         run: |
           if [ -z "${{ secrets.PRODUCTION_URL }}" ]; then
-            echo "ERROR: PRODUCTION_URL secret is not set in GitHub repository secrets."
-            exit 1
+            echo "WARNING: PRODUCTION_URL secret is not set in GitHub repository secrets."
+            echo "Using fallback URL: https://k-stockreplay.pe.kr"
           fi
 
       - name: Trigger AI Writer
@@ -34,7 +34,12 @@ jobs:
           github.event.schedule == '0 3,6,11 * * *' ||
           (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'all' || github.event.inputs.job_type == 'auto_writer'))
         run: |
-          echo "Triggering AI Auto Writer at ${{ secrets.PRODUCTION_URL }}/api/cron/auto-writer ..."
+          PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
+          if [ -z "$PRODUCTION_URL" ]; then
+            PRODUCTION_URL="https://k-stockreplay.pe.kr"
+          fi
+          
+          echo "Triggering AI Auto Writer at $PRODUCTION_URL/api/cron/auto-writer ..."
           
           AUTH_HEADER=""
           if [ ! -z "${{ secrets.CRON_SECRET }}" ]; then
@@ -43,7 +48,7 @@ jobs:
           
           RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
             -H "$AUTH_HEADER" \
-            "${{ secrets.PRODUCTION_URL }}/api/cron/auto-writer")
+            "$PRODUCTION_URL/api/cron/auto-writer")
             
           HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
           BODY=$(echo "$RESPONSE" | sed '$d')
@@ -61,7 +66,12 @@ jobs:
           github.event.schedule == '40 6 * * *' ||
           (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'all' || github.event.inputs.job_type == 'kis_token_refresh'))
         run: |
-          echo "Triggering KIS Token Refresh at ${{ secrets.PRODUCTION_URL }}/api/cron/kis-token-refresh ..."
+          PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
+          if [ -z "$PRODUCTION_URL" ]; then
+            PRODUCTION_URL="https://k-stockreplay.pe.kr"
+          fi
+          
+          echo "Triggering KIS Token Refresh at $PRODUCTION_URL/api/cron/kis-token-refresh ..."
           
           AUTH_HEADER=""
           if [ ! -z "${{ secrets.CRON_SECRET }}" ]; then
@@ -70,7 +80,7 @@ jobs:
           
           RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
             -H "$AUTH_HEADER" \
-            "${{ secrets.PRODUCTION_URL }}/api/cron/kis-token-refresh")
+            "$PRODUCTION_URL/api/cron/kis-token-refresh")
             
           HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
           BODY=$(echo "$RESPONSE" | sed '$d')

@@ -3,8 +3,8 @@ name: Daily Pre-Market Briefing Automation
 on:
   schedule:
     # 07:40 KST (KST = UTC+9) -> 22:40 UTC of the previous day
-    # Runs Monday to Friday (1-5)
-    - cron: '40 22 * * 1-5'
+    # Runs Monday to Friday KST (which is Sunday to Thursday UTC: 0-4)
+    - cron: '40 22 * * 0-4'
   workflow_dispatch: # Allows manual trigger
 
 jobs:
@@ -25,5 +25,6 @@ jobs:
       - name: Execute Daily Briefing Script
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY }}
         run: node scripts/generate_daily_briefing.js

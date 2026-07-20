@@ -237,7 +237,13 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
   // Fetch reports list on mount
   React.useEffect(() => {
     fetch('/api/platform/reports')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) {
+          console.warn('[API Warning] Response is not JSON or not OK in StockCalendarView. Status:', res.status);
+          return [];
+        }
+        return res.json();
+      })
       .then(data => {
         if (Array.isArray(data)) {
           setSavedReports(data);

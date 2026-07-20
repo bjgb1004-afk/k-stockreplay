@@ -71,7 +71,8 @@ export const JODOJU_STOCKS = [
   { rank: 7, name: "앤로보틱스", code: "035420", changeRatio: 11.17 },
   { rank: 8, name: "씨피시스템", code: "475150", changeRatio: 10.6 },
   { rank: 9, name: "한성기업", code: "003680", changeRatio: 9.93 },
-  { rank: 10, name: "신일전자", code: "002700", changeRatio: 9.83 }
+  { rank: 10, name: "신일전자", code: "002700", changeRatio: 9.83 },
+  { rank: 11, name: "고려산업", code: "002140", changeRatio: 29.44 }
 ];
 
 export const JODOJU_MILESTONES: Record<string, Array<{ time: string; priceRatio: number; state: string; news?: string }>> = {
@@ -117,6 +118,12 @@ export const JODOJU_MILESTONES: Record<string, Array<{ time: string; priceRatio:
     { "time": "11:20", "priceRatio": 1.15, "state": "거래대금 1000억 돌파 슈팅" },
     { "time": "14:10", "priceRatio": 1.08, "state": "오후장 패시브 펀드 일시 이탈" },
     { "time": "15:30", "priceRatio": 1.121, "state": "초대형 유동성 쏠림 속에 견조한 양봉 안착" }
+  ],
+  "002140": [
+    { "time": "09:00", "priceRatio": 1.0, "state": "시가 형성 (정적 출발)" },
+    { "time": "09:20", "priceRatio": 1.12, "state": "사료 및 대두 가격 급등 속보", "news": "고려산업, 엘니뇨발 글로벌 곡물 생산량 급감 소식에 사료용 옥수수/대두 가격 연속 상승 수혜 기대감 단독 속보" },
+    { "time": "10:15", "priceRatio": 1.25, "state": "거래대금 폭발 및 강력 상승파동" },
+    { "time": "11:30", "priceRatio": 1.2944, "state": "상한가 안착 및 물량 잠금", "news": "고려산업, 농업/사료 테마 대장주 등극 및 상한가 완벽 안착 마감" }
   ]
 };
 
@@ -959,7 +966,7 @@ export default function App() {
         // UI 진입 시 주도주 리스트 API의 캐시를 무효화(Bypass)하기 위해 force=true 추가 호출하여 오늘 자 실시간 주도주 명단을 강제 동기화
         console.log("[UI 진입] 실시간 주도주 15개 명단을 동기화하기 위해 /api/jodoju-list?force=true 호출 중...");
         const apiRes = await fetch('/api/jodoju-list?force=true');
-        if (apiRes.ok) {
+        if (apiRes.ok && apiRes.headers.get('content-type')?.includes('application/json')) {
           const fetched = await apiRes.json();
           if (Array.isArray(fetched) && fetched.length > 0) {
             list = fetched;
@@ -973,7 +980,7 @@ export default function App() {
       if (list.length === 0) {
         try {
           const reportRes = await fetch('/data/platform/after_market_report.json');
-          if (reportRes.ok) {
+          if (reportRes.ok && reportRes.headers.get('content-type')?.includes('application/json')) {
             const reportData = await reportRes.json();
             if (reportData?.jodoju15 && reportData.jodoju15.length > 0) {
               list = reportData.jodoju15.map((r: any) => ({
@@ -994,7 +1001,7 @@ export default function App() {
       if (list.length === 0) {
         try {
           const apiRes = await fetch('/api/jodoju-list');
-          if (apiRes.ok) {
+          if (apiRes.ok && apiRes.headers.get('content-type')?.includes('application/json')) {
             const fetched = await apiRes.json();
             if (Array.isArray(fetched) && fetched.length > 0) {
               list = fetched;
@@ -1008,7 +1015,7 @@ export default function App() {
       if (list.length === 0) {
         try {
           const res = await fetch('/data/jodoju_list.json');
-          if (res.ok) {
+          if (res.ok && res.headers.get('content-type')?.includes('application/json')) {
             const fetched = await res.json();
             if (Array.isArray(fetched) && fetched.length > 0) {
               list = fetched;
@@ -2324,7 +2331,7 @@ export default function App() {
           {/* Game Mode & Jodoju Stock Selector Control Card (Responsive for both Desktop and Mobile) */}
           <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
             {/* Mode Taps & Provider Selector */}
-            <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
+            <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center w-full xl:w-auto">
               <div className="grid grid-cols-2 gap-1.5 bg-white dark:bg-slate-950 p-1 rounded-lg border border-slate-800 w-full sm:w-56 flex-shrink-0">
                 <button
                   onClick={() => { setGameMode('daily'); setIsPlaying(false); setIsRandomChallengeMode(false); }}
@@ -2775,11 +2782,13 @@ export default function App() {
         </div>
           </>
         ) : platformTab === 'jodoju' ? (
-          <div className="lg:col-span-12 w-full">
-            <ReportDatePicker selectedDate={replayDate} onSelectDate={(date) => {
-              setReplayDate(date);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }} />
+          <div className="lg:col-span-12 w-full flex flex-col gap-3">
+            <div className="flex justify-end">
+              <ReportDatePicker selectedDate={replayDate} onSelectDate={(date) => {
+                setReplayDate(date);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }} />
+            </div>
             <JodojuAnalysisView 
               report={afterMarketReport} 
               onSelectStockForReplay={(code) => {
@@ -2789,6 +2798,12 @@ export default function App() {
                   setPlatformTab('replay');
                 }
               }}
+              selectedDate={replayDate}
+              onSelectDate={(date) => {
+                setReplayDate(date);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              stockList={stockList}
             />
           </div>
         ) : platformTab === 'blog' ? (

@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  TrendingUp, Zap, Sparkles, Loader2, AlertCircle, BarChart3, Building, HelpCircle, ArrowRight
+  TrendingUp, Zap, Sparkles, Loader2, AlertCircle, BarChart3, Building, HelpCircle, ArrowRight, ChevronRight
 } from 'lucide-react';
 import { AfterMarketReport } from '../types';
+import { ReportDatePicker } from './ReportDatePicker';
+import { JodojuDailyChart } from './JodojuDailyChart';
 
 interface JodojuAnalysisViewProps {
   report: AfterMarketReport | null;
   onSelectStockForReplay: (code: string) => void;
+  selectedDate: string | null;
+  onSelectDate: (date: string) => void;
+  stockList?: any[];
 }
 
 // Client-side fallback generator for bulletproof reliability
@@ -276,12 +281,75 @@ export const JODOJU_STATIC_DETAILS: Record<string, any> = {
   }
 };
 
+const getStockSector = (code: string): string => {
+  const sectors: Record<string, string> = {
+    "049080": "6G 안테나 국산화 및 대규모 수출 계약 가시화",
+    "044340": "역대급 폭염 제습기 품귀 및 주문 폭주 생산라인 가동",
+    "037070": "가마솥 폭염 지속 창문형 에어컨 국내 판매 최고치",
+    "012450": "차세대 AI 광전송장비 부품 특허 및 수급 급증",
+    "042110": "에어컨 공조모터 대기업향 대규모 공급 지속",
+    "413630": "초대형 해상풍력 사업단지 환경영향평가 공식 통과",
+    "035420": "지능형 협동로봇 안전 가이드라인 준수 통과",
+    "475150": "2차전지 자동화설비 케이블체인 글로벌 초도 출하",
+    "003680": "고수온 수산물 가격 급등 및 수출 본격 수혜",
+    "002700": "기습 폭염 써큘레이터/냉풍기 생산 예약 매진",
+    "002140": "사료",
+    "024060": "에너지/석유",
+    "006660": "자동차공조",
+    "252990": "반도체기판",
+    "138360": "로봇제어",
+    "191410": "모바일부품",
+    "142760": "바이오헬스",
+    "314930": "바이오진단",
+    "195440": "CXL/유리기판",
+    "008970": "강관/해상풍력",
+    "000250": "바이오복제약",
+    "042700": "반도체/HBM장비",
+    "237690": "바이오원료",
+    "141080": "ADC치료제",
+    "267260": "전력장비/변압기",
+    "257720": "K-뷰티/화장품",
+    "000660": "HBM/메모리",
+    "196170": "바이오SC제형",
+    "003230": "K-푸드/라면",
+    "006340": "전력선/구리선",
+    "028300": "항암치료제",
+    "000100": "폐암신약"
+  };
+  return sectors[code] || "주도주테마";
+};
+
 export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
   report,
-  onSelectStockForReplay
+  onSelectStockForReplay,
+  selectedDate,
+  onSelectDate,
+  stockList
 }) => {
   // Extract and memoize jodoju list based on report.jodoju15 if available, falling back to static JODOJU_STOCKS
   const jodojuList = React.useMemo(() => {
+    // If parent passed stockList (containing up to 15 stocks from the simulator's logic), use it directly
+    if (stockList && stockList.length > 0) {
+      return stockList.map((stk: any) => {
+        const details = JODOJU_STATIC_DETAILS[stk.code] || {};
+        const reportItem = report?.jodoju15?.find((r: any) => (r.ticker || r.code) === stk.code);
+        return {
+          rank: stk.rank,
+          ticker: stk.code,
+          name: stk.name,
+          closePrice: reportItem?.closePrice || details.closePrice || 1000,
+          changeRate: stk.changeRatio,
+          tradeValue: stk.tradingValue ? (stk.tradingValue / 100000000) : (reportItem?.tradeValuePct || reportItem?.tradeValue || details.tradeValuePct || 0),
+          tradingValue: stk.tradingValue,
+          relatedThemes: reportItem?.relatedThemes || details.relatedThemes || [],
+          riseReason: reportItem?.riseReason || details.riseReason || '당일 주도주 급등',
+          supplyDemand: reportItem?.supplyDemand || details.foreigner || '',
+          aiSummary: reportItem?.aiSummary || details.aiSummary || '',
+          aiAnalysis: reportItem?.aiAnalysis || details
+        };
+      });
+    }
+
     let rawList: any[] = [];
     if (report?.jodoju15 && report.jodoju15.length > 0) {
       const seenTickers = new Set<string>();
@@ -327,7 +395,7 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
     return [...rawList]
       .sort((a, b) => b.changeRate - a.changeRate)
       .slice(0, 10);
-  }, [report]);
+  }, [report, stockList]);
 
   // Selection states
   const [selectedTicker, setSelectedTicker] = useState<string>('');
@@ -376,7 +444,7 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
       setError(null);
       try {
         const res = await fetch(`/api/platform/jodoju-analysis?ticker=${stockTicker}&name=${encodeURIComponent(stockName || '')}&closePrice=${stockClosePrice || 0}&changeRate=${stockChangeRate || 0}&tradeValue=${stockTradeValue || 0}`);
-        if (!res.ok) {
+        if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) {
           throw new Error('AI 분석 정보를 가져오지 못했습니다.');
         }
         const data = await res.json();
@@ -427,7 +495,7 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
         <div>
           <h2 className="text-base font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-amber-500" />
-            <span>당일주도주 정량 분석센터 ({report?.date ? `${parseInt(report.date.split('-')[1])}월 ${parseInt(report.date.split('-')[2])}일` : '당일'}) ({jodojuList.length}종목)</span>
+            <span>당일주도주 정량 분석센터</span>
           </h2>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             인간의 주관적 예측과 과장을 배제하고, 실시간 구글 검색(Google Search) 팩트체크 기반의 회계학적·통계적 지표 보고서만 제공합니다.
@@ -437,18 +505,33 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
         {/* Elegant Merged Stock Selector Dropdown */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 shrink-0 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 rounded-xl p-2 px-3 shadow-sm">
           <span className="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">주도주 종목 선택 (Select Stock):</span>
-          <select
-            value={selectedTicker}
-            onChange={(e) => setSelectedTicker(e.target.value)}
-            className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 text-xs rounded-lg px-3 py-2 font-black focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer min-w-[240px]"
-            id="jodoju-stock-dropdown-select"
-          >
-            {jodojuList.map((stk, idx) => (
-              <option key={stk.ticker} value={stk.ticker}>
-                [{idx + 1}위] {stk.name} ({stk.ticker}) | +{stk.changeRate?.toFixed(2)}%
-              </option>
-            ))}
-          </select>
+          <div className="relative flex-1 max-w-full sm:max-w-[240px]">
+            <select
+              value={selectedTicker}
+              onChange={(e) => setSelectedTicker(e.target.value)}
+              className="w-full bg-white dark:bg-slate-950 border rounded-lg px-3 py-2 text-xs font-black focus:outline-none appearance-none cursor-pointer h-full min-h-[36px] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 focus:border-slate-600"
+              id="jodoju-stock-dropdown-select"
+            >
+              {jodojuList.map((stk, idx) => {
+                let valueInBillion = 0;
+                if (stk.tradingValue !== undefined) {
+                  valueInBillion = Math.round(stk.tradingValue / 100000000);
+                } else if (stk.tradeValue !== undefined) {
+                  valueInBillion = stk.tradeValue;
+                }
+                const sector = getStockSector(stk.ticker);
+                const rankNum = stk.rank || (idx + 1);
+                return (
+                  <option key={stk.ticker} value={stk.ticker}>
+                    {rankNum}위 {stk.name} [{sector}] | {valueInBillion.toLocaleString()}억 | {stk.changeRate !== undefined ? `${stk.changeRate >= 0 ? '+' : ''}${stk.changeRate.toFixed(1)}%` : ''}
+                  </option>
+                );
+              })}
+            </select>
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-500 dark:text-slate-500">
+              <ChevronRight className="w-4 h-4 rotate-90" />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -511,6 +594,13 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
                 </p>
               )}
             </div>
+
+            {/* JodojuDailyChart displaying 60 daily candles up to selected date */}
+            <JodojuDailyChart 
+              ticker={currentStock.ticker} 
+              stockName={currentStock.name} 
+              reportDate={selectedDate || report?.date || '2026-07-20'} 
+            />
 
             {/* Interactive Agent Tabs Output */}
             <div className="mt-2 flex flex-col gap-6">
