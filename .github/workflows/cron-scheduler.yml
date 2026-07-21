@@ -2,20 +2,16 @@ name: Vercel Cron Scheduler via GitHub Actions
 
 on:
   schedule:
-    # 1. AI Auto Writer (KST 12:00, 15:00, 20:00) -> UTC 03:00, 06:00, 11:00
-    - cron: '0 3,6,11 * * *'
-    # 2. KIS Token Refresh (KST 15:40) -> UTC 06:40
+    # 1. KIS Token Refresh (KST 15:40) -> UTC 06:40
     - cron: '40 6 * * *'
   workflow_dispatch:
     inputs:
       job_type:
         description: 'Choose the job to trigger manually'
         required: true
-        default: 'all'
+        default: 'kis_token_refresh'
         type: choice
         options:
-          - all
-          - auto_writer
           - kis_token_refresh
 
 jobs:
@@ -29,42 +25,10 @@ jobs:
             echo "Using fallback URL: https://k-stockreplay.pe.kr"
           fi
 
-      - name: Trigger AI Writer
-        if: |
-          github.event.schedule == '0 3,6,11 * * *' ||
-          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'all' || github.event.inputs.job_type == 'auto_writer'))
-        run: |
-          PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
-          if [ -z "$PRODUCTION_URL" ]; then
-            PRODUCTION_URL="https://k-stockreplay.pe.kr"
-          fi
-          
-          echo "Triggering AI Auto Writer at $PRODUCTION_URL/api/cron/auto-writer ..."
-          
-          AUTH_HEADER=""
-          if [ ! -z "${{ secrets.CRON_SECRET }}" ]; then
-            AUTH_HEADER="Authorization: Bearer ${{ secrets.CRON_SECRET }}"
-          fi
-          
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
-            -H "$AUTH_HEADER" \
-            "$PRODUCTION_URL/api/cron/auto-writer")
-            
-          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
-          BODY=$(echo "$RESPONSE" | sed '$d')
-          
-          echo "Response Body: $BODY"
-          echo "HTTP Status Code: $HTTP_STATUS"
-          
-          if [ "$HTTP_STATUS" -ne 200 ] && [ "$HTTP_STATUS" -ne 201 ]; then
-            echo "Failed to trigger AI Auto-Writer"
-            exit 1
-          fi
-
       - name: Trigger KIS Token Refresh
         if: |
           github.event.schedule == '40 6 * * *' ||
-          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'all' || github.event.inputs.job_type == 'kis_token_refresh'))
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'kis_token_refresh'))
         run: |
           PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
           if [ -z "$PRODUCTION_URL" ]; then

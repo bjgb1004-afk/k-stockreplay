@@ -2,26 +2,17 @@ name: K-Stock Analyst & Threads Publishing Daemon
 
 on:
   schedule:
-    # 07:40 KST (Runs Monday to Friday KST, which is Sunday to Thursday UTC: 0-4)
-    - cron: '40 22 * * 0-4'
     # 12:30 KST (Runs Monday to Friday KST/UTC: 1-5)
     - cron: '30 3 * * 1-5'
-    # 16:00 KST (Runs Monday to Friday KST/UTC: 1-5)
-    - cron: '0 7 * * 1-5'
-    # 20:00 KST (Runs Monday to Friday KST/UTC: 1-5)
-    - cron: '0 11 * * 1-5'
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Manual execution mode (morning, lunch, afternoon, evening)'
+        description: 'Manual execution mode (lunch)'
         required: true
         type: choice
-        default: 'afternoon'
+        default: 'lunch'
         options:
-          - morning
           - lunch
-          - afternoon
-          - evening
 
 jobs:
   run-analyst:
@@ -51,39 +42,7 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY || secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_ANON_KEY }}
         run: |
-          # Determine the execution mode dynamically
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            MODE="${{ github.event.inputs.mode }}"
-          else
-            # Try to determine by github schedule first for maximum safety against GitHub run delays
-            SCHEDULE_CRON="${{ github.event.schedule }}"
-            echo "Triggered by schedule: $SCHEDULE_CRON"
-            if [ "$SCHEDULE_CRON" = "40 22 * * 0-4" ] || [ "$SCHEDULE_CRON" = "40 22 * * *" ]; then
-              MODE="morning"
-            elif [ "$SCHEDULE_CRON" = "30 3 * * 1-5" ] || [ "$SCHEDULE_CRON" = "30 3 * * *" ]; then
-              MODE="lunch"
-            elif [ "$SCHEDULE_CRON" = "0 7 * * 1-5" ] || [ "$SCHEDULE_CRON" = "0 7 * * *" ]; then
-              MODE="afternoon"
-            elif [ "$SCHEDULE_CRON" = "0 11 * * 1-5" ] || [ "$SCHEDULE_CRON" = "0 11 * * *" ]; then
-              MODE="evening"
-            else
-              # Fallback: Calculate current KST hour
-              KST_HOUR=$(TZ=Asia/Seoul date +%H)
-              echo "Detected KST Hour: $KST_HOUR"
-              if [ "$KST_HOUR" -eq 7 ] || [ "$KST_HOUR" -eq 8 ]; then
-                MODE="morning"
-              elif [ "$KST_HOUR" -eq 12 ] || [ "$KST_HOUR" -eq 13 ]; then
-                MODE="lunch"
-              elif [ "$KST_HOUR" -eq 16 ] || [ "$KST_HOUR" -eq 17 ]; then
-                MODE="afternoon"
-              elif [ "$KST_HOUR" -eq 20 ] || [ "$KST_HOUR" -eq 21 ]; then
-                MODE="evening"
-              else
-                echo "Scheduled trigger but outside KST target hours. Defaulting to afternoon."
-                MODE="afternoon"
-              fi
-            fi
-          fi
-          
+          # Only lunch mode is supported now
+          MODE="lunch"
           echo "Executing AI Analyst Daemon in mode: $MODE"
           node scripts/ai-analyst.js "$MODE"
