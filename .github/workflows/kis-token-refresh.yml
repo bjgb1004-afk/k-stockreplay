@@ -1,4 +1,4 @@
-name: Vercel Cron Scheduler via GitHub Actions
+name: 한국투자증권 토큰 자동갱신 스케줄러
 
 on:
   schedule:
