@@ -1,9 +1,15 @@
-name: 한국투자증권 토큰 자동갱신 스케줄러
+name: K-주식 자동갱신 및 분석 스케줄러
 
 on:
   schedule:
-    # 1. KIS Token Refresh (KST 15:40) -> UTC 06:40
+    # 1. KIS Token Refresh & Leading Stocks (KST 15:40) -> UTC 06:40
     - cron: '40 6 * * *'
+    # 2. Pre-Market News (KST 07:40, Mon-Fri) -> UTC 22:40 (Sun-Thu)
+    - cron: '40 22 * * 0-4'
+    # 3. Post-Market News (KST 16:00, Mon-Fri) -> UTC 07:00 (Mon-Fri)
+    - cron: '0 7 * * 1-5'
+    # 4. Insight Column (KST 12:00, 15:00, 20:00) -> UTC 03:00, 06:00, 11:00 daily
+    - cron: '0 3,6,11 * * *'
   workflow_dispatch:
     inputs:
       job_type:
@@ -13,6 +19,11 @@ on:
         type: choice
         options:
           - kis_token_refresh
+          - pre_market
+          - leading_stocks
+          - post_market
+          - insight_column
+          - all
 
 jobs:
   trigger-crons:
@@ -28,31 +39,113 @@ jobs:
       - name: Trigger KIS Token Refresh
         if: |
           github.event.schedule == '40 6 * * *' ||
-          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'kis_token_refresh'))
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'kis_token_refresh' || github.event.inputs.job_type == 'all'))
         run: |
           PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
           if [ -z "$PRODUCTION_URL" ]; then
             PRODUCTION_URL="https://k-stockreplay.pe.kr"
           fi
           
-          echo "Triggering KIS Token Refresh at $PRODUCTION_URL/api/cron/kis-token-refresh ..."
-          
+          echo "Triggering KIS Token Refresh..."
           AUTH_HEADER=""
           if [ ! -z "${{ secrets.CRON_SECRET }}" ]; then
             AUTH_HEADER="Authorization: Bearer ${{ secrets.CRON_SECRET }}"
           fi
           
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
-            -H "$AUTH_HEADER" \
-            "$PRODUCTION_URL/api/cron/kis-token-refresh")
-            
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET -H "$AUTH_HEADER" "$PRODUCTION_URL/api/cron/kis-token-refresh")
           HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
           BODY=$(echo "$RESPONSE" | sed '$d')
-          
-          echo "Response Body: $BODY"
+          echo "Response: $BODY"
           echo "HTTP Status Code: $HTTP_STATUS"
-          
           if [ "$HTTP_STATUS" -ne 200 ] && [ "$HTTP_STATUS" -ne 201 ]; then
             echo "Failed to trigger KIS Token Refresh"
             exit 1
           fi
+
+      - name: Trigger Pre-Market News
+        if: |
+          github.event.schedule == '40 22 * * 0-4' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'pre_market' || github.event.inputs.job_type == 'all'))
+        run: |
+          PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
+          if [ -z "$PRODUCTION_URL" ]; then
+            PRODUCTION_URL="https://k-stockreplay.pe.kr"
+          fi
+          
+          echo "Triggering Pre-Market News..."
+          AUTH_HEADER=""
+          if [ ! -z "${{ secrets.CRON_SECRET }}" ]; then
+            AUTH_HEADER="Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          fi
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST -H "$AUTH_HEADER" "$PRODUCTION_URL/api/cron/pre-market")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "Response: $BODY"
+          echo "HTTP Status Code: $HTTP_STATUS"
+
+      - name: Trigger Leading Stocks
+        if: |
+          github.event.schedule == '40 6 * * *' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'leading_stocks' || github.event.inputs.job_type == 'all'))
+        run: |
+          PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
+          if [ -z "$PRODUCTION_URL" ]; then
+            PRODUCTION_URL="https://k-stockreplay.pe.kr"
+          fi
+          
+          echo "Triggering Leading Stocks..."
+          AUTH_HEADER=""
+          if [ ! -z "${{ secrets.CRON_SECRET }}" ]; then
+            AUTH_HEADER="Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          fi
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST -H "$AUTH_HEADER" "$PRODUCTION_URL/api/cron/leading-stocks")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "Response: $BODY"
+          echo "HTTP Status Code: $HTTP_STATUS"
+
+      - name: Trigger Post-Market News
+        if: |
+          github.event.schedule == '0 7 * * 1-5' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'post_market' || github.event.inputs.job_type == 'all'))
+        run: |
+          PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
+          if [ -z "$PRODUCTION_URL" ]; then
+            PRODUCTION_URL="https://k-stockreplay.pe.kr"
+          fi
+          
+          echo "Triggering Post-Market News..."
+          AUTH_HEADER=""
+          if [ ! -z "${{ secrets.CRON_SECRET }}" ]; then
+            AUTH_HEADER="Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          fi
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST -H "$AUTH_HEADER" "$PRODUCTION_URL/api/cron/post-market")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "Response: $BODY"
+          echo "HTTP Status Code: $HTTP_STATUS"
+
+      - name: Trigger Insight Column
+        if: |
+          github.event.schedule == '0 3,6,11 * * *' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'insight_column' || github.event.inputs.job_type == 'all'))
+        run: |
+          PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"
+          if [ -z "$PRODUCTION_URL" ]; then
+            PRODUCTION_URL="https://k-stockreplay.pe.kr"
+          fi
+          
+          echo "Triggering Insight Column..."
+          AUTH_HEADER=""
+          if [ ! -z "${{ secrets.CRON_SECRET }}" ]; then
+            AUTH_HEADER="Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          fi
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST -H "$AUTH_HEADER" "$PRODUCTION_URL/api/cron/insight-column")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "Response: $BODY"
+          echo "HTTP Status Code: $HTTP_STATUS"
