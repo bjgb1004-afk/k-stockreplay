@@ -103,6 +103,26 @@ function isSupabaseActive(): boolean {
   return true;
 }
 
+// Unified KST date/time utilities to solve double offset and timezone mismatch issues
+function getTodayKSTString(): string {
+  const formatter = new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  const parts = formatter.formatToParts(new Date());
+  const year = parts.find(p => p.type === 'year')?.value || '';
+  const month = parts.find(p => p.type === 'month')?.value || '';
+  const day = parts.find(p => p.type === 'day')?.value || '';
+  return `${year}-${month}-${day}`;
+}
+
+function getCurrentKSTISOString(): string {
+  // Return standard UTC ISO 8601 string to be stored in DB (recommended UTC-based timestamps)
+  return new Date().toISOString();
+}
+
 // In-memory/file-based sync with Supabase
 async function getLeaderboardFromSupabase(type: 'ilbong' | 'danta'): Promise<LeaderboardEntry[] | null> {
   const supabase = getSupabase();
@@ -367,6 +387,28 @@ async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<bo
     // If saving the main afternoon report, also save a date-specific backup key to preserve full history!
     if (key === 'afternoon_report' && dataVal?.date) {
       const backupKey = `afternoon_report_${dataVal.date}`;
+      
+      // Also upload backup key to Supabase Storage!
+      try {
+        const jsonStr = JSON.stringify(dataVal, null, 2);
+        await saveToSupabaseStorage(`reports/${backupKey}.json`, jsonStr);
+      } catch (_) {}
+
+      const { error: backupError } = await supabase
+        .from('kstock_platform_data')
+        .upsert({
+          key: backupKey,
+          data: dataVal,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'key' });
+      if (backupError && !backupError.message.includes('Could not find the table')) {
+        console.warn(`Supabase backup save error for '${backupKey}':`, backupError.message);
+      }
+    }
+
+    // If saving the main morning briefing, also save a date-specific backup key to preserve full history!
+    if (key === 'morning_briefing' && dataVal?.date) {
+      const backupKey = `morning_briefing_${dataVal.date}`;
       
       // Also upload backup key to Supabase Storage!
       try {
@@ -1015,8 +1057,7 @@ app.use((req, res, next) => {
 
     const cleanName = name.trim().slice(0, 12); // Limit to 12 chars for safety and responsiveness
     
-    const today = new Date();
-    const krDateStr = new Date(today.getTime() + (9 * 60 * 60 * 1000)).toISOString().slice(0, 10); // Simple KST date string
+    const krDateStr = getTodayKSTString();
 
     const rawInput = { name, yieldRate, symbol, totalAssets, type };
     
@@ -3285,7 +3326,7 @@ CREATE TABLE kstock_platform_data (
           }
         } else if (mode === 'minute') {
           // Minute candles: check if dateParam is today
-          const todayStr = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+          const todayStr = getTodayKSTString();
           if (dateParam !== todayStr) {
             // It's a historical day! Let's fetch daily candles first to grab the exact prices of that stock on dateParam
             let dayCandles: any[] = [];
@@ -3527,7 +3568,7 @@ CREATE TABLE kstock_platform_data (
           topic_index: nextIndex,
           title: targetTitle,
           content: generatedContent,
-          published_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().replace('Z', '+09:00')
+          published_at: getCurrentKSTISOString()
         }]);
 
       if (insertError) {
