@@ -6,6 +6,16 @@ interface ReportDatePickerProps {
   onSelectDate: (date: string) => void;
 }
 
+const getTodayKSTString = () => {
+  const d = new Date();
+  const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  const kst = new Date(utc + (3600000 * 9));
+  const year = kst.getFullYear();
+  const month = String(kst.getMonth() + 1).padStart(2, '0');
+  const day = String(kst.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export const ReportDatePicker: React.FC<ReportDatePickerProps> = ({ selectedDate, onSelectDate }) => {
   const [reports, setReports] = useState<string[]>([]);
 
@@ -23,8 +33,7 @@ export const ReportDatePicker: React.FC<ReportDatePickerProps> = ({ selectedDate
         .then(data => {
           if (Array.isArray(data)) {
             // Filter out future dates dynamically (KST offset friendly)
-            const kstOffset = 9 * 60 * 60 * 1000;
-            const todayStr = new Date(Date.now() + kstOffset).toISOString().split('T')[0];
+            const todayStr = getTodayKSTString();
             const dates = data
               .map((d: any) => d.date)
               .filter((d: string) => d <= todayStr)
@@ -131,8 +140,7 @@ export const ReportDatePicker: React.FC<ReportDatePickerProps> = ({ selectedDate
 
   // Filtered days: No weekends, must be in the database (saved), and not in the future (<= today KST)
   const filteredDaysArray = useMemo(() => {
-    const kstOffset = 9 * 60 * 60 * 1000;
-    const todayStr = new Date(Date.now() + kstOffset).toISOString().split('T')[0];
+    const todayStr = getTodayKSTString();
     let list = daysArray;
 
     // 1. Exclude weekends

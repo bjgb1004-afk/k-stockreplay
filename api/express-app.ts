@@ -1379,6 +1379,13 @@ CREATE TABLE kstock_platform_data (
     return new Date(utc + (3600000 * 9)); // UTC + 9 hours for KST
   }
 
+  function getKstDateString(dateObj: Date): string {
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   function isHoliday(dateStr: string): boolean {
     const mmdd = dateStr.slice(5, 10); // e.g. "07-15"
     const solarHolidays = [
@@ -1420,7 +1427,7 @@ CREATE TABLE kstock_platform_data (
     let isWorkingDay = false;
     while (!isWorkingDay) {
       const day = kst.getDay();
-      const dateStr = kst.toISOString().slice(0, 10);
+      const dateStr = getKstDateString(kst);
       
       if (day === 0 || day === 6 || isHoliday(dateStr)) {
         kst.setDate(kst.getDate() - 1);
@@ -1429,7 +1436,7 @@ CREATE TABLE kstock_platform_data (
       }
     }
     
-    return kst.toISOString().slice(0, 10);
+    return getKstDateString(kst);
   }
 
   async function fetchSiseQuant(sosok: number, page: number = 1): Promise<string> {
@@ -4183,8 +4190,11 @@ CREATE TABLE kstock_platform_data (
   // 1. Pre-Market Briefing Endpoints
   app.get('/api/platform/briefing', async (req, res) => {
     try {
-      
-      const briefing = PlatformEngine.getPreMarketBriefing();
+      let briefing = await getPlatformDataFromSupabase('morning_briefing');
+      if (!briefing) {
+        console.log('[Platform Briefing API] No briefing found in Supabase. Falling back to local file.');
+        briefing = PlatformEngine.getPreMarketBriefing();
+      }
       res.json(briefing);
     } catch (e: any) {
       res.status(500).json({ error: e.message || '장전 브리핑 조회 실패' });
@@ -4567,8 +4577,9 @@ CREATE TABLE kstock_platform_data (
           });
         }
       } else {
-        reportData = PlatformEngine.getAfterMarketReport();
+        reportData = await getPlatformDataFromSupabase('afternoon_report');
         if (!reportData) {
+          console.log('[Platform Report API] No active report found in Supabase. Falling back to local file.');
           reportData = PlatformEngine.getAfterMarketReport();
         }
       }
@@ -5077,7 +5088,8 @@ CREATE TABLE kstock_platform_data (
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select('*');
+        .select('*')
+        .order('published_at', { ascending: false });
         
       if (error) {
         throw error;
@@ -5224,11 +5236,16 @@ CREATE TABLE kstock_platform_data (
         posts = posts.filter(p => p.is_published === true);
       }
 
-      // Sort in DESCENDING order: newest post first (col_6, col_5, col_4...)
+      // Sort in DESCENDING order: newest post first (by published_at date, then by fallback numeric ID)
       posts.sort((a, b) => {
+        const timeA = new Date(a.published_at || a.createdAt || 0).getTime();
+        const timeB = new Date(b.published_at || b.createdAt || 0).getTime();
+        if (timeB !== timeA) {
+          return timeB - timeA; // Descending (newest date first)
+        }
         const idA = parseInt(a.id.toString().replace(/[^0-9]/g, '')) || 0;
         const idB = parseInt(b.id.toString().replace(/[^0-9]/g, '')) || 0;
-        return idB - idA; // DESCENDING (newest first)
+        return idB - idA; // DESCENDING (newest numeric ID first)
       });
 
       res.json({ posts });
