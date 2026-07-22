@@ -725,7 +725,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
           const lowPct = ((tooltipData.low - refPrice) / refPrice) * 100;
           const closePct = ((tooltipData.close - refPrice) / refPrice) * 100;
 
-          const tooltipTradeValueMillion = (tooltipData.close * tooltipData.volume) / 1000000;
+          const tooltipTradeValueEok = (tooltipData.close * tooltipData.volume) / 100000000;
           
           return (
             <div
@@ -778,7 +778,9 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
               <div className="flex justify-between items-center gap-4 border-t border-slate-200 dark:border-slate-800/80 pt-1.5 mt-0.5" id="tooltip-volume">
                 <span className="text-slate-600 dark:text-slate-400">거래대금</span>
                 <span className="font-semibold text-amber-400">
-                  {tooltipTradeValueMillion.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}백만원
+                  {tooltipTradeValueEok >= 1 
+                    ? `${tooltipTradeValueEok.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}억원`
+                    : `${Math.round((tooltipData.close * tooltipData.volume) / 10000).toLocaleString()}만원`}
                 </span>
               </div>
             </div>

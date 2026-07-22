@@ -398,7 +398,7 @@ export const LeaderboardChart: React.FC<LeaderboardChartProps> = ({ candles, tra
   const isUp = activeCandle ? activeCandle.close >= activeCandle.open : true;
   const changeAmt = activeCandle ? activeCandle.close - activeCandle.open : 0;
   const changePct = activeCandle ? (changeAmt / activeCandle.open) * 100 : 0;
-  const tradeValueMillion = activeCandle ? (activeCandle.close * activeCandle.volume) / 1000000 : 0;
+  const tradeValueEok = activeCandle ? (activeCandle.close * activeCandle.volume) / 100000000 : 0;
 
   return (
     <div className="relative flex flex-col w-full h-full bg-white dark:bg-slate-950 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl" id="leaderboard-chart-panel">
@@ -430,12 +430,14 @@ export const LeaderboardChart: React.FC<LeaderboardChartProps> = ({ candles, tra
                 {changeAmt >= 0 ? '+' : ''}{Math.round(changeAmt).toLocaleString()} ({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)
               </span>
             </div>
-            <div className="flex gap-1">
-              <span className="text-slate-500 dark:text-slate-500">거래대금:</span>
-              <span className="text-amber-400 font-bold">
-                {tradeValueMillion.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}백만원
-              </span>
-            </div>
+              <div className="flex gap-1">
+                <span className="text-slate-500 dark:text-slate-500">거래대금:</span>
+                <span className="text-amber-400 font-bold">
+                  {tradeValueEok >= 1 
+                    ? `${tradeValueEok.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}억원`
+                    : `${Math.round((activeCandle.close * activeCandle.volume) / 10000).toLocaleString()}만원`}
+                </span>
+              </div>
           </div>
 
           {/* Indicators Legend */}

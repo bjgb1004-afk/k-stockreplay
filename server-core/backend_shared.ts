@@ -120,6 +120,52 @@ export function isSupabaseActive(): boolean {
   return !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
 }
 
+// Platform Data syncing helper functions for Supabase
+export async function getPlatformDataFromSupabase(key: string): Promise<any | null> {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+
+  try {
+    const { data, error } = await supabase
+      .from('kstock_platform_data')
+      .select('data')
+      .eq('key', key)
+      .maybeSingle();
+    
+    if (!error && data) {
+      return data.data;
+    }
+    return null;
+  } catch (err: any) {
+    console.warn(`Supabase Platform Data fetch note for '${key}':`, err.message || err);
+    return null;
+  }
+}
+
+export async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<boolean> {
+  const supabase = getSupabase();
+  if (!supabase) return false;
+
+  try {
+    const { error } = await supabase
+      .from('kstock_platform_data')
+      .upsert({
+        key: key,
+        data: dataVal,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'key' });
+    
+    if (error) {
+      console.warn(`Supabase Platform Data save note for '${key}':`, error.message || error);
+      return false;
+    }
+    return true;
+  } catch (err: any) {
+    console.warn(`Supabase save exception for '${key}':`, err.message || err);
+    return false;
+  }
+}
+
 // Supabase leaderboard helpers
 export async function getLeaderboardFromSupabase(type: 'ilbong' | 'danta'): Promise<LeaderboardEntry[] | null> {
   const supabase = getSupabase();

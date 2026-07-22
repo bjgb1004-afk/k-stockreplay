@@ -22,8 +22,9 @@ export const ReportDatePicker: React.FC<ReportDatePickerProps> = ({ selectedDate
         })
         .then(data => {
           if (Array.isArray(data)) {
-            // Filter out future dates from metadata cutoff: 2026-07-20
-            const todayStr = '2026-07-20';
+            // Filter out future dates dynamically (KST offset friendly)
+            const kstOffset = 9 * 60 * 60 * 1000;
+            const todayStr = new Date(Date.now() + kstOffset).toISOString().split('T')[0];
             const dates = data
               .map((d: any) => d.date)
               .filter((d: string) => d <= todayStr)
@@ -128,9 +129,10 @@ export const ReportDatePicker: React.FC<ReportDatePickerProps> = ({ selectedDate
     return list;
   }, [year, month]);
 
-  // Filtered days: No weekends, must be in the database (saved), and not in the future (<= 2026-07-20)
+  // Filtered days: No weekends, must be in the database (saved), and not in the future (<= today KST)
   const filteredDaysArray = useMemo(() => {
-    const todayStr = '2026-07-20';
+    const kstOffset = 9 * 60 * 60 * 1000;
+    const todayStr = new Date(Date.now() + kstOffset).toISOString().split('T')[0];
     let list = daysArray;
 
     // 1. Exclude weekends
@@ -142,9 +144,6 @@ export const ReportDatePicker: React.FC<ReportDatePickerProps> = ({ selectedDate
     // 3. Only show dates that exist in reports (database-confirmed saved reports)
     if (reports.length > 0) {
       list = list.filter(d => reports.includes(d.dateStr));
-    } else {
-      // If no reports are fetched yet or none exist, return empty list
-      return [];
     }
 
     // 4. Assign sequential index (1, 2, 3...)

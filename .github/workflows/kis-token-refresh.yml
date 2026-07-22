@@ -9,7 +9,9 @@ on:
     # 3. Post-Market News (KST 16:00, Mon-Fri) -> UTC 07:00 (Mon-Fri)
     - cron: '0 7 * * 1-5'
     # 4. Insight Column (KST 12:00, 15:00, 20:00) -> UTC 03:00, 06:00, 11:00 daily
-    - cron: '0 3,6,11 * * *'
+    - cron: '0 3 * * *'
+    - cron: '0 6 * * *'
+    - cron: '0 11 * * *'
   workflow_dispatch:
     inputs:
       job_type:
@@ -130,7 +132,9 @@ jobs:
 
       - name: Trigger Insight Column
         if: |
-          github.event.schedule == '0 3,6,11 * * *' ||
+          github.event.schedule == '0 3 * * *' ||
+          github.event.schedule == '0 6 * * *' ||
+          github.event.schedule == '0 11 * * *' ||
           (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'insight_column' || github.event.inputs.job_type == 'all'))
         run: |
           PRODUCTION_URL="${{ secrets.PRODUCTION_URL }}"

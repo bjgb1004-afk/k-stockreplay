@@ -82,7 +82,7 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
               <span className="bg-blue-500/20 text-blue-400 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-blue-500/30 uppercase tracking-wider">
                 After-Market Analysis
               </span>
-              <span className="text-slate-600 dark:text-slate-400 font-mono text-[10px]">생성 일시: {new Date(createdAtStr).toLocaleString()}</span>
+              <span className="text-slate-600 dark:text-slate-400 font-mono text-[10px]">생성 일시: {new Date(createdAtStr).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</span>
             </div>
             <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <Zap className="w-6 h-6 text-blue-500" />

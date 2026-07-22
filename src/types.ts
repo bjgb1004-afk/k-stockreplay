@@ -106,6 +106,9 @@ export interface PreMarketBriefing {
 }
 
 export interface JodojuAnalysis {
+  sector?: string;
+  theme?: string;
+  tags?: string[];
   ticker: string;
   name: string;
   rank: number;

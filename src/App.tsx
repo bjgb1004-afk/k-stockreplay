@@ -430,39 +430,53 @@ export default function App() {
   
   const getStockSector = (code: string): string => {
     const sectors: Record<string, string> = {
-      "049080": "6G 안테나 국산화 및 대규모 수출 계약 가시화",
-      "044340": "역대급 폭염 제습기 품귀 및 주문 폭주 생산라인 가동",
-      "037070": "가마솥 폭염 지속 창문형 에어컨 국내 판매 최고치",
-      "012450": "차세대 AI 광전송장비 부품 특허 및 수급 급증",
-      "042110": "에어컨 공조모터 대기업향 대규모 공급 지속",
-      "413630": "초대형 해상풍력 사업단지 환경영향평가 공식 통과",
-      "035420": "지능형 협동로봇 안전 가이드라인 준수 통과",
-      "475150": "2차전지 자동화설비 케이블체인 글로벌 초도 출하",
-      "003680": "고수온 수산물 가격 급등 및 수출 본격 수혜",
-      "002700": "기습 폭염 써큘레이터/냉풍기 생산 예약 매진",
+      "138360": "로봇",
+      "005930": "반도체",
+      "373220": "2차전지",
+      "000660": "반도체",
+      "049080": "통신장비",
+      "044340": "가전",
+      "037070": "가전",
+      "012450": "통신장비",
+      "042110": "가전부품",
+      "413630": "신재생에너지",
+            "475150": "2차전지",
+      "003680": "음식료",
+      "002700": "가전",
+      "002140": "사료",
       "024060": "에너지/석유",
-      "006660": "자동차공조",
-      "252990": "반도체기판",
-      "138360": "로봇제어",
-      "191410": "모바일부품",
-      "142760": "바이오헬스",
-      "314930": "바이오진단",
-      "195440": "CXL/유리기판",
-      "008970": "강관/해상풍력",
-      "000250": "바이오복제약",
-      "042700": "반도체/HBM장비",
-      "237690": "바이오원료",
-      "141080": "ADC치료제",
-      "267260": "전력장비/변압기",
-      "257720": "K-뷰티/화장품",
-      "000660": "HBM/메모리",
-      "196170": "바이오SC제형",
-      "003230": "K-푸드/라면",
-      "006340": "전력선/구리선",
-      "028300": "항암치료제",
-      "000100": "폐암신약"
+      "006660": "자동차부품",
+      "252990": "반도체/기판",
+      "191410": "스마트폰부품",
+      "142760": "제약/바이오",
+      "314930": "의료AI",
+      "195440": "반도체/장비",
+      "008970": "철강",
+      "000250": "제약/바이오",
+      "042700": "반도체/장비",
+      "237690": "제약/바이오",
+      "141080": "제약/바이오",
+      "267260": "전력기기",
+      "257720": "화장품",
+      "196170": "제약/바이오",
+      "003230": "음식료",
+      "006340": "전선/구리",
+      "028300": "제약/바이오",
+      "000100": "제약/바이오",
+      "277810": "로봇",
+      "000500": "전선",
+      "477850": "IT/소프트웨어",
+      "006360": "건설",
+      "108490": "로봇",
+      "017670": "통신",
+      "090710": "로봇",
+      "214310": "의료AI",
+      "222800": "반도체/장비",
+      "035720": "IT/소프트웨어",
+      "035420": "IT/소프트웨어", // NAVER
+      "068270": "제약/바이오"
     };
-    return sectors[code] || "주도주테마";
+    return sectors[code] || "코스닥/코스피";
   };
 
   const getImpliedPrevClose = () => {
@@ -615,7 +629,10 @@ export default function App() {
             name: r.name,
             code: r.ticker || r.code,
             changeRatio: r.changeRate,
-            tradeValue: r.tradeValuePct
+            tradeValue: r.tradeValuePct,
+            sector: r.sector,
+            theme: r.theme,
+            tags: r.tags
           })).slice(0, 10);
           setStockList(list);
           setSelectedStock((prev) => {
@@ -2301,30 +2318,7 @@ export default function App() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }} />
             </div>
-            {replayDate && (
-              <div id="historical-replay-banner" className="lg:col-span-12 bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-indigo-300">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-indigo-400 animate-pulse shrink-0" />
-                  <div className="text-left">
-                    <span className="text-sm font-black block sm:inline">
-                      📅 {replayDate} 역사적 복기 모드 가동 중
-                    </span>
-                    <span className="text-xs text-slate-400 font-medium ml-0 sm:ml-2 block sm:inline">
-                      (선택한 일자의 실제 주도주 캔들과 분석 리포트로 시뮬레이션이 자동 설정됩니다)
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    setReplayDate(null);
-                    window.location.reload();
-                  }}
-                  className="text-xs bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-100 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 cursor-pointer font-extrabold transition-all shrink-0"
-                >
-                  실시간 최신 모드로 복귀
-                </button>
-              </div>
-            )}
+            
             {/* Left Side: Chart Section (Col span 12 on mobile, 8 on desktop) */}
         <div className="lg:col-span-8 flex flex-col gap-3">
           
@@ -2385,10 +2379,10 @@ export default function App() {
                     } else if (stk.tradeValue !== undefined) {
                       valueInBillion = stk.tradeValue;
                     }
-                    const sector = getStockSector(stk.code);
+                    const sector = stk.sector || getStockSector(stk.code);
                     return (
                       <option key={stk.code} value={stk.code}>
-                        {stk.rank}위 {stk.name} [{sector}] | {valueInBillion.toLocaleString()}억 | {stk.changeRatio !== undefined ? `${stk.changeRatio >= 0 ? '+' : ''}${stk.changeRatio.toFixed(1)}%` : ''}
+                        [{stk.rank}위] {stk.name} | {sector} | {valueInBillion.toLocaleString()}억 | {stk.changeRatio !== undefined ? `${stk.changeRatio >= 0 ? '+' : ''}${stk.changeRatio.toFixed(1)}%` : ''}
                       </option>
                     );
                   })}
@@ -4117,7 +4111,7 @@ export default function App() {
                               {gitCommit.repo}
                             </span>
                             <span className="text-[10px] text-slate-500 dark:text-slate-500 font-mono">
-                              {new Date(gitCommit.date).toLocaleDateString()} {new Date(gitCommit.date).toLocaleTimeString()}
+                              {new Date(gitCommit.date).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })} {new Date(gitCommit.date).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul' })}
                             </span>
                           </div>
                           <div className="text-slate-900 dark:text-slate-100 text-xs font-bold font-sans bg-white dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800 leading-relaxed italic">
@@ -4382,7 +4376,7 @@ export default function App() {
                               <span className="text-[9px] text-slate-500 dark:text-slate-500 font-mono">[{log.metadata?.symbol || 'N/A'}]</span>
                             </div>
                             <span className="text-[9px] text-slate-500 dark:text-slate-500 font-mono">
-                              {new Date(log.timestamp).toLocaleDateString()} {new Date(log.timestamp).toLocaleTimeString()}
+                              {new Date(log.timestamp).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })} {new Date(log.timestamp).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul' })}
                             </span>
                           </div>
 

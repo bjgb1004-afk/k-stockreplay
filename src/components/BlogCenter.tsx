@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, Search, Plus, Edit3, Trash2, Calendar, Eye, User, 
   ChevronLeft, ChevronRight, Hash, ArrowLeft, Sparkles, FileText, 
-  HelpCircle, Megaphone, Check, AlertCircle, Share2, Award, ExternalLink
+  HelpCircle, Megaphone, Check, AlertCircle, Share2, Award, ExternalLink, Clock
 } from 'lucide-react';
 
 export interface BlogPost {
@@ -15,6 +15,7 @@ export interface BlogPost {
   author: string;
   views: number;
   slug: string;
+  reading_time?: string;
 }
 
 const stripHtmlTags = (html: string): string => {
@@ -30,22 +31,7 @@ const renderHtmlWithAds = (content: string): string => {
   if (!content) {
     return '<p>작성 중인 칼럼입니다. 조만간 완성된 리포트가 업로드될 예정이니 조금만 기다려주세요!</p>';
   }
-
-  const adHtml = `
-<div class="my-6 min-h-[90px] w-full flex flex-col items-center justify-center overflow-hidden">
-  <ins class="adsbygoogle"
-       style="display:block; text-align:center; min-width:250px; min-height:90px;"
-       data-ad-layout="in-article"
-       data-ad-format="fluid"
-       data-ad-client="ca-pub-6302602717163004"
-       data-ad-slot="5043101495"></ins>
-  <script>
-       try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-  </script>
-</div>
-`;
-
-  return content.replace(/<!--\s*애드센스 자동 광고 삽입 위치\s*-->/g, adHtml);
+  return content;
 };
 
 interface BlogCenterProps {
@@ -411,12 +397,18 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
                   {getCategoryBadge(activePost.category)}
                   <span className="text-[10px] font-mono text-slate-500 dark:text-slate-500 flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    {new Date(activePost.createdAt).toLocaleDateString()}
+                    {new Date(activePost.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}
                   </span>
                   <span className="text-[10px] font-mono text-slate-500 dark:text-slate-500 flex items-center gap-1">
                     <Eye className="w-3 h-3" />
                     조회수 {activePost.views}회
                   </span>
+                  {activePost.reading_time && (
+                    <span className="text-[10px] font-mono text-slate-500 dark:text-slate-500 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {activePost.reading_time}
+                    </span>
+                  )}
                 </div>
                 
                 <h1 className="text-lg md:text-2xl font-black text-slate-900 dark:text-slate-100 leading-tight">
@@ -529,7 +521,7 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
                       {getCategoryBadge(post.category)}
                       <span className="text-[10px] text-slate-500 dark:text-slate-500 font-mono flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {new Date(post.createdAt).toLocaleDateString()}
+                        {new Date(post.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}
                       </span>
                     </div>
 
@@ -551,6 +543,12 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
                       <Eye className="w-3.5 h-3.5" />
                       조회 {post.views}
                     </span>
+                    {post.reading_time && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {post.reading_time}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}

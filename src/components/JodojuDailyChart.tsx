@@ -331,8 +331,8 @@ export const JodojuDailyChart: React.FC<JodojuDailyChartProps> = ({
           <span className="flex items-center gap-1 text-yellow-500">
             <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" /> 5일선
           </span>
-          <span className="flex items-center gap-1 text-magenta-500">
-            <span className="h-1.5 w-1.5 rounded-full bg-magenta-500" /> 20일선
+          <span className="flex items-center gap-1 text-[#d946ef]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#d946ef]" /> 20일선
           </span>
           <span className="flex items-center gap-1 text-cyan-500">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-500" /> 60일선

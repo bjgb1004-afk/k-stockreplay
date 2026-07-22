@@ -214,7 +214,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
     try {
       const d = new Date(dateVal);
       if (isNaN(d.getTime())) return String(dateVal);
-      return d.toLocaleString();
+      return d.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
     } catch (e) {
       return String(dateVal);
     }

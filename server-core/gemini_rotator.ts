@@ -43,10 +43,9 @@ export function getRotatedGeminiClient(): GoogleGenAI | null {
     return null;
   }
   
-  const activeKey = keys[currentKeyIndex % keys.length];
-  
+  // Create a default client just to satisfy the interface, we will override generateContent below.
   const client = new GoogleGenAI({
-    apiKey: activeKey,
+    apiKey: keys[0],
     httpOptions: {
       headers: {
         'User-Agent': 'aistudio-build',
@@ -55,91 +54,103 @@ export function getRotatedGeminiClient(): GoogleGenAI | null {
   });
 
   // Proxy generateContent to automatically handle key rotation and model fallback
-  const originalGenerateContent = client.models.generateContent.bind(client.models);
-  
   client.models.generateContent = async function (params: any, ...args: any[]) {
-    const rawKeysToTry = getAllGeminiKeys();
-    if (rawKeysToTry.length === 0) {
+    const rawKeys = getAllGeminiKeys();
+    if (rawKeys.length === 0) {
       throw new Error("No Gemini API keys are configured.");
     }
 
-    const now = Date.now();
-    // Prioritize keys that are not on cooldown
-    let keysToTry = rawKeysToTry.filter(key => {
-      const cooldownUntil = keyCooldowns.get(key) || 0;
-      return now >= cooldownUntil;
-    });
+    // Normalize model names if non-standard or deprecated
+    let originalModel = params?.model || 'gemini-3.6-flash';
+    if (typeof originalModel === 'string') {
+      if (
+        originalModel === 'gemini-2.5-flash' ||
+        originalModel === 'gemini-2.0-flash' ||
+        originalModel === 'gemini-1.5-flash' ||
+        originalModel === 'gemini-2.5-pro' ||
+        originalModel === 'gemini-3.5-flash' ||
+        originalModel === 'gemini-3.0-flash'
+      ) {
+        originalModel = 'gemini-3.6-flash';
+      }
+    }
 
-    // If all keys are on cooldown, try all of them anyway
-    if (keysToTry.length === 0) {
-      console.warn(`[Gemini Rotator] All ${rawKeysToTry.length} keys are currently cooling down. Resetting cooldowns to attempt generation.`);
-      keysToTry = rawKeysToTry;
+    // Determine the sequence of models to try
+    const fallbackModels = ['gemini-3.6-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest', 'gemini-3.1-pro-preview'];
+    // Build a unique list of models starting with originalModel
+    const modelsToTry: string[] = [originalModel];
+    for (const m of fallbackModels) {
+      if (!modelsToTry.includes(m)) {
+        modelsToTry.push(m);
+      }
     }
 
     let lastError: any = null;
-    
-    for (let attempt = 0; attempt < keysToTry.length; attempt++) {
-      const idx = (currentKeyIndex + attempt) % keysToTry.length;
-      const key = keysToTry[idx];
+
+    // We will iterate through models, and for each model, we will try all keys
+    for (const modelName of modelsToTry) {
+      const now = Date.now();
       
-      const currentClient = new GoogleGenAI({
-        apiKey: key,
-        httpOptions: {
-          headers: {
-            'User-Agent': 'aistudio-build',
-          }
+      // Separate keys into available vs cooling down
+      const availableKeys: string[] = [];
+      const coolingKeys: string[] = [];
+      
+      // To maintain rotation, start checking keys from currentKeyIndex
+      for (let i = 0; i < rawKeys.length; i++) {
+        const idx = (currentKeyIndex + i) % rawKeys.length;
+        const key = rawKeys[idx];
+        const cooldownUntil = keyCooldowns.get(key) || 0;
+        if (now >= cooldownUntil) {
+          availableKeys.push(key);
+        } else {
+          coolingKeys.push(key);
         }
-      });
+      }
+
+      // Try available keys first, then cooling keys if available keys failed
+      const keysForThisModel = [...availableKeys, ...coolingKeys];
       
-      try {
-        console.log(`[Gemini Rotator] Attempting generation with key index ${idx} (ends with ...${key.slice(-4)})`);
-        const result = await (currentClient.models.generateContent as any)(params, ...args);
-        
-        // Successful generation! Save this key index for future runs and remove from cooldown if any
-        currentKeyIndex = idx;
-        keyCooldowns.delete(key);
-        return result;
-      } catch (err: any) {
-        lastError = err;
-        const errStr = JSON.stringify(err);
-        
-        // Place this failing key on cooldown to avoid repeating immediately
-        keyCooldowns.set(key, Date.now() + 60000); // 1-minute cooldown
-        
-        console.warn(`[Gemini Rotator] Key index ${idx} failed (ends with ...${key.slice(-4)}). Placed on 1-min cooldown. Error: ${err.message || errStr}. cycling to the next key...`);
-        
-        // If we tried all keys and the requested model is not 'gemini-3.1-flash-lite', let's retry with 'gemini-3.1-flash-lite' across all keys
-        if (attempt === keysToTry.length - 1 && params && params.model !== 'gemini-3.1-flash-lite') {
-          console.warn(`[Gemini Rotator] All keys exhausted for model '${params.model || "default"}'. Retrying pool with 'gemini-3.1-flash-lite' as universal fallback...`);
-          const fallbackParams = { ...params, model: 'gemini-3.1-flash-lite' };
-          
-          for (let fbAttempt = 0; fbAttempt < keysToTry.length; fbAttempt++) {
-            const fbIdx = (currentKeyIndex + fbAttempt) % keysToTry.length;
-            const fbKey = keysToTry[fbIdx];
-            const fbClient = new GoogleGenAI({
-              apiKey: fbKey,
-              httpOptions: {
-                headers: {
-                  'User-Agent': 'aistudio-build',
-                }
-              }
-            });
-            try {
-              console.log(`[Gemini Rotator Fallback] Attempting fallback with key index ${fbIdx} (ends with ...${fbKey.slice(-4)})`);
-              const result = await (fbClient.models.generateContent as any)(fallbackParams, ...args);
-              currentKeyIndex = fbIdx;
-              keyCooldowns.delete(fbKey);
-              return result;
-            } catch (fbErr: any) {
-              lastError = fbErr;
-              keyCooldowns.set(fbKey, Date.now() + 60000);
+      for (const key of keysForThisModel) {
+        const keyIdx = rawKeys.indexOf(key);
+        const currentClient = new GoogleGenAI({
+          apiKey: key,
+          httpOptions: {
+            headers: {
+              'User-Agent': 'aistudio-build',
             }
+          }
+        });
+
+        const activeParams = { ...params, model: modelName };
+
+        try {
+          console.log(`[Gemini Rotator] Attempting generation with key index ${keyIdx} (ends with ...${key.slice(-4)}) using model '${modelName}'`);
+          const result = await (currentClient.models.generateContent as any)(activeParams, ...args);
+          
+          // Success! Update rotation pointer to this key and clear cooldown
+          currentKeyIndex = keyIdx;
+          keyCooldowns.delete(key);
+          return result;
+        } catch (err: any) {
+          lastError = err;
+          const errStr = JSON.stringify(err);
+          const is429 = errStr.includes('429') || errStr.includes('RESOURCE_EXHAUSTED');
+          
+          // Short cooldown for 429 (10s), longer for invalid keys (60s)
+          const cooldownTime = is429 ? 10000 : 60000;
+          keyCooldowns.set(key, Date.now() + cooldownTime);
+          
+          console.warn(`[Gemini Rotator] Key index ${keyIdx} failed (ends with ...${key.slice(-4)}) on model '${modelName}'. Cooldown: ${cooldownTime / 1000}s. Error: ${err.message || errStr}`);
+          
+          if (is429) {
+            // Brief pause before trying next key to allow rate limit windows to clear slightly
+            await new Promise(res => setTimeout(res, 500));
           }
         }
       }
     }
-    
-    throw lastError || new Error("All configured Gemini API keys failed.");
+
+    throw lastError || new Error("All configured Gemini API keys failed across all fallback models.");
   } as any;
 
   return client;

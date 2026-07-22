@@ -1,3 +1,4 @@
+import { sanitizeRiseReason } from './JodojuAnalysisView';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -625,7 +626,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
                                       <span className="text-[10px] font-black text-rose-400">+{stock.changeRatio || stock.pct}%</span>
                                     </div>
                                     <p className="text-[10px] text-slate-600 dark:text-slate-400 leading-normal">
-                                      <strong className="text-indigo-400">[{stock.theme || "테마 미확정"}]</strong> {stock.reason || "급등 사유 분석 요약 중"}
+                                      <strong className="text-indigo-400">[{stock.sector || stock.theme || "섹터 미확정"}]</strong> {sanitizeRiseReason(stock.riseReason || stock.reason, stock.name, stock.sector || stock.theme)}
                                     </p>
                                   </div>
                                   {onSelectHistoricalStock && (

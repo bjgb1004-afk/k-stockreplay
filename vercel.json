@@ -1,5 +1,19 @@
 {
   "version": 2,
+  "crons": [
+    {
+      "path": "/api/cron/briefing",
+      "schedule": "40 22 * * *"
+    },
+    {
+      "path": "/api/cron/market-close",
+      "schedule": "40 6 * * *"
+    },
+    {
+      "path": "/api/cron/facts",
+      "schedule": "40 6 * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/sitemap.xml",
