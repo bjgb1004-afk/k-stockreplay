@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx api/express-app.ts",
-    "build": "rm -rf dist && rm -f public/data/*.tsx public/data/*.ts public/data/*.config.ts public/data/package.json || true && vite build && esbuild api/express-app.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build": "vite build && esbuild api/express-app.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"
@@ -41,7 +41,6 @@
     "vite": "^6.2.3"
   },
   "description": "",
-  "main": "test-naver.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bjgb1004-afk/k-stockreplay.git"
