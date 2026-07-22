@@ -3340,11 +3340,23 @@ CREATE TABLE kstock_platform_data (
   app.post('/api/cron/pre-market', async (req, res) => {
     if (!checkCronAuth(req)) return res.status(401).json({ error: 'Unauthorized' });
     try {
-      console.log("[Cron] Triggered Pre-Market News Generation");
-      // TODO: Implementation for 07:40 Pre-market News
-      return res.json({ success: true, message: "Pre-market pipeline started." });
+      console.log('[Cron Pipeline] Triggering Pre-Market Briefing Generation (via pre-market)...');
+      const briefing = await PlatformEngine.getPreMarketBriefingAI();
+      PlatformEngine.savePreMarketBriefing(briefing);
+      await savePlatformDataToSupabase('morning_briefing', briefing);
+
+      // Revalidate frontend caches on-demand
+      try {
+        await revalidatePath('/');
+        await revalidatePath('/insight');
+      } catch (revalidateErr) {
+        console.warn('[Cron Pipeline] Revalidation failed (optional):', revalidateErr);
+      }
+
+      return res.json({ success: true, pipeline: 'Pre-Market 07:40 Briefing', date: briefing.date });
     } catch (err: any) {
-      return res.status(500).json({ error: err.message });
+      console.error('[Cron Pipeline Error - Pre-Market Briefing]:', err);
+      return res.status(500).json({ error: err.message || '장전 브리핑 크론 파이프라인 실패' });
     }
   });
 
@@ -4100,7 +4112,8 @@ CREATE TABLE kstock_platform_data (
   // 1. Pre-Market Briefing Endpoints
   app.get('/api/platform/briefing', async (req, res) => {
     try {
-      const targetDate = getJodojuTargetDate();
+      const dateParam = req.query.date as string;
+      const targetDate = dateParam || getTodayKSTString();
       const briefing = await getPlatformDataFromSupabase('morning_briefing', targetDate);
       if (!briefing) {
         return res.status(404).json({
@@ -4276,7 +4289,6 @@ CREATE TABLE kstock_platform_data (
         const report = await PlatformEngine.generateAfterMarketReportAI(tickers);
         PlatformEngine.saveAfterMarketReport(report);
         await savePlatformDataToSupabase('afternoon_report', report);
-        await savePlatformDataToSupabase(`afternoon_report_${todayDateStr}`, report);
         pipelineType = 'Post-Market 15:40 Close Report + Stock Data Collection';
       }
 
@@ -4328,7 +4340,6 @@ CREATE TABLE kstock_platform_data (
       const report = await PlatformEngine.generateAfterMarketReportAI(tickers);
       PlatformEngine.saveAfterMarketReport(report);
       await savePlatformDataToSupabase('afternoon_report', report);
-      await savePlatformDataToSupabase(`afternoon_report_${todayDateStr}`, report);
 
       // Revalidate frontend caches on-demand
       await revalidatePath('/');
