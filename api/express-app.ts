@@ -84,7 +84,7 @@ function getWritablePath(filename: string): string {
 // Lazy initialized Supabase client
 let supabaseClient: any = null;
 
-unction getSupabase() {
+function getSupabase() {
   if (!supabaseClient) {
     const url = process.env.SUPABASE_URL;
     const key =
@@ -96,6 +96,7 @@ unction getSupabase() {
     }
   }
   return supabaseClient;
+}
 
 function isSupabaseActive(): boolean {
   const url = process.env.SUPABASE_URL;
