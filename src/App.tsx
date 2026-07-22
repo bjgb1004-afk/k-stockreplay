@@ -652,7 +652,7 @@ export default function App() {
   const fetchDiagnostics = async () => {
     setDebugLoading(true);
     try {
-      const res = await fetch('/api/debug/status');
+      const res = await fetch('/api/debug/status', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setDebugStatus(data);
@@ -673,7 +673,7 @@ export default function App() {
     setGitLoading(true);
     setGitError(null);
     try {
-      const res = await fetch(`/api/debug/github-commit?repo=${encodeURIComponent(repoName)}`);
+      const res = await fetch(`/api/debug/github-commit?repo=${encodeURIComponent(repoName)}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setGitCommit(data);
@@ -694,7 +694,7 @@ export default function App() {
   const fetchVercelVars = async () => {
     setVercelLoading(true);
     try {
-      const res = await fetch('/api/debug/vercel-deploy');
+      const res = await fetch('/api/debug/vercel-deploy', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setVercelVars(data);

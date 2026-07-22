@@ -35,7 +35,7 @@ export const JodojuDailyChart: React.FC<JodojuDailyChartProps> = ({
       try {
         const cleanTicker = ticker.replace(/\.(KS|KQ)$/i, '').trim();
         // Request daily candles up to the selected report date
-        const res = await fetch(`/api/stock-data?ticker=${cleanTicker}&timeframe=day&date=${reportDate}`);
+        const res = await fetch(`/api/stock-data?ticker=${cleanTicker}&timeframe=day&date=${reportDate}`, { cache: 'no-store' });
         if (!res.ok) {
           throw new Error('주가 데이터를 가져오지 못했습니다.');
         }

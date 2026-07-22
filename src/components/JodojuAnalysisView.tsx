@@ -606,7 +606,7 @@ export const JodojuAnalysisView: React.FC<JodojuAnalysisViewProps> = ({
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/platform/jodoju-analysis?ticker=${stockTicker}&name=${encodeURIComponent(stockName || '')}&closePrice=${stockClosePrice || 0}&changeRate=${stockChangeRate || 0}&tradeValue=${stockTradeValue || 0}`);
+        const res = await fetch(`/api/platform/jodoju-analysis?ticker=${stockTicker}&name=${encodeURIComponent(stockName || '')}&closePrice=${stockClosePrice || 0}&changeRate=${stockChangeRate || 0}&tradeValue=${stockTradeValue || 0}`, { cache: 'no-store' });
         if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) {
           throw new Error('AI 분석 정보를 가져오지 못했습니다.');
         }

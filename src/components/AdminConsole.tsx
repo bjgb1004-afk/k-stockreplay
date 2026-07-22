@@ -39,7 +39,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
     setKisVerifyLoading(true);
     setKisVerifyResult(null);
     try {
-      const res = await fetch('/api/kis-verify');
+      const res = await fetch('/api/kis-verify', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setKisVerifyResult(data);
@@ -88,7 +88,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
   const loadAuditLogs = async () => {
     setLogsLoading(true);
     try {
-      const res = await fetch('/api/platform/audit-logs');
+      const res = await fetch('/api/platform/audit-logs', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setAuditLogs(data.logs || []);
