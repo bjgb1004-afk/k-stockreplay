@@ -84,16 +84,18 @@ function getWritablePath(filename: string): string {
 // Lazy initialized Supabase client
 let supabaseClient: any = null;
 
-function getSupabase() {
+unction getSupabase() {
   if (!supabaseClient) {
     const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_ANON_KEY;
+    const key =
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.SUPABASE_ANON_KEY;
+
     if (url && key) {
       supabaseClient = createClient(url, key);
     }
   }
   return supabaseClient;
-}
 
 function isSupabaseActive(): boolean {
   const url = process.env.SUPABASE_URL;
