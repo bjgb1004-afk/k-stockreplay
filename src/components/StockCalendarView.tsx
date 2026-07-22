@@ -237,7 +237,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
 
   // Fetch reports list on mount
   React.useEffect(() => {
-    fetch('/api/platform/reports')
+    fetch('/api/platform/reports', { cache: 'no-store' })
       .then(res => {
         if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) {
           console.warn('[API Warning] Response is not JSON or not OK in StockCalendarView. Status:', res.status);
@@ -265,7 +265,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
     // Construct clicked date string: "2026-07-XX"
     const dateStr = `2026-07-${day.toString().padStart(2, '0')}`;
     try {
-      const res = await fetch(`/api/platform/report?date=${dateStr}`);
+      const res = await fetch(`/api/platform/report?date=${dateStr}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setSelectedReport(data);

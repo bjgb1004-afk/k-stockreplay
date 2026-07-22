@@ -490,6 +490,17 @@ interface CacheEntry {
 const stockCache = new Map<string, CacheEntry>();
 const CACHE_TTL = 1000 * 60 * 60 * 4; // Cache for 4 hours
 
+// Revalidate cache helper to clear server stock cache and perform on-demand revalidation
+export async function revalidatePath(path: string) {
+  console.log(`[Revalidate Cache] revalidatePath called for: "${path}"`);
+  try {
+    stockCache.clear();
+    console.log(`[Revalidate Cache] Cleared server stockCache successfully for path: ${path}`);
+  } catch (err: any) {
+    console.warn(`[Revalidate Cache] Warning clearing stock cache during revalidation:`, err.message || err);
+  }
+}
+
 // Leaderboard storage configuration
 interface LeaderboardEntry {
   name: string;
@@ -3514,6 +3525,10 @@ CREATE TABLE kstock_platform_data (
 
       if (insertError) {
         console.error("Failed to insert insight column:", insertError);
+      } else {
+        // Immediate server cache revalidation on successful database insertion
+        await revalidatePath('/');
+        await revalidatePath('/insight');
       }
 
       return res.json({ success: true, message: `Insight column [${nextIndex + 1}/21] pipeline completed.`, topic: targetTitle });
@@ -4341,6 +4356,10 @@ CREATE TABLE kstock_platform_data (
         pipelineType = 'Post-Market 15:40 Close Report + Stock Data Collection';
       }
 
+      // Revalidate frontend caches on-demand after storing data successfully
+      await revalidatePath('/');
+      await revalidatePath('/insight');
+
       res.json({
         success: true,
         pipeline: pipelineType,
@@ -4363,6 +4382,11 @@ CREATE TABLE kstock_platform_data (
       const briefing = await PlatformEngine.getPreMarketBriefingAI();
       PlatformEngine.savePreMarketBriefing(briefing);
       await savePlatformDataToSupabase('morning_briefing', briefing);
+
+      // Revalidate frontend caches on-demand
+      await revalidatePath('/');
+      await revalidatePath('/insight');
+
       res.json({ success: true, pipeline: 'Pre-Market 07:40 Briefing', date: briefing.date });
     } catch (e: any) {
       console.error('[Cron Pipeline Error - Pre-Market Briefing]:', e);
@@ -4381,6 +4405,11 @@ CREATE TABLE kstock_platform_data (
       PlatformEngine.saveAfterMarketReport(report);
       await savePlatformDataToSupabase('afternoon_report', report);
       await savePlatformDataToSupabase(`afternoon_report_${todayDateStr}`, report);
+
+      // Revalidate frontend caches on-demand
+      await revalidatePath('/');
+      await revalidatePath('/insight');
+
       res.json({ success: true, pipeline: 'Post-Market 15:40 Close Report', date: report.date });
     } catch (e: any) {
       console.error('[Cron Pipeline Error - Post-Market Close]:', e);
@@ -4404,6 +4433,11 @@ CREATE TABLE kstock_platform_data (
       }
 
       await savePlatformDataToSupabase(`facts_${todayDateStr}`, results);
+
+      // Revalidate frontend caches on-demand
+      await revalidatePath('/');
+      await revalidatePath('/insight');
+
       res.json({ success: true, pipeline: 'Rapid Surge Facts Caching', date: todayDateStr, count: Object.keys(results).length, results });
     } catch (e: any) {
       console.error('[Cron Pipeline Error - Rapid Surge Facts]:', e);

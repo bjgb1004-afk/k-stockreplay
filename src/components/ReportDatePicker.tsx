@@ -12,7 +12,7 @@ export const ReportDatePicker: React.FC<ReportDatePickerProps> = ({ selectedDate
   // Fetch report list from database to determine which dates have saved reports
   useEffect(() => {
     const loadReports = () => {
-      fetch('/api/platform/reports')
+      fetch('/api/platform/reports', { cache: 'no-store' })
         .then(r => {
           if (!r.ok || !r.headers.get('content-type')?.includes('application/json')) {
             console.warn('[API Warning] Response is not JSON or not OK in loadReports. Status:', r.status);

@@ -553,7 +553,7 @@ export default function App() {
     setReportLoading(true);
     try {
       const dateParam = replayDate ? `?date=${replayDate}` : '';
-      const res = await fetch(`/api/platform/report${dateParam}`);
+      const res = await fetch(`/api/platform/report${dateParam}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         
@@ -724,7 +724,7 @@ export default function App() {
   const fetchPreMarketBriefing = async () => {
     setBriefingLoading(true);
     try {
-      const res = await fetch('/api/platform/briefing');
+      const res = await fetch('/api/platform/briefing', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setPreMarketBriefing(data);
@@ -740,7 +740,7 @@ export default function App() {
   const fetchLunchBriefing = async () => {
     setLunchLoading(true);
     try {
-      const res = await fetch('/api/platform/lunch');
+      const res = await fetch('/api/platform/lunch', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setLunchBriefing(data);
@@ -755,7 +755,7 @@ export default function App() {
   const fetchEveningColumn = async () => {
     setEveningLoading(true);
     try {
-      const res = await fetch('/api/platform/evening');
+      const res = await fetch('/api/platform/evening', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setEveningColumn(data);
@@ -770,7 +770,7 @@ export default function App() {
   const fetchStudyGuide = async (ticker: string) => {
     setGuideLoading(true);
     try {
-      const res = await fetch(`/api/platform/guide?ticker=${encodeURIComponent(ticker)}`);
+      const res = await fetch(`/api/platform/guide?ticker=${encodeURIComponent(ticker)}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setStudyGuide(data);

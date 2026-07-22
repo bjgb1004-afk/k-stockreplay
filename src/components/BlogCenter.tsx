@@ -71,7 +71,7 @@ export const BlogCenter: React.FC<BlogCenterProps> = ({ isAdmin = true, onBack }
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/posts');
+      const res = await fetch('/api/posts', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setPosts(data.posts || []);
