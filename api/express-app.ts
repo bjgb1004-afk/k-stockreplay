@@ -219,23 +219,20 @@ let globalSafeCacheAfternoonReport: any = null;
 let globalSafeCacheAfternoonReportTimestamp: number = 0;
 
 // Platform Data syncing helper functions for Supabase
-async function getPlatformDataFromSupabase(key: string): Promise<any | null> {
-  const targetDate = getJodojuTargetDate(); console.log("HIT ENDPOINT"); fs.writeFileSync("/tmp/hit.txt", "hit");
+async function getPlatformDataFromSupabase(key: string, dateKst?: string): Promise<any | null> {
+  const targetDate = dateKst || getJodojuTargetDate();
   
-  // Try loading from Supabase Storage for afternoon_report keys first!
   if (key === 'afternoon_report' || key.startsWith('afternoon_report_')) {
     try {
-      const storageContent = await getFromSupabaseStorage(`reports/${key}.json`);
+      const storageKey = dateKst ? `reports/afternoon_report_${dateKst}.json` : `reports/${key}.json`;
+      const storageContent = await getFromSupabaseStorage(storageKey);
       if (storageContent) {
         const parsed = JSON.parse(storageContent);
         if (parsed) {
-          console.log(`[Supabase Storage Get] Successfully loaded ${key} from storage!`);
           return parsed;
         }
       }
-    } catch (e: any) {
-      console.warn(`[Supabase Storage Get] Note: Failed to load ${key} from storage (falling back to database):`, e.message || e);
-    }
+    } catch (_) {}
   }
 
   const supabase = getSupabase();
@@ -247,123 +244,38 @@ async function getPlatformDataFromSupabase(key: string): Promise<any | null> {
   }
 
   try {
-    if (key === 'afternoon_report') {
-      // 1. Fetch only the metadata/timestamp first or the record directly to see if it was updated in Supabase
-      const { data: dbRecord, error: dbError } = await supabase
-        .from('kstock_platform_data')
-        .select('data, updated_at')
-        .eq('key', 'afternoon_report')
-        .maybeSingle();
-        
-      if (!dbError && dbRecord) {
-        const dbReport = dbRecord.data;
-        const dbUpdatedAt = dbRecord.updated_at ? new Date(dbRecord.updated_at).getTime() : 0;
-        
-        // If the database has today's targetDate, or if it has a newer updated_at than our in-memory cache,
-        // we MUST invalidate the in-memory cache and override it immediately!
-        const cacheIsStale = !globalSafeCacheAfternoonReport || 
-                            (dbReport && dbReport.date === targetDate && globalSafeCacheAfternoonReport.date !== targetDate) ||
-                            (dbUpdatedAt > globalSafeCacheAfternoonReportTimestamp);
-                            
-        if (cacheIsStale && dbReport && Array.isArray(dbReport.jodoju15) && dbReport.jodoju15.length > 0) {
-          console.log(`[Safe Cache] INVALIDATION: DB has today's date or newer update (${dbReport.date}, updated_at: ${dbRecord.updated_at}). Overriding memory cache.`);
-          globalSafeCacheAfternoonReport = dbReport;
-          globalSafeCacheAfternoonReportTimestamp = dbUpdatedAt;
-          return dbReport;
-        }
-      }
-      
-      // If our memory cache is up-to-date and matches today's target date, serve from memory
-      if (globalSafeCacheAfternoonReport && globalSafeCacheAfternoonReport.date === targetDate) {
-        console.log(`[Safe Cache] Serving matching targetDate from memory cache: ${targetDate}`);
-        return globalSafeCacheAfternoonReport;
-      }
-    }
-
-    // 2. Fetch exact match and wildcard/like matches to support historical or specific date entries (market_date or created_at)
     const { data, error } = await supabase
       .from('kstock_platform_data')
-      .select('key, data, updated_at')
-      .or(`key.eq.${key},key.like.${key}_%`);
+      .select('data')
+      .eq('key', key)
+      .eq('date_kst', targetDate)
+      .maybeSingle();
     
-    if (error) {
-      console.warn(`Supabase Platform Data list fetch note for '${key}':`, error.message || error);
-      // Fallback to simple direct single match
-      const { data: exactData } = await supabase
-        .from('kstock_platform_data')
-        .select('data')
-        .eq('key', key)
-        .single();
-      return exactData ? exactData.data : null;
+    if (!error && data) {
+      return data.data;
     }
-
-    if (!data || data.length === 0) return null;
-
-    // 3. Sort by inner JSON date (date or market_date) or created_at/updated_at descending
-    const sorted = [...data].sort((a: any, b: any) => {
-      const dateA = a.data?.date || a.data?.market_date || '';
-      const dateB = b.data?.date || b.data?.market_date || '';
-      if (dateA && dateB && dateA !== dateB) {
-        return dateB.localeCompare(dateA); // Descending by date string (e.g. YYYY-MM-DD)
-      }
-      const timeA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
-      const timeB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
-      return timeB - timeA;
-    });
-
-    // 4. For afternoon_report, ensure we select a complete report with a non-empty jodoju15 list to prevent zero-flicker / Safe Cache
-    if (key === 'afternoon_report') {
-      for (const item of sorted) {
-        const report = item.data;
-        if (report && Array.isArray(report.jodoju15) && report.jodoju15.length > 0) {
-          const dbUpdatedAt = item.updated_at ? new Date(item.updated_at).getTime() : 0;
-          if (!globalSafeCacheAfternoonReport || dbUpdatedAt > globalSafeCacheAfternoonReportTimestamp) {
-            globalSafeCacheAfternoonReport = report;
-            globalSafeCacheAfternoonReportTimestamp = dbUpdatedAt;
-          }
-          return report;
-        }
-      }
-    }
-
-    // Default: return the absolute newest record
-    const newestReport = sorted[0]?.data || null;
-    if (key === 'afternoon_report' && newestReport) {
-      const dbUpdatedAt = sorted[0]?.updated_at ? new Date(sorted[0]?.updated_at).getTime() : 0;
-      if (!globalSafeCacheAfternoonReport || dbUpdatedAt > globalSafeCacheAfternoonReportTimestamp) {
-        globalSafeCacheAfternoonReport = newestReport;
-        globalSafeCacheAfternoonReportTimestamp = dbUpdatedAt;
-      }
-    }
-    return newestReport;
+    return null;
   } catch (err: any) {
-    console.warn(`Supabase Platform Data fetch exception handled gracefully for '${key}':`, err.message || err);
-    if (key === 'afternoon_report' && globalSafeCacheAfternoonReport) {
-      console.log(`[Safe Cache] Returning server-side cached afternoon report due to fetch error.`);
-      return globalSafeCacheAfternoonReport;
-    }
+    console.warn(`Supabase Platform Data fetch error for '${key}' (${targetDate}):`, err.message || err);
     return null;
   }
 }
 
 async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<boolean> {
-  // Direct Invalidation/Override of in-memory cache to ensure instant reactivity!
+  const dateKst = dataVal?.date || getJodojuTargetDate();
+
   if (key === 'afternoon_report') {
     const nowTime = Date.now();
-    console.log('[Safe Cache] Invalidation triggered. Overriding globalSafeCacheAfternoonReport with new data:', dataVal?.date);
     globalSafeCacheAfternoonReport = dataVal;
     globalSafeCacheAfternoonReportTimestamp = nowTime;
   }
 
-  // Save to Supabase Storage for afternoon_report keys!
-  if (key === 'afternoon_report' || key.startsWith('afternoon_report_')) {
+  if (key === 'afternoon_report' || key.startsWith('afternoon_report_') || key === 'morning_briefing') {
     try {
+      const storageKey = `reports/${key}_${dateKst}.json`;
       const jsonStr = JSON.stringify(dataVal, null, 2);
-      await saveToSupabaseStorage(`reports/${key}.json`, jsonStr);
-      console.log(`[Supabase Storage Save] Successfully backed up ${key} to storage.`);
-    } catch (e: any) {
-      console.warn(`[Supabase Storage Save] Note: Failed to save ${key} to storage:`, e.message || e);
-    }
+      await saveToSupabaseStorage(storageKey, jsonStr);
+    } catch (_) {}
   }
 
   const supabase = getSupabase();
@@ -373,64 +285,21 @@ async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<bo
       .from('kstock_platform_data')
       .upsert({
         key: key,
+        date_kst: dateKst,
         data: dataVal,
         updated_at: new Date().toISOString()
-      }, { onConflict: 'key' });
+      }, { onConflict: 'key,date_kst' });
     
     if (error) {
       if (!error.message.includes('Could not find the table')) {
-        console.warn(`Supabase Platform Data save note for '${key}':`, error.message || error);
+        console.warn(`Supabase Platform Data save note for '${key}' (${dateKst}):`, error.message || error);
       }
       return false;
     }
 
-    // If saving the main afternoon report, also save a date-specific backup key to preserve full history!
-    if (key === 'afternoon_report' && dataVal?.date) {
-      const backupKey = `afternoon_report_${dataVal.date}`;
-      
-      // Also upload backup key to Supabase Storage!
-      try {
-        const jsonStr = JSON.stringify(dataVal, null, 2);
-        await saveToSupabaseStorage(`reports/${backupKey}.json`, jsonStr);
-      } catch (_) {}
-
-      const { error: backupError } = await supabase
-        .from('kstock_platform_data')
-        .upsert({
-          key: backupKey,
-          data: dataVal,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'key' });
-      if (backupError && !backupError.message.includes('Could not find the table')) {
-        console.warn(`Supabase backup save error for '${backupKey}':`, backupError.message);
-      }
-    }
-
-    // If saving the main morning briefing, also save a date-specific backup key to preserve full history!
-    if (key === 'morning_briefing' && dataVal?.date) {
-      const backupKey = `morning_briefing_${dataVal.date}`;
-      
-      // Also upload backup key to Supabase Storage!
-      try {
-        const jsonStr = JSON.stringify(dataVal, null, 2);
-        await saveToSupabaseStorage(`reports/${backupKey}.json`, jsonStr);
-      } catch (_) {}
-
-      const { error: backupError } = await supabase
-        .from('kstock_platform_data')
-        .upsert({
-          key: backupKey,
-          data: dataVal,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'key' });
-      if (backupError && !backupError.message.includes('Could not find the table')) {
-        console.warn(`Supabase backup save error for '${backupKey}':`, backupError.message);
-      }
-    }
-
     return true;
   } catch (err: any) {
-    console.warn(`Supabase Platform Data save exception handled gracefully for '${key}':`, err.message || err);
+    console.warn(`Supabase Platform Data save exception handled gracefully for '${key}' (${dateKst}):`, err.message || err);
     return false;
   }
 }
@@ -4231,10 +4100,14 @@ CREATE TABLE kstock_platform_data (
   // 1. Pre-Market Briefing Endpoints
   app.get('/api/platform/briefing', async (req, res) => {
     try {
-      let briefing = await getPlatformDataFromSupabase('morning_briefing');
+      const targetDate = getJodojuTargetDate();
+      const briefing = await getPlatformDataFromSupabase('morning_briefing', targetDate);
       if (!briefing) {
-        console.log('[Platform Briefing API] No briefing found in Supabase. Falling back to local file.');
-        briefing = PlatformEngine.getPreMarketBriefing();
+        return res.status(404).json({
+          error: '오늘의 장전 브리핑이 아직 생성되지 않았습니다.',
+          date: targetDate,
+          isNotGenerated: true
+        });
       }
       res.json(briefing);
     } catch (e: any) {
@@ -4586,8 +4459,9 @@ CREATE TABLE kstock_platform_data (
         console.error('[Retention Cleanup Background] Error:', err.message || err);
       });
 
-      let reportData: any = null;
-      if (isHistorical) {
+      let reportData: any = await getPlatformDataFromSupabase('afternoon_report', targetDate);
+
+      if (!reportData && isHistorical) {
         // Try local file backup first
         try {
           const localPath = path.join(process.cwd(), 'data', 'platform', `afternoon_report_${targetDate}.json`);
@@ -4600,10 +4474,18 @@ CREATE TABLE kstock_platform_data (
         }
 
         if (!reportData) {
-          reportData = await getPlatformDataFromSupabase(`afternoon_report_${targetDate}`);
+          reportData = await getPlatformDataFromSupabase(`afternoon_report_${targetDate}`, targetDate);
         }
+      }
 
-        if (!reportData) {
+      if (!reportData) {
+        if (!isHistorical) {
+          return res.status(404).json({
+            error: '오늘의 장마감 리포트가 아직 생성되지 않았습니다.',
+            date: targetDate,
+            isNotGenerated: true
+          });
+        } else {
           // Return a beautiful graceful fallback report for the historical date
           return res.json({
             date: targetDate,
@@ -4616,12 +4498,6 @@ CREATE TABLE kstock_platform_data (
             jodoju15: [],
             themes: []
           });
-        }
-      } else {
-        reportData = await getPlatformDataFromSupabase('afternoon_report');
-        if (!reportData) {
-          console.log('[Platform Report API] No active report found in Supabase. Falling back to local file.');
-          reportData = PlatformEngine.getAfterMarketReport();
         }
       }
 

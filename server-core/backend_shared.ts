@@ -120,16 +120,33 @@ export function isSupabaseActive(): boolean {
   return !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
 }
 
+// Get today's date string YYYY-MM-DD in KST (Asia/Seoul)
+export function getTodayKstDateStr(): string {
+  const formatter = new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  const parts = formatter.formatToParts(new Date());
+  const map: Record<string, string> = {};
+  parts.forEach(p => { map[p.type] = p.value; });
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
 // Platform Data syncing helper functions for Supabase
-export async function getPlatformDataFromSupabase(key: string): Promise<any | null> {
+export async function getPlatformDataFromSupabase(key: string, dateKst?: string): Promise<any | null> {
   const supabase = getSupabase();
   if (!supabase) return null;
+
+  const targetDate = dateKst || getTodayKstDateStr();
 
   try {
     const { data, error } = await supabase
       .from('kstock_platform_data')
       .select('data')
       .eq('key', key)
+      .eq('date_kst', targetDate)
       .maybeSingle();
     
     if (!error && data) {
@@ -137,7 +154,7 @@ export async function getPlatformDataFromSupabase(key: string): Promise<any | nu
     }
     return null;
   } catch (err: any) {
-    console.warn(`Supabase Platform Data fetch note for '${key}':`, err.message || err);
+    console.warn(`Supabase Platform Data fetch note for '${key}' (${targetDate}):`, err.message || err);
     return null;
   }
 }
@@ -146,22 +163,25 @@ export async function savePlatformDataToSupabase(key: string, dataVal: any): Pro
   const supabase = getSupabase();
   if (!supabase) return false;
 
+  const dateKst = dataVal?.date || getTodayKstDateStr();
+
   try {
     const { error } = await supabase
       .from('kstock_platform_data')
       .upsert({
         key: key,
+        date_kst: dateKst,
         data: dataVal,
         updated_at: new Date().toISOString()
-      }, { onConflict: 'key' });
+      }, { onConflict: 'key,date_kst' });
     
     if (error) {
-      console.warn(`Supabase Platform Data save note for '${key}':`, error.message || error);
+      console.warn(`Supabase Platform Data save note for '${key}' (${dateKst}):`, error.message || error);
       return false;
     }
     return true;
   } catch (err: any) {
-    console.warn(`Supabase save exception for '${key}':`, err.message || err);
+    console.warn(`Supabase save exception for '${key}' (${dateKst}):`, err.message || err);
     return false;
   }
 }
