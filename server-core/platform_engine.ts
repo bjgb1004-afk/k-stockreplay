@@ -97,7 +97,8 @@ import { getRotatedGeminiClient } from './gemini_rotator.js';
 import { getOrFetchFinancialsFromSupabase, generateAndCacheSurgeFact } from './dart_financials.js';
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'platform');
-const IS_VERCEL = process.env.VERCEL === '1';
+const IS_VERCEL = !!process.env.VERCEL;
+console.log('[PlatformEngine] Detected Environment:', IS_VERCEL ? 'Vercel (Read-only)' : 'Local/Server (Writable)');
 
 // Ensure database/platform directory exists
 if (!fs.existsSync(DATA_DIR) && !IS_VERCEL) {
@@ -794,7 +795,9 @@ export class PlatformEngine {
       // Save Seed Data
       try {
         fs.writeFileSync(filePath, JSON.stringify(SEED_PRE_MARKET_BRIEFING, null, 2));
-      } catch (e) {}
+      } catch (err) {
+        console.warn('[PlatformEngine] Failed to save seed pre-market briefing:', err);
+      }
       return SEED_PRE_MARKET_BRIEFING;
     }
     try {
@@ -831,7 +834,9 @@ export class PlatformEngine {
       // Save Seed Data
       try {
         fs.writeFileSync(filePath, JSON.stringify(SEED_AFTER_MARKET_REPORT, null, 2));
-      } catch (e) {}
+      } catch (err) {
+        console.warn('[PlatformEngine] Failed to save seed after-market report:', err);
+      }
       return SEED_AFTER_MARKET_REPORT;
     }
     try {
@@ -927,7 +932,9 @@ export class PlatformEngine {
 
     if (!ai) {
       console.warn('[PlatformEngine] GEMINI_API_KEY가 설정되지 않아 장전 브리핑 fallback 템플릿을 발행합니다.');
-      this.savePreMarketBriefing(fallbackBriefing);
+      if (!IS_VERCEL) {
+        this.savePreMarketBriefing(fallbackBriefing);
+      }
       return fallbackBriefing;
     }
 
@@ -978,11 +985,15 @@ JSON 스키마:
         ...parsed
       };
 
-      this.savePreMarketBriefing(newBriefing);
+      if (!IS_VERCEL) {
+        this.savePreMarketBriefing(newBriefing);
+      }
       return newBriefing;
     } catch (err: any) {
       console.warn('[Gemini AI Platform] Pre-Market Briefing generation failed or hit rate limit, using elegant offline template:', err.message || err);
-      this.savePreMarketBriefing(fallbackBriefing);
+      if (!IS_VERCEL) {
+        this.savePreMarketBriefing(fallbackBriefing);
+      }
       return fallbackBriefing;
     }
   }
@@ -1068,8 +1079,10 @@ JSON 스키마:
     if (!ai) {
       console.warn('[PlatformEngine] GEMINI_API_KEY가 설정되지 않아 주도주 리포트 fallback 데이터셋을 자동 빌드합니다.');
       const fallbackReport = buildFallbackReport(tickersToAnalyze);
-      this.saveAfterMarketReport(fallbackReport);
-      this.proactivelySaveStudyGuides(fallbackReport);
+      if (!IS_VERCEL) {
+        this.saveAfterMarketReport(fallbackReport);
+        this.proactivelySaveStudyGuides(fallbackReport);
+      }
       return fallbackReport;
     }
 
@@ -1372,21 +1385,26 @@ JSON 구조 스키마:
         });
       }
 
-      this.saveAfterMarketReport(newReport);
-      this.proactivelySaveStudyGuides(newReport);
+      if (!IS_VERCEL) {
+        this.saveAfterMarketReport(newReport);
+        this.proactivelySaveStudyGuides(newReport);
+      }
 
       return newReport;
     } catch (err: any) {
       console.warn('[Gemini AI Platform] Jodoju report generation failed or hit rate limit, using elegant offline fallback:', err.message || err);
       const fallbackReport = buildFallbackReport(tickersToAnalyze);
-      this.saveAfterMarketReport(fallbackReport);
-      this.proactivelySaveStudyGuides(fallbackReport);
+      if (!IS_VERCEL) {
+        this.saveAfterMarketReport(fallbackReport);
+        this.proactivelySaveStudyGuides(fallbackReport);
+      }
       return fallbackReport;
     }
   }
 
   // Proactively build and save study guides for all analyzed stocks in a report
   private static proactivelySaveStudyGuides(report: AfterMarketReport): void {
+    if (IS_VERCEL) return;
     if (!report.jodoju15) return;
     for (const stock of report.jodoju15) {
       const guides: ReplayGuideInterval[] = [
