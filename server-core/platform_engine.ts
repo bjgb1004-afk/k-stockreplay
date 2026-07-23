@@ -921,9 +921,10 @@ JSON 스키마:
 }
 `;
 
+    console.log('[PreMarket AI] Grounding attempt');
+    let responseText = '';
+
     try {
-      console.log('[Gemini SDK] Dispatching Pre-Market Briefing text request...');
-      
       const response = await ai.models.generateContent({
         model: 'gemini-3.6-flash',
         contents: prompt,
@@ -933,8 +934,34 @@ JSON 스키마:
           temperature: 0.1,
         }
       });
-      const responseText = response.text || '';
+      responseText = response.text || '';
+    } catch (err: any) {
+      const errMsg = err?.message || String(err || '');
+      console.warn(`[PreMarket AI] Grounding failed: ${errMsg}`);
+      console.log('[PreMarket AI] Fallback to non-grounding mode');
 
+      try {
+        const nonGroundingPrompt = prompt.replace(
+          '1. 연동된 Google Search Tool을 이용하여 미 증시 야간 마감 지수, 환율, 급등 테마, 코스피/코스닥 관련 주시 팩트를 실시간 검색하십시오.',
+          '1. 최근 글로벌 증시 동향 및 주요 주도주 팩트를 기반으로 오늘 아침 코스피/코스닥 개장 직후 시황 요약 및 대응 전략을 작성하십시오.'
+        );
+        const responseNoGrounding = await ai.models.generateContent({
+          model: 'gemini-3.6-flash',
+          contents: nonGroundingPrompt,
+          config: {
+            responseMimeType: 'application/json',
+            temperature: 0.1,
+          }
+        });
+        responseText = responseNoGrounding.text || '';
+        console.log('[PreMarket AI] Non-grounding generation success');
+      } catch (fallbackErr: any) {
+        console.error('[PreMarket AI] Non-grounding fallback failed:', fallbackErr?.message || fallbackErr);
+        throw fallbackErr;
+      }
+    }
+
+    try {
       console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON...');
       const parsed = cleanAndParseJson(responseText);
       
@@ -952,7 +979,7 @@ JSON 스키마:
       }
       return newBriefing;
     } catch (err: any) {
-      console.error('[Gemini AI Platform] Pre-Market Briefing generation failed:', err.message || err);
+      console.error('[Gemini AI Platform] Pre-Market Briefing parsing/generation failed:', err.message || err);
       throw new Error(`[Pre-Market Briefing AI Error] ${err.message || err}`);
     }
   }

@@ -115,15 +115,11 @@ export function getRotatedGeminiClient(): GoogleGenAI | null {
         keyOrder.push(rawKeys[idx]);
       }
 
-      // Filter keys that are NOT cooling down
+      // Filter keys that are NOT cooling down, but fallback to keyOrder if all keys are cooling down
       const availableKeys = keyOrder.filter(k => (keyCooldowns.get(k) || 0) <= now);
+      const keysToUse = availableKeys.length > 0 ? availableKeys : keyOrder;
 
-      if (availableKeys.length === 0) {
-        console.warn(`[Gemini Rotator] All ${rawKeys.length} keys are currently in cooldown for model '${modelName}'.`);
-        continue;
-      }
-
-      for (const key of availableKeys) {
+      for (const key of keysToUse) {
         if (attemptCount >= MAX_TOTAL_ATTEMPTS) break;
 
         attemptCount++;
