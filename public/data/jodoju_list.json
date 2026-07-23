@@ -1,0 +1,92 @@
+[
+  {
+    "rank": 1,
+    "code": "049080",
+    "name": "기가레인",
+    "changeRatio": 29.98,
+    "price": 21200,
+    "volume": 500000,
+    "tradingValue": 212000000000
+  },
+  {
+    "rank": 2,
+    "code": "044340",
+    "name": "위닉스",
+    "changeRatio": 29.97,
+    "price": 6200,
+    "volume": 500000,
+    "tradingValue": 62000000000
+  },
+  {
+    "rank": 3,
+    "code": "037070",
+    "name": "파세코",
+    "changeRatio": 25.32,
+    "price": 99600,
+    "volume": 500000,
+    "tradingValue": 996000000000
+  },
+  {
+    "rank": 4,
+    "code": "091440",
+    "name": "한울소재과학",
+    "changeRatio": 19.76,
+    "price": 4000,
+    "volume": 500000,
+    "tradingValue": 40000000000
+  },
+  {
+    "rank": 5,
+    "code": "042110",
+    "name": "에스씨디",
+    "changeRatio": 13.13,
+    "price": 25000,
+    "volume": 500000,
+    "tradingValue": 250000000000
+  },
+  {
+    "rank": 6,
+    "code": "475150",
+    "name": "SK이터닉스",
+    "changeRatio": 12.14,
+    "price": 405400,
+    "volume": 500000,
+    "tradingValue": 4054000000000
+  },
+  {
+    "rank": 7,
+    "code": "138360",
+    "name": "앤로보틱스",
+    "changeRatio": 11.17,
+    "price": 11200,
+    "volume": 500000,
+    "tradingValue": 112000000000
+  },
+  {
+    "rank": 8,
+    "code": "413630",
+    "name": "씨피시스템",
+    "changeRatio": 10.6,
+    "price": 21400,
+    "volume": 500000,
+    "tradingValue": 214000000000
+  },
+  {
+    "rank": 9,
+    "code": "003680",
+    "name": "한성기업",
+    "changeRatio": 9.93,
+    "price": 111200,
+    "volume": 500000,
+    "tradingValue": 1112000000000
+  },
+  {
+    "rank": 10,
+    "code": "002700",
+    "name": "신일전자",
+    "changeRatio": 9.83,
+    "price": 56100,
+    "volume": 500000,
+    "tradingValue": 561000000000
+  }
+]

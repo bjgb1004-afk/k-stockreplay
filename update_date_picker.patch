@@ -1,0 +1,12 @@
+--- src/components/ReportDatePicker.tsx
++++ src/components/ReportDatePicker.tsx
+@@ -19,6 +19,9 @@
+           
+           // If no selectedDate but we have reports, pick the latest
+           // Or we let the parent handle it? The parent uses `replayDate`
++          if (!selectedDate && dates.length > 0) {
++            onSelectDate(dates[0]);
++          }
+         }
+       })
+       .catch(console.error);

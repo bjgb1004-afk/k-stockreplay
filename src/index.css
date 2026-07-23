@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Hide TradingView watermark/attribution logo in Lightweight Charts */
+a[href*="tradingview.com"] {
+  display: none !important;
+}
