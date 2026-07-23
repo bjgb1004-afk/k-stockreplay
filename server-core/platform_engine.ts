@@ -751,6 +751,11 @@ export class PlatformEngine {
       id: cleanStr(b.id, `briefing_${todayStr}`),
       date: cleanStr(b.date, todayStr),
       published: typeof b.published === 'boolean' ? b.published : true,
+      summary: cleanStr(b.summary, s.summary || ''),
+      expectedThemes: cleanArr(b.expectedThemes, s.expectedThemes || []),
+      keyStocks: cleanArr(b.keyStocks, s.keyStocks || []),
+      leadMapping: cleanStr(b.leadMapping, s.leadMapping || ''),
+      strategyScenario: cleanStr(b.strategyScenario, s.strategyScenario || ''),
       usSummary: {
         dow: cleanStr(usSummary.dow, s.usSummary.dow),
         nasdaq: cleanStr(usSummary.nasdaq, s.usSummary.nasdaq),
@@ -884,12 +889,67 @@ export class PlatformEngine {
   }
 
   // ==========================================
-  // AI Generation with Gemini-3.5-Flash & Robust Fallback Engine
-  // ==========================================
-
-  // ==========================================
   // AI Generation with Gemini & Robust Fallback Engine
   // ==========================================
+
+  // Scrape actual US stock market indices from Yahoo Finance safely
+  static async fetchUsIndicesFromYahoo(): Promise<{
+    dow: string;
+    nasdaq: string;
+    sp500: string;
+    russell2000: string;
+    vix: string;
+  }> {
+    const symbols = {
+      dow: '^DJI',
+      nasdaq: '^IXIC',
+      sp500: '^GSPC',
+      russell2000: '^RUT',
+      vix: '^VIX'
+    };
+
+    const result = {
+      dow: '데이터 없음',
+      nasdaq: '데이터 없음',
+      sp500: '데이터 없음',
+      russell2000: '데이터 없음',
+      vix: '데이터 없음'
+    };
+
+    for (const [key, symbol] of Object.entries(symbols)) {
+      try {
+        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`;
+        const res = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+          }
+        });
+        if (!res.ok) {
+          console.warn(`[Yahoo Fetch] Failed to fetch ${key} (${symbol}): HTTP ${res.status}`);
+          continue;
+        }
+        const data: any = await res.json();
+        const meta = data?.chart?.result?.[0]?.meta;
+        if (meta) {
+          const priceVal = meta.regularMarketPrice;
+          const prevCloseVal = meta.chartPreviousClose;
+          if (typeof priceVal === 'number' && typeof prevCloseVal === 'number') {
+            const change = priceVal - prevCloseVal;
+            const pct = (change / prevCloseVal) * 100;
+            
+            const priceStr = priceVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const sign = change >= 0 ? '+' : '';
+            const pctStr = `${sign}${pct.toFixed(2)}%`;
+            result[key as keyof typeof result] = `${priceStr} (${pctStr})`;
+          }
+        }
+      } catch (err: any) {
+        console.warn(`[Yahoo Fetch] Error fetching ${key} (${symbol}):`, err.message || err);
+      }
+    }
+
+    return result;
+  }
 
   // Generate Pre-Market Briefing using real-time grounding
   static async getPreMarketBriefingAI(): Promise<PreMarketBriefing> {
@@ -900,24 +960,40 @@ export class PlatformEngine {
       throw new Error('[PlatformEngine] GEMINI_API_KEY가 설정되지 않아 장전 브리핑을 생성할 수 없습니다.');
     }
 
+    // Fetch actual verified market data
+    const actualIndices = await PlatformEngine.fetchUsIndicesFromYahoo();
+    const actualIndicesFormatted = `
+[실시간 수집된 미국 5대 지수 전 거래일 종가 데이터]
+- 다우존스: ${actualIndices.dow}
+- 나스닥: ${actualIndices.nasdaq}
+- S&P 500: ${actualIndices.sp500}
+- 러셀 2000: ${actualIndices.russell2000}
+- VIX 변동성: ${actualIndices.vix}
+`;
+
     const prompt = `
 당신은 전 세계 퀀트 투자 펀드 및 대한민국 기관 매니저들이 신뢰하는 여의도 최고의 '시황 전략분석관'입니다.
 오늘 날짜는 [${todayDateStr}]입니다.
 
+${actualIndicesFormatted}
+
 [실시간 구글 검색 필수 지침 - Input Control]
-1. 연동된 Google Search Tool을 이용하여 미 증시 야간 마감 5대 지수 수치(다우존스, 나스닥, S&P 500, 러셀 2000, VIX 변동성 지수 및 전일대비 등락률(%)), 환율, 유가, 국채금리, 급등 테마, 코스피/코스닥 연관 팩트를 실시간 검색하십시오.
+1. 연동된 Google Search Tool을 이용하여 미 증시 야간 마감 시황 특징, 환율, 유가, 국채금리, 급등 테마, 코스피/코스닥 연관 팩트를 실시간 검색하십시오.
 2. 미 증시 특징주 및 오늘 아침 개장 직후 가장 강력한 자금 쏠림이 유입될 주도주 및 테마를 분석해 주십시오.
 
 작성 규칙:
 1. 현실성 있고 전문적인 한국 주식 시장의 실전 용어를 사용하여 정밀한 한국어로 작성하십시오.
-2. 지수 수치와 환율, 유가 등은 반드시 실시간 구글 검색결과의 실제 수치(예: "40,843.89 (-0.12%)")를 기반으로 정확히 작성하십시오. 수치를 명확히 조회할 수 없을 경우 해당 지수 수치는 빈 문자열("")로 남겨두십시오. 절대로 임의의 숫자를 지어내거나 추정치를 넣지 마십시오.
-3. 출력 형식은 오직 JSON이어야 하며, 마크다운이나 잡다한 텍스트 없이 유효한 JSON 오브젝트 하나만 리턴해 주십시오.
+2. 위 제공해 드린 [실시간 수집된 미국 5대 지수 전 거래일 종가 데이터]의 수치(예: "40,843.89 (-0.12%)")를 절대 변조, 왜곡, 임의 계산하지 말고, JSON 스키마의 'usSummary' 필드에 정확히 그대로 복사하여 출력해 주십시오. 만약 지수가 "데이터 없음"으로 되어 있다면 빈 문자열이나 숫자를 지어내지 말고 "데이터 없음"을 정확하게 그대로 적으십시오.
+3. 오늘의 핵심 관심 테마(expectedThemes)와 오늘의 핵심 관심 주요 종목(keyStocks)을 정확히 분리하여 각각 배열 형태로 작성해 주십시오.
+4. 주요 종목이 표시되어야 할 영역에 긴 시황 분석이나 연동 매핑 설명글이 들어가지 않도록 주의하십시오. 연결 및 매핑 설명(예: "엔비디아 및 TSMC의 호실적 모멘텀이 지속됨에 따라 SK하...")은 반드시 'leadMapping' 필드에 한하여 작성하십시오.
+5. 출력 형식은 오직 JSON이어야 하며, 마크다운이나 잡다한 텍스트 없이 유효한 JSON 오브젝트 하나만 리턴해 주십시오.
 
 JSON 스키마:
 {
   "summary": "글로벌 매크로 변동 및 미 특징주 쏠림 현상이 오늘 아침 코스피/코스닥 개장 직후 어떤 테마로 수급 집중을 야기할지 2문장 이내 핵심 요약",
   "expectedThemes": ["오늘 아침 장 초반 가장 강력한 자금 쏠림이 유입될 개별 업종/테마명 1", "개별 업종/테마명 2"],
-  "leadMapping": "미국 주도주와 강력한 동조화 랠리를 보일 국내 주요 연계 주도주 및 부품망 소부장 관련 종목 2~3개 매칭 설명",
+  "keyStocks": ["오늘 아침 예상 테마와 직접 연동되어 급등하거나 주도력을 보일 핵심 국내 종목명 1", "핵심 국내 종목명 2", "핵심 국내 종목명 3"],
+  "leadMapping": "위의 예상 테마들과 핵심 주요 종목들이 구체적으로 왜 강력히 동조화 랠리를 보일 것인지, 해당 종목들이 부품망이나 소부장에서 어떤 모멘텀과 기술력, 수혜를 입는 것인지 연결지어 구체적으로 설명하는 핵심 분석 및 근거 서술 문장 (종목명을 단순 나열하지 말고 구체적인 연결 분석을 서술하십시오)",
   "strategyScenario": "시초가 갭상승 추격 금지, 눌림목 이평선 확인 등 트레이더의 정량적 리스크 관리 관점에서의 핵심 수급 대처 가이드라인",
   "usSummary": {
     "dow": "다우존스 종가 수치 및 등락률 (예: 40,843.89 (-0.12%))",
@@ -963,7 +1039,7 @@ JSON 스키마:
 2. 미 증시 특징주 및 오늘 아침 개장 직후 가장 강력한 자금 쏠림이 유입될 주도주 및 테마를 분석해 주십시오.
 
 `)
-          .replace('지수 수치와 환율, 유가 등은 반드시 실시간 구글 검색결과의 실제 수치(예: "40,843.89 (-0.12%)")를 기반으로 정확히 작성하십시오. 수치를 명확히 조회할 수 없을 경우 해당 지수 수치는 빈 문자열("")로 남겨두십시오. 절대로 임의의 숫자를 지어내거나 추정치를 넣지 마십시오.', '지수 수치와 환율, 유가 등은 최신 글로벌 시장 지표를 기반으로 빈 칸 없이 세심하게 채워주십시오.');
+          .replace('위 제공해 드린 [실시간 수집된 미국 5대 지수 전 거래일 종가 데이터]의 수치(예: "40,843.89 (-0.12%)")를 절대 변조, 왜곡, 임의 계산하지 말고, JSON 스키마의 \'usSummary\' 필드에 정확히 그대로 복사하여 출력해 주십시오. 만약 지수가 "데이터 없음"으로 되어 있다면 빈 문자열이나 숫자를 지어내지 말고 "데이터 없음"을 정확하게 그대로 적으십시오.', '미국 5대 지수 종가 데이터는 전달해 드린 [실시간 수집된 미국 5대 지수 전 거래일 종가 데이터]의 실제값을 그대로 복사해 적어 주시고, 환율 및 유가 등은 최신 글로벌 시장 지표를 기반으로 세심하게 채워주십시오.');
 
         const responseNoGrounding = await ai.models.generateContent({
           model: 'gemini-3.6-flash',
@@ -984,6 +1060,20 @@ JSON 스키마:
     try {
       console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON...');
       const parsed = cleanAndParseJson(responseText);
+
+      // Ensure keyStocks exists in parsed
+      if (!parsed.keyStocks || !Array.isArray(parsed.keyStocks)) {
+        parsed.keyStocks = [];
+      }
+
+      // Hard override usSummary with fetched actual indices to guarantee 100% accuracy and prevent any AI hallucinations
+      parsed.usSummary = {
+        dow: actualIndices.dow,
+        nasdaq: actualIndices.nasdaq,
+        sp500: actualIndices.sp500,
+        russell2000: actualIndices.russell2000,
+        vix: actualIndices.vix
+      };
       
       const newBriefing: PreMarketBriefing = {
         id: `briefing_${todayDateStr}`,

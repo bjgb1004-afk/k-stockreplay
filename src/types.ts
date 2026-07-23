@@ -65,6 +65,7 @@ export interface PreMarketBriefing {
   published: boolean;
   summary?: string;
   expectedThemes?: string[];
+  keyStocks?: string[];
   leadMapping?: string;
   strategyScenario?: string;
   usSummary?: {

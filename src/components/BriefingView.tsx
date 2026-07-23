@@ -273,6 +273,8 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
   }
 
   // 관심 테마
+  const aiKeyStocks = Array.isArray((briefing as any).keyStocks) ? (briefing as any).keyStocks : [];
+
   let rawInterestThemes = Array.isArray(briefing.interestThemes) && briefing.interestThemes.length > 0 
     ? briefing.interestThemes 
     : [];
@@ -281,7 +283,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
     rawInterestThemes = [
       {
         theme: aiExpectedThemes.join(' & '),
-        relatedStocks: [aiLeadMapping || '주도주 수급 유입']
+        relatedStocks: aiKeyStocks.length > 0 ? aiKeyStocks : ['주도주 수급 유입']
       }
     ];
   }
