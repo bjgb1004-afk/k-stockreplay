@@ -957,10 +957,14 @@ JSON 스키마:
       console.log('[PreMarket AI] Fallback to non-grounding mode');
 
       try {
-        const nonGroundingPrompt = prompt.replace(
-          '1. 연동된 Google Search Tool을 이용하여 미 증시 야간 마감 지수, 환율, 급등 테마, 코스피/코스닥 관련 주시 팩트를 실시간 검색하십시오.',
-          '1. 최근 글로벌 증시 동향 및 주요 주도주 팩트를 기반으로 오늘 아침 코스피/코스닥 개장 직후 시황 요약 및 대응 전략을 작성하십시오.'
-        );
+        const nonGroundingPrompt = prompt
+          .replace(/\[실시간 구글 검색 필수 지침 - Input Control\][\s\S]*?(?=작성 규칙:)/, `[기본 분석 지침 - Input Control]
+1. 최근 글로벌 증시 동향 및 주요 주도주 팩트를 기반으로 오늘 아침 코스피/코스닥 개장 직후 시황 요약 및 대응 전략을 작성하십시오.
+2. 미 증시 특징주 및 오늘 아침 개장 직후 가장 강력한 자금 쏠림이 유입될 주도주 및 테마를 분석해 주십시오.
+
+`)
+          .replace('지수 수치와 환율, 유가 등은 반드시 실시간 구글 검색결과의 실제 수치(예: "40,843.89 (-0.12%)")를 기반으로 정확히 작성하십시오. 수치를 명확히 조회할 수 없을 경우 해당 지수 수치는 빈 문자열("")로 남겨두십시오. 절대로 임의의 숫자를 지어내거나 추정치를 넣지 마십시오.', '지수 수치와 환율, 유가 등은 최신 글로벌 시장 지표를 기반으로 빈 칸 없이 세심하게 채워주십시오.');
+
         const responseNoGrounding = await ai.models.generateContent({
           model: 'gemini-3.6-flash',
           contents: nonGroundingPrompt,
