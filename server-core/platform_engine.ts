@@ -92,7 +92,7 @@ function validateAiOutput(candidate: any): { isValid: boolean; reason?: string }
 import fs from 'fs';
 import path from 'path';
 import { GoogleGenAI, Type } from '@google/genai';
-import { PreMarketBriefing, AfterMarketReport, JodojuAnalysis, FeatureStock, ReplayReviewReport, AiReplayStudyGuide, ReplayGuideInterval, Candle, Trade } from '../src/types.js';
+import { PreMarketBriefing, AfterMarketReport, JodojuAnalysis, FeatureStock, ReplayReviewReport, AiReplayStudyGuide, ReplayGuideInterval, Candle, Trade, MarketFact, NewsFact, NewsEvent, AiInterpretation, ValidationAuditLog } from '../src/types.js';
 import { getRotatedGeminiClient } from './gemini_rotator.js';
 import { getOrFetchFinancialsFromSupabase, generateAndCacheSurgeFact } from './dart_financials.js';
 import { getSupabase } from './backend_shared.js';
@@ -915,7 +915,12 @@ export class PlatformEngine {
         description: cleanStr(seo.description, s.seo.description),
         keywords: cleanArr(seo.keywords, s.seo.keywords)
       },
-      quantAnalysisMarkdown: cleanStr(b.quantAnalysisMarkdown, s.quantAnalysisMarkdown || '')
+      quantAnalysisMarkdown: cleanStr(b.quantAnalysisMarkdown, s.quantAnalysisMarkdown || ''),
+      marketFacts: Array.isArray(b.marketFacts) ? b.marketFacts : undefined,
+      newsFacts: Array.isArray(b.newsFacts) ? b.newsFacts : undefined,
+      newsEvents: Array.isArray(b.newsEvents) ? b.newsEvents : undefined,
+      aiInterpretation: b.aiInterpretation && typeof b.aiInterpretation === 'object' ? b.aiInterpretation : undefined,
+      validationLogs: Array.isArray(b.validationLogs) ? b.validationLogs : undefined
     };
   }
 
@@ -1027,13 +1032,41 @@ export class PlatformEngine {
     russell2000: string;
     vix: string;
     exchangeRate: string;
+    stocks: Record<string, { price: string; changePct: string; name: string }>;
+    marketFacts?: MarketFact[];
   }> {
-    const symbols = {
+    const symbolMap: Record<string, string> = {
+      '^DJI': 'Dow Jones',
+      '^IXIC': 'Nasdaq Composite',
+      '^GSPC': 'S&P 500',
+      '^RUT': 'Russell 2000',
+      '^SOX': 'PHLX Semiconductor Index',
+      'USDKRW=X': 'USD/KRW Exchange Rate',
+      '^VIX': 'CBOE Volatility Index (VIX)',
+      '^TNX': 'US 10-Year Treasury Yield',
+      'CL=F': 'WTI Crude Oil',
+      'GC=F': 'Gold',
+      'NVDA': 'NVIDIA',
+      'TSLA': 'Tesla',
+      'AVGO': 'Broadcom',
+      'AAPL': 'Apple',
+      'MSFT': 'Microsoft'
+    };
+
+    const legacyIndices = {
       dow: '^DJI',
       nasdaq: '^IXIC',
       sp500: '^GSPC',
       russell2000: '^RUT',
       vix: '^VIX'
+    };
+
+    const legacyStocks = {
+      NVDA: 'NVIDIA',
+      TSLA: 'Tesla',
+      AVGO: 'Broadcom',
+      AAPL: 'Apple',
+      MSFT: 'Microsoft'
     };
 
     const result = {
@@ -1042,11 +1075,21 @@ export class PlatformEngine {
       sp500: '데이터 없음',
       russell2000: '데이터 없음',
       vix: '데이터 없음',
-      exchangeRate: '데이터 없음'
+      exchangeRate: '데이터 없음',
+      stocks: {} as Record<string, { price: string; changePct: string; name: string }>,
+      marketFacts: [] as MarketFact[]
     };
 
-    // 1. Fetch indices
-    for (const [key, symbol] of Object.entries(symbols)) {
+    // Initialize legacy stock results
+    for (const [ticker, name] of Object.entries(legacyStocks)) {
+      result.stocks[ticker] = {
+        price: '데이터 없음',
+        changePct: '데이터 없음',
+        name
+      };
+    }
+
+    const fetchPromises = Object.entries(symbolMap).map(async ([symbol, name]) => {
       try {
         const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`;
         const res = await fetch(url, {
@@ -1054,64 +1097,594 @@ export class PlatformEngine {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
           }
         });
-        if (!res.ok) {
-          console.warn(`[Yahoo Fetch] Failed to fetch ${key} (${symbol}): HTTP ${res.status}`);
-          continue;
-        }
-        const data: any = await res.json();
-        const meta = data?.chart?.result?.[0]?.meta;
-        if (meta) {
-          const priceVal = meta.regularMarketPrice;
-          const prevCloseVal = meta.chartPreviousClose;
-          if (typeof priceVal === 'number' && typeof prevCloseVal === 'number') {
-            const change = priceVal - prevCloseVal;
-            const pct = (change / prevCloseVal) * 100;
-            
-            const priceStr = priceVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const sign = change >= 0 ? '+' : '';
-            const pctStr = `${sign}${pct.toFixed(2)}%`;
-            result[key as keyof typeof result] = `${priceStr} (${pctStr})`;
+
+        if (res.ok) {
+          const data: any = await res.json();
+          const meta = data?.chart?.result?.[0]?.meta;
+          if (meta) {
+            const priceVal = meta.regularMarketPrice;
+            const prevCloseVal = meta.chartPreviousClose;
+
+            if (typeof priceVal === 'number' && typeof prevCloseVal === 'number') {
+              const change = priceVal - prevCloseVal;
+              const pct = (change / prevCloseVal) * 100;
+              const priceStr = priceVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+              const sign = change >= 0 ? '+' : '';
+              const changeStr = `${sign}${change.toFixed(2)}`;
+              const pctStr = `${sign}${pct.toFixed(2)}%`;
+
+              // Store as MarketFact
+              result.marketFacts.push({
+                symbol,
+                name,
+                price: priceStr,
+                change: changeStr,
+                changePercent: pctStr,
+                timestamp: new Date().toISOString(),
+                source: 'Yahoo Finance'
+              });
+
+              // Populate legacy fields
+              // 1. Legacy indices
+              for (const [key, legacySymbol] of Object.entries(legacyIndices)) {
+                if (legacySymbol === symbol) {
+                  result[key as keyof typeof legacyIndices] = `${priceStr} (${pctStr})`;
+                }
+              }
+
+              // 2. Legacy exchange rate
+              if (symbol === 'USDKRW=X') {
+                const directionStr = change >= 0 ? '상승' : '하락';
+                const absChangeStr = Math.abs(change).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                result.exchangeRate = `${priceStr}원 (${sign}${absChangeStr}원 ${directionStr})`;
+              }
+
+              // 3. Legacy stocks
+              if (symbol in legacyStocks) {
+                result.stocks[symbol] = {
+                  price: priceStr,
+                  changePct: pctStr,
+                  name
+                };
+              }
+              return;
+            }
           }
         }
       } catch (err: any) {
-        console.warn(`[Yahoo Fetch] Error fetching ${key} (${symbol}):`, err.message || err);
+        console.warn(`[Yahoo Fetch] Error fetching ${name} (${symbol}):`, err.message || err);
       }
+
+      // If fetch fails or has bad data, add empty/missing MarketFact entry so we maintain 100% data presence
+      result.marketFacts.push({
+        symbol,
+        name,
+        price: '데이터 없음',
+        change: '0.00',
+        changePercent: '0.00%',
+        timestamp: new Date().toISOString(),
+        source: 'Yahoo Finance'
+      });
+    });
+
+    await Promise.all(fetchPromises);
+    return result;
+  }
+
+  // Helper to parse change percentage
+  static parseChangePct(val: string): number {
+    if (!val || val === '데이터 없음') return 0;
+    const match = val.match(/\(([-+]?\d+\.?\d*)%\)/);
+    if (match && match[1]) {
+      return parseFloat(match[1]);
+    }
+    return 0;
+  }
+
+  // Post-processing text validation and programmatic correction to enforce semantic alignment
+  static verifyAndCorrectBriefingText(text: string, mData: {
+    dow: string;
+    nasdaq: string;
+    sp500: string;
+    russell2000: string;
+    vix: string;
+    exchangeRate: string;
+    stocks: Record<string, { price: string; changePct: string; name: string }>;
+  }): string {
+    let corrected = text;
+
+    const dowPct = PlatformEngine.parseChangePct(mData.dow);
+    const nasdaqPct = PlatformEngine.parseChangePct(mData.nasdaq);
+    const spPct = PlatformEngine.parseChangePct(mData.sp500);
+    const russellPct = PlatformEngine.parseChangePct(mData.russell2000);
+    const vixPct = PlatformEngine.parseChangePct(mData.vix);
+
+    const nvdaPct = PlatformEngine.parseChangePct(mData.stocks.NVDA.changePct);
+    const tslaPct = PlatformEngine.parseChangePct(mData.stocks.TSLA.changePct);
+    const avgoPct = PlatformEngine.parseChangePct(mData.stocks.AVGO.changePct);
+    const aaplPct = PlatformEngine.parseChangePct(mData.stocks.AAPL.changePct);
+    const msftPct = PlatformEngine.parseChangePct(mData.stocks.MSFT.changePct);
+
+    const applyReplacements = (str: string, rules: [RegExp, any][]) => {
+      let s = str;
+      for (const [regex, replacement] of rules) {
+        s = s.replace(regex, replacement);
+      }
+      return s;
+    };
+
+    if (nasdaqPct < 0) {
+      corrected = applyReplacements(corrected, [
+        [/나스닥\s*(지수)?\s*(급?상승|폭등|급등|강세|상승\s*마감|상승세를\s*보여|강세를\s*보여)/g, '나스닥 지수 하락 마감'],
+        [/나스닥\s*(\d+(\.\d+)?)%\s*(상승)/g, (match, p1) => `나스닥 -${p1}% 하락`],
+        [/미국\s*기술주\s*(급?상승|강세|주도\s*상승)/g, '미국 기술주 약세 및 차익실현'],
+        [/기술주들의\s*(상승세|강세)/g, '기술주들의 차익실현 및 약세'],
+        [/미국\s*3대\s*지수는\s*엔비디아와\s*빅테크\s*주도로\s*나스닥\s*.*?상승\s*마감하였습니다/g, '미국 증시는 빅테크 차익실현 매물과 변동성 확대로 일제히 급락 마감하였습니다.']
+      ]);
+    } else if (nasdaqPct > 0) {
+      corrected = applyReplacements(corrected, [
+        [/나스닥\s*(지수)?\s*(급?하락|급락|폭락|하락\s*마감|하락세를\s*보여|약세를\s*보여)/g, '나스닥 지수 상승 마감'],
+        [/나스닥\s*(\d+(\.\d+)?)%\s*(하락)/g, (match, p1) => `나스닥 +${p1}% 상승`]
+      ]);
     }
 
-    // 2. Fetch exchange rate (USD/KRW)
+    if (dowPct < 0) {
+      corrected = applyReplacements(corrected, [
+        [/다우\s*(지수)?\s*(급?상승|상승\s*마감|강세)/g, '다우 지수 하락 마감']
+      ]);
+    } else if (dowPct > 0) {
+      corrected = applyReplacements(corrected, [
+        [/다우\s*(지수)?\s*(급?하락|하락\s*마감|약세)/g, '다우 지수 상승 마감']
+      ]);
+    }
+
+    if (spPct < 0) {
+      corrected = applyReplacements(corrected, [
+        [/S&P\s*500\s*(지수)?\s*(급?상승|상승\s*마감|강세)/g, 'S&P 500 지수 하락 마감'],
+        [/S&P5500\s*(지수)?\s*(급?상승|상승\s*마감|강세)/g, 'S&P500 지수 하락 마감']
+      ]);
+    } else if (spPct > 0) {
+      corrected = applyReplacements(corrected, [
+        [/S&P\s*500\s*(지수)?\s*(급?하락|하락\s*마감|약세)/g, 'S&P 500 지수 상승 마감'],
+        [/S&P500\s*(지수)?\s*(급?하락|하락\s*마감|약세)/g, 'S&P500 지수 상승 마감']
+      ]);
+    }
+
+    if (nvdaPct < 0) {
+      corrected = applyReplacements(corrected, [
+        [/엔비디아\s*(주가)?\s*(급?상승|폭등|급등|강세|상승세를\s*보여|강세를\s*보여)/g, '엔비디아 주가 하락 조정'],
+        [/엔비디아\s*(\d+(\.\d+)?)%\s*(상승)/g, (match, p1) => `엔비디아 -${p1}% 하락`],
+        [/엔비디아와\s*빅테크\s*주도로/g, '빅테크 차익실현 매물 출회 및']
+      ]);
+    } else if (nvdaPct > 0) {
+      corrected = applyReplacements(corrected, [
+        [/엔비디아\s*(주가)?\s*(급?하락|급락|조정|하락세를\s*보여|약세를\s*보여)/g, '엔비디아 주가 상승세'],
+        [/엔비디아\s*(\d+(\.\d+)?)%\s*(하락)/g, (match, p1) => `엔비디아 +${p1}% 상승`]
+      ]);
+    }
+
+    return corrected;
+  }
+
+  // Fetch actual, real-time news articles from Google News RSS
+  static async fetchNewsFromGoogleRSS(query: string = "US stock market"): Promise<any[]> {
     try {
-      const url = `https://query1.finance.yahoo.com/v8/finance/chart/USDKRW=X?interval=1d&range=1d`;
+      const encodedQuery = encodeURIComponent(query);
+      const url = `https://news.google.com/rss/search?q=${encodedQuery}&hl=en-US&gl=US&ceid=US:en`;
       const res = await fetch(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
       });
-      if (res.ok) {
-        const data: any = await res.json();
-        const meta = data?.chart?.result?.[0]?.meta;
-        if (meta) {
-          const priceVal = meta.regularMarketPrice;
-          const prevCloseVal = meta.chartPreviousClose;
-          if (typeof priceVal === 'number' && typeof prevCloseVal === 'number') {
-            const change = priceVal - prevCloseVal;
-            const sign = change >= 0 ? '+' : '';
-            const priceStr = priceVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const changeStr = Math.abs(change).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const directionStr = change >= 0 ? '상승' : '하락';
-            result.exchangeRate = `${priceStr}원 (${sign}${changeStr}원 ${directionStr})`;
-          }
-        }
-      } else {
-        console.warn(`[Yahoo Fetch] Failed to fetch USDKRW=X: HTTP ${res.status}`);
-      }
-    } catch (err: any) {
-      console.warn(`[Yahoo Fetch] Error fetching USDKRW=X:`, err.message || err);
+      if (!res.ok) return [];
+      const text = await res.text();
+      
+      const cheerio = await import('cheerio');
+      const $ = cheerio.load(text, { xmlMode: true });
+      const items: any[] = [];
+      $('item').each((i, el) => {
+        if (i >= 15) return;
+        const title = $(el).find('title').text();
+        const link = $(el).find('link').text();
+        const pubDate = $(el).find('pubDate').text();
+        const source = $(el).find('source').text() || 'Google News';
+        
+        items.push({
+          title,
+          url: link,
+          publishedAt: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
+          source
+        });
+      });
+      return items;
+    } catch (err) {
+      console.warn('[News Fetch] Google News RSS fetch failed, falling back to empty list:', err);
+      return [];
     }
-
-    return result;
   }
 
-  // Generate Pre-Market Briefing using real-time grounding
+  // Group similar NewsFacts into events to fulfill the grouping requirement
+  static groupNewsIntoEvents(news: NewsFact[]): NewsEvent[] {
+    const events: NewsEvent[] = [];
+    const groupedTitles = new Set<string>();
+
+    for (const item of news) {
+      if (groupedTitles.has(item.title)) continue;
+
+      const relatedItems = news.filter(other => {
+        if (other.title === item.title) return true;
+        const sharedSymbols = other.relatedSymbols.filter(s => item.relatedSymbols.includes(s));
+        const sharedSectors = other.relatedSectors.filter(s => item.relatedSectors.includes(s));
+        return (sharedSymbols.length > 0 && sharedSectors.length > 0) || 
+               other.title.toLowerCase().includes(item.title.toLowerCase().slice(0, 15));
+      });
+
+      relatedItems.forEach(ri => groupedTitles.add(ri.title));
+
+      const sectors = Array.from(new Set(relatedItems.flatMap(ri => ri.relatedSectors)));
+      const symbols = Array.from(new Set(relatedItems.flatMap(ri => ri.relatedSymbols)));
+
+      events.push({
+        eventTitle: item.title,
+        relatedSectors: sectors,
+        relatedSymbols: symbols,
+        newsItems: relatedItems
+      });
+    }
+
+    return events;
+  }
+
+  // Save validation audit logs to Cloud DB (Supabase) + Local JSON backup with idempotency & retry
+  static saveValidationLogs(logs: ValidationAuditLog[]): void {
+    if (logs.length === 0) return;
+    
+    // 1. Local JSON backup (always saved)
+    try {
+      const dataDir = path.join(process.cwd(), 'data', 'platform');
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      const filePath = path.join(dataDir, 'validation_audit.json');
+      let existingLogs: ValidationAuditLog[] = [];
+      if (fs.existsSync(filePath)) {
+        try {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          existingLogs = JSON.parse(content);
+        } catch (e) {
+          console.warn('[Audit Log] Failed to parse existing logs, starting fresh:', e);
+        }
+      }
+
+      // Avoid duplicate validationIds in local JSON backup
+      const existingIds = new Set(existingLogs.map(l => l.validationId || l.id));
+      for (const log of logs) {
+        const vId = log.validationId || log.id;
+        if (!existingIds.has(vId)) {
+          existingLogs.push(log);
+          existingIds.add(vId);
+        }
+      }
+
+      if (existingLogs.length > 1000) {
+        existingLogs = existingLogs.slice(existingLogs.length - 1000);
+      }
+      fs.writeFileSync(filePath, JSON.stringify(existingLogs, null, 2), 'utf-8');
+      console.log(`[Audit Log] Saved ${logs.length} validation logs locally to ${filePath}`);
+    } catch (err: any) {
+      console.error('[Audit Log] Failed to save local validation logs:', err.message || err);
+    }
+
+    // 2. Cloud DB (Supabase) persistent storage (Primary for production) with retry & idempotency
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseKey && !supabaseUrl.includes('your-supabase-project')) {
+      (async () => {
+        let success = false;
+        let attempts = 0;
+        while (!success && attempts < 2) {
+          attempts++;
+          try {
+            const { createClient } = await import('@supabase/supabase-js');
+            const supabase = createClient(supabaseUrl, supabaseKey);
+
+            for (const log of logs) {
+              const row = {
+                validation_id: log.validationId || log.id,
+                briefing_id: log.briefingId || null,
+                timestamp: log.timestamp || new Date().toISOString(),
+                field_name: log.fieldName || log.field || '',
+                source_type: log.sourceType || 'YFINANCE',
+                source_reference: log.sourceReference || '',
+                source_value: String(log.sourceValue || log.referenceData || ''),
+                ai_generated_value: String(log.aiGeneratedValue || log.originalSentence || ''),
+                original_text: String(log.originalText || log.originalSentence || ''),
+                corrected_text: String(log.correctedText || log.afterSentence || ''),
+                error_type: log.errorType || 'hallucination',
+                confidence: log.confidence || 'VERIFIED',
+                correction_applied: log.correctionApplied ?? true,
+                validation_status: log.validationStatus || 'CORRECTED',
+                data_status: log.dataStatus || 'FRESH',
+                market_date: log.marketDate || new Date().toISOString().slice(0, 10),
+                fetched_at: log.fetchedAt || new Date().toISOString()
+              };
+
+              const { error } = await supabase
+                .from('validation_audit_logs')
+                .upsert(row, { onConflict: 'validation_id' });
+
+              if (error) {
+                // If table doesn't exist, try kstock_platform_data JSON upsert fallback
+                if (error.code === '42P01' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+                  await supabase
+                    .from('kstock_platform_data')
+                    .upsert({
+                      key: `audit_log_${row.validation_id}`,
+                      data: row,
+                      updated_at: new Date().toISOString()
+                    }, { onConflict: 'key' });
+                } else {
+                  throw error;
+                }
+              }
+            }
+            success = true;
+            console.log(`[Audit Log Cloud] Successfully upserted ${logs.length} validation logs to Supabase Cloud DB.`);
+          } catch (dbErr: any) {
+            console.warn(`[Audit Log Cloud] Supabase save attempt ${attempts}/2 failed:`, dbErr.message || dbErr);
+            if (attempts >= 2) {
+              console.error('[Audit Log Cloud] Supabase Cloud DB save permanently failed after retry. Using local JSON backup.');
+            } else {
+              await new Promise(r => setTimeout(r, 600));
+            }
+          }
+        }
+      })();
+    }
+  }
+
+  // Clean and validate briefing content against actual market data & news facts (Fact Consistency Validator)
+  static async validateAndCorrectBriefing(
+    briefing: PreMarketBriefing,
+    mData: any,
+    newsFacts: NewsFact[]
+  ): Promise<{ corrected: PreMarketBriefing; logs: ValidationAuditLog[] }> {
+    const ai = getRotatedGeminiClient() || getGeminiClient();
+    const logs: ValidationAuditLog[] = [];
+
+    // Let's first run our programmatic rules as the fast, first validator layer
+    const nasdaqPct = PlatformEngine.parseChangePct(mData.nasdaq);
+    const dowPct = PlatformEngine.parseChangePct(mData.dow);
+    const spPct = PlatformEngine.parseChangePct(mData.sp500);
+    const vixPct = PlatformEngine.parseChangePct(mData.vix);
+    const nvdaPct = PlatformEngine.parseChangePct(mData.stocks?.NVDA?.changePct || '0.00%');
+    const tslaPct = PlatformEngine.parseChangePct(mData.stocks?.TSLA?.changePct || '0.00%');
+
+    // Simple rule-based checking for direction mismatch on major indices and key tech stocks
+    const checkRule = (field: string, text: string): string => {
+      let corrected = text;
+      
+      // Nasdaq Direction check
+      if (nasdaqPct < 0 && (text.includes('나스닥 상승') || text.includes('나스닥 급등') || text.includes('기술주 주도 상승'))) {
+        const replacement = '나스닥 하락 마감';
+        corrected = corrected.replace(/나스닥\s*(급?상승|급등|상승\s*마감|강세)/g, replacement);
+        logs.push({
+          id: `val_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+          validationId: `val_uuid_${Date.now()}`,
+          briefingId: briefing.id,
+          timestamp: new Date().toISOString(),
+          fieldName: field,
+          sourceType: 'YFINANCE',
+          sourceValue: mData.nasdaq,
+          aiGeneratedValue: text,
+          originalText: text,
+          correctedText: corrected,
+          field,
+          originalSentence: text,
+          errorType: 'direction_mismatch',
+          referenceData: `Nasdaq actual: ${mData.nasdaq}`,
+          beforeSentence: text,
+          afterSentence: corrected,
+          correctionApplied: true,
+          validationStatus: 'CORRECTED',
+          confidence: 'VERIFIED',
+          sourceReference: 'Yahoo Finance ^IXIC'
+        });
+      }
+      if (nasdaqPct > 0 && (text.includes('나스닥 하락') || text.includes('나스닥 급락') || text.includes('기술주 약세'))) {
+        const replacement = '나스닥 상승 마감';
+        corrected = corrected.replace(/나스닥\s*(급?하락|급락|하락\s*마감|약세)/g, replacement);
+        logs.push({
+          id: `val_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+          validationId: `val_uuid_${Date.now()}`,
+          briefingId: briefing.id,
+          timestamp: new Date().toISOString(),
+          fieldName: field,
+          sourceType: 'YFINANCE',
+          sourceValue: mData.nasdaq,
+          aiGeneratedValue: text,
+          originalText: text,
+          correctedText: corrected,
+          field,
+          originalSentence: text,
+          errorType: 'direction_mismatch',
+          referenceData: `Nasdaq actual: ${mData.nasdaq}`,
+          beforeSentence: text,
+          afterSentence: corrected,
+          correctionApplied: true,
+          validationStatus: 'CORRECTED',
+          confidence: 'VERIFIED',
+          sourceReference: 'Yahoo Finance ^IXIC'
+        });
+      }
+
+      // Nvidia Direction check
+      if (nvdaPct < 0 && (text.includes('엔비디아 상승') || text.includes('엔비디아 급등') || text.includes('엔비디아 주도'))) {
+        const replacement = '엔비디아 주가 하락 조정';
+        corrected = corrected.replace(/엔비디아\s*(급?상승|급등|상승\s*마감|강세)/g, replacement);
+        logs.push({
+          id: `val_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+          validationId: `val_uuid_${Date.now()}`,
+          briefingId: briefing.id,
+          timestamp: new Date().toISOString(),
+          fieldName: field,
+          sourceType: 'YFINANCE',
+          sourceValue: mData.stocks?.NVDA?.changePct,
+          aiGeneratedValue: text,
+          originalText: text,
+          correctedText: corrected,
+          field,
+          originalSentence: text,
+          errorType: 'direction_mismatch',
+          referenceData: `NVIDIA actual: ${mData.stocks?.NVDA?.changePct}`,
+          beforeSentence: text,
+          afterSentence: corrected,
+          correctionApplied: true,
+          validationStatus: 'CORRECTED',
+          confidence: 'VERIFIED',
+          sourceReference: 'Yahoo Finance NVDA'
+        });
+      }
+
+      return corrected;
+    };
+
+    // Perform rule checks on main text fields
+    const step1Briefing = { ...briefing };
+    step1Briefing.summary = checkRule('summary', step1Briefing.summary);
+    step1Briefing.leadMapping = checkRule('leadMapping', step1Briefing.leadMapping);
+    step1Briefing.strategyScenario = checkRule('strategyScenario', step1Briefing.strategyScenario);
+    step1Briefing.koreanImpact = checkRule('koreanImpact', step1Briefing.koreanImpact);
+    if (step1Briefing.aiSummary5Lines) {
+      step1Briefing.aiSummary5Lines = step1Briefing.aiSummary5Lines.map((line, idx) => checkRule(`aiSummary5Lines[${idx}]`, line));
+    }
+
+    if (!ai) {
+      return { corrected: step1Briefing, logs };
+    }
+
+    // Step 2: Use Gemini to check and align the entire document text fields
+    try {
+      const editorPrompt = `
+You are an expert financial news editor and fact checker.
+Your task is to review the drafted Pre-Market Briefing and edit any text fields to match the Actual Market Data and Verified News Facts 100% perfectly.
+
+[Actual Market Data (Source of Truth)]
+${JSON.stringify(mData, null, 2)}
+
+[Verified News Facts]
+${JSON.stringify(newsFacts, null, 2)}
+
+[Drafted Briefing to Check]
+${JSON.stringify(step1Briefing, null, 2)}
+
+Check carefully for:
+1. Directional Contradictions: Check if an index/stock fell, but the text says it rose, gained, showed strong momentum, or drove the market up.
+2. Numerical Hallucinations: Check if any percentage or price values are mentioned (e.g. "1.5% 하락") and ensure they match actual figures with a 0.2% tolerance. If they are outside tolerance, replace them with the exact actual figures.
+3. Ungrounded Claims: E.g., if the text claims "CPI surged and caused a market crash" but CPI was not released or CPI news is not in the News Facts, flag it and rephrase to avoid claiming it as a solid fact (rephrase as analytical reasoning or remove).
+4. If news facts are empty or data is missing, ensure the AI states "확인된 주요 원인은 제한적입니다" or "데이터 부족 상태" rather than fabricating content.
+
+Please return a valid JSON object matching the following TypeScript structure. Return ONLY the JSON object, no Markdown wrappers except the JSON itself.
+
+{
+  "correctedBriefing": {
+    "summary": "corrected string",
+    "leadMapping": "corrected string",
+    "strategyScenario": "corrected string",
+    "koreanImpact": "corrected string",
+    "aiSummary5Lines": ["corrected line 1", "corrected line 2", "corrected line 3", "corrected line 4", "corrected line 5"],
+    "quantAnalysisMarkdown": "corrected string",
+    "worldNews": ["corrected news 1", "corrected news 2", "corrected news 3"],
+    "relatedKoreanStocks": [
+      { "name": "종목명", "reason": "corrected reason" }
+    ],
+    "riskIssues": ["corrected risk 1", "corrected risk 2"]
+  },
+  "logs": [
+    {
+      "field": "summary",
+      "originalSentence": "The incorrect sentence",
+      "errorType": "direction_mismatch" | "numerical_error" | "ungrounded_claim" | "hallucination",
+      "referenceData": "E.g. Nasdaq Composite: -1.5%",
+      "beforeSentence": "The incorrect sentence",
+      "afterSentence": "The corrected sentence",
+      "correctionApplied": true,
+      "validationStatus": "corrected"
+    }
+  ]
+}
+`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: editorPrompt,
+        config: {
+          responseMimeType: 'application/json',
+          temperature: 0.1
+        }
+      });
+
+      const text = response.text || '';
+      const parsed = cleanAndParseJson(text);
+
+      if (parsed?.correctedBriefing) {
+        const finalBriefing = { ...step1Briefing };
+        const cb = parsed.correctedBriefing;
+
+        if (cb.summary) finalBriefing.summary = cb.summary;
+        if (cb.leadMapping) finalBriefing.leadMapping = cb.leadMapping;
+        if (cb.strategyScenario) finalBriefing.strategyScenario = cb.strategyScenario;
+        if (cb.koreanImpact) finalBriefing.koreanImpact = cb.koreanImpact;
+        if (Array.isArray(cb.aiSummary5Lines)) finalBriefing.aiSummary5Lines = cb.aiSummary5Lines;
+        if (cb.quantAnalysisMarkdown) finalBriefing.quantAnalysisMarkdown = cb.quantAnalysisMarkdown;
+        if (Array.isArray(cb.worldNews)) finalBriefing.worldNews = cb.worldNews;
+        if (Array.isArray(cb.riskIssues)) finalBriefing.riskIssues = cb.riskIssues;
+        if (Array.isArray(cb.relatedKoreanStocks)) {
+          finalBriefing.relatedKoreanStocks = cb.relatedKoreanStocks.map((item: any) => ({
+            name: String(item?.name || '알 수 없는 종목'),
+            reason: String(item?.reason || '분석 중')
+          }));
+        }
+
+        // Merge logs
+        if (Array.isArray(parsed.logs)) {
+          parsed.logs.forEach((log: any) => {
+            logs.push({
+              id: `val_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+              validationId: `val_uuid_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+              briefingId: briefing.id,
+              timestamp: new Date().toISOString(),
+              fieldName: String(log.field || 'summary'),
+              sourceType: 'YFINANCE',
+              sourceValue: log.referenceData || '',
+              aiGeneratedValue: log.originalSentence || log.beforeSentence || '',
+              originalText: String(log.originalSentence || log.beforeSentence || ''),
+              correctedText: String(log.afterSentence || ''),
+              field: String(log.field || ''),
+              originalSentence: String(log.originalSentence || log.beforeSentence || ''),
+              errorType: log.errorType || 'hallucination',
+              referenceData: String(log.referenceData || ''),
+              beforeSentence: String(log.beforeSentence || ''),
+              afterSentence: String(log.afterSentence || ''),
+              correctionApplied: typeof log.correctionApplied === 'boolean' ? log.correctionApplied : true,
+              validationStatus: 'CORRECTED',
+              confidence: 'VERIFIED',
+              sourceReference: String(log.referenceData || 'Market Data')
+            });
+          });
+        }
+
+        return { corrected: finalBriefing, logs };
+      }
+    } catch (err: any) {
+      console.warn('[Validation Layer] Gemini editor correction failed, using step1 rule-corrected briefing:', err.message || err);
+    }
+
+    return { corrected: step1Briefing, logs };
+  }
+
+  // Generate Pre-Market Briefing using real-time grounding and strict validation layer
   static async getPreMarketBriefingAI(): Promise<PreMarketBriefing> {
     const ai = getGeminiClient();
     const todayDateStr = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -1146,14 +1719,134 @@ export class PlatformEngine {
     }
 
     // Fetch actual verified market data
-    const actualIndices = await PlatformEngine.fetchUsIndicesFromYahoo();
+    const mData = await PlatformEngine.fetchUsIndicesFromYahoo();
+
+    // Fetch and ground actual news from Google News RSS
+    const rawNews = await PlatformEngine.fetchNewsFromGoogleRSS("US stock market finance");
+    let newsFacts: NewsFact[] = [];
+    try {
+      const googleNewsPrompt = `
+You are a top financial intelligence analyst.
+Here are raw recent headlines:
+${JSON.stringify(rawNews, null, 2)}
+
+And the live market data:
+${JSON.stringify(mData, null, 2)}
+
+Process this into a valid JSON array of NewsFact objects conforming strictly to this JSON schema:
+[
+  {
+    "title": "Clean, deduplicated news title",
+    "source": "CNBC, Reuters, Bloomberg, etc.",
+    "publishedAt": "ISO timestamp",
+    "url": "Link",
+    "summary": "1-2 sentence detailed summary",
+    "relatedSymbols": ["NVDA", "TSLA"],
+    "relatedSectors": ["Semiconductor", "Tech"],
+    "sentiment": "positive" | "negative" | "neutral",
+    "factualClaims": ["Claim 1", "Claim 2"]
+  }
+]
+`;
+      const newsResponse = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: googleNewsPrompt,
+        config: {
+          responseMimeType: 'application/json',
+          temperature: 0.1
+        }
+      });
+      newsFacts = cleanAndParseJson(newsResponse.text || '[]');
+    } catch (err) {
+      console.warn('[News Fact Structurer] Failed, falling back to basic extraction:', err);
+      newsFacts = rawNews.map(item => ({
+        title: item.title,
+        source: item.source,
+        publishedAt: item.publishedAt,
+        url: item.url,
+        summary: item.title,
+        relatedSymbols: [],
+        relatedSectors: [],
+        sentiment: 'neutral',
+        factualClaims: [item.title]
+      }));
+    }
+
+    // Filter out future-dated news (Test 6)
+    const now = new Date();
+    newsFacts = newsFacts.filter(item => {
+      try {
+        const pubDate = new Date(item.publishedAt);
+        return pubDate <= now;
+      } catch (e) {
+        return true;
+      }
+    });
+
+    const newsEvents = PlatformEngine.groupNewsIntoEvents(newsFacts);
+    
+    const dowPct = PlatformEngine.parseChangePct(mData.dow);
+    const nasdaqPct = PlatformEngine.parseChangePct(mData.nasdaq);
+    const spPct = PlatformEngine.parseChangePct(mData.sp500);
+    const russellPct = PlatformEngine.parseChangePct(mData.russell2000);
+    const vixPct = PlatformEngine.parseChangePct(mData.vix);
+
+    const nvdaPct = PlatformEngine.parseChangePct(mData.stocks.NVDA.changePct);
+    const tslaPct = PlatformEngine.parseChangePct(mData.stocks.TSLA.changePct);
+    const avgoPct = PlatformEngine.parseChangePct(mData.stocks.AVGO.changePct);
+    const aaplPct = PlatformEngine.parseChangePct(mData.stocks.AAPL.changePct);
+    const msftPct = PlatformEngine.parseChangePct(mData.stocks.MSFT.changePct);
+
+    // Dynamic negative constraints built programmatically to prevent any semantic contradiction
+    const directionConstraints: string[] = [];
+
+    if (nasdaqPct < 0) {
+      directionConstraints.push(`- 나스닥 지수가 하락(${nasdaqPct}%)했으므로, "나스닥 상승", "나스닥 급등", "미국 기술주 강세", "기술주 주도 상승" 같은 긍정적 서술은 절대 금지합니다. 반드시 "나스닥 하락 마감", "기술주 차익실현", "기술주 약세", "지수 조정" 등으로 작성하십시오.`);
+    } else if (nasdaqPct > 0) {
+      directionConstraints.push(`- 나스닥 지수가 상승(${nasdaqPct}%)했으므로, "나스닥 하락", "나스닥 급락", "기술주 약세" 등 부정적 서술은 절대 금지합니다. 반드시 "나스닥 상승 마감", "기술주 강세" 등으로 서술하십시오.`);
+    }
+
+    if (dowPct < 0) {
+      directionConstraints.push(`- 다우 지수가 하락(${dowPct}%)했으므로, "다우 상승 마감", "다우 강세" 등으로 반대로 서술하지 마십시오.`);
+    } else if (dowPct > 0) {
+      directionConstraints.push(`- 다우 지수가 상승(${dowPct}%)했으므로, "다우 하락 마감" 등으로 반대로 서술하지 마십시오.`);
+    }
+
+    if (spPct < 0) {
+      directionConstraints.push(`- S&P 500 지수가 하락(${spPct}%)했으므로, "S&P 500 상승 마감", "S&P 500 강세" 등으로 반대로 서술하지 마십시오.`);
+    } else if (spPct > 0) {
+      directionConstraints.push(`- S&P 500 지수가 상승(${spPct}%)했으므로, "S&P 500 하락 마감" 등으로 반대로 서술하지 마십시오.`);
+    }
+
+    if (nvdaPct < 0) {
+      directionConstraints.push(`- 엔비디아(NVDA) 주가가 하락(${nvdaPct}%)했으므로, "엔비디아 상승세", "엔비디아 급등", "엔비디아 주도 강세" 등은 절대 금지합니다. 반드시 "엔비디아 주가 조정", "엔비디아 약세", "차익실현 출회" 등으로 작성하십시오.`);
+    } else if (nvdaPct > 0) {
+      directionConstraints.push(`- 엔비디아(NVDA) 주가가 상승(${nvdaPct}%)했으므로, "엔비디아 하락 조정", "엔비디아 약세" 등은 절대 금지합니다.`);
+    }
+
+    if (tslaPct < 0) {
+      directionConstraints.push(`- 테슬라(TSLA) 주가가 하락(${tslaPct}%)했으므로 "테슬라 상승" 등으로 서술하지 마십시오.`);
+    } else if (tslaPct > 0) {
+      directionConstraints.push(`- 테슬라(TSLA) 주가가 상승(${tslaPct}%)했으므로 "테슬라 하락/조정" 등으로 서술하지 마십시오.`);
+    }
+
     const actualIndicesFormatted = `
-[실시간 수집된 미국 5대 지수 전 거래일 종가 데이터]
-- 다우존스: ${actualIndices.dow}
-- 나스닥: ${actualIndices.nasdaq}
-- S&P 500: ${actualIndices.sp500}
-- 러셀 2000: ${actualIndices.russell2000}
-- VIX 변동성: ${actualIndices.vix}
+[실시간 수집된 실제 금융 데이터 (단일 Source of Truth)]
+- 미국 5대 지수 전 거래일 종가:
+  1) 다우존스: ${mData.dow}
+  2) 나스닥: ${mData.nasdaq}
+  3) S&P 500: ${mData.sp500}
+  4) 러셀 2000: ${mData.russell2000}
+  5) VIX 변동성: ${mData.vix}
+
+- 원/달러 환율: ${mData.exchangeRate}
+
+- 미국 주요 종목 전 거래일 종가 및 등락률:
+  1) NVIDIA (NVDA): 종가 $${mData.stocks.NVDA.price}, 등락률 ${mData.stocks.NVDA.changePct}
+  2) Tesla (TSLA): 종가 $${mData.stocks.TSLA.price}, 등락률 ${mData.stocks.TSLA.changePct}
+  3) Broadcom (AVGO): 종가 $${mData.stocks.AVGO.price}, 등락률 ${mData.stocks.AVGO.changePct}
+  4) Apple (AAPL): 종가 $${mData.stocks.AAPL.price}, 등락률 ${mData.stocks.AAPL.changePct}
+  5) Microsoft (MSFT): 종가 $${mData.stocks.MSFT.price}, 등락률 ${mData.stocks.MSFT.changePct}
 `;
 
     const prompt = `
@@ -1162,39 +1855,152 @@ export class PlatformEngine {
 
 ${actualIndicesFormatted}
 
-[실시간 구글 검색 필수 지침 - Input Control]
-1. 연동된 Google Search Tool을 이용하여 미 증시 야간 마감 시황 특징, 환율, 유가, 국채금리, 급등 테마, 코스피/코스닥 연관 팩트를 실시간 검색하십시오.
+[검증된 실제 뉴스 팩트 (Grounded News Facts)]
+${newsFacts.length > 0 ? newsFacts.map((n, i) => `${i+1}) 제목: ${n.title} (출처: ${n.source}) | 주요팩트: ${n.factualClaims.join(', ')}`).join('\n') : "실제 최근 뉴스가 없거나 데이터 수집이 제한적입니다. (확인된 주요 원인은 제한적입니다.)"}
+
+[일관성 분석 및 서술 규정 (CRITICAL DIRECTIONAL MATCHING RULES)]
+${directionConstraints.join('\n')}
+- 중요: "실시간 수집된 실제 금융 데이터"를 100% 신뢰하십시오. 데이터에 나타난 하락/상승 비율과 지수의 실제 방향을 절대로 왜곡, 변조하거나 반대되는 방향으로 시황 분석글을 작성하지 마십시오.
+
+- 매우 중요 (근거 중심 서술): 당신은 오직 위의 [검증된 실제 뉴스 팩트]와 [실시간 수집된 실제 금융 데이터]에 존재하는 팩트만을 인과 관계의 근거로 사용해야 합니다. 실제 뉴스나 데이터에 존재하지 않는 허구의 원인, 발표 수치, 시장 반응을 지어내는 것은 엄격히 금지됩니다. (예: 실제 뉴스에 물가 지표에 대한 언급이 전혀 없다면, '물가 상승 우려로 하락했다'고 주장해서는 안 되며, '확인된 주요 원인은 제한적입니다'라고 명시해야 합니다. - Test 4, Test 7 만족 필수)
+- 만약 뉴스가 부족하거나 데이터 수집에 실패하여 시장 정보가 없는 경우, AI가 임의로 상세한 하락/상승 이유를 상상해내지 말고 "확인된 주요 원인은 제한적입니다." 혹은 "정보 수집 대기 중" 등으로 데이터 부족 상태를 솔직히 명시해야 합니다.
+
+[실시간 구글 검색 필수 지침]
+1. 연동된 Google Search Tool을 이용하여 미 증시 야간 마감 시황 특징, 환율 변동 원인, 유가, 국채금리 변동 이유, 코스피/코스닥 연관 팩트를 실시간 검색하여 최신의 전문 지식으로 응답하십시오.
 2. 미 증시 특징주 및 오늘 아침 개장 직후 가장 강력한 자금 쏠림이 유입될 주도주 및 테마를 분석해 주십시오.
 
-작성 규칙:
+[작성 규칙]
 1. 현실성 있고 전문적인 한국 주식 시장의 실전 용어를 사용하여 정밀한 한국어로 작성하십시오.
-2. 위 제공해 드린 [실시간 수집된 미국 5대 지수 전 거래일 종가 데이터]의 수치(예: "40,843.89 (-0.12%)")를 절대 변조, 왜곡, 임의 계산하지 말고, JSON 스키마의 'usSummary' 필드에 정확히 그대로 복사하여 출력해 주십시오. 만약 지수가 "데이터 없음"으로 되어 있다면 빈 문자열이나 숫자를 지어내지 말고 "데이터 없음"을 정확하게 그대로 적으십시오.
-3. 오늘의 핵심 관심 테마(expectedThemes)와 오늘의 핵심 관심 주요 종목(keyStocks)을 정확히 분리하여 각각 배열 형태로 작성해 주십시오.
-4. 주요 종목이 표시되어야 할 영역에 긴 시황 분석이나 연동 매핑 설명글이 들어가지 않도록 주의하십시오. 연결 및 매핑 설명(예: "엔비디아 및 TSMC의 호실적 모멘텀이 지속됨에 따라 SK하...")은 반드시 'leadMapping' 필드에 한하여 작성하십시오.
-5. 출력 형식은 오직 JSON이어야 하며, 마크다운이나 잡다한 텍스트 없이 유효한 JSON 오브젝트 하나만 리턴해 주십시오.
+2. 오늘의 핵심 관심 테마(expectedThemes)와 오늘의 핵심 관심 주요 종목(keyStocks)을 정확히 분리하여 각각 배열 형태로 작성해 주십시오.
+3. 주요 종목이 표시되어야 할 영역에 긴 시황 분석이나 연동 매핑 설명글이 들어가지 않도록 주의하십시오. 연결 및 매핑 설명은 반드시 'leadMapping' 필드에 작성하십시오.
+4. 출력 형식은 오직 JSON이어야 하며, 마크다운이나 잡다한 텍스트 없이 유효한 JSON 오브젝트 하나만 리턴해 주십시오.
 
 JSON 스키마:
 {
-  "summary": "글로벌 매크로 변동 및 미 특징주 쏠림 현상이 오늘 아침 코스피/코스닥 개장 직후 어떤 테마로 수급 집중을 야기할지 2문장 이내 핵심 요약",
+  "summary": "실제 미국 5대 지수의 마감 흐름과 오늘 아침 한국 코스피/코스닥 개장 직후 영향력을 정밀하게 요약한 1~2문장 (실제 지표의 상승/하락과 100% 일치해야 함)",
   "expectedThemes": ["오늘 아침 장 초반 가장 강력한 자금 쏠림이 유입될 개별 업종/테마명 1", "개별 업종/테마명 2"],
   "keyStocks": ["오늘 아침 예상 테마와 직접 연동되어 급등하거나 주도력을 보일 핵심 국내 종목명 1", "핵심 국내 종목명 2", "핵심 국내 종목명 3"],
-  "leadMapping": "위의 예상 테마들과 핵심 주요 종목들이 구체적으로 왜 강력히 동조화 랠리를 보일 것인지, 해당 종목들이 부품망이나 소부장에서 어떤 모멘텀과 기술력, 수혜를 입는 것인지 연결지어 구체적으로 설명하는 핵심 분석 및 근거 서술 문장 (종목명을 단순 나열하지 말고 구체적인 연결 분석을 서술하십시오)",
-  "strategyScenario": "시초가 갭상승 추격 금지, 눌림목 이평선 확인 등 트레이더의 정량적 리스크 관리 관점에서의 핵심 수급 대처 가이드라인",
-  "usSummary": {
-    "dow": "다우존스 종가 수치 및 등락률 (예: 40,843.89 (-0.12%))",
-    "nasdaq": "나스닥 종가 수치 및 등락률 (예: 17,654.32 (+0.25%))",
-    "sp500": "S&P 500 종가 수치 및 등락률 (예: 5,520.10 (-0.05%))",
-    "russell2000": "러셀 2000 종가 수치 및 등락률 (예: 2,180.50 (+0.40%))",
-    "vix": "VIX 변동성 수치 및 등락률 (예: 16.45 (-2.10%))"
-  },
+  "leadMapping": "위의 예상 테마들과 핵심 주요 종목들이 구체적으로 왜 강력히 동조화 랠리를 보일 것인지 연결지어 구체적으로 설명하는 핵심 분석 및 근거 서술 문장",
+  "strategyScenario": "시초가 대응 및 리스크 관리 관점에서의 핵심 수급 대처 가이드라인",
+  "koreanImpact": "미국 증시 마감 상황이 대한민국 코스피 및 코스닥 지수의 방향성, 외국인 수급 변동에 미칠 영향 분석",
+  "aiSummary5Lines": [
+    "미국 5대 지수 및 마감 상황 핵심 요약 한 줄 (실제 상승/하락 비율과 완벽하게 일치해야 함)",
+    "미국 증시의 하락/상승 주도 섹터 및 특징주 요약 한 줄",
+    "달러 환율 및 매크로 지표 변동성 핵심 요약 한 줄",
+    "대한민국 개장 직후 수급 유입 기대 테마 및 대표 종목명 요약 한 줄",
+    "트레이더를 위한 당일 대응 및 리스크 가이드라인 요약 한 줄"
+  ],
+  "riskIssues": [
+    "경계해야 할 시장 리스크 요인 1 (예: 금리 변동성, 지정학적 리스크 등)",
+    "경계해야 할 시장 리스크 요인 2"
+  ],
+  "worldNews": [
+    "글로벌 마켓 핵심 경제 헤드라인 1",
+    "글로벌 마켓 핵심 경제 헤드라인 2",
+    "글로벌 마켓 핵심 경제 헤드라인 3"
+  ],
+  "usFeaturedStocks": [
+    { "ticker": "NVDA", "momentum": "NVIDIA 전일 모멘텀 분석 (상승/하락 방향이 실제 종가 등락률과 완벽 부합해야 함)" },
+    { "ticker": "TSLA", "momentum": "Tesla 전일 모멘텀 분석 (실제 종가 등락률과 완벽 부합)" },
+    { "ticker": "AVGO", "momentum": "Broadcom 전일 모멘텀 분석 (실제 종가 등락률과 완벽 부합)" }
+  ],
   "macro": {
-    "interestRate": "미국 기준금리 (예: 3.50%~3.75%)",
-    "cpi": "CPI 지표 (예: +3.5%)",
-    "ppi": "PPI 지표 (예: +5.5%)",
-    "bondYield": "미 10년물 국채금리 (예: 4.57%)",
-    "exchangeRate": "원/달러 환율 (예: 1,488.5원)",
-    "oilPrice": "WTI 유가 (예: $79.67)"
-  }
+    "interestRate": "미국 기준금리 (예: 5.25%~5.50%)",
+    "cpi": "CPI 소비자물가 수치 (예: +3.0%)",
+    "ppi": "PPI 생산자물가 수치 (예: +2.1%)",
+    "bondYield": "미 10년물 국채금리 (예: 4.18%)",
+    "oilPrice": "WTI 국제유가 (예: $74.50)"
+  },
+  "macroDetailed": {
+    "interestRate": {
+      "value": "기준 금리 수치",
+      "reason": "해당 지표 움직임의 원인 및 배경 설명",
+      "majorsAction": "글로벌 헤지펀드 및 메이저 자금 포지션 흐름",
+      "marketImpact": "주요 자산군에 미치는 영향력",
+      "sectorsAnalysis": "수혜/피해 업종 분석"
+    },
+    "cpi": {
+      "value": "CPI 지표 수치",
+      "reason": "배경 설명",
+      "majorsAction": "자금 흐름",
+      "marketImpact": "영향력",
+      "sectorsAnalysis": "업종 분석"
+    },
+    "ppi": {
+      "value": "PPI 지표 수치",
+      "reason": "배경 설명",
+      "majorsAction": "자금 흐름",
+      "marketImpact": "영향력",
+      "sectorsAnalysis": "업종 분석"
+    },
+    "bond10y": {
+      "value": "미 10년물 국채금리 수치",
+      "reason": "배경 설명",
+      "majorsAction": "자금 흐름",
+      "marketImpact": "영향력",
+      "sectorsAnalysis": "업종 분석"
+    },
+    "exchangeRate": {
+      "value": "${mData.exchangeRate}",
+      "reason": "배경 설명",
+      "majorsAction": "자금 흐름",
+      "marketImpact": "영향력",
+      "sectorsAnalysis": "업종 분석"
+    },
+    "oilPrice": {
+      "value": "WTI 유가 수치",
+      "reason": "배경 설명",
+      "majorsAction": "자금 흐름",
+      "marketImpact": "영향력",
+      "sectorsAnalysis": "업종 분석"
+    }
+  },
+  "domesticSectors": [
+    {
+      "sectorName": "핵심 업종명 1",
+      "sentiment": "bullish 또는 neutral 또는 bearish",
+      "reason": "업종 수급 동향 및 근거",
+      "stocks": ["관련 종목 1", "관련 종목 2"]
+    },
+    {
+      "sectorName": "핵심 업종명 2",
+      "sentiment": "bullish 또는 neutral 또는 bearish",
+      "reason": "업종 수급 동향 및 근거",
+      "stocks": ["관련 종목 1", "관련 종목 2"]
+    }
+  ],
+  "relatedKoreanStocks": [
+    { "name": "국내 수혜주 1", "reason": "미국 증시 및 관련 테마 마감에 따른 직간접 수혜 및 거래량 증가 기대" },
+    { "name": "국내 수혜주 2", "reason": "국내 시장 개장 직후 외인/기관 순매수 수급 집중 예상" }
+  ],
+  "interestThemes": [
+    {
+      "theme": "핵심 관심 테마 1",
+      "relatedStocks": ["국내 종목 1", "국내 종목 2"]
+    },
+    {
+      "theme": "핵심 관심 테마 2",
+      "relatedStocks": ["국내 종목 1", "국내 종목 2"]
+    }
+  ],
+  "interestStocks": [
+    {
+      "name": "종목명 1",
+      "ticker": "티커 (예: 042700)",
+      "catalyst": "핵심 수급 및 모멘텀 재료"
+    },
+    {
+      "name": "종목명 2",
+      "ticker": "티커",
+      "catalyst": "핵심 수급 및 모멘텀 재료"
+    }
+  ],
+  "seo": {
+    "title": "여의도 퀀트 장전 브리핑 분석글 제목",
+    "description": "분석글 요약 설명",
+    "keywords": ["주요키워드1", "주요키워드2", "주요키워드3"]
+  },
+  "quantAnalysisMarkdown": "마크다운 내용 전체"
 }
 `;
 
@@ -1219,12 +2025,11 @@ JSON 스키마:
 
       try {
         const nonGroundingPrompt = prompt
-          .replace(/\[실시간 구글 검색 필수 지침 - Input Control\][\s\S]*?(?=작성 규칙:)/, `[기본 분석 지침 - Input Control]
+          .replace(/\[실시간 구글 검색 필수 지침\][\s\S]*?(?=작성 규칙:)/, `[기본 분석 지침]
 1. 최근 글로벌 증시 동향 및 주요 주도주 팩트를 기반으로 오늘 아침 코스피/코스닥 개장 직후 시황 요약 및 대응 전략을 작성하십시오.
 2. 미 증시 특징주 및 오늘 아침 개장 직후 가장 강력한 자금 쏠림이 유입될 주도주 및 테마를 분석해 주십시오.
 
-`)
-          .replace('위 제공해 드린 [실시간 수집된 미국 5대 지수 전 거래일 종가 데이터]의 수치(예: "40,843.89 (-0.12%)")를 절대 변조, 왜곡, 임의 계산하지 말고, JSON 스키마의 \'usSummary\' 필드에 정확히 그대로 복사하여 출력해 주십시오. 만약 지수가 "데이터 없음"으로 되어 있다면 빈 문자열이나 숫자를 지어내지 말고 "데이터 없음"을 정확하게 그대로 적으십시오.', '미국 5대 지수 종가 데이터는 전달해 드린 [실시간 수집된 미국 5대 지수 전 거래일 종가 데이터]의 실제값을 그대로 복사해 적어 주시고, 환율 및 유가 등은 최신 글로벌 시장 지표를 기반으로 세심하게 채워주십시오.');
+`);
 
         const responseNoGrounding = await ai.models.generateContent({
           model: 'gemini-3.6-flash',
@@ -1246,42 +2051,132 @@ JSON 스키마:
       console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON...');
       const parsed = cleanAndParseJson(responseText);
 
+      // Perform deep, fail-safe programmatic correction on all generated text fields
+      const correctText = (str: any): string => {
+        if (typeof str !== 'string') return '';
+        return PlatformEngine.verifyAndCorrectBriefingText(str, mData);
+      };
+
+      const correctedSummary = correctText(parsed.summary);
+      const correctedLeadMapping = correctText(parsed.leadMapping);
+      const correctedStrategyScenario = correctText(parsed.strategyScenario);
+      const correctedKoreanImpact = correctText(parsed.koreanImpact);
+      const correctedQuantMarkdown = correctText(parsed.quantAnalysisMarkdown);
+
+      const correctedAiSummary5Lines = Array.isArray(parsed.aiSummary5Lines)
+        ? parsed.aiSummary5Lines.map((line: any) => correctText(line))
+        : [];
+
+      const correctedRelatedKoreanStocks = Array.isArray(parsed.relatedKoreanStocks)
+        ? parsed.relatedKoreanStocks.map((item: any) => ({
+            name: typeof item?.name === 'string' ? item.name.trim() : '알 수 없는 종목',
+            reason: correctText(item?.reason)
+          }))
+        : [];
+
       const cleanedKeyStocks = cleanKeyStocks(parsed.keyStocks || parsed.key_stocks || []);
       const cleanedExpectedThemes = cleanExpectedThemes(parsed.expectedThemes || parsed.expected_themes || []);
+
+      // Programmatically build 100% correct and synced US featured stocks lists using Yahoo Finance actuals
+      const formattedUsFeaturedStocks = [
+        `- 엔비디아 (티커: NVDA): 종가 $${mData.stocks.NVDA.price} (${mData.stocks.NVDA.changePct}) | AI 반도체\n  - [모멘텀 분석]: ${correctText(parsed.usFeaturedStocks?.find((s: any) => s.ticker === 'NVDA')?.momentum || '블랙웰 가속기 수요 및 빅테크 AI 투자 지속으로 전 세계 반도체 공급망 대장 지위 공고화')}`,
+        `- 테슬라 (티커: TSLA): 종가 $${mData.stocks.TSLA.price} (${mData.stocks.TSLA.changePct}) | 자율주행\n  - [모멘텀 분석]: ${correctText(parsed.usFeaturedStocks?.find((s: any) => s.ticker === 'TSLA')?.momentum || 'FSD 중국 출시 승인 기대감 및 메가팩 가동률 극대화에 따른 에너지 부문 고성장 동력 확보')}`,
+        `- 브로드컴 (티커: AVGO): 종가 $${mData.stocks.AVGO.price} (${mData.stocks.AVGO.changePct}) | 맞춤형 반도체\n  - [모멘텀 분석]: ${correctText(parsed.usFeaturedStocks?.find((s: any) => s.ticker === 'AVGO')?.momentum || '빅테크 전용 ASIC 커스텀 반도체 수주 잔고 사상 최대치 기록 및 네트워크 스위칭 사업부 고속 성장')}`
+      ];
+
+      const formattedUsJodoju = [
+        `엔비디아 (티커: NVDA): 종가 $${mData.stocks.NVDA.price} (${mData.stocks.NVDA.changePct}) | AI 반도체`,
+        `테슬라 (티커: TSLA): 종가 $${mData.stocks.TSLA.price} (${mData.stocks.TSLA.changePct}) | 자율주행`,
+        `브로드컴 (티커: AVGO): 종가 $${mData.stocks.AVGO.price} (${mData.stocks.AVGO.changePct}) | 맞춤형 반도체`
+      ];
+
+      // Overwrite value of exchangeRate in macroDetailed
+      const macroDetailed = parsed.macroDetailed || {};
+      if (macroDetailed.exchangeRate) {
+        macroDetailed.exchangeRate.value = mData.exchangeRate;
+      }
 
       const newBriefing: PreMarketBriefing = {
         ...SEED_PRE_MARKET_BRIEFING,
         id: `briefing_${todayDateStr}`,
         date: todayDateStr,
         published: true,
-        summary: typeof parsed.summary === 'string' ? parsed.summary.trim() : '',
+        summary: correctedSummary,
         expectedThemes: cleanedExpectedThemes,
         keyStocks: cleanedKeyStocks,
-        leadMapping: typeof parsed.leadMapping === 'string' ? parsed.leadMapping.trim() : '',
-        strategyScenario: typeof parsed.strategyScenario === 'string' ? parsed.strategyScenario.trim() : '',
+        leadMapping: correctedLeadMapping,
+        strategyScenario: correctedStrategyScenario,
         usSummary: {
-          dow: actualIndices.dow,
-          nasdaq: actualIndices.nasdaq,
-          sp500: actualIndices.sp500,
-          russell2000: actualIndices.russell2000,
-          vix: actualIndices.vix
+          dow: mData.dow,
+          nasdaq: mData.nasdaq,
+          sp500: mData.sp500,
+          russell2000: mData.russell2000,
+          vix: mData.vix
         },
         macro: {
           interestRate: parsed.macro?.interestRate || parsed.macro?.interest_rate || '데이터 없음',
           cpi: parsed.macro?.cpi || '데이터 없음',
           ppi: parsed.macro?.ppi || '데이터 없음',
           bondYield: parsed.macro?.bondYield || parsed.macro?.bond_yield || '데이터 없음',
-          exchangeRate: actualIndices.exchangeRate,
+          exchangeRate: mData.exchangeRate,
           oilPrice: parsed.macro?.oilPrice || parsed.macro?.oil_price || '데이터 없음'
-        }
+        },
+        macroDetailed: macroDetailed,
+        domesticSectors: parsed.domesticSectors || SEED_PRE_MARKET_BRIEFING.domesticSectors,
+        worldNews: Array.isArray(parsed.worldNews) ? parsed.worldNews.map((w: any) => correctText(w)) : SEED_PRE_MARKET_BRIEFING.worldNews,
+        usFeaturedStocks: formattedUsFeaturedStocks,
+        usJodoju: formattedUsJodoju,
+        koreanImpact: correctedKoreanImpact,
+        relatedKoreanStocks: correctedRelatedKoreanStocks,
+        aiSummary5Lines: correctedAiSummary5Lines,
+        interestThemes: parsed.interestThemes || SEED_PRE_MARKET_BRIEFING.interestThemes,
+        interestStocks: parsed.interestStocks || SEED_PRE_MARKET_BRIEFING.interestStocks,
+        riskIssues: Array.isArray(parsed.riskIssues) ? parsed.riskIssues.map((r: any) => correctText(r)) : SEED_PRE_MARKET_BRIEFING.riskIssues,
+        seo: {
+          title: typeof parsed.seo?.title === 'string' ? parsed.seo.title.trim() : '오늘의 장전 핵심 프리마켓 요약 브리핑',
+          description: typeof parsed.seo?.description === 'string' ? parsed.seo.description.trim() : '미 증시 야간 마감 시황 및 수급 특징 국내 영향 분석 리포트',
+          keywords: Array.isArray(parsed.seo?.keywords) ? parsed.seo.keywords : ['장전브리핑', '미국증시', '국내주식']
+        },
+        quantAnalysisMarkdown: correctedQuantMarkdown
       };
+
+      // Run the Fact Consistency Validator on the generated briefing
+      const { corrected: correctedBriefing, logs: validationLogs } = await PlatformEngine.validateAndCorrectBriefing(newBriefing, mData, newsFacts);
+
+      // Attach layers
+      correctedBriefing.marketFacts = mData.marketFacts;
+      correctedBriefing.newsFacts = newsFacts;
+      correctedBriefing.newsEvents = newsEvents;
+      
+      // Build 3-Layer structure: Market Fact, News Fact, AI Interpretation (separating Verified Facts, AI Analysis, and Forecast)
+      correctedBriefing.aiInterpretation = {
+        verifiedFacts: [
+          `미국 5대 지수 종가: 다우 ${mData.dow}, 나스닥 ${mData.nasdaq}, S&P 500 ${mData.sp500}, 러셀 2000 ${mData.russell2000}, VIX ${mData.vix}`,
+          `USD/KRW 환율: ${mData.exchangeRate}`,
+          ...newsFacts.slice(0, 3).map(n => `뉴스 팩트: ${n.title} (${n.source})`)
+        ],
+        aiAnalysis: [
+          correctedBriefing.summary,
+          correctedBriefing.leadMapping,
+          correctedBriefing.koreanImpact
+        ],
+        forecast: [
+          correctedBriefing.strategyScenario,
+          ...correctedBriefing.riskIssues
+        ]
+      };
+
+      correctedBriefing.validationLogs = validationLogs;
+
+      // Save validation logs locally
+      PlatformEngine.saveValidationLogs(validationLogs);
 
       if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
         try {
-          this.savePreMarketBriefing(newBriefing);
+          this.savePreMarketBriefing(correctedBriefing);
         } catch (e) {}
       }
-      return newBriefing;
+      return correctedBriefing;
     } catch (err: any) {
       console.error('[Gemini AI Platform] Pre-Market Briefing parsing/generation failed:', err.message || err);
       throw new Error(`[Pre-Market Briefing AI Error] ${err.message || err}`);

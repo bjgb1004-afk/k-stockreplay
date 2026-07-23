@@ -8,7 +8,9 @@
     "build": "vite build && esbuild api/express-app.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test:verify": "tsx test-verification.ts",
+    "test:e2e": "tsx test-e2e.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

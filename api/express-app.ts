@@ -1203,6 +1203,75 @@ CREATE TABLE kstock_platform_data (
     res.json({ success: true, message: 'Server stock cache cleared successfully' });
   });
 
+  // Get validation audit logs from Supabase Cloud DB with local JSON file fallback
+  app.get('/api/audit-logs', async (req, res) => {
+    let logs: any[] = [];
+    let source = 'local_json';
+
+    const supabase = getSupabase();
+    if (isSupabaseActive() && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('validation_audit_logs')
+          .select('*')
+          .order('timestamp', { ascending: false })
+          .limit(100);
+
+        if (!error && data && data.length > 0) {
+          logs = data.map((item: any) => ({
+            id: item.validation_id,
+            validationId: item.validation_id,
+            briefingId: item.briefing_id,
+            timestamp: item.timestamp,
+            fieldName: item.field_name,
+            field: item.field_name,
+            sourceType: item.source_type,
+            sourceReference: item.source_reference,
+            sourceValue: item.source_value,
+            aiGeneratedValue: item.ai_generated_value,
+            originalText: item.original_text,
+            originalSentence: item.original_text,
+            correctedText: item.corrected_text,
+            afterSentence: item.corrected_text,
+            errorType: item.error_type,
+            confidence: item.confidence,
+            correctionApplied: item.correction_applied,
+            validationStatus: item.validation_status,
+            dataStatus: item.data_status,
+            marketDate: item.market_date,
+            fetchedAt: item.fetched_at
+          }));
+          source = 'supabase_cloud_db';
+        }
+      } catch (err: any) {
+        console.warn('[API Audit Logs] Supabase fetch failed, falling back to local json:', err.message || err);
+      }
+    }
+
+    if (logs.length === 0) {
+      try {
+        const filePath = path.join(process.cwd(), 'data', 'platform', 'validation_audit.json');
+        if (fs.existsSync(filePath)) {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          const parsed = JSON.parse(content);
+          if (Array.isArray(parsed)) {
+            logs = parsed.slice().reverse().slice(0, 100);
+            source = 'local_json_fallback';
+          }
+        }
+      } catch (err: any) {
+        console.warn('[API Audit Logs] Local JSON read failed:', err.message || err);
+      }
+    }
+
+    res.json({
+      success: true,
+      source,
+      count: logs.length,
+      logs
+    });
+  });
+
   // Get GitHub Latest Commit info
   app.get('/api/debug/github-commit', async (req, res) => {
     const repo = (req.query.repo as string) || process.env.GITHUB_REPO || '';

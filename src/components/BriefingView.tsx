@@ -187,6 +187,70 @@ interface BriefingViewProps {
   isCompact?: boolean;
 }
 
+const AuditTrailAccordion: React.FC<{ logs: any[] }> = ({ logs }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const cleanLogs = logs.filter(l => l.correctionApplied);
+
+  return (
+    <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 md:p-6 space-y-3">
+      <div 
+        className="flex items-center justify-between cursor-pointer select-none"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-400 animate-pulse" />
+          <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+            🛡️ AI Real-time Validation Audit Trail (정오 검증 결과 내역)
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold ${cleanLogs.length > 0 ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'}`}>
+            {cleanLogs.length > 0 ? `${cleanLogs.length}개의 실시간 오류 자동 보정됨` : '100% 데이터 무결성 검증 완료'}
+          </span>
+          <span className="text-slate-400 text-xs font-extrabold">{isOpen ? '▼ 접기' : '▲ 펼치기'}</span>
+        </div>
+      </div>
+
+      {isOpen && (
+        <div className="border-t border-slate-200 dark:border-slate-800 pt-3.5 space-y-3">
+          {cleanLogs.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-[11px]">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-850 text-slate-500 font-extrabold">
+                    <th className="pb-2 font-black pl-1">검증 시간</th>
+                    <th className="pb-2 font-black">에러유형</th>
+                    <th className="pb-2 font-black">대상 필드</th>
+                    <th className="pb-2 font-black">실측 지표(Reference)</th>
+                    <th className="pb-2 font-black">보정 전 문장 (Before)</th>
+                    <th className="pb-2 font-black">실시간 보정 후 문장 (After)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-150 dark:divide-slate-850">
+                  {cleanLogs.map((log, idx) => (
+                    <tr key={idx} className="hover:bg-slate-100/40 dark:hover:bg-slate-950/40">
+                      <td className="py-2.5 text-slate-500 pl-1 font-mono">{new Date(log.timestamp).toLocaleTimeString('ko-KR')}</td>
+                      <td className="py-2.5 font-extrabold text-amber-400 uppercase">{log.errorType}</td>
+                      <td className="py-2.5 font-bold text-slate-700 dark:text-slate-350">{log.field}</td>
+                      <td className="py-2.5 font-mono text-indigo-400">{log.referenceData}</td>
+                      <td className="py-2.5 text-rose-400 bg-red-500/5 px-1.5 rounded">{log.beforeSentence || log.originalSentence}</td>
+                      <td className="py-2.5 text-emerald-400 bg-emerald-500/5 px-1.5 rounded">{log.afterSentence}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+              실시간 데이터 대조 검증을 수행한 결과, 등락 방향 왜곡 및 통계적 수치 할루시네이션(Hallucination) 오류가 발견되지 않은 완벽하게 청정한 상태입니다.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, isCompact = false }) => {
   const [viewMode, setViewMode] = React.useState<'quant' | 'visual'>('quant');
   

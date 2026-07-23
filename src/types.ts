@@ -108,6 +108,11 @@ export interface PreMarketBriefing {
     keywords: string[];
   };
   quantAnalysisMarkdown?: string;
+  marketFacts?: MarketFact[];
+  newsFacts?: NewsFact[];
+  newsEvents?: NewsEvent[];
+  aiInterpretation?: AiInterpretation;
+  validationLogs?: ValidationAuditLog[];
 }
 
 export interface JodojuAnalysis {
@@ -201,3 +206,79 @@ export interface ReplayReviewReport {
     comment: string;
   }[];
 }
+
+// ==========================================
+// Fact Grounding & AI Interpretation Types
+// ==========================================
+
+export type DataStatus = 'FRESH' | 'STALE' | 'FAILED' | 'MISSING';
+export type ConfidenceState = 'VERIFIED' | 'PARTIALLY_VERIFIED' | 'INFERRED' | 'UNGROUNDED' | 'DATA_INSUFFICIENT';
+
+export interface MarketFact {
+  symbol: string;
+  name: string;
+  price: string;
+  change: string;
+  changePercent: string;
+  timestamp: string;
+  source: string;
+  dataStatus?: DataStatus;
+  dataAgeMinutes?: number;
+}
+
+export interface NewsFact {
+  title: string;
+  source: string;
+  publishedAt: string;
+  url: string;
+  summary: string;
+  relatedSymbols: string[];
+  relatedSectors: string[];
+  sentiment: 'positive' | 'negative' | 'neutral';
+  factualClaims: string[];
+}
+
+export interface NewsEvent {
+  eventTitle: string;
+  relatedSectors: string[];
+  relatedSymbols: string[];
+  newsItems: NewsFact[];
+}
+
+export interface AiInterpretation {
+  verifiedFacts: string[];
+  aiAnalysis: string[];
+  forecast: string[];
+  confidenceState?: ConfidenceState;
+}
+
+export interface ValidationAuditLog {
+  id: string;
+  validationId: string;
+  briefingId: string;
+  timestamp: string;
+  fieldName: string;
+  sourceType: 'YFINANCE' | 'GOOGLE_NEWS' | 'DART' | 'MARKET_ALGORITHM';
+  sourceValue?: any;
+  aiGeneratedValue?: any;
+  originalText: string;
+  correctedText: string;
+  field: string;
+  originalSentence: string;
+  errorType: 'direction_mismatch' | 'numerical_error' | 'ungrounded_claim' | 'hallucination';
+  referenceData: string;
+  beforeSentence: string;
+  afterSentence: string;
+  correctionApplied: boolean;
+  validationStatus: 'passed' | 'corrected' | 'failed' | 'CORRECTED';
+  confidence: ConfidenceState;
+  sourceReference: string;
+  dataStatus?: DataStatus;
+  marketDate?: string;
+  fetchedAt?: string;
+}
+
+
+
+
+
