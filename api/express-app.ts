@@ -57,6 +57,11 @@ import { getOrFetchFinancialsFromSupabase, generateAndCacheSurgeFact } from '../
 
 dotenv.config();
 
+const IS_VERCEL = !!process.env.VERCEL || 
+                 !!process.env.VERCEL_URL || 
+                 (typeof process.cwd === 'function' && process.cwd().includes('/var/task')) ||
+                 (typeof process.env.AWS_LAMBDA_FUNCTION_NAME !== 'undefined');
+
 // Robust path helper to resolve writable file paths for serverless/read-only environments like Vercel
 function getWritablePath(filename: string): string {
   const basename = path.basename(filename);
@@ -223,7 +228,7 @@ let globalSafeCacheAfternoonReportTimestamp: number = 0;
 
 // Platform Data syncing helper functions for Supabase
 async function getPlatformDataFromSupabase(key: string, dateKst?: string): Promise<any | null> {
-  const targetDate = dateKst || getJodojuTargetDate();
+  const targetDate = dateKst || (key === 'morning_briefing' ? getTodayKSTString() : getJodojuTargetDate());
   
   if (key === 'afternoon_report' || key.startsWith('afternoon_report_')) {
     try {
@@ -3345,8 +3350,15 @@ CREATE TABLE kstock_platform_data (
     try {
       console.log('[Cron Pipeline] Triggering Pre-Market Briefing Generation (via pre-market)...');
       const briefing = await PlatformEngine.getPreMarketBriefingAI();
-      PlatformEngine.savePreMarketBriefing(briefing);
-      await savePlatformDataToSupabase('morning_briefing', briefing);
+      
+      const isSaved = await savePlatformDataToSupabase('morning_briefing', briefing);
+      if (!isSaved) {
+        throw new Error('Supabase에 장전 브리핑을 저장하지 못했습니다.');
+      }
+
+      if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+        try { PlatformEngine.savePreMarketBriefing(briefing); } catch (e) {}
+      }
 
       // Revalidate frontend caches on-demand
       try {
@@ -4120,7 +4132,8 @@ CREATE TABLE kstock_platform_data (
       const briefing = await getPlatformDataFromSupabase('morning_briefing', targetDate);
       if (!briefing) {
         return res.status(404).json({
-          error: '오늘의 장전 브리핑이 아직 생성되지 않았습니다.',
+          error: 'NO_DATA',
+          message: '오늘의 장전 브리핑이 아직 생성되지 않았습니다.',
           date: targetDate,
           isNotGenerated: true
         });
@@ -4133,8 +4146,13 @@ CREATE TABLE kstock_platform_data (
 
   app.post('/api/platform/briefing/save', async (req, res) => {
     try {
-      PlatformEngine.savePreMarketBriefing(req.body);
-      await savePlatformDataToSupabase('morning_briefing', req.body);
+      if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+        try { PlatformEngine.savePreMarketBriefing(req.body); } catch(e) {}
+      }
+      const isSaved = await savePlatformDataToSupabase('morning_briefing', req.body);
+      if (!isSaved) {
+        return res.status(500).json({ error: 'Supabase 저장 실패' });
+      }
       res.json({ success: true, message: '장전 브리핑이 성공적으로 저장되었습니다.' });
     } catch (e: any) {
       res.status(500).json({ error: e.message || '장전 브리핑 저장 실패' });
@@ -4144,13 +4162,23 @@ CREATE TABLE kstock_platform_data (
   app.post('/api/platform/briefing', async (req, res) => {
     try {
       if (req.body && Object.keys(req.body).length > 0) {
-        PlatformEngine.savePreMarketBriefing(req.body);
-        await savePlatformDataToSupabase('morning_briefing', req.body);
+        if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+          try { PlatformEngine.savePreMarketBriefing(req.body); } catch(e) {}
+        }
+        const isSaved = await savePlatformDataToSupabase('morning_briefing', req.body);
+        if (!isSaved) {
+          return res.status(500).json({ error: 'Supabase 저장 실패' });
+        }
         res.json({ success: true, message: '장전 브리핑이 성공적으로 저장되었습니다.' });
       } else {
         const briefing = await PlatformEngine.getPreMarketBriefingAI();
-        PlatformEngine.savePreMarketBriefing(briefing);
-        await savePlatformDataToSupabase('morning_briefing', briefing);
+        if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+          try { PlatformEngine.savePreMarketBriefing(briefing); } catch(e) {}
+        }
+        const isSaved = await savePlatformDataToSupabase('morning_briefing', briefing);
+        if (!isSaved) {
+          return res.status(500).json({ error: 'Supabase 저장 실패' });
+        }
         res.json(briefing);
       }
     } catch (e: any) {
@@ -4161,6 +4189,13 @@ CREATE TABLE kstock_platform_data (
   app.post('/api/platform/briefing/generate', async (req, res) => {
     try {
       const briefing = await PlatformEngine.getPreMarketBriefingAI();
+      const isSaved = await savePlatformDataToSupabase('morning_briefing', briefing);
+      if (!isSaved) {
+        return res.status(500).json({ error: 'Supabase 저장 실패' });
+      }
+      if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+        try { PlatformEngine.savePreMarketBriefing(briefing); } catch(e) {}
+      }
       res.json(briefing);
     } catch (e: any) {
       res.status(500).json({ error: e.message || 'AI 장전 브리핑 생성 실패' });
@@ -4319,12 +4354,21 @@ CREATE TABLE kstock_platform_data (
     try {
       console.log('[Cron Pipeline] Triggering Pre-Market Briefing Generation (07:40 KST)...');
       const briefing = await PlatformEngine.getPreMarketBriefingAI();
-      PlatformEngine.savePreMarketBriefing(briefing);
-      await savePlatformDataToSupabase('morning_briefing', briefing);
+      
+      const isSaved = await savePlatformDataToSupabase('morning_briefing', briefing);
+      if (!isSaved) {
+        throw new Error('Supabase에 장전 브리핑을 저장하지 못했습니다.');
+      }
+
+      if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+        try { PlatformEngine.savePreMarketBriefing(briefing); } catch (e) {}
+      }
 
       // Revalidate frontend caches on-demand
-      await revalidatePath('/');
-      await revalidatePath('/insight');
+      try {
+        await revalidatePath('/');
+        await revalidatePath('/insight');
+      } catch (e) {}
 
       res.json({ success: true, pipeline: 'Pre-Market 07:40 Briefing', date: briefing.date });
     } catch (e: any) {
