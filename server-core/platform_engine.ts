@@ -924,18 +924,16 @@ JSON 스키마:
     try {
       console.log('[Gemini SDK] Dispatching Pre-Market Briefing text request...');
       
-      const responseText = await retryWithBackoff(async () => {
-        const response = await ai.models.generateContent({
-          model: 'gemini-3.6-flash',
-          contents: prompt,
-          config: {
-            tools: [{ googleSearch: {} }],
-            responseMimeType: 'application/json',
-            temperature: 0.1,
-          }
-        });
-        return response.text || '';
-      }, 2, 1000);
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: prompt,
+        config: {
+          tools: [{ googleSearch: {} }],
+          responseMimeType: 'application/json',
+          temperature: 0.1,
+        }
+      });
+      const responseText = response.text || '';
 
       console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON...');
       const parsed = cleanAndParseJson(responseText);
@@ -1163,8 +1161,7 @@ JSON 구조 스키마:
           currentPrompt += `\n\n[엄격 재시도 경고 ${retryCount}/${maxRetries}]: 이전 생성된 답변 검증 실패. 이유: 금지어('관련 산업 섹터', '관련 산업 주요 호재', '수급 유입으로 강세', '모멘텀 지속', '시장 관심 집중', '동반 상승세', '언론 보도는 부재', '단독 특징주' 등) 포함 또는 구체적 팩트(대기업/기관명, 수주/공급계약/어닝서프라이즈/국산화/실적 등의 사건, 숫자/금액) 미포함. "{종목명} 공시", "{종목명} 뉴스"를 세분화 검색하여 구체적 팩트 키워드를 명시하십시오.`;
         }
 
-        const responseText = await retryWithBackoff(async () => {
-          const response = await ai.models.generateContent({
+        const response = await ai.models.generateContent({
             model: 'gemini-3.6-flash',
             contents: currentPrompt,
             config: {
@@ -1310,8 +1307,7 @@ JSON 구조 스키마:
               }
             }
           });
-          return response.text || '';
-        }, 2, 1000);
+        const responseText = response.text || '';
 
         lastResponseText = responseText;
         const candidate = cleanAndParseJson(responseText);
