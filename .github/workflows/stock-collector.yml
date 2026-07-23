@@ -19,9 +19,12 @@ jobs:
     steps:
       - name: Trigger Stock Collection Pipeline
         run: |
-          APP_URL="${{ secrets.APP_URL }}"
+          APP_URL="${{ secrets.PRODUCTION_URL }}"
           if [ -z "$APP_URL" ]; then
-            APP_URL="https://ais-dev-tlmuwzipcipunlemoa2ytr-454899791369.asia-east1.run.app"
+            APP_URL="${{ secrets.APP_URL }}"
+          fi
+          if [ -z "$APP_URL" ]; then
+            APP_URL="https://k-stockreplay.pe.kr"
           fi
           
           ENDPOINT="${{ github.event.inputs.target_endpoint }}"

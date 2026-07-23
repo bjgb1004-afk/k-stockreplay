@@ -4315,13 +4315,7 @@ CREATE TABLE kstock_platform_data (
       const hourKst = nowKst.getUTCHours();
       let pipelineType = 'Standard Stock Collection';
 
-      if (hourKst >= 7 && hourKst < 9) {
-        // Morning Pre-Market Briefing
-        const briefing = await PlatformEngine.getPreMarketBriefingAI();
-        PlatformEngine.savePreMarketBriefing(briefing);
-        await savePlatformDataToSupabase('morning_briefing', briefing);
-        pipelineType = 'Pre-Market 07:40 Briefing + Stock Data Collection';
-      } else if (hourKst >= 15 && hourKst < 18) {
+      if (hourKst >= 15 && hourKst < 18) {
         // Post-Market Close Report
         const tickers = targetStocks.map(s => s.code);
         const report = await PlatformEngine.generateAfterMarketReportAI(tickers);
