@@ -892,13 +892,14 @@ export class PlatformEngine {
   // AI Generation with Gemini & Robust Fallback Engine
   // ==========================================
 
-  // Scrape actual US stock market indices from Yahoo Finance safely
+  // Scrape actual US stock market indices and USD/KRW exchange rate from Yahoo Finance safely
   static async fetchUsIndicesFromYahoo(): Promise<{
     dow: string;
     nasdaq: string;
     sp500: string;
     russell2000: string;
     vix: string;
+    exchangeRate: string;
   }> {
     const symbols = {
       dow: '^DJI',
@@ -913,9 +914,11 @@ export class PlatformEngine {
       nasdaq: '데이터 없음',
       sp500: '데이터 없음',
       russell2000: '데이터 없음',
-      vix: '데이터 없음'
+      vix: '데이터 없음',
+      exchangeRate: '데이터 없음'
     };
 
+    // 1. Fetch indices
     for (const [key, symbol] of Object.entries(symbols)) {
       try {
         const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`;
@@ -946,6 +949,36 @@ export class PlatformEngine {
       } catch (err: any) {
         console.warn(`[Yahoo Fetch] Error fetching ${key} (${symbol}):`, err.message || err);
       }
+    }
+
+    // 2. Fetch exchange rate (USD/KRW)
+    try {
+      const url = `https://query1.finance.yahoo.com/v8/finance/chart/USDKRW=X?interval=1d&range=1d`;
+      const res = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+      });
+      if (res.ok) {
+        const data: any = await res.json();
+        const meta = data?.chart?.result?.[0]?.meta;
+        if (meta) {
+          const priceVal = meta.regularMarketPrice;
+          const prevCloseVal = meta.chartPreviousClose;
+          if (typeof priceVal === 'number' && typeof prevCloseVal === 'number') {
+            const change = priceVal - prevCloseVal;
+            const sign = change >= 0 ? '+' : '';
+            const priceStr = priceVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const changeStr = Math.abs(change).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const directionStr = change >= 0 ? '상승' : '하락';
+            result.exchangeRate = `${priceStr}원 (${sign}${changeStr}원 ${directionStr})`;
+          }
+        }
+      } else {
+        console.warn(`[Yahoo Fetch] Failed to fetch USDKRW=X: HTTP ${res.status}`);
+      }
+    } catch (err: any) {
+      console.warn(`[Yahoo Fetch] Error fetching USDKRW=X:`, err.message || err);
     }
 
     return result;
@@ -1074,6 +1107,12 @@ JSON 스키마:
         russell2000: actualIndices.russell2000,
         vix: actualIndices.vix
       };
+
+      // Hard override macro.exchangeRate with fetched actual exchange rate
+      if (!parsed.macro || typeof parsed.macro !== 'object') {
+        parsed.macro = {};
+      }
+      parsed.macro.exchangeRate = actualIndices.exchangeRate;
       
       const newBriefing: PreMarketBriefing = {
         id: `briefing_${todayDateStr}`,

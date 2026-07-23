@@ -273,7 +273,34 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
   }
 
   // 관심 테마
-  const aiKeyStocks = Array.isArray((briefing as any).keyStocks) ? (briefing as any).keyStocks : [];
+  const rawKeyStocks = Array.isArray((briefing as any).keyStocks) ? (briefing as any).keyStocks : [];
+
+  // Filter and clean key stocks to remove bad/generic entries or full-sentence/leadMapping structures
+  const aiKeyStocks = rawKeyStocks.filter((s: any) => {
+    if (typeof s !== 'string') return false;
+    const clean = s.trim();
+    if (clean.length === 0) return false;
+    const lower = clean.toLowerCase();
+    
+    // Exclude descriptions or generic fallbacks
+    if (lower.includes('수급 유입') || 
+        lower.includes('주도주 수급') || 
+        lower.includes('상세 분석') || 
+        lower.includes('대기 중') || 
+        lower.includes('n/a') || 
+        lower.includes('데이터 없음') || 
+        lower.includes('없음') ||
+        lower.includes('동조화') ||
+        lower.includes('소부장') ||
+        lower.includes('테마') ||
+        lower.includes('모멘텀') ||
+        clean.length > 20 || 
+        clean.split(/\s+/).length > 3
+    ) {
+      return false;
+    }
+    return true;
+  });
 
   let rawInterestThemes = Array.isArray(briefing.interestThemes) && briefing.interestThemes.length > 0 
     ? briefing.interestThemes 
@@ -283,10 +310,43 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
     rawInterestThemes = [
       {
         theme: aiExpectedThemes.join(' & '),
-        relatedStocks: aiKeyStocks.length > 0 ? aiKeyStocks : ['주도주 수급 유입']
+        relatedStocks: aiKeyStocks
       }
     ];
   }
+
+  // Filter all themes in rawInterestThemes to only keep valid stocks
+  const filteredInterestThemes = rawInterestThemes.map((item: any) => {
+    const themeName = typeof item === 'string' ? item : (item.theme || '관심테마');
+    const stocks = Array.isArray(item.relatedStocks) ? item.relatedStocks : [];
+    const validStocks = stocks.filter((s: any) => {
+      if (typeof s !== 'string') return false;
+      const clean = s.trim();
+      if (clean.length === 0) return false;
+      const lower = clean.toLowerCase();
+      if (lower.includes('수급 유입') || 
+          lower.includes('주도주 수급') || 
+          lower.includes('상세 분석') || 
+          lower.includes('대기 중') || 
+          lower.includes('n/a') || 
+          lower.includes('데이터 없음') || 
+          lower.includes('없음') ||
+          lower.includes('동조화') ||
+          lower.includes('소부장') ||
+          lower.includes('테마') ||
+          lower.includes('모멘텀') ||
+          clean.length > 20 || 
+          clean.split(/\s+/).length > 3
+      ) {
+        return false;
+      }
+      return true;
+    });
+    return {
+      theme: themeName,
+      relatedStocks: validStocks
+    };
+  }).filter((item: any) => item.relatedStocks.length > 0);
 
   const warningIssues = (briefing as any).warningIssues || (Array.isArray(briefing.riskIssues) ? briefing.riskIssues.join('\n') : (aiStrategyScenario || ''));
 
@@ -743,77 +803,54 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
           </div>
 
           {/* 7. 오늘의 핵심 관심 테마 및 주요 종목 */}
-          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
-            <h3 className="text-xs font-black text-slate-700 dark:text-slate-300 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
-              <Flame className="w-4 h-4 text-red-500" />
-              <span>오늘의 핵심 관심 테마 및 주요 종목</span>
-            </h3>
-            <div className="space-y-3.5">
-              {rawInterestThemes.map((item: any, idx) => {
-                const themeName = typeof item === 'string' ? item : (item.theme || '관심테마');
-                const stocks = Array.isArray(item.relatedStocks) ? item.relatedStocks : [];
-                return (
-                  <div key={idx} className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 flex flex-col gap-3.5">
-                    {/* Theme Label */}
-                    <div className="flex items-center gap-2 border-b border-slate-900 pb-2.5 shrink-0 min-h-[36px]">
-                      <span className="w-1.5 h-3 bg-red-500 rounded-full shrink-0" />
-                      <span className="text-xs font-black text-slate-800 dark:text-slate-200 leading-snug block whitespace-normal break-keep w-full">{themeName}</span>
-                    </div>
-                    
-                    {/* Stocks (Horizontally laid out) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                      {stocks.map((stock, sIdx) => {
-                        let name = stock;
-                        let detail = '';
-                        if (stock.includes('(')) {
-                          const parts = stock.split('(');
-                          name = parts[0].trim();
-                          detail = parts[1].replace(')', '').trim();
-                        }
-
-                        let detailParts: string[] = [];
-                        if (detail) {
-                          if (detail.includes('/')) {
-                            detailParts = detail.split('/').map(p => p.trim());
-                          } else {
-                            detailParts = [detail];
+          {filteredInterestThemes.length > 0 && (
+            <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+              <h3 className="text-xs font-black text-slate-700 dark:text-slate-300 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
+                <Flame className="w-4 h-4 text-red-500" />
+                <span>오늘의 핵심 관심 테마 및 주요 종목</span>
+              </h3>
+              <div className="space-y-3.5">
+                {filteredInterestThemes.map((item: any, idx) => {
+                  const themeName = item.theme;
+                  const stocks = item.relatedStocks;
+                  return (
+                    <div key={idx} className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 flex flex-col gap-3.5">
+                      {/* Theme Label */}
+                      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5 shrink-0 min-h-[36px]">
+                        <span className="w-1.5 h-3 bg-red-500 rounded-full shrink-0" />
+                        <span className="text-xs font-black text-slate-800 dark:text-slate-200 leading-snug block whitespace-normal break-keep w-full">{themeName}</span>
+                      </div>
+                      
+                      {/* Stocks (Chips/Badges laid out horizontally) */}
+                      <div className="flex flex-wrap gap-2.5">
+                        {stocks.map((stock: any, sIdx: number) => {
+                          let name = stock;
+                          let detail = '';
+                          if (stock.includes('(')) {
+                            const parts = stock.split('(');
+                            name = parts[0].trim();
+                            detail = parts[1].replace(')', '').trim();
                           }
-                        }
-
-                        const isNegative = detailParts[0]?.includes('-');
-                        const isPositive = detailParts[0]?.includes('+');
-                        const changeColor = isNegative ? 'text-blue-400' : (isPositive ? 'text-red-400' : 'text-slate-700 dark:text-slate-300');
-
-                        return (
-                          <div key={sIdx} className="bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-850/50 py-2.5 px-3 rounded-xl flex flex-col justify-between transition-all min-w-0 gap-1.5 w-full h-full shadow-sm">
-                            <div className="font-extrabold text-slate-900 dark:text-slate-100 text-[12px] sm:text-xs tracking-tight truncate w-full">
-                              {name}
+                          return (
+                            <div 
+                              key={sIdx} 
+                              className="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-250 font-extrabold text-xs px-3.5 py-1.5 rounded-full border border-slate-250/60 dark:border-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 hover:scale-102 transition-all cursor-default select-none shadow-sm"
+                            >
+                              <span className="w-1.5 h-1.5 bg-red-500 rounded-full shrink-0 animate-pulse" />
+                              <span>{name}</span>
+                              {detail && (
+                                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">({detail})</span>
+                              )}
                             </div>
-                            
-                            {detailParts.length > 0 && (
-                              <div className="flex items-center justify-between w-full border-t border-slate-200 dark:border-slate-800/40 pt-2 mt-0.5 select-none gap-2">
-                                <span className={`font-black text-[10px] sm:text-[10.5px] font-mono whitespace-nowrap ${changeColor}`}>
-                                  {detailParts[0]}
-                                </span>
-                                {detailParts[1] && (
-                                  <span className="text-amber-400 font-extrabold text-[10px] sm:text-[10.5px] font-mono shrink-0 whitespace-nowrap">
-                                    {detailParts[1]}
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                      {stocks.length === 0 && (
-                        <div className="text-[10px] text-slate-500 dark:text-slate-500 italic col-span-2 py-1">종목 준비 중...</div>
-                      )}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* 8. 오늘의 핵심 주의 리스크 (마지막 배치) */}
           <div className="bg-slate-50 dark:bg-slate-900 border border-red-500/10 rounded-2xl p-5 space-y-3">
