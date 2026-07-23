@@ -95,6 +95,7 @@ import { GoogleGenAI, Type } from '@google/genai';
 import { PreMarketBriefing, AfterMarketReport, JodojuAnalysis, FeatureStock, ReplayReviewReport, AiReplayStudyGuide, ReplayGuideInterval, Candle, Trade } from '../src/types.js';
 import { getRotatedGeminiClient } from './gemini_rotator.js';
 import { getOrFetchFinancialsFromSupabase, generateAndCacheSurgeFact } from './dart_financials.js';
+import { getSupabase } from './backend_shared.js';
 
 const IS_VERCEL = !!process.env.VERCEL || 
                  !!process.env.VERCEL_URL || 
@@ -188,6 +189,130 @@ function repairTruncatedJson(str: string): string {
   }
   
   return repaired;
+}
+
+// Predefined list of top major Korean stocks for robust validation
+const MAJOR_KOREAN_STOCKS = new Set([
+  '삼성전자', 'SK하이닉스', '알테오젠', '한미반도체', '한화에어로스페이스', '삼양식품', 'HD현대일렉트릭', '리가켐바이오', '태성', '바이오다인',
+  '피에스케이홀딩스', '에이프릴바이오', 'NAVER', '카카오', '현대차', '에코프로비엠', '셀트리온', '에코프로', '기가레인', '위닉스',
+  '파세코', '한울소재과학', '에스씨디', 'SK이터닉스', '앤로보틱스', '실리콘투', '대원전선', 'HLB', '유한양행', '동양철관',
+  'LG에너지솔루션', '삼성바이오로직스', '현대모비스', 'LG화학', '삼성SDI', '포스코퓨처엠', 'POSCO홀딩스', '기아', '카카오뱅크', '카카오페이',
+  '크래프톤', '넷마블', '엔씨소프트', '한미약품', '펩트론', '삼천당제약', '신풍제약', 'SK바이오팜', 'SK바이오사이언스', '셀트리온제약',
+  '툴젠', '오스코텍', '보령', '대웅제약', '메디톡스', '휴젤', '한국항공우주', 'LIG넥스원', '현대로템', '한화시스템',
+  '제노코', '쎄트렉아이', '풍산', '스페코', '빅텍', '퍼스텍', '엘앤에프', '금양', '나노신소재', '대주전자재료',
+  '솔루스첨단소재', '천보', '코스모신소재', '에코프로머티', '농심', '오뚜기', '대상', '빙그레', 'CJ제일제당', '풀무원',
+  '하이브', '에스엠', '와이지엔터테인먼트', 'JYP', 'JYP Ent.', 'HL만도', '성우하이텍', '화신', '서연이화', '한국석유',
+  '흥구석유', '극동유화', '중앙에너비스', 'HMM', '대한해운', '흥아해운', '팬오션', '이오테크닉스', '테크윙', '리노공업',
+  '주성엔지니어링', '에이디테크놀로지', '가온칩스', '오픈엣지테크놀로지', '제주반도체', '네패스', '하나마이크론', '에스에프에이', '원익IPS', '유진테크',
+  '디아이', 'GST', '씨앤지하이테크', '효성중공업', '광명전기', '일진전기', '제룡전기', '가온전선', '대한전선', 'LS',
+  'LS에코에너지', '세명전기', '피에스텍', '한전산업', '한국전력', '두산에너빌리티', '두산', '두산로보틱스', '에스피지', '레인보우로보틱스',
+  '유진로봇', '로보스타', '로보티즈', '티로보틱스', '뉴로메카', '에브리봇', '휴림로봇', '솔트룩스', '크라우드웍스', '마음AI',
+  '폴라리스오피스', '한글과컴퓨터', '이스트소프트', '코난테크놀로지', '셀바스AI', '오픈놀', '데이타솔루션', '영원무역', 'F&F', '한세실업',
+  '코오롱인더', '태광산업', '대한유화', '롯데케미칼', '금호석유', '효성티앤씨', '코스모화학', '경인양행', '국도화학', '송원산업',
+  '한국타이어앤테크놀로지', '넥센타이어', '금호타이어', '한온시스템', '에스엘', '디아이씨', '상신브레이크', 'KB금융', '신한지주', '하나금융지주',
+  '우리금융지주', '기업은행', '메리츠금융지주', '삼성카드', '제주은행', '푸른저축은행', '삼성생명', '한화생명', '동양생명', '삼성화재',
+  '현대해상', 'DB손해보험', '메리츠화재', '한화손해보험', '미래에셋증권', 'NH투자증권', '한국금융지주', '삼성증권', '키움증권', '대신증권',
+  '유안타증권', '신영증권', '한양증권', '현대건설', 'GS건설', '대우건설', 'DL이앤씨', 'HDC현대산업개발', '계룡건설', '태영건설',
+  '금호건설', '동부건설', '남광토건', '삼부토건', '일성건설', '서희건설', '동원개발', '아시아나항공', '대한항공', '제주항공',
+  '진에어', '티웨이항공', '에어부산', 'CJ대한통운', '한진', '동방', 'KCTC', '인터지스', '국보',
+  '한국가스공사', '지역난방공사', '강원랜드', 'GKL', '파라다이스', '토니모리', '한국화장품', '잇츠스킨', '코스맥스', '한국콜마',
+  '아모레퍼시픽', 'LG생활건강', '클리오', '애경산업', '네오팜', '코리아나', '제닉', '에이블씨엔씨', '화승엔터프라이즈', '영원무역홀딩스'
+]);
+
+// Clean key stocks to guarantee they contain only real stock names
+function cleanKeyStocks(val: any, fallback: any[] = []): any[] {
+  if (!Array.isArray(val)) return fallback;
+  const bannedKeywords = [
+    '주도주', '수급', '유입', '상세', '분석', '대기', '없음', '시나리오', '예상', '전망', '테마', '데이터', '종목', '확인', '진행', '미정', '준비', '관심', '특징주', '수혜주', '급등', '상승', '호재', '동향', '시황', '관련'
+  ];
+
+  // Populate dynamic names from cached set if populated, otherwise use fallbacks
+  const realNames = new Set<string>();
+  
+  // 1. KNOWN_TICKER_NAMES_LOCAL
+  for (const name of Object.values(KNOWN_TICKER_NAMES_LOCAL)) {
+    realNames.add(name);
+  }
+  // 2. MAJOR_KOREAN_STOCKS
+  for (const name of MAJOR_KOREAN_STOCKS) {
+    realNames.add(name);
+  }
+  // 3. PlatformEngine's dynamic cached names from Supabase
+  const dynamicCached = (PlatformEngine as any).cachedRealStockNames;
+  if (dynamicCached && dynamicCached instanceof Set) {
+    for (const name of dynamicCached) {
+      realNames.add(name);
+    }
+  }
+
+  return val
+    .map(item => typeof item === 'string' ? item.trim() : '')
+    .filter(s => {
+      if (!s) return false;
+      const clean = s.replace(/\([^)]*\)/g, '').replace(/\[[^\]]*\]/g, '').trim();
+      if (!clean) return false;
+
+      // 1. Exact match in the real names set
+      if (realNames.has(clean)) return true;
+
+      // 2. Case-insensitive match
+      const lowerClean = clean.toLowerCase();
+      let foundMatch = false;
+      for (const name of realNames) {
+        if (name.toLowerCase() === lowerClean) {
+          foundMatch = true;
+          break;
+        }
+      }
+      if (foundMatch) return true;
+
+      // 3. English-only stock names must be in our list to be accepted
+      if (/^[a-zA-Z0-9\s&.-]+$/.test(clean)) {
+        return false;
+      }
+
+      // 4. Korean stock names validation:
+      // Real Korean stock names can be up to 15 characters (e.g., 한화에어로스페이스, 삼성바이오로직스)
+      if (!/^[가-힣0-9]{2,15}$/.test(clean)) {
+        return false;
+      }
+
+      // Banned words check
+      if (bannedKeywords.some(keyword => clean.includes(keyword))) {
+        return false;
+      }
+
+      // Particle/sentence check
+      if (
+        clean.includes('는') || 
+        clean.includes('은') || 
+        clean.includes('을') || 
+        clean.includes('를') || 
+        clean.includes('이며') || 
+        clean.includes('하고') || 
+        clean.includes('의')
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+}
+
+// Clean expected themes to guarantee they only contain relevant themes
+function cleanExpectedThemes(val: any, fallback: any[] = []): any[] {
+  if (!Array.isArray(val)) return fallback;
+  const bannedKeywords = [
+    '없음', '대기', '분석', '데이터', '시나리오', '전망', '확인', '진행', '미정', '준비'
+  ];
+  return val
+    .map(item => typeof item === 'string' ? item.trim() : '')
+    .filter(t => {
+      if (!t) return false;
+      if (bannedKeywords.some(keyword => t.includes(keyword))) return false;
+      if (t.length > 30) return false;
+      return true;
+    });
 }
 
 // Clean and Parse JSON robustly
@@ -649,6 +774,8 @@ const SEED_STUDY_GUIDES: Record<string, AiReplayStudyGuide> = {
 };
 
 export class PlatformEngine {
+  static cachedRealStockNames: Set<string> | null = null;
+
   // Validate and sanitize PreMarketBriefing data to prevent issues/omissions
   static validatePreMarketBriefing(b: any): PreMarketBriefing {
     const todayStr = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -752,8 +879,8 @@ export class PlatformEngine {
       date: cleanStr(b.date, todayStr),
       published: typeof b.published === 'boolean' ? b.published : true,
       summary: cleanStr(b.summary, s.summary || ''),
-      expectedThemes: cleanArr(b.expectedThemes, s.expectedThemes || []),
-      keyStocks: cleanArr(b.keyStocks, s.keyStocks || []),
+      expectedThemes: cleanExpectedThemes(b.expectedThemes, s.expectedThemes || []),
+      keyStocks: cleanKeyStocks(b.keyStocks, s.keyStocks || []),
       leadMapping: cleanStr(b.leadMapping, s.leadMapping || ''),
       strategyScenario: cleanStr(b.strategyScenario, s.strategyScenario || ''),
       usSummary: {
@@ -993,6 +1120,31 @@ export class PlatformEngine {
       throw new Error('[PlatformEngine] GEMINI_API_KEY가 설정되지 않아 장전 브리핑을 생성할 수 없습니다.');
     }
 
+    // Pre-populate dynamic real stock names cache from Supabase database safely
+    if (!PlatformEngine.cachedRealStockNames) {
+      const names = new Set<string>();
+      try {
+        const supabase = getSupabase();
+        if (supabase) {
+          const { data: finData } = await supabase.from('financials').select('stock_name').limit(1000);
+          if (finData) {
+            for (const row of finData) {
+              if (row.stock_name) names.add(row.stock_name.trim());
+            }
+          }
+          const { data: analysisData } = await supabase.from('stock_analysis').select('stock_name').limit(1000);
+          if (analysisData) {
+            for (const row of analysisData) {
+              if (row.stock_name) names.add(row.stock_name.trim());
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[PlatformEngine] Dynamic stock name caching failed:', err);
+      }
+      PlatformEngine.cachedRealStockNames = names;
+    }
+
     // Fetch actual verified market data
     const actualIndices = await PlatformEngine.fetchUsIndicesFromYahoo();
     const actualIndicesFormatted = `
@@ -1094,31 +1246,34 @@ JSON 스키마:
       console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON...');
       const parsed = cleanAndParseJson(responseText);
 
-      // Ensure keyStocks exists in parsed
-      if (!parsed.keyStocks || !Array.isArray(parsed.keyStocks)) {
-        parsed.keyStocks = [];
-      }
+      const cleanedKeyStocks = cleanKeyStocks(parsed.keyStocks || parsed.key_stocks || []);
+      const cleanedExpectedThemes = cleanExpectedThemes(parsed.expectedThemes || parsed.expected_themes || []);
 
-      // Hard override usSummary with fetched actual indices to guarantee 100% accuracy and prevent any AI hallucinations
-      parsed.usSummary = {
-        dow: actualIndices.dow,
-        nasdaq: actualIndices.nasdaq,
-        sp500: actualIndices.sp500,
-        russell2000: actualIndices.russell2000,
-        vix: actualIndices.vix
-      };
-
-      // Hard override macro.exchangeRate with fetched actual exchange rate
-      if (!parsed.macro || typeof parsed.macro !== 'object') {
-        parsed.macro = {};
-      }
-      parsed.macro.exchangeRate = actualIndices.exchangeRate;
-      
       const newBriefing: PreMarketBriefing = {
+        ...SEED_PRE_MARKET_BRIEFING,
         id: `briefing_${todayDateStr}`,
         date: todayDateStr,
         published: true,
-        ...parsed
+        summary: typeof parsed.summary === 'string' ? parsed.summary.trim() : '',
+        expectedThemes: cleanedExpectedThemes,
+        keyStocks: cleanedKeyStocks,
+        leadMapping: typeof parsed.leadMapping === 'string' ? parsed.leadMapping.trim() : '',
+        strategyScenario: typeof parsed.strategyScenario === 'string' ? parsed.strategyScenario.trim() : '',
+        usSummary: {
+          dow: actualIndices.dow,
+          nasdaq: actualIndices.nasdaq,
+          sp500: actualIndices.sp500,
+          russell2000: actualIndices.russell2000,
+          vix: actualIndices.vix
+        },
+        macro: {
+          interestRate: parsed.macro?.interestRate || parsed.macro?.interest_rate || '데이터 없음',
+          cpi: parsed.macro?.cpi || '데이터 없음',
+          ppi: parsed.macro?.ppi || '데이터 없음',
+          bondYield: parsed.macro?.bondYield || parsed.macro?.bond_yield || '데이터 없음',
+          exchangeRate: actualIndices.exchangeRate,
+          oilPrice: parsed.macro?.oilPrice || parsed.macro?.oil_price || '데이터 없음'
+        }
       };
 
       if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {

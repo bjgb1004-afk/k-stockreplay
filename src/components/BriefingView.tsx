@@ -803,7 +803,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
           </div>
 
           {/* 7. 오늘의 핵심 관심 테마 및 주요 종목 */}
-          {filteredInterestThemes.length > 0 && (
+          {aiKeyStocks.length > 0 && filteredInterestThemes.length > 0 && (
             <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
               <h3 className="text-xs font-black text-slate-700 dark:text-slate-300 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
                 <Flame className="w-4 h-4 text-red-500" />

@@ -4138,7 +4138,8 @@ CREATE TABLE kstock_platform_data (
           isNotGenerated: true
         });
       }
-      res.json(briefing);
+      const validated = PlatformEngine.validatePreMarketBriefing(briefing);
+      res.json(validated);
     } catch (e: any) {
       res.status(500).json({ error: e.message || '장전 브리핑 조회 실패' });
     }
