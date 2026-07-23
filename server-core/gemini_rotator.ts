@@ -31,10 +31,10 @@ export function getAllGeminiKeys(): string[] {
   );
 }
 
-// Current active index globally
+// Global rotation index
 let currentKeyIndex = 0;
 
-// Track key cooldowns to skip rate-limited keys dynamically
+// Track key cooldowns (60s minimum on 429)
 const keyCooldowns = new Map<string, number>();
 
 export function getRotatedGeminiClient(): GoogleGenAI | null {
@@ -43,7 +43,7 @@ export function getRotatedGeminiClient(): GoogleGenAI | null {
     return null;
   }
   
-  // Create a default client just to satisfy the interface, we will override generateContent below.
+  // Default client instance
   const client = new GoogleGenAI({
     apiKey: keys[0],
     httpOptions: {
@@ -53,105 +53,90 @@ export function getRotatedGeminiClient(): GoogleGenAI | null {
     }
   });
 
-  // Proxy generateContent to automatically handle key rotation and model fallback
+  // Controlled proxy for generateContent with strict rate-limit protection
   client.models.generateContent = async function (params: any, ...args: any[]) {
+    const startTime = new Date().toISOString();
     const rawKeys = getAllGeminiKeys();
     if (rawKeys.length === 0) {
       throw new Error("No Gemini API keys are configured.");
     }
 
-    // Normalize model names if non-standard or deprecated
-    let originalModel = params?.model || 'gemini-3.6-flash';
-    if (typeof originalModel === 'string') {
-      if (
-        originalModel === 'gemini-2.5-flash' ||
-        originalModel === 'gemini-2.0-flash' ||
-        originalModel === 'gemini-1.5-flash' ||
-        originalModel === 'gemini-2.5-pro' ||
-        originalModel === 'gemini-3.5-flash' ||
-        originalModel === 'gemini-3.0-flash'
-      ) {
-        originalModel = 'gemini-3.6-flash';
-      }
-    }
-
-    // Determine the sequence of models to try
-    const fallbackModels = ['gemini-3.6-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest', 'gemini-3.1-pro-preview'];
-    // Build a unique list of models starting with originalModel
-    const modelsToTry: string[] = [originalModel];
-    for (const m of fallbackModels) {
-      if (!modelsToTry.includes(m)) {
-        modelsToTry.push(m);
-      }
-    }
-
+    // Strict model priority
+    const modelsToTry = ['gemini-3.6-flash', 'gemini-3.1-flash-lite'];
+    
+    let attempt = 0;
+    const MAX_ATTEMPTS = 3;
     let lastError: any = null;
 
-    // We will iterate through models, and for each model, we will try all keys
-    for (const modelName of modelsToTry) {
+    for (const model of modelsToTry) {
+      if (attempt >= MAX_ATTEMPTS) break;
+
+      // Pick next available key not in cooldown
+      let activeKey: string | null = null;
+      let keyIdx = -1;
       const now = Date.now();
       
-      // Separate keys into available vs cooling down
-      const availableKeys: string[] = [];
-      const coolingKeys: string[] = [];
-      
-      // To maintain rotation, start checking keys from currentKeyIndex
       for (let i = 0; i < rawKeys.length; i++) {
         const idx = (currentKeyIndex + i) % rawKeys.length;
-        const key = rawKeys[idx];
-        const cooldownUntil = keyCooldowns.get(key) || 0;
+        const k = rawKeys[idx];
+        const cooldownUntil = keyCooldowns.get(k) || 0;
         if (now >= cooldownUntil) {
-          availableKeys.push(key);
-        } else {
-          coolingKeys.push(key);
+          activeKey = k;
+          keyIdx = idx;
+          break;
         }
       }
 
-      // Try available keys first, then cooling keys if available keys failed
-      const keysForThisModel = [...availableKeys, ...coolingKeys];
+      // If all keys in cooldown, wait or skip (for simplicity, use last key and proceed if needed)
+      if (!activeKey) {
+        activeKey = rawKeys[currentKeyIndex];
+        keyIdx = currentKeyIndex;
+      }
       
-      for (const key of keysForThisModel) {
-        const keyIdx = rawKeys.indexOf(key);
-        const currentClient = new GoogleGenAI({
-          apiKey: key,
-          httpOptions: {
-            headers: {
-              'User-Agent': 'aistudio-build',
-            }
-          }
-        });
-
-        const activeParams = { ...params, model: modelName };
-
-        try {
-          console.log(`[Gemini Rotator] Attempting generation with key index ${keyIdx} (ends with ...${key.slice(-4)}) using model '${modelName}'`);
-          const result = await (currentClient.models.generateContent as any)(activeParams, ...args);
-          
-          // Success! Update rotation pointer to this key and clear cooldown
-          currentKeyIndex = keyIdx;
-          keyCooldowns.delete(key);
-          return result;
-        } catch (err: any) {
-          lastError = err;
-          const errStr = JSON.stringify(err);
-          const is429 = errStr.includes('429') || errStr.includes('RESOURCE_EXHAUSTED');
-          
-          // Short cooldown for 429 (10s), longer for invalid keys (60s)
-          const cooldownTime = is429 ? 10000 : 60000;
-          keyCooldowns.set(key, Date.now() + cooldownTime);
-          
-          console.warn(`[Gemini Rotator] Key index ${keyIdx} failed (ends with ...${key.slice(-4)}) on model '${modelName}'. Cooldown: ${cooldownTime / 1000}s. Error: ${err.message || errStr}`);
-          
-          if (is429) {
-            // Brief pause before trying next key to allow rate limit windows to clear slightly
-            await new Promise(res => setTimeout(res, 500));
+      const keyTag = `...${activeKey.slice(-4)}`;
+      
+      const currentClient = new GoogleGenAI({
+        apiKey: activeKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
           }
         }
+      });
+
+      const activeParams = { ...params, model: model };
+      attempt++;
+
+      console.log(`[Gemini Rotator Log] [ReqStart: ${startTime}] Attempt ${attempt}/${MAX_ATTEMPTS} | Model: '${model}' | KeyIdx: ${keyIdx} (${keyTag})`);
+
+      try {
+        const result = await (currentClient.models.generateContent as any)(activeParams, ...args);
+        
+        // Success: Advance key index and clear cooldown
+        currentKeyIndex = (keyIdx + 1) % rawKeys.length;
+        keyCooldowns.delete(activeKey);
+        
+        console.log(`[Gemini Rotator Log] [ReqStart: ${startTime}] SUCCESS | Attempt: ${attempt} | Model: '${model}' | Key: ${keyTag} | 429: NO`);
+        return result;
+      } catch (err: any) {
+        lastError = err;
+        const errStr = JSON.stringify(err);
+        const is429 = errStr.includes('429') || errStr.includes('RESOURCE_EXHAUSTED');
+        
+        // Minimum 60-second cooldown on 429
+        const cooldownTime = is429 ? 60000 : 180000;
+        keyCooldowns.set(activeKey, Date.now() + cooldownTime);
+
+        console.warn(`[Gemini Rotator Log] [ReqStart: ${startTime}] FAILED | Attempt: ${attempt} | Model: '${model}' | Key: ${keyTag} | 429: ${is429 ? 'YES' : 'NO'} | CooldownSet: ${cooldownTime/1000}s | Error: ${err.message || errStr}`);
+        
+        // If not 429, maybe don't retry? User said 429 logic.
       }
     }
 
-    throw lastError || new Error("All configured Gemini API keys failed across all fallback models.");
+    console.error(`[Gemini Rotator Log] [ReqStart: ${startTime}] FINAL FAILURE | TotalAttempts: ${attempt} | Error: ${lastError?.message || lastError}`);
+    throw lastError || new Error(`Gemini API call failed after ${attempt} attempt(s).`);
   } as any;
 
   return client;
 }
+

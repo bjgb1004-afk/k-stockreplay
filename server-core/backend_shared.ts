@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import zlib from 'zlib';
 import iconv from 'iconv-lite';
 import { createClient } from '@supabase/supabase-js';
@@ -93,14 +94,48 @@ export const FALLBACK_15_JODOJU = [
   { rank: 15, name: "동양철관", code: "008970", changeRatio: 18.2, tradingValue: 220000000000 }
 ];
 
-const ILBONG_LEADERBOARD_FILE = path.join(process.cwd(), 'leaderboard_ilbong.json');
-const DANTA_LEADERBOARD_FILE = path.join(process.cwd(), 'leaderboard_danta.json');
-const ALL_ILBONG_SCORES_FILE = path.join(process.cwd(), 'all_scores_ilbong.json');
-const ALL_DANTA_SCORES_FILE = path.join(process.cwd(), 'all_scores_danta.json');
-const AUDIT_LOGS_FILE = path.join(process.cwd(), 'audit_logs.json');
-const JODOJU_CACHE_FILE = path.join(process.cwd(), 'jodoju_cache.json');
-const CONTENT_DIR = path.join(process.cwd(), 'data', 'content');
+const IS_VERCEL = !!process.env.VERCEL || 
+                 !!process.env.VERCEL_URL || 
+                 (typeof process.cwd === 'function' && process.cwd().includes('/var/task')) ||
+                 (typeof process.env.AWS_LAMBDA_FUNCTION_NAME !== 'undefined');
+
+const ILBONG_LEADERBOARD_FILE = IS_VERCEL
+  ? path.join(os.tmpdir(), 'leaderboard_ilbong.json')
+  : path.join(process.cwd(), 'leaderboard_ilbong.json');
+
+const DANTA_LEADERBOARD_FILE = IS_VERCEL
+  ? path.join(os.tmpdir(), 'leaderboard_danta.json')
+  : path.join(process.cwd(), 'leaderboard_danta.json');
+
+const ALL_ILBONG_SCORES_FILE = IS_VERCEL
+  ? path.join(os.tmpdir(), 'all_scores_ilbong.json')
+  : path.join(process.cwd(), 'all_scores_ilbong.json');
+
+const ALL_DANTA_SCORES_FILE = IS_VERCEL
+  ? path.join(os.tmpdir(), 'all_scores_danta.json')
+  : path.join(process.cwd(), 'all_scores_danta.json');
+
+const AUDIT_LOGS_FILE = IS_VERCEL 
+  ? path.join(os.tmpdir(), 'audit_logs.json')
+  : path.join(process.cwd(), 'audit_logs.json');
+
+const JODOJU_CACHE_FILE = IS_VERCEL
+  ? path.join(os.tmpdir(), 'jodoju_cache.json')
+  : path.join(process.cwd(), 'jodoju_cache.json');
+
+const CONTENT_DIR = IS_VERCEL
+  ? path.join(os.tmpdir(), 'data', 'content')
+  : path.join(process.cwd(), 'data', 'content');
+
 const POSTS_FILE = path.join(CONTENT_DIR, 'posts.json');
+
+// Ensure directories exist in tmp if in Vercel
+if (IS_VERCEL) {
+  try {
+    fs.mkdirSync(CONTENT_DIR, { recursive: true });
+    fs.mkdirSync(path.join(os.tmpdir(), 'data', 'platform'), { recursive: true });
+  } catch (e) {}
+}
 
 // Lazy initialized Supabase client
 let supabaseClient: any = null;
@@ -1246,21 +1281,23 @@ export function saveJodojuToCacheAndStatic(stocks: any[], targetDate: string) {
   try {
     fs.writeFileSync(JODOJU_CACHE_FILE, JSON.stringify({ targetDate, stocks }, null, 2), 'utf-8');
     
-    const publicDataPath = path.join(process.cwd(), 'public', 'data', 'jodoju_list.json');
-    try {
-      fs.mkdirSync(path.dirname(publicDataPath), { recursive: true });
-      fs.writeFileSync(publicDataPath, JSON.stringify(stocks, null, 2), 'utf-8');
-    } catch (e) {}
+    if (!IS_VERCEL) {
+      const publicDataPath = path.join(process.cwd(), 'public', 'data', 'jodoju_list.json');
+      try {
+        fs.mkdirSync(path.dirname(publicDataPath), { recursive: true });
+        fs.writeFileSync(publicDataPath, JSON.stringify(stocks, null, 2), 'utf-8');
+      } catch (e) {}
 
-    const distDataPath = path.join(process.cwd(), 'dist', 'data', 'jodoju_list.json');
-    try {
-      if (fs.existsSync(path.dirname(distDataPath))) {
-        fs.writeFileSync(distDataPath, JSON.stringify(stocks, null, 2), 'utf-8');
-      }
-    } catch (e) {}
-    console.log(`[주도주 저장 완료] 캐시 파일 및 static json 파일 저장 완료 (Target Date: ${targetDate})`);
+      const distDataPath = path.join(process.cwd(), 'dist', 'data', 'jodoju_list.json');
+      try {
+        if (fs.existsSync(path.dirname(distDataPath))) {
+          fs.writeFileSync(distDataPath, JSON.stringify(stocks, null, 2), 'utf-8');
+        }
+      } catch (e) {}
+    }
+    console.log(`[주도주 저장 완료] 캐시 파일 저장 완료 (Target Date: ${targetDate})`);
   } catch (err) {
-    console.error('[주도주 저장 에러] 정적 파일 쓰기 실패:', err);
+    console.error('[주도주 저장 에러] 파일 쓰기 실패:', err);
   }
 }
 

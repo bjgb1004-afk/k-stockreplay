@@ -57,6 +57,11 @@ import { getOrFetchFinancialsFromSupabase, generateAndCacheSurgeFact } from '../
 
 dotenv.config();
 
+const IS_VERCEL = !!process.env.VERCEL || 
+                 !!process.env.VERCEL_URL || 
+                 (typeof process.cwd === 'function' && process.cwd().includes('/var/task')) ||
+                 (typeof process.env.AWS_LAMBDA_FUNCTION_NAME !== 'undefined');
+
 // Robust path helper to resolve writable file paths for serverless/read-only environments like Vercel
 function getWritablePath(filename: string): string {
   const basename = path.basename(filename);
@@ -234,7 +239,7 @@ let globalSafeCacheAfternoonReportTimestamp: number = 0;
 
 // Platform Data syncing helper functions for Supabase
 async function getPlatformDataFromSupabase(key: string, dateKst?: string): Promise<any | null> {
-  const targetDate = dateKst || getJodojuTargetDate();
+  const targetDate = dateKst || (key === 'morning_briefing' ? getTodayKSTString() : getJodojuTargetDate());
   
   if (key === 'afternoon_report' || key.startsWith('afternoon_report_')) {
     try {
@@ -3365,12 +3370,13 @@ CREATE TABLE kstock_platform_data (
       // Save to Supabase (Primary storage for production)
       const isSaved = await savePlatformDataToSupabase('morning_briefing', briefing);
       
-      // Save to disk (Only for development/fallback, ignored in production EROFS environments)
-      try {
-        PlatformEngine.savePreMarketBriefing(briefing);
-      } catch (diskErr) {
-        // Log but don't fail the request if Supabase save succeeded
-        console.warn('[Cron Pipeline] Local disk save skipped or failed (common in Vercel):', diskErr);
+      // Save to disk (Only for development/fallback, strictly ignored in production/Vercel)
+      if (!IS_VERCEL) {
+        try {
+          PlatformEngine.savePreMarketBriefing(briefing);
+        } catch (diskErr) {
+          console.warn('[Cron Pipeline] Local disk save failed (ignored):', diskErr);
+        }
       }
 
       if (!isSaved) {
@@ -4153,7 +4159,8 @@ CREATE TABLE kstock_platform_data (
       const briefing = await getPlatformDataFromSupabase('morning_briefing', targetDate);
       if (!briefing) {
         return res.status(404).json({
-          error: '오늘의 장전 브리핑이 아직 생성되지 않았습니다.',
+          error: 'NO_DATA',
+          message: '오늘의 장전 브리핑이 아직 생성되지 않았습니다.',
           date: targetDate,
           isNotGenerated: true
         });
@@ -4166,8 +4173,13 @@ CREATE TABLE kstock_platform_data (
 
   app.post('/api/platform/briefing/save', async (req, res) => {
     try {
-      PlatformEngine.savePreMarketBriefing(req.body);
-      await savePlatformDataToSupabase('morning_briefing', req.body);
+      if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+        try { PlatformEngine.savePreMarketBriefing(req.body); } catch(e) {}
+      }
+      const isSaved = await savePlatformDataToSupabase('morning_briefing', req.body);
+      if (!isSaved) {
+        return res.status(500).json({ error: 'Supabase 저장 실패' });
+      }
       res.json({ success: true, message: '장전 브리핑이 성공적으로 저장되었습니다.' });
     } catch (e: any) {
       res.status(500).json({ error: e.message || '장전 브리핑 저장 실패' });
@@ -4177,13 +4189,23 @@ CREATE TABLE kstock_platform_data (
   app.post('/api/platform/briefing', async (req, res) => {
     try {
       if (req.body && Object.keys(req.body).length > 0) {
-        PlatformEngine.savePreMarketBriefing(req.body);
-        await savePlatformDataToSupabase('morning_briefing', req.body);
+        if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+          try { PlatformEngine.savePreMarketBriefing(req.body); } catch(e) {}
+        }
+        const isSaved = await savePlatformDataToSupabase('morning_briefing', req.body);
+        if (!isSaved) {
+          return res.status(500).json({ error: 'Supabase 저장 실패' });
+        }
         res.json({ success: true, message: '장전 브리핑이 성공적으로 저장되었습니다.' });
       } else {
         const briefing = await PlatformEngine.getPreMarketBriefingAI();
-        PlatformEngine.savePreMarketBriefing(briefing);
-        await savePlatformDataToSupabase('morning_briefing', briefing);
+        if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+          try { PlatformEngine.savePreMarketBriefing(briefing); } catch(e) {}
+        }
+        const isSaved = await savePlatformDataToSupabase('morning_briefing', briefing);
+        if (!isSaved) {
+          return res.status(500).json({ error: 'Supabase 저장 실패' });
+        }
         res.json(briefing);
       }
     } catch (e: any) {
@@ -4194,6 +4216,13 @@ CREATE TABLE kstock_platform_data (
   app.post('/api/platform/briefing/generate', async (req, res) => {
     try {
       const briefing = await PlatformEngine.getPreMarketBriefingAI();
+      const isSaved = await savePlatformDataToSupabase('morning_briefing', briefing);
+      if (!isSaved) {
+        return res.status(500).json({ error: 'Supabase 저장 실패' });
+      }
+      if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+        try { PlatformEngine.savePreMarketBriefing(briefing); } catch(e) {}
+      }
       res.json(briefing);
     } catch (e: any) {
       res.status(500).json({ error: e.message || 'AI 장전 브리핑 생성 실패' });
@@ -4352,12 +4381,21 @@ CREATE TABLE kstock_platform_data (
     try {
       console.log('[Cron Pipeline] Triggering Pre-Market Briefing Generation (07:40 KST)...');
       const briefing = await PlatformEngine.getPreMarketBriefingAI();
-      PlatformEngine.savePreMarketBriefing(briefing);
-      await savePlatformDataToSupabase('morning_briefing', briefing);
+      
+      const isSaved = await savePlatformDataToSupabase('morning_briefing', briefing);
+      if (!isSaved) {
+        throw new Error('Supabase에 장전 브리핑을 저장하지 못했습니다.');
+      }
+
+      if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+        try { PlatformEngine.savePreMarketBriefing(briefing); } catch (e) {}
+      }
 
       // Revalidate frontend caches on-demand
-      await revalidatePath('/');
-      await revalidatePath('/insight');
+      try {
+        await revalidatePath('/');
+        await revalidatePath('/insight');
+      } catch (e) {}
 
       res.json({ success: true, pipeline: 'Pre-Market 07:40 Briefing', date: briefing.date });
     } catch (e: any) {
@@ -4894,13 +4932,22 @@ CREATE TABLE kstock_platform_data (
   // New: 2.5 Lunch & Evening Endpoints
   app.get('/api/platform/lunch', async (req, res) => {
     try {
+      const targetDate = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
       
+      // Try local first
       const filePath = path.join(process.cwd(), 'data', 'platform', 'lunch_briefing.json');
       if (fs.existsSync(filePath)) {
         return res.json(JSON.parse(fs.readFileSync(filePath, 'utf-8')));
       }
+
+      // Try Supabase fallback
+      const supabaseData = await getPlatformDataFromSupabase('lunch_briefing', targetDate);
+      if (supabaseData) {
+        return res.json(supabaseData);
+      }
+
       res.json({
-        date: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0],
+        date: targetDate,
         title: '장중 실시간 수급 및 동향 분석',
         midDayAnalysis: '장중 AI 분석 데이터가 아직 수집되지 않았습니다. 실시간 수급 봇이 12:30에 자동으로 가동됩니다.',
         tags: ['장중체크', '오전장결산']
@@ -4912,12 +4959,14 @@ CREATE TABLE kstock_platform_data (
 
   app.post('/api/platform/lunch/save', async (req, res) => {
     try {
-      const dataDir = path.join(process.cwd(), 'data', 'platform');
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
+      if (!IS_VERCEL) {
+        const dataDir = path.join(process.cwd(), 'data', 'platform');
+        if (!fs.existsSync(dataDir)) {
+          fs.mkdirSync(dataDir, { recursive: true });
+        }
+        const filePath = path.join(dataDir, 'lunch_briefing.json');
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2));
       }
-      const filePath = path.join(dataDir, 'lunch_briefing.json');
-      fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2));
       await savePlatformDataToSupabase('lunch_briefing', req.body);
       res.json({ success: true, message: '장중 브리핑이 성공적으로 저장되었습니다.' });
     } catch (e: any) {
@@ -4927,13 +4976,22 @@ CREATE TABLE kstock_platform_data (
 
   app.get('/api/platform/evening', async (req, res) => {
     try {
+      const targetDate = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
       
+      // Try local first
       const filePath = path.join(process.cwd(), 'data', 'platform', 'evening_column.json');
       if (fs.existsSync(filePath)) {
         return res.json(JSON.parse(fs.readFileSync(filePath, 'utf-8')));
       }
+
+      // Try Supabase fallback
+      const supabaseData = await getPlatformDataFromSupabase('evening_column', targetDate);
+      if (supabaseData) {
+        return res.json(supabaseData);
+      }
+
       res.json({
-        date: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0],
+        date: targetDate,
         columnTitle: '저녁 AI 금융 칼럼: 메가트렌드 경제 전망',
         columnContentMarkdown: '저녁 AI 금융 칼럼이 아직 집필되지 않았습니다. 분석 봇이 20:00에 자동으로 가동됩니다.',
         tags: ['메가트렌드', '경제칼럼']
@@ -4945,12 +5003,14 @@ CREATE TABLE kstock_platform_data (
 
   app.post('/api/platform/evening/save', async (req, res) => {
     try {
-      const dataDir = path.join(process.cwd(), 'data', 'platform');
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
+      if (!IS_VERCEL) {
+        const dataDir = path.join(process.cwd(), 'data', 'platform');
+        if (!fs.existsSync(dataDir)) {
+          fs.mkdirSync(dataDir, { recursive: true });
+        }
+        const filePath = path.join(dataDir, 'evening_column.json');
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2));
       }
-      const filePath = path.join(dataDir, 'evening_column.json');
-      fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2));
       await savePlatformDataToSupabase('evening_column', req.body);
       res.json({ success: true, message: '저녁 금융 칼럼이 성공적으로 저장되었습니다.' });
     } catch (e: any) {
@@ -5123,8 +5183,12 @@ CREATE TABLE kstock_platform_data (
   async function savePostsList(posts: any[]) {
     try {
       fs.writeFileSync(POSTS_FILE, JSON.stringify(posts, null, 2), 'utf-8');
-      const originalWorkspacePath = path.resolve(process.cwd(), 'data/content/posts.json');
-      fs.writeFileSync(originalWorkspacePath, JSON.stringify(posts, null, 2), 'utf-8');
+      if (!IS_VERCEL) {
+        const originalWorkspacePath = path.resolve(process.cwd(), 'data/content/posts.json');
+        try {
+          fs.writeFileSync(originalWorkspacePath, JSON.stringify(posts, null, 2), 'utf-8');
+        } catch (e) {}
+      }
     } catch (err) {}
 
     const supabase = getSupabase();

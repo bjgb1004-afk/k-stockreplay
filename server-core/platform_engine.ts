@@ -96,12 +96,30 @@ import { PreMarketBriefing, AfterMarketReport, JodojuAnalysis, FeatureStock, Rep
 import { getRotatedGeminiClient } from './gemini_rotator.js';
 import { getOrFetchFinancialsFromSupabase, generateAndCacheSurgeFact } from './dart_financials.js';
 
-const DATA_DIR = path.join(process.cwd(), 'data', 'platform');
-const IS_VERCEL = !!process.env.VERCEL;
-console.log('[PlatformEngine] Detected Environment:', IS_VERCEL ? 'Vercel (Read-only)' : 'Local/Server (Writable)');
+import os from 'os';
+
+const IS_VERCEL = !!process.env.VERCEL || 
+                 !!process.env.VERCEL_URL || 
+                 (typeof process.cwd === 'function' && process.cwd().includes('/var/task')) ||
+                 (typeof process.env.AWS_LAMBDA_FUNCTION_NAME !== 'undefined');
+
+const DATA_DIR = IS_VERCEL 
+  ? path.join(os.tmpdir(), 'data', 'platform')
+  : path.join(process.cwd(), 'data', 'platform');
+
+console.log('[PlatformEngine] Environment Check:', {
+  IS_VERCEL,
+  VERCEL_ENV: process.env.VERCEL_ENV,
+  CWD: process.cwd(),
+  DATA_DIR
+});
+
+if (IS_VERCEL) {
+  console.log('[PlatformEngine] Vercel Production environment detected. Disk writes to project root are DISABLED.');
+}
 
 // Ensure database/platform directory exists
-if (!fs.existsSync(DATA_DIR) && !IS_VERCEL) {
+if (!fs.existsSync(DATA_DIR)) {
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   } catch (e) {}
@@ -785,42 +803,33 @@ export class PlatformEngine {
   }
 
   // 1. Get Pre-Market Briefing
-  static getPreMarketBriefing(): PreMarketBriefing {
+  static getPreMarketBriefing(): PreMarketBriefing | null {
     const filePath = path.join(DATA_DIR, 'pre_market_briefing.json');
     if (!fs.existsSync(filePath)) {
-      if (IS_VERCEL) {
-        console.warn('[PlatformEngine] Pre-market briefing file missing in Vercel, returning seed data.');
-        return SEED_PRE_MARKET_BRIEFING;
-      }
-      // Save Seed Data
-      try {
-        fs.writeFileSync(filePath, JSON.stringify(SEED_PRE_MARKET_BRIEFING, null, 2));
-      } catch (err) {
-        console.warn('[PlatformEngine] Failed to save seed pre-market briefing:', err);
-      }
-      return SEED_PRE_MARKET_BRIEFING;
+      return null;
     }
     try {
       const data = fs.readFileSync(filePath, 'utf-8');
       const parsed = JSON.parse(data);
       return this.validatePreMarketBriefing(parsed);
     } catch (e) {
-      return SEED_PRE_MARKET_BRIEFING;
+      return null;
     }
   }
 
   // 2. Save Pre-Market Briefing (Admin)
   static savePreMarketBriefing(briefing: PreMarketBriefing): void {
-    if (IS_VERCEL) {
-      // In Vercel, we only save to Supabase via the caller (express-app)
+    if (IS_VERCEL || process.env.NODE_ENV === 'production') {
+      console.log('[PlatformEngine] Skipping local disk save in production environment.');
       return;
     }
+    
     const validated = this.validatePreMarketBriefing(briefing);
     const filePath = path.join(DATA_DIR, 'pre_market_briefing.json');
     try {
       fs.writeFileSync(filePath, JSON.stringify(validated, null, 2));
     } catch (err: any) {
-      console.warn('[PlatformEngine] Failed to save pre-market briefing to local disk:', err.message);
+      console.warn('[PlatformEngine] Failed to save pre-market briefing:', err.message || err);
     }
   }
 
@@ -924,18 +933,8 @@ export class PlatformEngine {
     const ai = getGeminiClient();
     const todayDateStr = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    const fallbackBriefing: PreMarketBriefing = {
-      ...SEED_PRE_MARKET_BRIEFING,
-      id: `briefing_${todayDateStr}`,
-      date: todayDateStr,
-    };
-
     if (!ai) {
-      console.warn('[PlatformEngine] GEMINI_API_KEY가 설정되지 않아 장전 브리핑 fallback 템플릿을 발행합니다.');
-      if (!IS_VERCEL) {
-        this.savePreMarketBriefing(fallbackBriefing);
-      }
-      return fallbackBriefing;
+      throw new Error('[PlatformEngine] GEMINI_API_KEY가 설정되지 않아 장전 브리핑을 생성할 수 없습니다.');
     }
 
     const prompt = `
@@ -973,7 +972,7 @@ JSON 스키마:
           }
         });
         return response.text || '';
-      }, 3, 1000);
+      }, 2, 1000);
 
       console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON...');
       const parsed = cleanAndParseJson(responseText);
@@ -985,16 +984,15 @@ JSON 스키마:
         ...parsed
       };
 
-      if (!IS_VERCEL) {
-        this.savePreMarketBriefing(newBriefing);
+      if (!IS_VERCEL && process.env.NODE_ENV !== 'production') {
+        try {
+          this.savePreMarketBriefing(newBriefing);
+        } catch (e) {}
       }
       return newBriefing;
     } catch (err: any) {
-      console.warn('[Gemini AI Platform] Pre-Market Briefing generation failed or hit rate limit, using elegant offline template:', err.message || err);
-      if (!IS_VERCEL) {
-        this.savePreMarketBriefing(fallbackBriefing);
-      }
-      return fallbackBriefing;
+      console.error('[Gemini AI Platform] Pre-Market Briefing generation failed:', err.message || err);
+      throw new Error(`[Pre-Market Briefing AI Error] ${err.message || err}`);
     }
   }
 
