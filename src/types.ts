@@ -63,18 +63,22 @@ export interface PreMarketBriefing {
   id: string;
   date: string;
   published: boolean;
-  usSummary: {
+  summary?: string;
+  expectedThemes?: string[];
+  leadMapping?: string;
+  strategyScenario?: string;
+  usSummary?: {
     dow: string;
     nasdaq: string;
     sp500: string;
     russell2000: string;
     vix: string;
   };
-  macro: {
+  macro?: {
     interestRate: string;
     cpi: string;
     ppi: string;
-    fomc: string;
+    fomc?: string;
     bondYield: string;
     exchangeRate: string;
     oilPrice: string;

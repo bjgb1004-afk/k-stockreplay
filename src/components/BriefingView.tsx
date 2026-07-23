@@ -229,19 +229,19 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
   const aiStrategyScenario = (briefing as any).strategyScenario || '';
 
   const usSummary = briefing.usSummary || (briefing as any).usMarkets || {};
-  const dow = usSummary.dow || '동향 관찰';
-  const nasdaq = usSummary.nasdaq || '동향 관찰';
-  const sp500 = usSummary.sp500 || usSummary.sAndP500 || '동향 관찰';
-  const russell2000 = usSummary.russell2000 || '동향 관찰';
-  const vix = usSummary.vix || '동향 관찰';
+  const dow = usSummary.dow || '';
+  const nasdaq = usSummary.nasdaq || '';
+  const sp500 = usSummary.sp500 || usSummary.sAndP500 || '';
+  const russell2000 = usSummary.russell2000 || '';
+  const vix = usSummary.vix || '';
 
   const macro = briefing.macro || (briefing as any).macroIndicators || {};
-  const interestRate = macro.interestRate || '3.50%~3.75%';
-  const cpi = macro.cpi || '+3.5%';
-  const ppi = macro.ppi || '+5.5%';
-  const treasuryYield = macro.bondYield || macro.treasuryYield || '4.57%';
-  const exchangeRate = macro.exchangeRate || '1,488.5원';
-  const oilPrice = macro.oilPrice || '$79.67';
+  const interestRate = macro.interestRate || '데이터 없음';
+  const cpi = macro.cpi || '데이터 없음';
+  const ppi = macro.ppi || '데이터 없음';
+  const treasuryYield = macro.bondYield || macro.treasuryYield || '데이터 없음';
+  const exchangeRate = macro.exchangeRate || '데이터 없음';
+  const oilPrice = macro.oilPrice || '데이터 없음';
 
   const usLeaders = (briefing as any).usLeaders || (Array.isArray(briefing.usJodoju) ? briefing.usJodoju.join(', ') : (aiExpectedThemes.length > 0 ? aiExpectedThemes.join(', ') : 'AI 반도체 / 빅테크'));
   const usFeaturedStock = (briefing as any).usFeaturedStock || (Array.isArray(briefing.usFeaturedStocks) ? briefing.usFeaturedStocks.join('\n') : (aiLeadMapping || '주요 주도주 동향 관찰 중'));
@@ -355,7 +355,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
       </div>
 
       {/* AI 실시간 프리마켓 핵심 시황 및 수급 전략 카드 */}
-      {(aiSummary || aiLeadMapping || aiStrategyScenario) && (
+      {(aiSummary || aiLeadMapping || aiStrategyScenario || aiExpectedThemes.length > 0) && (
         <div className="bg-gradient-to-br from-indigo-950/50 via-slate-900 to-slate-950 border border-indigo-500/30 rounded-2xl p-5 md:p-6 space-y-4 shadow-xl">
           <div className="flex items-center justify-between border-b border-indigo-500/20 pb-3">
             <h3 className="text-sm font-black text-indigo-300 tracking-tight flex items-center gap-2">
@@ -373,7 +373,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                 <span className="text-[11px] font-black text-indigo-400 block">
                   📌 글로벌 마켓 시황 요약
                 </span>
-                <p className="text-xs text-slate-200 leading-relaxed font-medium break-keep">
+                <p className="text-xs text-slate-200 leading-relaxed font-medium break-keep whitespace-normal overflow-wrap-anywhere">
                   {aiSummary}
                 </p>
               </div>
@@ -384,33 +384,39 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                 <span className="text-[11px] font-black text-emerald-400 block">
                   🎯 주도주 & 소부장 연동 매핑
                 </span>
-                <p className="text-xs text-slate-200 leading-relaxed font-medium break-keep">
+                <p className="text-xs text-slate-200 leading-relaxed font-medium break-keep whitespace-normal overflow-wrap-anywhere">
                   {aiLeadMapping}
                 </p>
               </div>
             )}
 
             {aiExpectedThemes.length > 0 && (
-              <div className="bg-slate-900/90 p-4 rounded-xl border border-indigo-500/20 space-y-2">
+              <div className="bg-slate-900/90 p-4 rounded-xl border border-indigo-500/20 space-y-2 md:col-span-2">
                 <span className="text-[11px] font-black text-amber-400 block">
                   🔥 장 초반 수급 유입 예상 테마
                 </span>
-                <div className="flex flex-wrap gap-2">
-                  {aiExpectedThemes.map((theme: string, tIdx: number) => (
-                    <span key={tIdx} className="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 font-extrabold text-xs rounded-lg">
-                      #{theme}
-                    </span>
+                <div className="flex flex-wrap gap-2.5">
+                  {aiExpectedThemes.flatMap((themeStr: string) => {
+                    if (typeof themeStr === 'string' && (themeStr.includes('&') || themeStr.includes(' / '))) {
+                      return themeStr.split(/&|\//).map(s => s.trim()).filter(Boolean);
+                    }
+                    return [themeStr];
+                  }).map((theme: string, tIdx: number) => (
+                    <div key={tIdx} className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 font-extrabold text-xs rounded-lg max-w-full leading-normal tracking-tight break-keep whitespace-normal overflow-wrap-anywhere flex items-center gap-1.5 shadow-sm">
+                      <span className="text-amber-400 font-mono">#</span>
+                      <span className="break-keep word-break-keep-all overflow-wrap-anywhere text-slate-100">{theme}</span>
+                    </div>
                   ))}
                 </div>
               </div>
             )}
 
             {aiStrategyScenario && (
-              <div className="bg-slate-900/90 p-4 rounded-xl border border-indigo-500/20 space-y-1.5">
+              <div className="bg-slate-900/90 p-4 rounded-xl border border-indigo-500/20 space-y-1.5 md:col-span-2">
                 <span className="text-[11px] font-black text-rose-400 block">
                   🛡️ 전업 트레이더 대응 시나리오
                 </span>
-                <p className="text-xs text-slate-200 leading-relaxed font-medium break-keep">
+                <p className="text-xs text-slate-200 leading-relaxed font-medium break-keep whitespace-normal overflow-wrap-anywhere">
                   {aiStrategyScenario}
                 </p>
               </div>
@@ -541,38 +547,54 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                 { name: '러셀 2000', val: russell2000 },
                 { name: 'VIX 변동성', val: vix, isVix: true }
               ].map((m, idx) => {
-                const parts = m.val.trim().split(/\s+/);
-                const price = parts[0] || '';
-                const change = parts.slice(1).join(' ') || '';
+                const raw = (m.val || '').trim();
+                const hasData = Boolean(raw) && raw !== '동향 관찰' && raw !== '데이터 없음';
+                
+                let price = '데이터 없음';
+                let change = '';
+
+                if (hasData) {
+                  const match = raw.match(/^([0-9\.,\$\+\-]+)\s*(.*)$/);
+                  if (match) {
+                    price = match[1];
+                    change = match[2];
+                  } else {
+                    price = raw;
+                  }
+                }
+
+                const isUp = change.includes('+') || raw.includes('+');
+                const isDown = change.includes('-') || raw.includes('-');
 
                 const getUsCommentary = (nameStr: string, valStr: string) => {
                   const trimmed = valStr.trim();
-                  const isUp = trimmed.includes('+');
-                  const isDown = trimmed.includes('-');
+                  if (!trimmed || trimmed === '데이터 없음') return '지수 수치 미집계';
+
+                  const u = trimmed.includes('+');
+                  const d = trimmed.includes('-');
                   
                   if (nameStr.includes('다우존스')) {
-                    if (isUp) return '우량주 중심 완만한 상승세';
-                    if (isDown) return '제조·금융 대형주 차익 실현';
-                    return 'FOMC 앞두고 보합권 대기';
+                    if (u) return '우량주 중심 완만한 상승세';
+                    if (d) return '제조·금융 대형주 차익 실현';
+                    return '관망세 지속 보합권 등락';
                   }
                   if (nameStr.includes('나스닥')) {
-                    if (isUp) return '빅테크·AI 강력한 매수 쏠림';
-                    if (isDown) return '고점 도달에 따른 단기 매물 출회';
+                    if (u) return '빅테크·AI 강력한 매수 쏠림';
+                    if (d) return '고점 도달에 따른 단기 매물 출회';
                     return '추가 상승 모멘텀 탐색 흐름';
                   }
                   if (nameStr.includes('S&P 500')) {
-                    if (isUp) return '사상 최고가권 안착 흐름 지속';
-                    if (isDown) return '상승 랠리 이후 단기 숨고르기';
+                    if (u) return '사상 최고가권 안착 흐름 지속';
+                    if (d) return '상승 랠리 이후 단기 숨고르기';
                     return '방향성 타진하며 혼조세 등락';
                   }
                   if (nameStr.includes('러셀 2000')) {
-                    if (isUp) return '금리 완화 기대로 중소형주 수혜';
-                    if (isDown) return '고금리 장기화 우려에 약세 지속';
+                    if (u) return '금리 완화 기대로 중소형주 수혜';
+                    if (d) return '고금리 장기화 우려에 약세 지속';
                     return '중소형주 경기 연착륙 관망';
                   }
                   if (nameStr.includes('VIX')) {
-                    const isNeg = trimmed.includes('-');
-                    if (isNeg || trimmed.startsWith('10') || trimmed.startsWith('11') || trimmed.startsWith('12') || trimmed.startsWith('13')) {
+                    if (d || trimmed.startsWith('10') || trimmed.startsWith('11') || trimmed.startsWith('12') || trimmed.startsWith('13') || trimmed.startsWith('14') || trimmed.startsWith('15') || trimmed.startsWith('16')) {
                       return '시장 심리 안정 및 불안 해소';
                     }
                     return '옵션 시장 헤지 매수세 유입';
@@ -581,24 +603,32 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ briefing, loading, i
                 };
 
                 return (
-                  <div key={idx} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-3 rounded-xl flex flex-col justify-between items-center text-center gap-2.5 w-full min-h-[118px]">
+                  <div key={idx} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 rounded-xl flex flex-col justify-between items-center text-center gap-2 w-full min-h-[118px] shadow-sm">
                     <div className="flex flex-col items-center gap-1 w-full">
                       <span className="text-[11px] font-extrabold text-slate-600 dark:text-slate-400 block whitespace-normal break-keep w-full leading-tight">{m.name}</span>
                       <div className="flex flex-col gap-0.5 w-full items-center">
-                        <span className="text-xs font-black font-mono text-slate-900 dark:text-slate-100 block whitespace-normal break-all w-full leading-normal">{price}</span>
-                        {change && (
-                          <span className={`text-[10px] font-bold font-mono block leading-normal whitespace-normal break-all w-full ${
+                        <span className={`text-xs font-black font-mono block whitespace-normal break-all w-full leading-normal ${
+                          hasData ? 'text-slate-900 dark:text-slate-100' : 'text-slate-500 dark:text-slate-500'
+                        }`}>
+                          {price}
+                        </span>
+                        {hasData && change ? (
+                          <span className={`text-[10px] font-extrabold font-mono block leading-normal whitespace-normal break-all w-full ${
                             m.isVix 
-                              ? 'text-amber-400' 
-                              : change.includes('+') ? 'text-red-400' : change.includes('-') ? 'text-blue-400' : 'text-slate-600 dark:text-slate-400'
+                              ? (isDown ? 'text-emerald-400' : 'text-amber-400') 
+                              : isUp ? 'text-rose-500 dark:text-rose-400' : isDown ? 'text-sky-500 dark:text-sky-400' : 'text-slate-400'
                           }`}>
                             {change}
                           </span>
-                        )}
+                        ) : !hasData ? (
+                          <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 block">
+                            데이터 없음
+                          </span>
+                        ) : null}
                       </div>
                     </div>
-                    <div className="w-full border-t border-slate-900/60 pt-1.5 select-none">
-                      <p className="text-[9px] font-medium text-slate-600 dark:text-slate-400 leading-tight break-keep">{getUsCommentary(m.name, m.val)}</p>
+                    <div className="w-full border-t border-slate-100 dark:border-slate-850 pt-1.5 select-none">
+                      <p className="text-[9px] font-medium text-slate-500 dark:text-slate-400 leading-tight break-keep">{getUsCommentary(m.name, m.val)}</p>
                     </div>
                   </div>
                 );
