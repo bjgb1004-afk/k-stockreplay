@@ -1,0 +1,19 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Dynamic Cache & Leaderboard files
+jodoju_cache.json
+leaderboard_ilbong.json
+leaderboard_danta.json
+
+# Temporary / Test Files
+test.js
+test.py
+tests/
+test/

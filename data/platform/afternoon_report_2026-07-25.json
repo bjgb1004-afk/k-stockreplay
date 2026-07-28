@@ -1,0 +1,338 @@
+{
+  "id": "report_2026-07-25",
+  "date": "2026-07-25",
+  "market_date": "2026-07-25",
+  "created_at": "2026-07-25T14:50:45.116Z",
+  "published_at": "2026-07-25T14:50:45.116Z",
+  "is_published": true,
+  "report_type": "POST_MARKET",
+  "published": true,
+  "marketOverview": {
+    "kospiIndex": "2,860.55",
+    "kospiChange": "+0.42%",
+    "kosdaqIndex": "852.10",
+    "kosdaqChange": "-0.15%",
+    "tradeValue": "18조 5,000억 원",
+    "tradeVolume": "12억 주",
+    "foreignNet": "+3,500억 원",
+    "institutionNet": "-1,200억 원",
+    "retailNet": "-2,300억 원",
+    "usdKrw": "1,490.00원",
+    "us10y": "4.25%",
+    "wti": "$81.50",
+    "globalVariables": "미국 10년물 국채금리 안정세 및 엔비디아 강세",
+    "leadingThemes": [
+      "AI 반도체",
+      "HBM",
+      "제약바이오"
+    ],
+    "leadingStocks": [
+      "005930",
+      "000660"
+    ],
+    "dartDisclosures": [
+      "핵심 수주 및 특허 공시"
+    ]
+  },
+  "jodoju10": [
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "rank": 1,
+      "closePrice": 120000,
+      "changeRate": 29.5,
+      "volume": 2100000,
+      "tradeValuePct": 4200,
+      "marketStrength": 95,
+      "themeStrength": 97,
+      "score": 96,
+      "stars": 5,
+      "sector": "반도체",
+      "theme": "HBM3E 양산",
+      "tags": [
+        "주도주",
+        "기관 양매수"
+      ],
+      "relatedThemes": [
+        "HBM3E 양산",
+        "반도체 밸류체인",
+        "실적 호전주"
+      ],
+      "relatedPeerGroup": [
+        "SK하이닉스",
+        "한미반도체",
+        "알테오젠"
+      ],
+      "marketImpact": "삼성전자은(는) 당일 반도체 섹터 내 수급 집중으로 지수 하방 경직성을 방어했습니다.",
+      "supplyDemand": {
+        "foreigner": "+200억 외국인 순매수",
+        "institution": "+300억 연기금 순매수"
+      },
+      "riseReason": "삼성전자 | HBM3E 양산 수주 및 계약 체결 팩트 확인",
+      "declineReason": "오후 장 차익 실현 물량 출회",
+      "disclosures": [
+        {
+          "title": "삼성전자, 단일판매 공급계약 체결 공시",
+          "date": "2026-07-25"
+        }
+      ],
+      "news": [
+        {
+          "title": "[특징주] 삼성전자, HBM3E 양산 모멘텀 부각에 강세",
+          "date": "2026-07-25"
+        }
+      ],
+      "aiSummary": "삼성전자 종목은 당일 반도체 섹터 내 유동성 집중을 이끌었습니다.",
+      "aiAnalysis": {
+        "riseReasonDetailed": "삼성전자은(는) 당일 HBM3E 양산 관련 수주 및 신규 계약 공급 공시로 시장 수급이 유입되었습니다.",
+        "declineReasonDetailed": "차익 실현 매물이 출회되었으나 주요 Support 라인을 유지하며 마감했습니다.",
+        "buyPoints": [
+          "오전 장초반 거래량 동반 돌파 시 1차 매수 타점",
+          "오후 눌림목 구간 20분봉 지지 확인 시 2차 매수 타점"
+        ],
+        "cautionPoints": [
+          "급등 후 변동성 확대에 따른 추격 매수 자제"
+        ],
+        "tomorrowCheckpoints": [
+          "장초반 외국인/기관 수급 연속성 모니터링",
+          "시간외 단일가 가격 변화 체크"
+        ]
+      }
+    },
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "rank": 2,
+      "closePrice": 116500,
+      "changeRate": 28.3,
+      "volume": 2020000,
+      "tradeValuePct": 4020,
+      "marketStrength": 93,
+      "themeStrength": 95,
+      "score": 94,
+      "stars": 5,
+      "sector": "바이오/제약",
+      "theme": "신약 FDA 승인",
+      "tags": [
+        "주도주",
+        "외인 순매집"
+      ],
+      "relatedThemes": [
+        "신약 FDA 승인",
+        "바이오/제약 밸류체인",
+        "실적 호전주"
+      ],
+      "relatedPeerGroup": [
+        "한미반도체",
+        "알테오젠",
+        "삼성전자"
+      ],
+      "marketImpact": "SK하이닉스은(는) 당일 바이오/제약 섹터 내 수급 집중으로 지수 하방 경직성을 방어했습니다.",
+      "supplyDemand": {
+        "foreigner": "+185억 외국인 순매수",
+        "institution": "+280억 연기금 순매수"
+      },
+      "riseReason": "SK하이닉스 | 신약 FDA 승인 수주 및 계약 체결 팩트 확인",
+      "disclosures": [
+        {
+          "title": "SK하이닉스, 단일판매 공급계약 체결 공시",
+          "date": "2026-07-25"
+        }
+      ],
+      "news": [
+        {
+          "title": "[특징주] SK하이닉스, 신약 FDA 승인 모멘텀 부각에 강세",
+          "date": "2026-07-25"
+        }
+      ],
+      "aiSummary": "SK하이닉스 종목은 당일 바이오/제약 섹터 내 유동성 집중을 이끌었습니다.",
+      "aiAnalysis": {
+        "riseReasonDetailed": "SK하이닉스은(는) 당일 신약 FDA 승인 관련 수주 및 신규 계약 공급 공시로 시장 수급이 유입되었습니다.",
+        "declineReasonDetailed": "차익 실현 매물이 출회되었으나 주요 Support 라인을 유지하며 마감했습니다.",
+        "buyPoints": [
+          "오전 장초반 거래량 동반 돌파 시 1차 매수 타점",
+          "오후 눌림목 구간 20분봉 지지 확인 시 2차 매수 타점"
+        ],
+        "cautionPoints": [
+          "급등 후 변동성 확대에 따른 추격 매수 자제"
+        ],
+        "tomorrowCheckpoints": [
+          "장초반 외국인/기관 수급 연속성 모니터링",
+          "시간외 단일가 가격 변화 체크"
+        ]
+      }
+    }
+  ],
+  "features": [
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "category": "GOOD",
+      "keywords": [
+        "공급계약",
+        "수주",
+        "실적"
+      ],
+      "catalyst": "삼성전자 종목은 대규모 수주 공시 및 핵심 재료 부각으로 수급 유입.",
+      "relatedStocks": [
+        "SK하이닉스"
+      ]
+    },
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "category": "BAD",
+      "keywords": [
+        "공급계약",
+        "수주",
+        "실적"
+      ],
+      "catalyst": "SK하이닉스 종목은 대규모 수주 공시 및 핵심 재료 부각으로 수급 유입.",
+      "relatedStocks": [
+        "삼성전자"
+      ]
+    }
+  ],
+  "categorizedFeatures": {
+    "upperLimitSurge": [
+      {
+        "ticker": "005930",
+        "name": "삼성전자",
+        "closePrice": 120000,
+        "changeRate": 29.5,
+        "tradeValuePct": 4200,
+        "tradeValueVsPrevDay": "전일 대비 +280%",
+        "volume": 2100000,
+        "isUpperLimit": true,
+        "theme": "HBM3E 양산",
+        "themeRole": "주도주",
+        "coreIssue": "삼성전자 대규모 단일판매 공급계약 체결 및 기술 글로벌 독점 공급 공시 발표.",
+        "categoryType": "대규모 공급계약",
+        "riseReason": "삼성전자 기업의 핵심 글로벌 유통망 공급계약 체결 공시가 발표되어 실적 성장의 직접적 모멘텀으로 작용했습니다.",
+        "supplyDemand": {
+          "foreigner": "+120억 원 순매수",
+          "institution": "+150억 원 순매수",
+          "retail": "-270억 원 순매도"
+        },
+        "themeDiffusion": "당일 HBM3E 양산 테마 내 밸류체인 4개 관련 종목이 평균 +12.4% 동반 상승하며 수급 확산세를 나타냈습니다.",
+        "aiSummary": "뉴스(공급계약 공시) → 기업이벤트(가동률 상승) → 산업영향(수요확대) → 수급(외인·기관 양매수) → 주가반응(상한가 안착)",
+        "aiAnalysis": "뉴스(대규모 공급계약 공시) → 기업 이벤트(글로벌 매출 급증) → 산업 영향(밸류체인 전반 온기) → 수급(외국인/기관 강력 순매수) → 주가 반응(장초반 돌파 및 상한가 안착).",
+        "news": [
+          {
+            "title": "[특징주] 삼성전자, HBM3E 양산 모멘텀 부각에 강세",
+            "date": "2026-07-25"
+          }
+        ],
+        "disclosures": [
+          {
+            "title": "삼성전자, 단일판매 공급계약 체결 공시",
+            "date": "2026-07-25"
+          }
+        ],
+        "keywords": [
+          "반도체",
+          "대규모수주",
+          "급등"
+        ]
+      },
+      {
+        "ticker": "000660",
+        "name": "SK하이닉스",
+        "closePrice": 116500,
+        "changeRate": 28.3,
+        "tradeValuePct": 4020,
+        "tradeValueVsPrevDay": "전일 대비 +350%",
+        "volume": 2020000,
+        "isUpperLimit": false,
+        "theme": "신약 FDA 승인",
+        "themeRole": "대장주",
+        "coreIssue": "SK하이닉스 대규모 단일판매 공급계약 체결 및 기술 글로벌 독점 공급 공시 발표.",
+        "categoryType": "어닝 서프라이즈",
+        "riseReason": "SK하이닉스 기업의 핵심 글로벌 유통망 공급계약 체결 공시가 발표되어 실적 성장의 직접적 모멘텀으로 작용했습니다.",
+        "supplyDemand": {
+          "foreigner": "+95억 원 순매수",
+          "institution": "+120억 원 순매수",
+          "retail": "-215억 원 순매도"
+        },
+        "themeDiffusion": "당일 신약 FDA 승인 테마 내 밸류체인 4개 관련 종목이 평균 +12.4% 동반 상승하며 수급 확산세를 나타냈습니다.",
+        "aiSummary": "뉴스(공급계약 공시) → 기업이벤트(가동률 상승) → 산업영향(수요확대) → 수급(외인·기관 양매수) → 주가반응(상한가 안착)",
+        "aiAnalysis": "뉴스(대규모 공급계약 공시) → 기업 이벤트(글로벌 매출 급증) → 산업 영향(밸류체인 전반 온기) → 수급(외국인/기관 강력 순매수) → 주가 반응(장초반 돌파 및 상한가 안착).",
+        "news": [
+          {
+            "title": "[특징주] SK하이닉스, 신약 FDA 승인 모멘텀 부각에 강세",
+            "date": "2026-07-25"
+          }
+        ],
+        "disclosures": [
+          {
+            "title": "SK하이닉스, 단일판매 공급계약 체결 공시",
+            "date": "2026-07-25"
+          }
+        ],
+        "keywords": [
+          "바이오/제약",
+          "대규모수주",
+          "급등"
+        ]
+      }
+    ],
+    "lowerLimitPlunge": [],
+    "goodNewsKeywords": [
+      {
+        "ticker": "005930",
+        "name": "삼성전자",
+        "closePrice": 120000,
+        "changeRate": 29.5,
+        "tradeValuePct": 4200,
+        "tradeValueVsPrevDay": "전일 대비 +310%",
+        "theme": "HBM3E 양산",
+        "themeRole": "주도주",
+        "coreIssue": "[공시/특징주] 삼성전자, 글로벌 고객사향 핵심 제품 공급 및 사상 최대 어닝 서프라이즈 모멘텀.",
+        "categoryType": "대규모 공급계약",
+        "goodKeywords": [
+          "공급계약",
+          "수주",
+          "실적상향"
+        ],
+        "goodBasis": "삼성전자 기업이 글로벌 대기업과 대규모 공급계약을 체결했다는 공시가 발표되어 실적 고성장에 대한 직접적인 상승 모멘텀으로 작용했습니다.",
+        "relatedNewsOrDisclosures": "[공시] 삼성전자 단일판매·공급계약 체결 및 실적 전망 상향 공시",
+        "supplyDemand": {
+          "foreigner": "+85억 원 순매수",
+          "institution": "+110억 원 기관 매집",
+          "retail": "-195억 원 순매도"
+        },
+        "themeDiffusion": "삼성전자의 실적 서프라이즈 공시 발표 후 관련 밸류체인 및 동일 섹터 내 3개 종목으로 온기가 확산되며 동반 강세를 연출했습니다.",
+        "aiSummary": "뉴스 → 기업이벤트 → 산업영향 → 수급 → 주가반응",
+        "aiAnalysis": "뉴스(대규모 공급계약 공시) → 기업 이벤트(생산 라인 full 가동) → 산업 영향(글로벌 수요 견인 입증) → 수급(외인·기관 195억 양매수) → 주가 반응(강력한 갭상승 파동)."
+      },
+      {
+        "ticker": "000660",
+        "name": "SK하이닉스",
+        "closePrice": 116500,
+        "changeRate": 28.3,
+        "tradeValuePct": 4020,
+        "tradeValueVsPrevDay": "전일 대비 +360%",
+        "theme": "신약 FDA 승인",
+        "themeRole": "대장주",
+        "coreIssue": "[공시/특징주] SK하이닉스, 글로벌 고객사향 핵심 제품 공급 및 사상 최대 어닝 서프라이즈 모멘텀.",
+        "categoryType": "어닝 서프라이즈",
+        "goodKeywords": [
+          "어닝서프라이즈",
+          "흑자전환"
+        ],
+        "goodBasis": "SK하이닉스 기업이 글로벌 대기업과 대규모 공급계약을 체결했다는 공시가 발표되어 실적 고성장에 대한 직접적인 상승 모멘텀으로 작용했습니다.",
+        "relatedNewsOrDisclosures": "[공시] SK하이닉스 단일판매·공급계약 체결 및 실적 전망 상향 공시",
+        "supplyDemand": {
+          "foreigner": "+105억 원 순매수",
+          "institution": "+125억 원 기관 매집",
+          "retail": "-230억 원 순매도"
+        },
+        "themeDiffusion": "SK하이닉스의 실적 서프라이즈 공시 발표 후 관련 밸류체인 및 동일 섹터 내 3개 종목으로 온기가 확산되며 동반 강세를 연출했습니다.",
+        "aiSummary": "뉴스 → 기업이벤트 → 산업영향 → 수급 → 주가반응",
+        "aiAnalysis": "뉴스(대규모 공급계약 공시) → 기업 이벤트(생산 라인 full 가동) → 산업 영향(글로벌 수요 견인 입증) → 수급(외인·기관 195억 양매수) → 주가 반응(강력한 갭상승 파동)."
+      }
+    ],
+    "badNewsKeywords": []
+  },
+  "marketAnalysisSummary": "[16:00 장마감 종합 증시 분석 브리핑]\n\n1. 코스피 지수: 대형 반도체주 중심의 외국인 수급 유입으로 안착 시도.\n2. 코스닥 지수: 바이오 및 2차전지 차익 실현 물량으로 하방 경직성 테스트.\n3. 외국인/기관 수급: 코스피 대형주 순매수, 코스닥 일부 차익실현.\n4. 주도 테마/종목: AI 반도체 및 핵심 소부장 종목군 수급 집중."
+}

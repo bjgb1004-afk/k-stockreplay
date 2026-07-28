@@ -1,0 +1,116 @@
+name: K-주식 통합 스케줄러
+
+on:
+  schedule:
+    # 1. 장전 브리핑 (KST 07:40 월-토) -> UTC 22:40 (일-금)
+    - cron: '40 22 * * 0-5'
+    # 2. 인사이트 칼럼 1 (KST 12:00 매일) -> UTC 03:00
+    - cron: '0 3 * * *'
+    # 3. 인사이트 칼럼 2 (KST 15:00 매일) -> UTC 06:00
+    - cron: '0 6 * * *'
+    # 4. KIS 토큰 갱신 & 주도주 수집 (KST 15:40 월-금) -> UTC 06:40
+    - cron: '40 6 * * 1-5'
+    # 5. 장마감 브리핑 (KST 15:50 월-금) -> UTC 06:50
+    - cron: '50 6 * * 1-5'
+    # 6. 인사이트 칼럼 3 (KST 20:00 매일) -> UTC 11:00
+    - cron: '0 11 * * *'
+    # 7. 캘린더 업데이트 (매월 28일 KST 09:00) -> UTC 00:00
+    - cron: '0 0 28 * *'
+  workflow_dispatch:
+    inputs:
+      job_type:
+        description: '실행할 작업 선택'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - pre_market
+          - leading_stocks
+          - post_market
+          - insight_column
+          - kis_token_refresh
+          - update_calendar
+
+jobs:
+  scheduler:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 환경 변수 설정 및 검증
+        run: |
+          # PRODUCTION_URL에서 마지막 슬래시 제거 (이중 슬래시 방지)
+          RAW_URL="${{ secrets.PRODUCTION_URL }}"
+          if [ -z "$RAW_URL" ]; then
+            RAW_URL="https://k-stockreplay.pe.kr"
+          fi
+          CLEAN_URL="${RAW_URL%/}"
+          echo "BASE_URL=$CLEAN_URL" >> $GITHUB_ENV
+          
+          # CRON_SECRET 설정
+          SECRET="${{ secrets.CRON_SECRET }}"
+          if [ -z "$SECRET" ]; then
+            SECRET="kstock_cron_secret_2026"
+          fi
+          echo "CRON_TOKEN=$SECRET" >> $GITHUB_ENV
+
+      - name: 작업 트리거 (장전 브리핑)
+        if: |
+          github.event.schedule == '40 22 * * 0-5' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'pre_market' || github.event.inputs.job_type == 'all'))
+        run: |
+          echo "Triggering Pre-Market Briefing..."
+          curl -s -X POST "${{ env.BASE_URL }}/api/cron/pre-market" \
+            -H "Authorization: Bearer ${{ env.CRON_TOKEN }}" \
+            -H "x-cron-secret: ${{ env.CRON_TOKEN }}"
+
+      - name: 작업 트리거 (KIS 토큰 갱신)
+        if: |
+          github.event.schedule == '40 6 * * 1-5' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'kis_token_refresh' || github.event.inputs.job_type == 'all'))
+        run: |
+          echo "Triggering KIS Token Refresh..."
+          curl -s -X POST "${{ env.BASE_URL }}/api/cron/kis-token-refresh" \
+            -H "Authorization: Bearer ${{ env.CRON_TOKEN }}" \
+            -H "x-cron-secret: ${{ env.CRON_TOKEN }}"
+
+      - name: 작업 트리거 (주도주 데이터 수집)
+        if: |
+          github.event.schedule == '40 6 * * 1-5' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'leading_stocks' || github.event.inputs.job_type == 'all'))
+        run: |
+          echo "Triggering Leading Stocks Collection..."
+          curl -s -X POST "${{ env.BASE_URL }}/api/cron/leading-stocks" \
+            -H "Authorization: Bearer ${{ env.CRON_TOKEN }}" \
+            -H "x-cron-secret: ${{ env.CRON_TOKEN }}"
+
+      - name: 작업 트리거 (인사이트 칼럼)
+        if: |
+          github.event.schedule == '0 3 * * *' ||
+          github.event.schedule == '0 6 * * *' ||
+          github.event.schedule == '0 11 * * *' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'insight_column' || github.event.inputs.job_type == 'all'))
+        run: |
+          echo "Triggering Insight Column Generation..."
+          curl -s -X POST "${{ env.BASE_URL }}/api/cron/insight-column" \
+            -H "Authorization: Bearer ${{ env.CRON_TOKEN }}" \
+            -H "x-cron-secret: ${{ env.CRON_TOKEN }}"
+
+      - name: 작업 트리거 (장마감 브리핑)
+        if: |
+          github.event.schedule == '50 6 * * 1-5' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'post_market' || github.event.inputs.job_type == 'all'))
+        run: |
+          echo "Triggering Post-Market Briefing..."
+          curl -s -X POST "${{ env.BASE_URL }}/api/cron/post-market" \
+            -H "Authorization: Bearer ${{ env.CRON_TOKEN }}" \
+            -H "x-cron-secret: ${{ env.CRON_TOKEN }}"
+
+      - name: 작업 트리거 (캘린더 업데이트)
+        if: |
+          github.event.schedule == '0 0 28 * *' ||
+          (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'update_calendar' || github.event.inputs.job_type == 'all'))
+        run: |
+          echo "Triggering Calendar Update..."
+          curl -s -X POST "${{ env.BASE_URL }}/api/cron/update-calendar" \
+            -H "Authorization: Bearer ${{ env.CRON_TOKEN }}" \
+            -H "x-cron-secret: ${{ env.CRON_TOKEN }}"
