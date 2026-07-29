@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <!-- 스마트폰 홈 화면 바로가기 추가 시 생성될 예쁜 아이콘 지정 -->
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#6366f1" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YEKR07QKCH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-YEKR07QKCH');
+    </script>
+    <meta name="naver-site-verification" content="aa73169b038367f15fc630ac01863a68a2792477" />
+    <meta name="description" content="주식 단기 트레이딩 및 기술적 분석 독학을 위한 무료 차트 복기 시뮬레이터. 과거 차트 리플레이 매매 연습으로 투자 실력을 키우세요." />
+    <meta property="og:title" content="무료 주식 차트 복기 시뮬레이터 | 단타 매매 연습 툴" />
+    <meta property="og:description" content="로그인 없이 즉시 시작하는 과거 주식 차트 복기 리플레이. 이동평균선, 거래량 기반 기술적 분석 매매일지 연습." />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K-Stock Replay Simulator</title>
+    <script>
+      window.getMagnetTickPrice = function(candle, progress, gameMode) {
+        if (!candle) return 0;
+        var O = candle.open;
+        var H = candle.high;
+        var L = candle.low;
+        var C = candle.close;
+        var V = candle.volume || 100000;
+
+        var target = O;
+        var isBullish = C >= O;
+
+        // 1. Progress-based target price calculation
+        if (isBullish) {
+          if (progress <= 0.20) {
+            // 0%~20%: Open -> Low
+            var p = progress / 0.20;
+            target = O + (L - O) * p;
+          } else if (progress <= 0.80) {
+            // 21%~80%: Low -> High
+            var p = (progress - 0.20) / 0.60;
+            target = L + (H - L) * p;
+          } else {
+            // 81%~100%: High -> Close
+            var p = (progress - 0.80) / 0.20;
+            target = H + (C - H) * p;
+          }
+        } else {
+          if (progress <= 0.20) {
+            // 0%~20%: Open -> High
+            var p = progress / 0.20;
+            target = O + (H - O) * p;
+          } else if (progress <= 0.80) {
+            // 21%~80%: High -> Low
+            var p = (progress - 0.20) / 0.60;
+            target = H + (L - H) * p;
+          } else {
+            // 81%~100%: Low -> Close
+            var p = (progress - 0.80) / 0.20;
+            target = L + (C - L) * p;
+          }
+        }
+
+        // 2. Volume-linked volatility noise
+        var refVol = gameMode === 'daily' ? 1000000 : 20000;
+        var volRatio = V / refVol;
+        if (isNaN(volRatio) || volRatio <= 0) volRatio = 1;
+        volRatio = Math.max(0.2, Math.min(4.0, volRatio));
+
+        // Noise amplitude scaling
+        var baseNoisePct = 0.0006; // 0.06% standard noise
+        var currentNoisePct = baseNoisePct * volRatio * (0.5 + Math.random() * 1.0);
+        var noiseSign = Math.random() > 0.5 ? 1 : -1;
+        var noiseVal = target * currentNoisePct * noiseSign;
+
+        var finalPrice = Math.round(target + noiseVal);
+
+        // Strict boundary constraints
+        if (progress >= 0.99) {
+          finalPrice = C;
+        } else {
+          finalPrice = Math.max(L, Math.min(H, finalPrice));
+        }
+
+        return finalPrice;
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <!-- SEO & AdSense Crawling Fallback Content (This text is read by AdSense / Google / Naver / Daum bots on initial crawl) -->
+      <article style="padding: 40px 20px; max-width: 800px; margin: 0 auto; font-family: 'Inter', sans-serif; line-height: 1.8; color: #f1f5f9; background-color: #0f172a; border-radius: 12px; margin-top: 40px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+        <h1 style="color: #f59e0b; font-size: 2rem; margin-bottom: 20px; font-weight: 800;">K-Stock Replay Simulator - 주식 투자 학습 및 실시간 리플레이 시뮬레이터</h1>
+        <p style="font-size: 1.1rem; color: #cbd5e1; margin-bottom: 24px;">본 시뮬레이터는 한국 주식 시장(K-Stock)의 역사적인 거래 데이터와 실제 캔들 정보를 바탕으로 실시간 주식 투자 연습 및 차트 리플레이 시뮬레이션을 제공하는 전문 웹 기반 학습 플랫폼입니다. 개인 투자자들이 실제 자산을 위험에 노출시키지 않고도 시장의 극심한 변동성과 호가 체결 흐름을 경험하고, 최적의 매매 타이밍을 훈련할 수 있도록 설계되었습니다.</p>
+        
+        <h2 style="color: #6366f1; font-size: 1.5rem; margin-top: 32px; margin-bottom: 16px; font-weight: 700;">주요 핵심 기능 및 시뮬레이터 활용 가이드</h2>
+        <ul style="list-style-type: disc; padding-left: 20px; color: #cbd5e1; margin-bottom: 24px;">
+          <li style="margin-bottom: 12px;"><strong>실시간 일봉 및 분봉 리플레이 엔진:</strong> 과거 실제 시장 거래 데이터를 기반으로 하루 단위의 일봉 및 분봉 흐름을 실제 호가 움직임처럼 실시간으로 리플레이합니다.</li>
+          <li style="margin-bottom: 12px;"><strong>자석 기반 틱 시뮬레이션 알고리즘:</strong> 인위적이거나 무작위적인 가격 움직임을 완전히 배제하고, 거래량과 당일 고점, 저점, 종가의 유기적 흐름을 완벽히 계산하는 고정밀 자석식 틱 체결 엔진을 구동합니다.</li>
+          <li style="margin-bottom: 12px;"><strong>블라인드 챌린지 모드 (Random Mode):</strong> 종목명과 일자 정보를 완전히 가린 상태에서 오직 캔들 패턴과 이동평균선, 실시간 거래량만으로 시장을 판단하고 매각 결정을 내림으로써 기술적 분석 역량을 극대화합니다.</li>
+          <li style="margin-bottom: 12px;"><strong>모바일 최적화 반응형 인터페이스:</strong> 데스크톱뿐만 아니라 다양한 모바일 기기에서도 동일한 실시간 차트 제어, 속도 조절(2배속 모드), 간편 주문 기능을 완벽히 사용할 수 있습니다.</li>
+        </ul>
+
+        <h2 style="color: #6366f1; font-size: 1.5rem; margin-top: 32px; margin-bottom: 16px; font-weight: 700;">실전 투자 성공을 위한 필수 기술적 분석 핵심 가이드</h2>
+        <h3 style="color: #38bdf8; font-size: 1.2rem; margin-top: 24px; margin-bottom: 12px; font-weight: 600;">1. 이동평균선(Moving Average) 분석법</h3>
+        <p style="color: #cbd5e1; margin-bottom: 16px;">이동평균선은 일정 기간 동안의 주가 종가 평균치를 산출해 연결한 선으로, 주가의 전체적인 방향성과 추세를 식별하는 가장 직관적이고 강력한 도구입니다. 5일(단기선), 20일(생명선), 60일(수급선), 120일(경기선) 등 각각의 이평선은 시장의 평균 심리를 대변하며 주요 지지선 및 저항선 역할을 수행하므로, 돌파 및 이탈 여부를 정밀히 주시해야 합니다.</p>
+        
+        <h3 style="color: #38bdf8; font-size: 1.2rem; margin-top: 24px; margin-bottom: 12px; font-weight: 600;">2. 거래량(Volume)과 시장 에너키 분석</h3>
+        <p style="color: #cbd5e1; margin-bottom: 16px;">거래량은 주가를 움직이는 근본적인 에너지이자 주가의 선행 지표입니다. 주가 상승 시 대량 거래량이 동반되는 것은 기관 및 외국인 등 대형 주도 세력의 강력한 수급이 유입되었음을 방증합니다. 반면 거래량 없이 주가만 상승하는 흐름은 신뢰도가 떨어지며, 거래량을 동반한 하락 캔들은 강력한 매도 압력으로 작용하므로 리스크 관리가 절실한 신호입니다.</p>
+
+        <h3 style="color: #38bdf8; font-size: 1.2rem; margin-top: 24px; margin-bottom: 12px; font-weight: 600;">3. 캔들차트(Candlestick Chart) 해석과 OHLC 서사</h3>
+        <p style="color: #cbd5e1; margin-bottom: 16px;">캔들은 지정된 시간 동안의 매수세와 매도세 간 치열한 전투의 결과물입니다. 시가(Open), 고가(High), 저가(Low), 종가(Close)의 상대적 위치는 그날 시장의 지배적인 주체를 명확히 보여줍니다. 긴 아래꼬리는 저점 매수세의 강력한 유입을, 긴 위꼬리는 고점에서의 차익 실현 욕구가 강했음을 나타냅니다. 본 시뮬레이터는 이러한 양봉과 음봉의 미세한 흐름을 실제 호가 체결 패턴처럼 구현하여 투자자의 차트 해석력을 비약적으로 증진시킵니다.</p>
+
+        <h2 style="color: #f59e0b; font-size: 1.5rem; margin-top: 32px; margin-bottom: 16px; font-weight: 700;">올바른 모의투자 학습 태도와 자산 관리의 핵심 원칙</h2>
+        <p style="color: #cbd5e1; margin-bottom: 16px;">모든 성공적인 트레이더는 기계적이고 일관된 손절매(Stop-loss) 원칙과 자금 관리 전략을 지니고 있습니다. 감정에 치우치지 않는 차분한 마인드로 매수 전 목표가와 손절가를 명확히 설정하고, 분할 매수를 통해 평균 단가를 제어하는 훈련을 습관화하십시오. 본 리플레이 시뮬레이터에서 반복적이고 체계적인 가상 매매를 경험함으로써 나만의 주식 투자 원칙을 안전하게 다듬고 완성도 높은 매매 전략을 수립해 보시기 바랍니다.</p>
+      </article>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

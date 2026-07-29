@@ -1,0 +1,827 @@
+{
+  "id": "report_2026-07-24",
+  "date": "2026-07-24",
+  "market_date": "2026-07-24",
+  "created_at": "2026-07-26T12:27:38.454Z",
+  "published_at": "2026-07-26T12:27:38.454Z",
+  "is_published": true,
+  "report_type": "POST_MARKET",
+  "published": true,
+  "marketOverview": {
+    "kospiIndex": "6,690.62",
+    "kospiChange": "-406.27 (-5.72%)",
+    "kosdaqIndex": "748.22",
+    "kosdaqChange": "-42.06 (-5.32%)",
+    "foreignNet": "-3.4조원",
+    "institutionNet": "-2.3조원",
+    "retailNet": "+5.7조원",
+    "usdKrw": "1,462.1원",
+    "us10y": "4.68%",
+    "wti": "$89.31",
+    "btc": "94,304,000원",
+    "globalVariables": "매크로 지표 분석 대기 중",
+    "leadingThemes": [],
+    "leadingStocks": []
+  },
+  "jodoju10": [
+    {
+      "ticker": "044340",
+      "name": "위닉스",
+      "rank": 1,
+      "closePrice": 4905,
+      "changeRate": 29.93,
+      "volume": 6174907,
+      "tradeValuePct": 277,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "반도체",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "위닉스 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "460930",
+      "name": "에이피알",
+      "rank": 2,
+      "closePrice": 15950,
+      "changeRate": 22.5,
+      "volume": 7297537,
+      "tradeValuePct": 1154,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "바이오/제약",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "에이피알 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "037070",
+      "name": "파세코",
+      "rank": 3,
+      "closePrice": 6810,
+      "changeRate": 15.23,
+      "volume": 8418972,
+      "tradeValuePct": 567,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "2차전지",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "파세코 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "002140",
+      "name": "고려산업",
+      "rank": 4,
+      "closePrice": 2340,
+      "changeRate": 13.04,
+      "volume": 29031468,
+      "tradeValuePct": 692,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "로봇/AI",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "고려산업 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "047920",
+      "name": "컴투스홀딩스",
+      "rank": 5,
+      "closePrice": 9020,
+      "changeRate": 11.77,
+      "volume": 1823216,
+      "tradeValuePct": 173,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "자동차부품",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "컴투스홀딩스 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "054540",
+      "name": "원익머트리얼즈",
+      "rank": 6,
+      "closePrice": 7260,
+      "changeRate": 11.01,
+      "volume": 4014505,
+      "tradeValuePct": 306,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "인터넷/소프트웨어",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "원익머트리얼즈 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "078590",
+      "name": "우리기술",
+      "rank": 7,
+      "closePrice": 3725,
+      "changeRate": 10.7,
+      "volume": 4511957,
+      "tradeValuePct": 186,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "반도체",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "우리기술 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "207940",
+      "name": "삼성바이오로직스",
+      "rank": 8,
+      "closePrice": 1518000,
+      "changeRate": 10.08,
+      "volume": 198056,
+      "tradeValuePct": 2971,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "바이오/제약",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "삼성바이오로직스 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "100090",
+      "name": "엑스게이트",
+      "rank": 9,
+      "closePrice": 18350,
+      "changeRate": 6.32,
+      "volume": 20117530,
+      "tradeValuePct": 3854,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "2차전지",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "엑스게이트 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    },
+    {
+      "ticker": "138040",
+      "name": "윤성에프앤씨",
+      "rank": 10,
+      "closePrice": 123300,
+      "changeRate": 5.75,
+      "volume": 454950,
+      "tradeValuePct": 553,
+      "marketStrength": 80,
+      "themeStrength": 80,
+      "score": 80,
+      "stars": 4,
+      "sector": "로봇/AI",
+      "theme": "데이터 수집 중",
+      "tags": [
+        "주도주"
+      ],
+      "relatedThemes": [
+        "데이터 수집 중"
+      ],
+      "relatedPeerGroup": [],
+      "marketImpact": "데이터 수집 및 분석 진행 중입니다.",
+      "supplyDemand": {
+        "foreigner": "미수집",
+        "institution": "미수집"
+      },
+      "riseReason": "윤성에프앤씨 | 데이터 수집 중",
+      "disclosures": [],
+      "news": [],
+      "aiSummary": "실시간 데이터 수집 중...",
+      "aiAnalysis": {
+        "riseReasonDetailed": "데이터 분석이 완료되면 업데이트됩니다.",
+        "declineReasonDetailed": "분석 중",
+        "buyPoints": [
+          "분석 중"
+        ],
+        "cautionPoints": [
+          "분석 중"
+        ],
+        "tomorrowCheckpoints": [
+          "분석 중"
+        ]
+      }
+    }
+  ],
+  "marketAnalysisSummary": "[15:50 장마감 종합 증시 분석 브리핑]\n\n시스템에서 실시간 데이터를 수집하여 AI 분석을 진행하고 있습니다. 잠시 후 최신 리포트로 업데이트됩니다.",
+  "globalMacro": {
+    "reportDate": "2026-07-24",
+    "marketTradeDate": "2026-07-24",
+    "collectedAt": "2026-07-26T12:27:32.220Z",
+    "kospiIndex": "6,690.62",
+    "kospiChange": "-406.27 (-5.72%)",
+    "kospiAsOf": "2026-07-24",
+    "kosdaqIndex": "748.22",
+    "kosdaqChange": "-42.06 (-5.32%)",
+    "kosdaqAsOf": "2026-07-24",
+    "foreignNet": "-3.4조원",
+    "institutionNet": "-2.3조원",
+    "retailNet": "+5.7조원",
+    "investorAsOf": "2026-07-24",
+    "usdKrw": "1,462.1원",
+    "usdKrwAsOf": "2026-07-26",
+    "us10y": "4.68%",
+    "us10yAsOf": "2026-07-24",
+    "wti": "$89.31",
+    "wtiAsOf": "2026-07-24",
+    "btc": "94,304,000원",
+    "btcAsOf": "2026-07-26",
+    "globalVariables": "매크로 지표 분석 대기 중",
+    "leadingThemes": [],
+    "leadingStocks": [],
+    "globalMacro": {
+      "usdKrw": "1,462.1원",
+      "usdKrwAsOf": "2026-07-26",
+      "us10y": "4.68%",
+      "us10yAsOf": "2026-07-24",
+      "wti": "$89.31",
+      "wtiAsOf": "2026-07-24",
+      "btc": "94,304,000원",
+      "btcAsOf": "2026-07-26"
+    }
+  },
+  "marketTradeDate": "2026-07-24",
+  "collectedAt": "2026-07-26T12:27:32.220Z",
+  "categorizedFeatures": {
+    "upperLimitSurge": [
+      {
+        "ticker": "044340",
+        "name": "위닉스",
+        "sector": "반도체",
+        "market": "KOSPI",
+        "closePrice": 4905,
+        "changeRate": 29.93,
+        "volume": 6174907,
+        "tradeValuePct": 277,
+        "riseReason": "위닉스 | 데이터 수집 중",
+        "categoryType": "상한가/급등주",
+        "isUpperLimit": true,
+        "keywords": [
+          "상승모멘텀"
+        ]
+      },
+      {
+        "ticker": "460930",
+        "name": "에이피알",
+        "sector": "바이오/제약",
+        "market": "KOSDAQ",
+        "closePrice": 15950,
+        "changeRate": 22.5,
+        "volume": 7297537,
+        "tradeValuePct": 1154,
+        "riseReason": "에이피알 | 데이터 수집 중",
+        "categoryType": "상한가/급등주",
+        "isUpperLimit": false,
+        "keywords": [
+          "상승모멘텀"
+        ]
+      },
+      {
+        "ticker": "037070",
+        "name": "파세코",
+        "sector": "2차전지",
+        "market": "KOSPI",
+        "closePrice": 6810,
+        "changeRate": 15.23,
+        "volume": 8418972,
+        "tradeValuePct": 567,
+        "riseReason": "파세코 | 데이터 수집 중",
+        "categoryType": "상한가/급등주",
+        "isUpperLimit": false,
+        "keywords": [
+          "상승모멘텀"
+        ]
+      },
+      {
+        "ticker": "002140",
+        "name": "고려산업",
+        "sector": "로봇/AI",
+        "market": "KOSPI",
+        "closePrice": 2340,
+        "changeRate": 13.04,
+        "volume": 29031468,
+        "tradeValuePct": 692,
+        "riseReason": "고려산업 | 데이터 수집 중",
+        "categoryType": "상한가/급등주",
+        "isUpperLimit": false,
+        "keywords": [
+          "상승모멘텀"
+        ]
+      },
+      {
+        "ticker": "047920",
+        "name": "컴투스홀딩스",
+        "sector": "자동차부품",
+        "market": "KOSPI",
+        "closePrice": 9020,
+        "changeRate": 11.77,
+        "volume": 1823216,
+        "tradeValuePct": 173,
+        "riseReason": "컴투스홀딩스 | 데이터 수집 중",
+        "categoryType": "상한가/급등주",
+        "isUpperLimit": false,
+        "keywords": [
+          "상승모멘텀"
+        ]
+      }
+    ],
+    "lowerLimitPlunge": [
+      {
+        "ticker": "138040",
+        "name": "윤성에프앤씨",
+        "sector": "로봇/AI",
+        "market": "KOSPI",
+        "closePrice": 123300,
+        "changeRate": 5.75,
+        "volume": 454950,
+        "tradeValuePct": 553,
+        "declineReason": "직접 촉매 확인 안 됨",
+        "categoryType": "하한가/급락주",
+        "isLowerLimit": false,
+        "keywords": [
+          "하락주의"
+        ]
+      },
+      {
+        "ticker": "100090",
+        "name": "엑스게이트",
+        "sector": "2차전지",
+        "market": "KOSPI",
+        "closePrice": 18350,
+        "changeRate": 6.32,
+        "volume": 20117530,
+        "tradeValuePct": 3854,
+        "declineReason": "직접 촉매 확인 안 됨",
+        "categoryType": "하한가/급락주",
+        "isLowerLimit": false,
+        "keywords": [
+          "하락주의"
+        ]
+      },
+      {
+        "ticker": "207940",
+        "name": "삼성바이오로직스",
+        "sector": "바이오/제약",
+        "market": "KOSDAQ",
+        "closePrice": 1518000,
+        "changeRate": 10.08,
+        "volume": 198056,
+        "tradeValuePct": 2971,
+        "declineReason": "직접 촉매 확인 안 됨",
+        "categoryType": "하한가/급락주",
+        "isLowerLimit": false,
+        "keywords": [
+          "하락주의"
+        ]
+      },
+      {
+        "ticker": "078590",
+        "name": "우리기술",
+        "sector": "반도체",
+        "market": "KOSPI",
+        "closePrice": 3725,
+        "changeRate": 10.7,
+        "volume": 4511957,
+        "tradeValuePct": 186,
+        "declineReason": "직접 촉매 확인 안 됨",
+        "categoryType": "하한가/급락주",
+        "isLowerLimit": false,
+        "keywords": [
+          "하락주의"
+        ]
+      },
+      {
+        "ticker": "054540",
+        "name": "원익머트리얼즈",
+        "sector": "인터넷/소프트웨어",
+        "market": "KOSPI",
+        "closePrice": 7260,
+        "changeRate": 11.01,
+        "volume": 4014505,
+        "tradeValuePct": 306,
+        "declineReason": "직접 촉매 확인 안 됨",
+        "categoryType": "하한가/급락주",
+        "isLowerLimit": false,
+        "keywords": [
+          "하락주의"
+        ]
+      }
+    ],
+    "goodNewsKeywords": [
+      {
+        "ticker": "054540",
+        "name": "원익머트리얼즈",
+        "sector": "인터넷/소프트웨어",
+        "market": "KOSPI",
+        "closePrice": 7260,
+        "changeRate": 11.01,
+        "tradeValuePct": 306,
+        "goodBasis": "원익머트리얼즈 | 데이터 수집 중",
+        "categoryType": "호재 키워드 특징주",
+        "goodKeywords": [
+          "시장관심"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      },
+      {
+        "ticker": "078590",
+        "name": "우리기술",
+        "sector": "반도체",
+        "market": "KOSPI",
+        "closePrice": 3725,
+        "changeRate": 10.7,
+        "tradeValuePct": 186,
+        "goodBasis": "우리기술 | 데이터 수집 중",
+        "categoryType": "호재 키워드 특징주",
+        "goodKeywords": [
+          "시장관심"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      },
+      {
+        "ticker": "207940",
+        "name": "삼성바이오로직스",
+        "sector": "바이오/제약",
+        "market": "KOSDAQ",
+        "closePrice": 1518000,
+        "changeRate": 10.08,
+        "tradeValuePct": 2971,
+        "goodBasis": "삼성바이오로직스 | 데이터 수집 중",
+        "categoryType": "호재 키워드 특징주",
+        "goodKeywords": [
+          "시장관심"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      },
+      {
+        "ticker": "100090",
+        "name": "엑스게이트",
+        "sector": "2차전지",
+        "market": "KOSPI",
+        "closePrice": 18350,
+        "changeRate": 6.32,
+        "tradeValuePct": 3854,
+        "goodBasis": "엑스게이트 | 데이터 수집 중",
+        "categoryType": "호재 키워드 특징주",
+        "goodKeywords": [
+          "시장관심"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      },
+      {
+        "ticker": "138040",
+        "name": "윤성에프앤씨",
+        "sector": "로봇/AI",
+        "market": "KOSPI",
+        "closePrice": 123300,
+        "changeRate": 5.75,
+        "tradeValuePct": 553,
+        "goodBasis": "윤성에프앤씨 | 데이터 수집 중",
+        "categoryType": "호재 키워드 특징주",
+        "goodKeywords": [
+          "시장관심"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      }
+    ],
+    "badNewsKeywords": [
+      {
+        "ticker": "047920",
+        "name": "컴투스홀딩스",
+        "sector": "자동차부품",
+        "market": "KOSPI",
+        "closePrice": 9020,
+        "changeRate": 11.77,
+        "tradeValuePct": 173,
+        "badBasis": "직접 촉매 확인 안 됨",
+        "categoryType": "악재 키워드 특징주",
+        "badKeywords": [
+          "변동성"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      },
+      {
+        "ticker": "002140",
+        "name": "고려산업",
+        "sector": "로봇/AI",
+        "market": "KOSPI",
+        "closePrice": 2340,
+        "changeRate": 13.04,
+        "tradeValuePct": 692,
+        "badBasis": "직접 촉매 확인 안 됨",
+        "categoryType": "악재 키워드 특징주",
+        "badKeywords": [
+          "변동성"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      },
+      {
+        "ticker": "037070",
+        "name": "파세코",
+        "sector": "2차전지",
+        "market": "KOSPI",
+        "closePrice": 6810,
+        "changeRate": 15.23,
+        "tradeValuePct": 567,
+        "badBasis": "직접 촉매 확인 안 됨",
+        "categoryType": "악재 키워드 특징주",
+        "badKeywords": [
+          "변동성"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      },
+      {
+        "ticker": "460930",
+        "name": "에이피알",
+        "sector": "바이오/제약",
+        "market": "KOSDAQ",
+        "closePrice": 15950,
+        "changeRate": 22.5,
+        "tradeValuePct": 1154,
+        "badBasis": "직접 촉매 확인 안 됨",
+        "categoryType": "악재 키워드 특징주",
+        "badKeywords": [
+          "변동성"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      },
+      {
+        "ticker": "044340",
+        "name": "위닉스",
+        "sector": "반도체",
+        "market": "KOSPI",
+        "closePrice": 4905,
+        "changeRate": 29.93,
+        "tradeValuePct": 277,
+        "badBasis": "직접 촉매 확인 안 됨",
+        "categoryType": "악재 키워드 특징주",
+        "badKeywords": [
+          "변동성"
+        ],
+        "relatedNewsOrDisclosures": "직접 촉매 확인 안 됨"
+      }
+    ]
+  }
+}
