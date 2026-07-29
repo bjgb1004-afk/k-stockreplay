@@ -318,8 +318,29 @@ function cleanExpectedThemes(val: any, fallback: any[] = []): any[] {
 // Clean and Parse JSON robustly
 function cleanAndParseJson(rawText: string): any {
   let cleaned = rawText.trim();
-  // Strip markdown code block wrappers
-  cleaned = cleaned.replace(/^```(json)?\s*/i, '').replace(/\s*```$/, '');
+
+  // Extract JSON string between first { or [ and last } or ]
+  const firstCurly = cleaned.indexOf('{');
+  const firstSquare = cleaned.indexOf('[');
+  
+  let startIdx = -1;
+  if (firstCurly !== -1 && firstSquare !== -1) {
+    startIdx = Math.min(firstCurly, firstSquare);
+  } else if (firstCurly !== -1) {
+    startIdx = firstCurly;
+  } else if (firstSquare !== -1) {
+    startIdx = firstSquare;
+  }
+
+  const isArray = startIdx !== -1 && cleaned[startIdx] === '[';
+  const lastIdx = isArray ? cleaned.lastIndexOf(']') : cleaned.lastIndexOf('}');
+
+  if (startIdx !== -1 && lastIdx !== -1 && lastIdx > startIdx) {
+    cleaned = cleaned.substring(startIdx, lastIdx + 1);
+  } else {
+    // Strip markdown code block wrappers as fallback
+    cleaned = cleaned.replace(/^```(json)?\s*/i, '').replace(/\s*```$/, '');
+  }
   
   // Escape literal newlines inside double-quoted strings
   cleaned = escapeNewlinesInJsonStrings(cleaned);

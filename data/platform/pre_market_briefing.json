@@ -1,224 +1,722 @@
 {
-  "id": "briefing_2026-07-29",
-  "date": "2026-07-29",
+  "id": "briefing_2026-07-30",
+  "date": "2026-07-30",
   "published": true,
-  "summary": "미국 증시는 4월 생산자물가지수(PPI)가 예상치를 상회했음에도 불구하고, 이전 수치의 하향 조정과 파월 의장의 금리 인상 가능성 일축 발언에 힘입어 3대 지수 모두 상승 마감했습니다.",
+  "summary": "미국 증시는 AI 반도체 섹터의 매도세 심화와 미-이란 지정학적 긴장 고조로 나스닥(-1.96%), 다우(-1.18%), S&P500(-1.31%)이 일제히 하락 마감했으며, 오늘 아침 국내 증시도 반도체 대형주 중심의 하락 압력 속 방어주로의 자금 이동이 예상됩니다.",
   "expectedThemes": [
-    "반도체 및 인공지능(AI)",
-    "밈 주식 및 중소형주"
+    "지정학적 리스크 방어(방산/석유에너지)",
+    "실적 및 고배당 방어주"
   ],
   "keyStocks": [
-    "삼성전자",
-    "SK하이닉스",
-    "에코프로"
+    "한화에어로스페이스",
+    "흥구석유"
   ],
-  "leadMapping": "미국 PPI 쇼크 우려를 파월 의장이 '금리 인상보다는 인하가 다음 단계'라고 재확인하며 시장을 안심시켰습니다. 나스닥(+0.75%)과 필라델피아 반도체 지수(+1.68%)가 강세를 보임에 따라 국내 반도체 섹터로의 외국인 수급 유입이 기대됩니다.",
-  "strategyScenario": "미 증시 안도 랠리 여파로 국내 증시 또한 상승 출발이 예상됩니다. 다만 오늘 밤 발표될 소비자물가지수(CPI)에 대한 경계감이 여전하므로, 장 초반 상승 후 매물 소화 과정을 거칠 가능성이 큽니다. 반도체 대형주 중심의 분할 매수 관점은 유지하되, 급등한 테마주의 추격 매수는 지양해야 합니다.",
+  "leadMapping": "미국 증시에서 엔비디아(-3.31%) 및 브로드컴(-3.37%) 등 핵심 AI 반도체주의 투매가 전개되고, 미-이란 지정학적 긴장 고조로 유가 상승과 VIX 변동성 지수 급등(+13.45%)이 발생했습니다. 이에 따라 위험자산 피하기 심리가 강화되어 국내 시장에서도 반도체 대형주에 대한 외국인 매도세가 출회되는 반면, 방산 및 정유·에너지 섹터로 리스크 회피성 자금 유입이 집중될 것으로 전망됩니다.",
+  "strategyScenario": "시초가 형성 시 미 반도체 폭락 여파에 따른 갭하락 출발이 불가피할 것으로 판단됩니다. 약세 출발 후 반도체/IT 주도주에 대한 성급한 저가 매수보다는 지정학적 리스크 수혜주 및 방어주 중심의 보수적 단기 트레이딩 전략을 추천합니다.",
   "usSummary": {
-    "dow": "39,558.11 (+0.32%)",
-    "nasdaq": "16,511.18 (+0.75%)",
-    "sp500": "5,222.68 (+0.48%)",
-    "russell2000": "2,085.44 (+1.14%)",
-    "vix": "13.42 (-1.45%)"
+    "dow": "51,594.14 (-1.18%)",
+    "nasdaq": "24,442.94 (-1.96%)",
+    "sp500": "7,316.15 (-1.31%)",
+    "russell2000": "2,906.31 (-1.42%)",
+    "vix": "20.66 (+13.45%)"
   },
   "macro": {
-    "interestRate": "5.25%~5.50% (동결)",
-    "cpi": "발표 대기 중 (시장 예상치 전년비 3.4%)",
-    "ppi": "0.5% (예상치 0.3% 상회, 전월비)",
-    "fomc": "파월 의장, 금리 인상 가능성 낮다고 언급",
-    "bondYield": "10년물 4.45% (소폭 하락)",
-    "exchangeRate": "1,368.50원 (보합권)",
-    "oilPrice": "$78.02 (WTI 기준)"
+    "interestRate": "5.25%~5.50%",
+    "cpi": "확인된 주요 원인은 제한적입니다.",
+    "ppi": "확인된 주요 원인은 제한적입니다.",
+    "fomc": "9월 금리 인하 기대감 고조",
+    "bondYield": "확인된 주요 원인은 제한적입니다.",
+    "exchangeRate": "1,443.65원 (20.79원 하락)",
+    "oilPrice": "미-이란 긴장에 따른 상승세"
   },
   "macroDetailed": {
     "interestRate": {
       "value": "5.25%~5.50%",
-      "reason": "인플레이션 둔화 속도 확인 필요",
-      "majorsAction": "금리 인하 시점 저울질 중",
-      "marketImpact": "중립적",
-      "sectorsAnalysis": "성장주 우호적 환경 조성 기대"
+      "reason": "연준 금리 동결 기조 지속 및 지정학적 리스크 모니터링",
+      "majorsAction": "위험자산 비중 축소 및 안전자산 선호 강화",
+      "marketImpact": "고밸류에이션 성장주 하락 압력",
+      "sectorsAnalysis": "기술주 약세, 방어주 상대적 견조"
     },
     "cpi": {
-      "value": "발표 대기 중",
-      "reason": "오늘 밤 발표될 수치가 향후 금리 경로의 핵심",
-      "majorsAction": "지표 확인 전까지 관망세",
-      "marketImpact": "매우 높음",
-      "sectorsAnalysis": "전 섹터 변동성 확대 가능성"
+      "value": "정보 수집 대기 중",
+      "reason": "확인된 주요 원인은 제한적입니다.",
+      "majorsAction": "관망세 유지",
+      "marketImpact": "중립적 영향",
+      "sectorsAnalysis": "지표 발표 관망"
     },
     "ppi": {
-      "value": "0.5% (상승)",
-      "reason": "서비스 물가 상승 기여",
-      "majorsAction": "이전치 하향 조정에 안도",
-      "marketImpact": "일시적 충격 후 회복",
-      "sectorsAnalysis": "기술주 반등 모멘텀"
+      "value": "정보 수집 대기 중",
+      "reason": "확인된 주요 원인은 제한적입니다.",
+      "majorsAction": "관망세 유지",
+      "marketImpact": "중립적 영향",
+      "sectorsAnalysis": "지표 발표 관망"
     },
     "bond10y": {
-      "value": "4.45%",
-      "reason": "안도 랠리에 따른 수요 유입",
-      "majorsAction": "채권 매수세 유입",
-      "marketImpact": "성장주에 긍정적",
-      "sectorsAnalysis": "테크주 상방 압력"
+      "value": "정보 수집 대기 중",
+      "reason": "지정학적 리스크 및 증시 변동성 확대 모니터링",
+      "majorsAction": "채권 및 안전자산 포지션 체크",
+      "marketImpact": "증시 위험 자산 투심 위축",
+      "sectorsAnalysis": "금리 민감 섹터 변동성 유지"
     },
     "exchangeRate": {
-      "value": "1,368.50원",
-      "reason": "달러화 혼조세 반영",
-      "majorsAction": "외국인 수급 중립적",
-      "marketImpact": "제한적",
-      "sectorsAnalysis": "수출주 환율 효과 지속"
+      "value": "1,443.65원 (20.79원 하락)",
+      "reason": "환율 급등세 일단락 및 시장 조정 흐름 반영",
+      "majorsAction": "외국인 수급 변동성 완화 탐색",
+      "marketImpact": "국내 지수 급락 폭을 일정 부분 완화하는 버팀목 역할",
+      "sectorsAnalysis": "수출 대형주 수급 하방 지지"
     },
     "oilPrice": {
-      "value": "$78.02",
-      "reason": "수요 둔화 우려와 감산 연장 기대 혼재",
-      "majorsAction": "에너지주 변동성 확대",
-      "marketImpact": "인플레 부담 완화",
-      "sectorsAnalysis": "정유/화학 섹터 관망"
+      "value": "미-이란 긴장으로 상승",
+      "reason": "미국과 이란 간 지정학적 충돌 우려에 따른 공급 불안 반영",
+      "majorsAction": "원자재 및 에너지 섹터 자금 순유입",
+      "marketImpact": "인플레이션 경계감 부각 및 지수 상승 제한",
+      "sectorsAnalysis": "정유, 석유화학, 방산 섹터 직접적 수혜"
     }
   },
   "domesticSectors": [
     {
-      "sectorName": "반도체 및 AI",
+      "sectorName": "방위산업 / 석유에너지",
       "sentiment": "bullish",
-      "reason": "필라델피아 반도체 지수 강세(+1.68%) 및 엔비디아 반등 여파",
+      "reason": "미-이란 지정학적 긴장 고조 및 유가 급등에 따른 리스크 회피 수혜",
       "stocks": [
-        "삼성전자",
-        "SK하이닉스",
-        "한미반도체"
+        "한화에어로스페이스",
+        "S-Oil"
       ]
     },
     {
-      "sectorName": "2차전지",
-      "sentiment": "neutral",
-      "reason": "테슬라 반등 시도 및 리튬 가격 안정화 단계 진입",
+      "sectorName": "반도체 / AI 밸류체인",
+      "sentiment": "bearish",
+      "reason": "엔비디아(-3.31%), 브로드컴(-3.37%) 등 미 AI 반도체주 투매 연동 약세 우려",
       "stocks": [
-        "LG에너지솔루션",
-        "에코프로비엠"
+        "삼성전자",
+        "SK하이닉스"
       ]
     }
   ],
   "worldNews": [
-    "US PPI Rises More Than Expected in April on Service Costs",
-    "Powell Calls PPI 'Mixed' Rather Than Hot, Downplays Rate Hikes",
-    "GameStop and AMC Extend Meme-Stock Rally in Volatile Trading"
+    "지정학적 긴장 고조 및 반도체주 약세로 미 증시 주요 지수 일제히 하락 마감",
+    "AI 시스템 급증에 따른 글로벌 금융 시스템 안정성 위험 우려 부각",
+    "Magnificent 7 실적 발표 앞두고 기술주 내부 변동성 및 자금 이동 지속"
   ],
   "usFeaturedStocks": [
-    "- 엔비디아 (NVDA): $913.56 (+1.06%) | HBM 수요 지속\n  - [모멘텀]: PPI 쇼크에도 불구하고 파월 의장의 온건한 발언에 반등 성공",
-    "- 게임스탑 (GME): $48.75 (+60.10%) | 밈 주식 열풍\n  - [모멘텀]: 로어링 키티 복귀 소식에 이틀 연속 폭등세 연출",
-    "- 구글 (GOOGL): $171.93 (+0.60%) | AI I/O 컨퍼런스\n  - [모멘텀]: 새로운 AI 모델 및 검색 기능 강화 발표에 견조한 흐름"
+    "- 엔비디아 (티커: NVDA): 종가 $190.01 (-3.31%) | AI 반도체\n  - [모멘텀 분석]: AI 시장 전반의 매도세 심화 및 반도체 투매 영향으로 -3.31% 급락 마감",
+    "- 테슬라 (티커: TSLA): 종가 $298.32 (-3.52%) | 자율주행\n  - [모멘텀 분석]: 기술주 약세 흐름 및 위험회피 심리 확산으로 -3.52% 하락 마감",
+    "- 브로드컴 (티커: AVGO): 종가 $370.32 (-3.37%) | 맞춤형 반도체\n  - [모멘텀 분석]: AI 칩 밸류체인 유동성 이탈로 -3.37% 하락 마감"
   ],
   "usJodoju": [
-    "엔비디아 (NVDA): +1.06%",
-    "게임스탑 (GME): +60.10%",
-    "구글 (GOOGL): +0.60%"
+    "엔비디아 (티커: NVDA): 종가 $190.01 (-3.31%) | AI 반도체",
+    "테슬라 (티커: TSLA): 종가 $298.32 (-3.52%) | 자율주행",
+    "브로드컴 (티커: AVGO): 종가 $370.32 (-3.37%) | 맞춤형 반도체"
   ],
-  "koreanImpact": "미국 증시의 안도 랠리와 반도체주 강세는 국내 증시에 매우 긍정적인 신호입니다. 시초가 갭 상승 출발이 예상되며, 특히 하이닉스를 필두로 한 반도체 밸류체인의 강세가 지수를 견인할 것으로 보입니다. 다만 장중 중화권 증시 움직임과 밤에 예정된 미 CPI 발표를 앞둔 차익 실현 욕구는 경계해야 합니다.",
+  "koreanImpact": "엔비디아 및 미 반도체 지수 약세로 인해 삼성전자, SK하이닉스 등 국내 반도체 대표주들의 기관 및 외국인 동반 순매도가 우려됩니다. 다만 원/달러 환율이 20.79원 하락한 1,443.65원에 마감하며 환율 리스크가 다소 진정된 점은 지수의 과도한 둔화를 방어하는 요인이 될 수 있습니다.",
   "relatedKoreanStocks": [
     {
-      "name": "SK하이닉스",
-      "reason": "필라델피아 반도체 지수 강세 및 HBM 수혜 기대감 지속"
+      "name": "한화에어로스페이스",
+      "reason": "중동 지정학적 긴장감 재부각에 따른 방산주 수급 집중 예상"
     },
     {
-      "name": "한미반도체",
-      "reason": "글로벌 AI 반도체 공급망 핵심 장비주로서의 위상 부각"
+      "name": "S-Oil",
+      "reason": "국제유가 상승 및 정산마진 개선 기대감에 따른 강세 전망"
     }
   ],
   "aiSummary5Lines": [
-    "미국 3대 지수는 PPI 지표 상회에도 파월 의장의 온건 발언에 안도하며 상승했습니다.",
-    "나스닥은 반도체주 강세와 함께 0.75% 상승하며 기술주 중심의 반등을 보였습니다.",
-    "게임스탑 등 밈 주식이 연일 폭등하며 시장의 투기적 수급이 강화되는 양상입니다.",
-    "국내 증시는 미 반도체 지수 강세에 힘입어 상승 출발 후 CPI 대기 모드에 진입할 전망입니다.",
-    "반도체 대형주 중심의 우호적 수급이 예상되나, 고점 매물 출회 가능성에 유의가 필요합니다."
+    "미국 5대 지수는 나스닥(-1.96%), 다우(-1.18%), S&P500(-1.31%), 러셀2000(-1.42%) 일제히 하락하고 VIX(+13.45%) 급등 마감함.",
+    "엔비디아(-3.31%), 브로드컴(-3.37%), 테슬라(-3.52%) 등 AI 및 주요 기술주가 급락한 반면 애플(+0.38%), MSFT(+0.37%)는 방어함.",
+    "원/달러 환율은 20.79원 하락한 1,443.65원으로 진정되었으나, 중동 지정학적 긴장감으로 국제유가는 상승함.",
+    "국내 증시는 개장 직후 반도체 섹터의 약세 출발이 예상되며 지정학 및 에너지 방어 테마로 수급이 쏠릴 것으로 보임.",
+    "장 초반 반도체 추격 매수를 자제하고 지정학 리스크 수혜주 및 방어주 위주의 리스크 관리 중심 대응이 필요함."
   ],
   "interestThemes": [
     {
-      "theme": "AI 반도체 및 소부장",
+      "theme": "지정학적 리스크 방어",
       "relatedStocks": [
-        "SK하이닉스",
-        "한미반도체",
-        "이오테크닉스"
+        "한화에어로스페이스",
+        "LIG넥스원"
       ]
     },
     {
-      "theme": "밈 주식 및 중소형 개별주",
+      "theme": "석유 및 에너지",
       "relatedStocks": [
-        "개별 테마주"
+        "S-Oil",
+        "흥구석유"
       ]
     }
   ],
   "interestStocks": [
     {
-      "name": "삼성전자",
-      "ticker": "005930",
-      "catalyst": "반도체 업황 개선 기대감 및 외국인 수급 유입 재개 여부"
+      "name": "한화에어로스페이스",
+      "ticker": "012450",
+      "catalyst": "중동 지정학적 리스크 고조에 따른 대표 방어주 수급 유입"
     },
     {
-      "name": "SK하이닉스",
-      "ticker": "000660",
-      "catalyst": "미국 반도체 지수 강세 연동 및 HBM3E 공급 모멘텀"
+      "name": "S-Oil",
+      "ticker": "010950",
+      "catalyst": "유가 상승에 따른 정유 섹터 모멘텀 부각"
     }
   ],
   "riskIssues": [
-    "오늘 밤 예정된 미국 4월 소비자물가지수(CPI) 발표 결과에 따른 시장 변동성",
-    "과도한 밈 주식 열풍에 따른 시장 전반의 변동성 확대 및 수급 쏠림"
+    "미-이란 지정학적 충돌 고조 및 이에 따른 국제유가 상승 압력",
+    "AI 반도체 섹터 전반의 차익실현 및 매도세 심화"
   ],
   "seo": {
-    "title": "2026년 7월 29일 장전 브리핑: 파월 발언에 안도한 미 증시, 국내 반도체주 상승 기대",
-    "description": "미국 PPI 쇼크에도 파월 의장의 온건 발언에 나스닥이 상승했습니다. 오늘 밤 CPI 발표를 앞둔 국내 증시 대응 전략을 분석합니다.",
+    "title": "[여의도 퀀트 장전브리핑] 미 증시 반도체 투매·지정학 리스크로 나스닥 -1.96% 하락... 대응 전략",
+    "description": "2026-07-30 여의도 장전 브리핑. 엔비디아, 브로드컴 급락 및 지정학 리스크로 뉴욕 증시 하락 마감. 국내 증시 반도체 약세 속 방산·에너지 방어주 중심 전략 제시.",
     "keywords": [
-      "미국증시",
-      "나스닥상승",
-      "PPI발표",
-      "파월의장",
-      "반도체주",
+      "미증시하락",
+      "반도체투매",
+      "지정학리스크",
+      "엔비디아",
       "코스피전망"
     ]
   },
-  "quantAnalysisMarkdown": "# [2026-07-29] 여의도 퀀트 장전 전략 브리핑\n\n## 1. 글로벌 마켓 리비전 & 핵심 지표\n\n- **다우존스**: 39,558.11 (+0.32%)\n- **나스닥**: 16,511.18 (+0.75%)\n- **S&P 500**: 5,222.68 (+0.48%)\n- **필라델피아 반도체**: +1.68%\n- **원/달러 환율**: 1,368.50원\n\n## 2. 미국 증시 핵심 특징\n미국 증시는 4월 생산자물가지수(PPI)가 전월 대비 0.5% 상승하며 예상치(0.3%)를 웃돌았음에도 불구하고 상승 마감했습니다. 이는 3월 PPI가 기존 0.2%에서 0.1%로 하향 조정된 점과, 제롬 파월 연준 의장이 '다음 금리 결정이 인상이 될 가능성은 낮다'고 발언하며 시장의 공포를 잠재웠기 때문입니다.\n\n특히 엔비디아(+1.06%)와 브로드컴(+2.11%) 등 주요 반도체주가 반등하며 기술주 중심의 매수세가 유입되었습니다. 또한 게임스탑(+60.1%) 등 밈 주식의 폭발적인 상승세가 시장의 이목을 끌었습니다.\n\n## 3. 국내 증시(KOSPI/KOSDAQ) 영향 및 대응 전략\n\n- **반도체 주도권 재탈환**: 미 반도체 지수 강세로 인해 SK하이닉스와 삼성전자 등 대형주로의 외국인 수급 유입이 강하게 나타날 것으로 보입니다.\n- **CPI 대기 모드**: 장 초반 강세 이후에는 오늘 밤 예정된 CPI 지표 발표를 앞두고 눈치보기 장세가 펼쳐질 수 있습니다.\n- **섹터 대응**: 반도체 섹터의 강세를 활용한 트레이딩이 유효하며, 2차전지 및 바이오 등 낙폭 과대 섹터의 기술적 반등 여부도 함께 체크할 필요가 있습니다.",
+  "quantAnalysisMarkdown": "# [여의도 퀀트 장전 브리핑] 2026년 7월 30일 시황 전략\n\n## 1. 미 증시 마감 요약 및 데이터 분석\n전일 뉴욕증시는 AI 반도체 섹터의 심화된 매도세와 미-이란 지정학적 긴장 고조에 따른 유가 상승 여파로 3대 지수가 일제히 하락 마감했습니다.\n- **다우존스**: 51,594.14 (-1.18%)\n- **나스닥**: 24,442.94 (-1.96%)\n- **S&P 500**: 7,316.15 (-1.31%)\n- **러셀 2000**: 2,906.31 (-1.42%)\n- **VIX 변동성**: 20.66 (+13.45%)\n- **원/달러 환율**: 1,443.65원 (-20.79원)\n\n특징주로는 **엔비디아(NVDA -3.31%)**, **브로드컴(AVGO -3.37%)**, **테슬라(TSLA -3.52%)** 등 고밸류 기술주 및 반도체 밸류체인이 급락세를 주도한 반면, **애플(AAPL +0.38%)**과 **마이크로소프트(MSFT +0.37%)**는 제한적인 상승으로 지수 추가 하락을 방어했습니다.\n\n## 2. 국내 증시 영향 및 수급 전망\n미국 증시의 반도체 및 AI 주도주 급락은 금일 국내 증시의 삼성전자, SK하이닉스 등 반도체 톱픽에 직접적인 하락 압력으로 작용할 것으로 보입니다. 다만 원/달러 환율이 20.79원 하락하며 환율 변동성이 다소 안정된 점은 외국인 추가 매도세를 완화시킬 수 있는 긍정적 지표입니다.\n\n## 3. 오늘의 핵심 관심 테마 및 주도 종목\n- **주요 테마**: 지정학적 리스크 방어(방산), 석유/에너지\n- **핵심 종목**: 한화에어로스페이스(012450), S-Oil(010950), 흥구석유(024060)\n- **수급 연결 고리**: 미-이란 갈등 부각으로 국제유가 변동성이 확대됨에 따라 방위산업 및 에너지 종목으로 단기 리스크 회피성 자금이 유입될 가능성이 높습니다.\n\n## 4. 트레이더 대응 가이드라인\n장 초반 약세 출발 후 반도체주에 대한 성급한 저가 매수를 지양하고, 지정학 수혜주 및 실적 방어주 중심으로 보수적인 관점의 단기 트레이딩을 권장합니다.",
   "marketFacts": [
     {
       "symbol": "^IXIC",
       "name": "Nasdaq Composite",
-      "price": "16,511.18",
-      "change": "+122.54",
-      "changePercent": "+0.75%",
-      "timestamp": "2026-07-29T00:00:00Z",
+      "price": "24,442.94",
+      "change": "-489.14",
+      "changePercent": "-1.96%",
+      "timestamp": "2026-07-29T22:57:56.148Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^RUT",
+      "name": "Russell 2000",
+      "price": "2,906.31",
+      "change": "-41.73",
+      "changePercent": "-1.42%",
+      "timestamp": "2026-07-29T22:57:56.151Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^GSPC",
+      "name": "S&P 500",
+      "price": "7,316.15",
+      "change": "-97.03",
+      "changePercent": "-1.31%",
+      "timestamp": "2026-07-29T22:57:56.153Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^DJI",
+      "name": "Dow Jones",
+      "price": "51,594.14",
+      "change": "-615.94",
+      "changePercent": "-1.18%",
+      "timestamp": "2026-07-29T22:57:56.155Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^VIX",
+      "name": "CBOE Volatility Index (VIX)",
+      "price": "20.66",
+      "change": "+2.45",
+      "changePercent": "+13.45%",
+      "timestamp": "2026-07-29T22:57:56.157Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "GC=F",
+      "name": "Gold",
+      "price": "4,139.70",
+      "change": "+103.40",
+      "changePercent": "+2.56%",
+      "timestamp": "2026-07-29T22:57:56.159Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^SOX",
+      "name": "PHLX Semiconductor Index",
+      "price": "10,447.49",
+      "change": "-1107.39",
+      "changePercent": "-9.58%",
+      "timestamp": "2026-07-29T22:57:56.160Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^TNX",
+      "name": "US 10-Year Treasury Yield",
+      "price": "4.62",
+      "change": "+0.02",
+      "changePercent": "+0.39%",
+      "timestamp": "2026-07-29T22:57:56.164Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "USDKRW=X",
+      "name": "USD/KRW Exchange Rate",
+      "price": "1,443.65",
+      "change": "-20.79",
+      "changePercent": "-1.42%",
+      "timestamp": "2026-07-29T22:57:56.167Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "CL=F",
+      "name": "WTI Crude Oil",
+      "price": "84.42",
+      "change": "+5.16",
+      "changePercent": "+6.51%",
+      "timestamp": "2026-07-29T22:57:56.248Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA",
+      "price": "190.01",
+      "change": "-6.50",
+      "changePercent": "-3.31%",
+      "timestamp": "2026-07-29T22:57:56.410Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "TSLA",
+      "name": "Tesla",
+      "price": "298.32",
+      "change": "-10.90",
+      "changePercent": "-3.52%",
+      "timestamp": "2026-07-29T22:57:56.414Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "AVGO",
+      "name": "Broadcom",
+      "price": "370.32",
+      "change": "-12.90",
+      "changePercent": "-3.37%",
+      "timestamp": "2026-07-29T22:57:56.656Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft",
+      "price": "390.54",
+      "change": "+1.44",
+      "changePercent": "+0.37%",
+      "timestamp": "2026-07-29T22:57:56.676Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "AAPL",
+      "name": "Apple",
+      "price": "338.19",
+      "change": "+1.28",
+      "changePercent": "+0.38%",
+      "timestamp": "2026-07-29T22:57:56.702Z",
       "source": "Yahoo Finance"
     }
   ],
   "newsFacts": [
     {
-      "title": "Powell plays down PPI, says inflation will fall further",
-      "source": "CNBC",
-      "publishedAt": "2026-07-28T18:00:00Z",
-      "url": "https://www.cnbc.com",
-      "summary": "Fed Chair Powell said PPI was mixed and he expects inflation to continue its downward trend.",
-      "relatedSymbols": [
-        "GSPC"
+      "title": "BlackRock Releases Weekly Market Commentary",
+      "source": "BlackRock",
+      "publishedAt": "2026-07-27T07:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQLWJDTjBBalYwVHVpc0VxV1BwRE1xeUt1RWlLQ1VJdnJQRXNnb3p6MnFNbjRBV0s0TnlldW4wSVIycFRQeVNISWJ3VV9wMWdjX1ZndE1Tc24tNzc0anNYWjl0SVBsRDhSa0dVTWlyVVYxX0w5b2JhTFB0Tm9Vb2FwYVZubTU1SVJlcy0zMEpXOEM4ZlhiSU1QazdVQVlldw?oc=5",
+      "summary": "BlackRock outlines its latest tactical asset allocation and economic commentary for the upcoming week.",
+      "relatedSymbols": [],
+      "relatedSectors": [
+        "Financials",
+        "Broad Market"
       ],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "BlackRock published its weekly strategic market commentary on July 27, 2026."
+      ]
+    },
+    {
+      "title": "Risks of AI Integration to Global Financial Stability Highlighted",
+      "source": "PubAffairs Bruxelles",
+      "publishedAt": "2026-07-29T09:59:49.000Z",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQYklvNm9heFc5OWZlV29Za1l1UEYwMXdxbjR0LWJtNjl2ODh6US1ySFp6ZVd4dGdyRmVtd2xIYUxiQlIwMHNINmdFUWZpTGVLWThnSEJSenVrS2MwV0MwOFNKdWhPSGZqenp2dlBvdlFweVNUTVNzdU9nU2c4a3BwOEZBd2JZNzl4QUZ4WUx6X2psd00?oc=5",
+      "summary": "European analysts raise concerns regarding potential systemic vulnerabilities and risks posed by AI models to global financial stability.",
+      "relatedSymbols": [],
+      "relatedSectors": [
+        "Technology",
+        "Artificial Intelligence",
+        "Financials"
+      ],
+      "sentiment": "negative",
+      "factualClaims": [
+        "Rapid adoption of AI systems presents systemic stability risks to financial infrastructure."
+      ]
+    },
+    {
+      "title": "Unusual Shifts and Internal Market Dynamics Surface in Stock Market",
+      "source": "WSJ",
+      "publishedAt": "2026-07-21T07:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNcTJwS3A5VGRQNVAwUDlGR3lOMXBQcEt4bklSV3pRdW5oUHZRMWNudk9WRzVTUGIwenlhbkZxMWxGanU1M0tWNmtMWE9rZU4zY1YxZ3dTSGZKcUc1OXVVNzZneVdiNm54YS1FX3ZFLVBXckNnMXVXWExuc3c5MlhhZU5BQXNlWUxzZ0lTUmFlcGpveDJPRU8zQ1ROOGF0cGE1aVNkYVl6SGE2Zw?oc=5",
+      "summary": "Analyses reveal unconventional sector rotations and underlying factor movements taking place beneath headline stock index levels.",
+      "relatedSymbols": [],
       "relatedSectors": [
         "Broad Market"
       ],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Internal market indicators display abnormal dispersion relative to benchmark index performance."
+      ]
+    },
+    {
+      "title": "Deloitte Details Key Weekly Economic Events and Trends",
+      "source": "Deloitte",
+      "publishedAt": "2026-07-27T07:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNcV9VYnV0R0RPcWN0d2g1SHJIVlNmaVA1TV9nXzRKdVlFcWtSMjQ1T1B0djE4dDNRanZvSVFGX0ZBNUd6cnZkVnAtenFuMnFzdU9zYzg5cFdkTVRxU1F5YVVXVFhVWGdhd2RsTDBkNS1Xcm9ub1FnMFp5NnB3WVBYa3JJa1FVbG5IT0ZRRHphTUhtNThkenVJS1ZrdWNDdw?oc=5",
+      "summary": "Deloitte reviews major macroeconomic data releases and global economic indicators scheduled for the week.",
+      "relatedSymbols": [],
+      "relatedSectors": [
+        "Economics",
+        "Broad Market"
+      ],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Deloitte published its macroeconomic outlook and data calendar for the week of July 27, 2026."
+      ]
+    },
+    {
+      "title": "Magnificent 7 Earnings Set to Test US Stock Market Rotation",
+      "source": "The Standard (HK)",
+      "publishedAt": "2026-07-29T13:24:10.000Z",
+      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQQU9pYkNYTzBwSU9RcHRQcEJEaXA0VHFEMnRoVzRwZ2xrS1BjLVBzWU5iT3pxRDNLejdoWHc5RWQyalJMTUZzTDFQUlljM0NsM1BIWk00YXNnSkpaVnFNek5qSmhHeFhCa2tjajJ3aFZzZ0RlX2w2djh3dS05VmFlZWJHMGRfMHNPaVl4UFpEWDlGWWM2a2pENnRfSG1pX2VKYjNTM3Fia1MyMnhWYmtCNC1DdUY?oc=5",
+      "summary": "Upcoming quarterly earnings reports from mega-cap tech companies will test whether the US equity market rally can broaden beyond technology leaders.",
+      "relatedSymbols": [
+        "AAPL",
+        "MSFT",
+        "NVDA",
+        "TSLA"
+      ],
+      "relatedSectors": [
+        "Technology",
+        "Consumer Cyclical",
+        "Broad Market"
+      ],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Earnings reports from the 'Magnificent 7' tech giants are evaluating the durability of market breadth expansion."
+      ]
+    },
+    {
+      "title": "US Stocks Rebound as Earnings and Lower Oil Prices Counter Semiconductor Weakness",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-28T20:05:42.000Z",
+      "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOWDRBVjhSNWg2TGl3T1NMcWh5aVk4UzIxVEVOb3ZLZ0tST1NHM244Q2h1VlM3aXRRYkVUOTBBOUNXYWg1SmxZME5XUXA1MDQ0ZWZzS2hhamltUkNkeHRTZzNkRjQ0UTN5NWQ3MVp0S0syZ0tmOGNXNi1abFAxMmszb2ZyQWc3NXltMUM4WE1IQV9aUS1zckFIN2pKdmdjUVZDUkN2UTNTcDFqS3N0Y2pKQmtJYzRNcE50VWc?oc=5",
+      "summary": "The Nasdaq, S&P 500, and Dow recorded gains as strong corporate earnings and falling crude oil prices helped absorb losses in chipmaker stocks.",
+      "relatedSymbols": [
+        "NVDA",
+        "AVGO"
+      ],
+      "relatedSectors": [
+        "Technology",
+        "Semiconductor",
+        "Energy"
+      ],
       "sentiment": "positive",
       "factualClaims": [
-        "Powell said rate hikes are unlikely.",
-        "PPI was 0.5% in April."
+        "Major US indexes gained ground as solid corporate earnings reports outweighed semiconductor stock declines."
+      ]
+    },
+    {
+      "title": "Semiconductor Stocks Plunge as AI Market Sell-Off Deepens",
+      "source": "Financial Times",
+      "publishedAt": "2026-07-28T02:21:38.000Z",
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQOU5EQzYzM1h5cUFtRE1hbWhzLW5KMm9ZVjZ4SFY0SE5Xc3IweTFEbS1XRTBjbThoVUJodHphUUprdWlEV2dyZ0tsazM0S01adW5EM255NXNhdmV1Vi1fR0dkVXNaRjNvT08ydm1GRlE2TC1XMVBrR3MxRkVwSEVRTnR1Nkc?oc=5",
+      "summary": "Global chipmakers experienced substantial price declines amid growing investor skepticism over high artificial intelligence valuations and spending durability.",
+      "relatedSymbols": [
+        "NVDA",
+        "AVGO"
+      ],
+      "relatedSectors": [
+        "Semiconductor",
+        "Technology",
+        "Artificial Intelligence"
+      ],
+      "sentiment": "negative",
+      "factualClaims": [
+        "Chip stocks tumbled sharply due to a deepening sell-off in AI-focused technology companies."
+      ]
+    },
+    {
+      "title": "US Markets Fall as Chip Stocks Drop and Oil Surges on US-Iran Tensions",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-13T07:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQQlU2UWNVczhNV3dXcjQzU2prNWtseFE1cGJSNXUtNzcwWlk5R2VkVUl3eXVHX0pCbFBXZUNXbV9pNG5JNUFkTnR1VWhiMmRBeEtFLTZ3dVFPZlhwVmhtOFBKMGpteFdtVFVOQ0tkTExZUDI5RWRJZ0oxSzNONEZ5MjNPM1VTLThCLUJEN21yMWhmamQ4aWJYUU1obE5hcjVtZXpz?oc=5",
+      "summary": "Major stock indexes declined following heavy selling in chip stocks while crude oil prices climbed due to escalated US-Iran geopolitical tension.",
+      "relatedSymbols": [
+        "NVDA",
+        "AVGO"
+      ],
+      "relatedSectors": [
+        "Semiconductor",
+        "Energy",
+        "Broad Market"
+      ],
+      "sentiment": "negative",
+      "factualClaims": [
+        "Geopolitical tensions between the US and Iran drove crude oil higher while chip losses dragged indices down."
+      ]
+    },
+    {
+      "title": "US Stocks Surge as Apple Reaches New All-Time High",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-15T07:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOLVp4LWZyMUlpNGV3T2MwYmkwT1RLY01BSzNnTkpRaUJRZ2dXWGpOVEJDdEJqN0xLTUdMT0hvYzczREpVZmZWUzlpVkZoWGMzcVpTZHgtd0ltdDJINFBnWXBEaTRHa1pvYjB3ZHQ5dWNyRHlLZUJJWHVZd0Q5aU5CcnVydGpNcmlzQlFtbGZ4aVZVWTRERGFqenN5OWdleEpYeHIxYmhVX3o4V0xhdWZ6SFdLc2MxUQ?oc=5",
+      "summary": "Wall Street finished higher as shares of Apple climbed to a record high, boosting sentiment across the tech sector.",
+      "relatedSymbols": [
+        "AAPL"
+      ],
+      "relatedSectors": [
+        "Technology",
+        "Consumer Electronics"
+      ],
+      "sentiment": "positive",
+      "factualClaims": [
+        "Apple stock hit a new record high, lifting the Dow, S&P 500, and Nasdaq higher on July 15."
+      ]
+    }
+  ],
+  "newsEvents": [
+    {
+      "eventTitle": "BlackRock Releases Weekly Market Commentary",
+      "relatedSectors": [
+        "Financials",
+        "Broad Market"
+      ],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "BlackRock Releases Weekly Market Commentary",
+          "source": "BlackRock",
+          "publishedAt": "2026-07-27T07:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQLWJDTjBBalYwVHVpc0VxV1BwRE1xeUt1RWlLQ1VJdnJQRXNnb3p6MnFNbjRBV0s0TnlldW4wSVIycFRQeVNISWJ3VV9wMWdjX1ZndE1Tc24tNzc0anNYWjl0SVBsRDhSa0dVTWlyVVYxX0w5b2JhTFB0Tm9Vb2FwYVZubTU1SVJlcy0zMEpXOEM4ZlhiSU1QazdVQVlldw?oc=5",
+          "summary": "BlackRock outlines its latest tactical asset allocation and economic commentary for the upcoming week.",
+          "relatedSymbols": [],
+          "relatedSectors": [
+            "Financials",
+            "Broad Market"
+          ],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "BlackRock published its weekly strategic market commentary on July 27, 2026."
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Risks of AI Integration to Global Financial Stability Highlighted",
+      "relatedSectors": [
+        "Technology",
+        "Artificial Intelligence",
+        "Financials"
+      ],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Risks of AI Integration to Global Financial Stability Highlighted",
+          "source": "PubAffairs Bruxelles",
+          "publishedAt": "2026-07-29T09:59:49.000Z",
+          "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQYklvNm9heFc5OWZlV29Za1l1UEYwMXdxbjR0LWJtNjl2ODh6US1ySFp6ZVd4dGdyRmVtd2xIYUxiQlIwMHNINmdFUWZpTGVLWThnSEJSenVrS2MwV0MwOFNKdWhPSGZqenp2dlBvdlFweVNUTVNzdU9nU2c4a3BwOEZBd2JZNzl4QUZ4WUx6X2psd00?oc=5",
+          "summary": "European analysts raise concerns regarding potential systemic vulnerabilities and risks posed by AI models to global financial stability.",
+          "relatedSymbols": [],
+          "relatedSectors": [
+            "Technology",
+            "Artificial Intelligence",
+            "Financials"
+          ],
+          "sentiment": "negative",
+          "factualClaims": [
+            "Rapid adoption of AI systems presents systemic stability risks to financial infrastructure."
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Unusual Shifts and Internal Market Dynamics Surface in Stock Market",
+      "relatedSectors": [
+        "Broad Market"
+      ],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Unusual Shifts and Internal Market Dynamics Surface in Stock Market",
+          "source": "WSJ",
+          "publishedAt": "2026-07-21T07:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNcTJwS3A5VGRQNVAwUDlGR3lOMXBQcEt4bklSV3pRdW5oUHZRMWNudk9WRzVTUGIwenlhbkZxMWxGanU1M0tWNmtMWE9rZU4zY1YxZ3dTSGZKcUc1OXVVNzZneVdiNm54YS1FX3ZFLVBXckNnMXVXWExuc3c5MlhhZU5BQXNlWUxzZ0lTUmFlcGpveDJPRU8zQ1ROOGF0cGE1aVNkYVl6SGE2Zw?oc=5",
+          "summary": "Analyses reveal unconventional sector rotations and underlying factor movements taking place beneath headline stock index levels.",
+          "relatedSymbols": [],
+          "relatedSectors": [
+            "Broad Market"
+          ],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Internal market indicators display abnormal dispersion relative to benchmark index performance."
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Deloitte Details Key Weekly Economic Events and Trends",
+      "relatedSectors": [
+        "Economics",
+        "Broad Market"
+      ],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Deloitte Details Key Weekly Economic Events and Trends",
+          "source": "Deloitte",
+          "publishedAt": "2026-07-27T07:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNcV9VYnV0R0RPcWN0d2g1SHJIVlNmaVA1TV9nXzRKdVlFcWtSMjQ1T1B0djE4dDNRanZvSVFGX0ZBNUd6cnZkVnAtenFuMnFzdU9zYzg5cFdkTVRxU1F5YVVXVFhVWGdhd2RsTDBkNS1Xcm9ub1FnMFp5NnB3WVBYa3JJa1FVbG5IT0ZRRHphTUhtNThkenVJS1ZrdWNDdw?oc=5",
+          "summary": "Deloitte reviews major macroeconomic data releases and global economic indicators scheduled for the week.",
+          "relatedSymbols": [],
+          "relatedSectors": [
+            "Economics",
+            "Broad Market"
+          ],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Deloitte published its macroeconomic outlook and data calendar for the week of July 27, 2026."
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Magnificent 7 Earnings Set to Test US Stock Market Rotation",
+      "relatedSectors": [
+        "Technology",
+        "Consumer Cyclical",
+        "Broad Market",
+        "Semiconductor",
+        "Energy",
+        "Artificial Intelligence",
+        "Consumer Electronics"
+      ],
+      "relatedSymbols": [
+        "AAPL",
+        "MSFT",
+        "NVDA",
+        "TSLA",
+        "AVGO"
+      ],
+      "newsItems": [
+        {
+          "title": "Magnificent 7 Earnings Set to Test US Stock Market Rotation",
+          "source": "The Standard (HK)",
+          "publishedAt": "2026-07-29T13:24:10.000Z",
+          "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQQU9pYkNYTzBwSU9RcHRQcEJEaXA0VHFEMnRoVzRwZ2xrS1BjLVBzWU5iT3pxRDNLejdoWHc5RWQyalJMTUZzTDFQUlljM0NsM1BIWk00YXNnSkpaVnFNek5qSmhHeFhCa2tjajJ3aFZzZ0RlX2w2djh3dS05VmFlZWJHMGRfMHNPaVl4UFpEWDlGWWM2a2pENnRfSG1pX2VKYjNTM3Fia1MyMnhWYmtCNC1DdUY?oc=5",
+          "summary": "Upcoming quarterly earnings reports from mega-cap tech companies will test whether the US equity market rally can broaden beyond technology leaders.",
+          "relatedSymbols": [
+            "AAPL",
+            "MSFT",
+            "NVDA",
+            "TSLA"
+          ],
+          "relatedSectors": [
+            "Technology",
+            "Consumer Cyclical",
+            "Broad Market"
+          ],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Earnings reports from the 'Magnificent 7' tech giants are evaluating the durability of market breadth expansion."
+          ]
+        },
+        {
+          "title": "US Stocks Rebound as Earnings and Lower Oil Prices Counter Semiconductor Weakness",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-28T20:05:42.000Z",
+          "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOWDRBVjhSNWg2TGl3T1NMcWh5aVk4UzIxVEVOb3ZLZ0tST1NHM244Q2h1VlM3aXRRYkVUOTBBOUNXYWg1SmxZME5XUXA1MDQ0ZWZzS2hhamltUkNkeHRTZzNkRjQ0UTN5NWQ3MVp0S0syZ0tmOGNXNi1abFAxMmszb2ZyQWc3NXltMUM4WE1IQV9aUS1zckFIN2pKdmdjUVZDUkN2UTNTcDFqS3N0Y2pKQmtJYzRNcE50VWc?oc=5",
+          "summary": "The Nasdaq, S&P 500, and Dow recorded gains as strong corporate earnings and falling crude oil prices helped absorb losses in chipmaker stocks.",
+          "relatedSymbols": [
+            "NVDA",
+            "AVGO"
+          ],
+          "relatedSectors": [
+            "Technology",
+            "Semiconductor",
+            "Energy"
+          ],
+          "sentiment": "positive",
+          "factualClaims": [
+            "Major US indexes gained ground as solid corporate earnings reports outweighed semiconductor stock declines."
+          ]
+        },
+        {
+          "title": "Semiconductor Stocks Plunge as AI Market Sell-Off Deepens",
+          "source": "Financial Times",
+          "publishedAt": "2026-07-28T02:21:38.000Z",
+          "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQOU5EQzYzM1h5cUFtRE1hbWhzLW5KMm9ZVjZ4SFY0SE5Xc3IweTFEbS1XRTBjbThoVUJodHphUUprdWlEV2dyZ0tsazM0S01adW5EM255NXNhdmV1Vi1fR0dkVXNaRjNvT08ydm1GRlE2TC1XMVBrR3MxRkVwSEVRTnR1Nkc?oc=5",
+          "summary": "Global chipmakers experienced substantial price declines amid growing investor skepticism over high artificial intelligence valuations and spending durability.",
+          "relatedSymbols": [
+            "NVDA",
+            "AVGO"
+          ],
+          "relatedSectors": [
+            "Semiconductor",
+            "Technology",
+            "Artificial Intelligence"
+          ],
+          "sentiment": "negative",
+          "factualClaims": [
+            "Chip stocks tumbled sharply due to a deepening sell-off in AI-focused technology companies."
+          ]
+        },
+        {
+          "title": "US Markets Fall as Chip Stocks Drop and Oil Surges on US-Iran Tensions",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-13T07:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQQlU2UWNVczhNV3dXcjQzU2prNWtseFE1cGJSNXUtNzcwWlk5R2VkVUl3eXVHX0pCbFBXZUNXbV9pNG5JNUFkTnR1VWhiMmRBeEtFLTZ3dVFPZlhwVmhtOFBKMGpteFdtVFVOQ0tkTExZUDI5RWRJZ0oxSzNONEZ5MjNPM1VTLThCLUJEN21yMWhmamQ4aWJYUU1obE5hcjVtZXpz?oc=5",
+          "summary": "Major stock indexes declined following heavy selling in chip stocks while crude oil prices climbed due to escalated US-Iran geopolitical tension.",
+          "relatedSymbols": [
+            "NVDA",
+            "AVGO"
+          ],
+          "relatedSectors": [
+            "Semiconductor",
+            "Energy",
+            "Broad Market"
+          ],
+          "sentiment": "negative",
+          "factualClaims": [
+            "Geopolitical tensions between the US and Iran drove crude oil higher while chip losses dragged indices down."
+          ]
+        },
+        {
+          "title": "US Stocks Surge as Apple Reaches New All-Time High",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-15T07:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOLVp4LWZyMUlpNGV3T2MwYmkwT1RLY01BSzNnTkpRaUJRZ2dXWGpOVEJDdEJqN0xLTUdMT0hvYzczREpVZmZWUzlpVkZoWGMzcVpTZHgtd0ltdDJINFBnWXBEaTRHa1pvYjB3ZHQ5dWNyRHlLZUJJWHVZd0Q5aU5CcnVydGpNcmlzQlFtbGZ4aVZVWTRERGFqenN5OWdleEpYeHIxYmhVX3o4V0xhdWZ6SFdLc2MxUQ?oc=5",
+          "summary": "Wall Street finished higher as shares of Apple climbed to a record high, boosting sentiment across the tech sector.",
+          "relatedSymbols": [
+            "AAPL"
+          ],
+          "relatedSectors": [
+            "Technology",
+            "Consumer Electronics"
+          ],
+          "sentiment": "positive",
+          "factualClaims": [
+            "Apple stock hit a new record high, lifting the Dow, S&P 500, and Nasdaq higher on July 15."
+          ]
+        }
       ]
     }
   ],
   "aiInterpretation": {
     "verifiedFacts": [
-      "미국 3대 지수 동반 상승: 다우 +0.32%, 나스닥 +0.75%, S&P 500 +0.48%",
-      "미국 4월 PPI 0.5% 상승 (예상치 0.3% 상회), 단 이전 달 수치는 하향 조정됨",
-      "제롬 파월 의장, '금리 인상 가능성 낮다'고 발언하며 매파적 우려 일축"
+      "미국 5대 지수 종가: 다우 51,594.14 (-1.18%), 나스닥 24,442.94 (-1.96%), S&P 500 7,316.15 (-1.31%), 러셀 2000 2,906.31 (-1.42%), VIX 20.66 (+13.45%)",
+      "USD/KRW 환율: 1,443.65원 (20.79원 하락)",
+      "뉴스 팩트: BlackRock Releases Weekly Market Commentary (BlackRock)",
+      "뉴스 팩트: Risks of AI Integration to Global Financial Stability Highlighted (PubAffairs Bruxelles)",
+      "뉴스 팩트: Unusual Shifts and Internal Market Dynamics Surface in Stock Market (WSJ)"
     ],
     "aiAnalysis": [
-      "물가 지표 상회에도 불구하고 파월 의장의 온건한 태도가 시장을 안도하게 하며 '배드 뉴스 이즈 굿 뉴스' 장세 연출",
-      "엔비디아 및 필라델피아 반도체 지수 반등으로 국내 반도체 섹터에 대한 투자 심리 급속 회복 기대",
-      "게임스탑 등 밈 주식 광풍이 시장 전반의 투기적 에너지를 자극하고 있음"
+      "미국 증시는 AI 반도체 섹터의 매도세 심화와 미-이란 지정학적 긴장 고조로 나스닥(-1.96%), 다우(-1.18%), S&P500(-1.31%)이 일제히 하락 마감했으며, 오늘 아침 국내 증시도 반도체 대형주 중심의 하락 압력 속 방어주로의 자금 이동이 예상됩니다.",
+      "미국 증시에서 엔비디아(-3.31%) 및 브로드컴(-3.37%) 등 핵심 AI 반도체주의 투매가 전개되고, 미-이란 지정학적 긴장 고조로 유가 상승과 VIX 변동성 지수 급등(+13.45%)이 발생했습니다. 이에 따라 위험자산 피하기 심리가 강화되어 국내 시장에서도 반도체 대형주에 대한 외국인 매도세가 출회되는 반면, 방산 및 정유·에너지 섹터로 리스크 회피성 자금 유입이 집중될 것으로 전망됩니다.",
+      "엔비디아 및 미 반도체 지수 약세로 인해 삼성전자, SK하이닉스 등 국내 반도체 대표주들의 기관 및 외국인 동반 순매도가 우려됩니다. 다만 원/달러 환율이 20.79원 하락한 1,443.65원에 마감하며 환율 리스크가 다소 진정된 점은 지수의 과도한 둔화를 방어하는 요인이 될 수 있습니다."
     ],
     "forecast": [
-      "국내 증시 갭 상승 출발 후 외국인 수급이 지수 방향성 결정할 전망",
-      "오늘 밤 CPI 발표 전까지는 상단이 다소 제한될 수 있어 추격 매수보다는 눌림목 공략 권장",
-      "반도체 섹터 내 실적 우량주 및 수급 개선 종목 중심의 집중 대응 전략 유효"
+      "시초가 형성 시 미 반도체 폭락 여파에 따른 갭하락 출발이 불가피할 것으로 판단됩니다. 약세 출발 후 반도체/IT 주도주에 대한 성급한 저가 매수보다는 지정학적 리스크 수혜주 및 방어주 중심의 보수적 단기 트레이딩 전략을 추천합니다.",
+      "미-이란 지정학적 충돌 고조 및 이에 따른 국제유가 상승 압력",
+      "AI 반도체 섹터 전반의 차익실현 및 매도세 심화"
     ]
   },
   "validationLogs": []
