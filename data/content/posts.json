@@ -16,7 +16,7 @@
     "createdAt": "2026-07-27T10:00:00+00:00",
     "published_at": "2026-07-27T10:00:00+00:00",
     "is_published": false,
-    "views": 430
+    "views": 0
   },
   {
     "id": "col_20",
@@ -35,7 +35,7 @@
     "createdAt": "2026-07-27T10:00:00+00:00",
     "published_at": "2026-07-27T10:00:00+00:00",
     "is_published": true,
-    "views": 286
+    "views": 0
   },
   {
     "id": "col_19",
@@ -54,7 +54,7 @@
     "createdAt": "2026-07-26T15:00:00+00:00",
     "published_at": "2026-07-26T15:00:00+00:00",
     "is_published": true,
-    "views": 317
+    "views": 0
   },
   {
     "id": "col_18",
@@ -73,7 +73,7 @@
     "createdAt": "2026-07-26T10:00:00+00:00",
     "published_at": "2026-07-26T10:00:00+00:00",
     "is_published": true,
-    "views": 245
+    "views": 0
   },
   {
     "id": "col_17",
@@ -92,7 +92,7 @@
     "createdAt": "2026-07-25T15:00:00+00:00",
     "published_at": "2026-07-25T15:00:00+00:00",
     "is_published": true,
-    "views": 305
+    "views": 0
   },
   {
     "id": "col_16",
@@ -111,7 +111,7 @@
     "createdAt": "2026-07-25T10:00:00+00:00",
     "published_at": "2026-07-25T10:00:00+00:00",
     "is_published": true,
-    "views": 290
+    "views": 0
   },
   {
     "id": "col_15",
@@ -130,7 +130,7 @@
     "createdAt": "2026-07-24T10:00:00+00:00",
     "published_at": "2026-07-24T10:00:00+00:00",
     "is_published": true,
-    "views": 371
+    "views": 0
   },
   {
     "id": "col_14",
@@ -148,7 +148,7 @@
     "createdAt": "2026-07-23T10:00:00+00:00",
     "published_at": "2026-07-23T10:00:00+00:00",
     "is_published": true,
-    "views": 341
+    "views": 0
   },
   {
     "id": "col_13",
@@ -166,7 +166,7 @@
     "createdAt": "2026-07-22T10:00:00+00:00",
     "published_at": "2026-07-22T10:00:00+00:00",
     "is_published": true,
-    "views": 265
+    "views": 0
   },
   {
     "id": "col_12",
@@ -184,7 +184,7 @@
     "createdAt": "2026-07-21T10:00:00+00:00",
     "published_at": "2026-07-21T10:00:00+00:00",
     "is_published": true,
-    "views": 311
+    "views": 0
   },
   {
     "id": "col_11",
@@ -202,7 +202,7 @@
     "createdAt": "2026-07-20T10:00:00+00:00",
     "published_at": "2026-07-20T10:00:00+00:00",
     "is_published": true,
-    "views": 450
+    "views": 0
   },
   {
     "id": "col_10",
@@ -220,7 +220,7 @@
     "createdAt": "2026-07-23T17:06:25.926+00:00",
     "published_at": "2026-07-23T17:06:25.926+00:00",
     "is_published": true,
-    "views": 326
+    "views": 0
   },
   {
     "id": "col_9",
@@ -238,7 +238,7 @@
     "createdAt": "2026-07-18T10:00:00+00:00",
     "published_at": "2026-07-18T10:00:00+00:00",
     "is_published": true,
-    "views": 280
+    "views": 0
   },
   {
     "id": "col_8",
@@ -256,7 +256,7 @@
     "createdAt": "2026-07-17T10:00:00+00:00",
     "published_at": "2026-07-17T10:00:00+00:00",
     "is_published": true,
-    "views": 395
+    "views": 0
   },
   {
     "id": "col_7",
@@ -274,7 +274,7 @@
     "createdAt": "2026-07-23T10:54:18.447+00:00",
     "published_at": "2026-07-23T10:54:18.447+00:00",
     "is_published": true,
-    "views": 331
+    "views": 0
   },
   {
     "id": "col_6",
@@ -292,7 +292,7 @@
     "createdAt": "2026-07-15T10:00:00+00:00",
     "published_at": "2026-07-15T10:00:00+00:00",
     "is_published": true,
-    "views": 420
+    "views": 0
   },
   {
     "id": "col_5",
@@ -310,7 +310,7 @@
     "createdAt": "2026-07-14T10:00:00+00:00",
     "published_at": "2026-07-14T10:00:00+00:00",
     "is_published": true,
-    "views": 350
+    "views": 0
   },
   {
     "id": "col_4",
@@ -329,7 +329,7 @@
     "createdAt": "2026-07-22T12:30:36.481+00:00",
     "published_at": "2026-07-22T12:30:36.481+00:00",
     "is_published": true,
-    "views": 296
+    "views": 0
   },
   {
     "id": "col_3",
@@ -347,7 +347,7 @@
     "createdAt": "2026-07-12T10:00:00+00:00",
     "published_at": "2026-07-12T10:00:00+00:00",
     "is_published": true,
-    "views": 312
+    "views": 0
   },
   {
     "id": "col_2",
@@ -365,7 +365,7 @@
     "createdAt": "2026-07-21T16:06:29.408+00:00",
     "published_at": "2026-07-21T16:06:29.408+00:00",
     "is_published": true,
-    "views": 390
+    "views": 0
   },
   {
     "id": "col_1",
@@ -383,7 +383,7 @@
     "createdAt": "2026-07-21T11:03:44.524+00:00",
     "published_at": "2026-07-21T11:03:44.524+00:00",
     "is_published": true,
-    "views": 413
+    "views": 0
   },
   {
     "id": "col_23",
@@ -417,7 +417,7 @@
     "createdAt": "2026-07-27T14:00:00+00:00",
     "published_at": "2026-07-27T14:00:00+00:00",
     "is_published": true,
-    "views": 1
+    "views": 0
   },
   {
     "id": "col_26",
@@ -434,7 +434,7 @@
     "createdAt": "2026-07-27T16:00:00+00:00",
     "published_at": "2026-07-27T16:00:00+00:00",
     "is_published": true,
-    "views": 2
+    "views": 0
   },
   {
     "id": "col_6_nodate_midday",
