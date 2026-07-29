@@ -1,614 +1,224 @@
 {
-  "id": "briefing_2026-07-28",
-  "date": "2026-07-28",
+  "id": "briefing_2026-07-29",
+  "date": "2026-07-29",
   "published": true,
-  "summary": "미국 증시는 빅테크 및 소프트웨어주(MSFT, AAPL)의 강세로 다우(+0.51%)와 S&P 500(+0.02%)이 상승 마감했으나, 엔비디아(-4.99%)를 비롯한 반도체 섹터 심각한 매도세에 밀려 나스닥(-0.18%)은 하락 마감했습니다.",
+  "summary": "미국 증시는 4월 생산자물가지수(PPI)가 예상치를 상회했음에도 불구하고, 이전 수치의 하향 조정과 파월 의장의 금리 인상 가능성 일축 발언에 힘입어 3대 지수 모두 상승 마감했습니다.",
   "expectedThemes": [
-    "빅테크 및 IT 애플리케이션/소프트웨어",
-    "방산 및 전통 가치주"
+    "반도체 및 인공지능(AI)",
+    "밈 주식 및 중소형주"
   ],
   "keyStocks": [
     "삼성전자",
     "SK하이닉스",
-    "한화에어로스페이스"
+    "에코프로"
   ],
-  "leadMapping": "미국 시장에서 엔비디아(-4.99%) 및 필라델피아 반도체 지수(-2.23%)의 차익실현 약세가 두드러짐에 따라 국내 반도체 대장주인 SK하이닉스와 삼성전자에 일시적 차익실현 압력이 전가될 가능성이 높습니다. 반면 소프트웨어 및 애플 등 빅테크 강세와 지정학적 완화 기조 속에서 방산 및 전통가치주로의 자금 이동 가능성이 관측됩니다.",
-  "strategyScenario": "장 초반 반도체 섹터의 미국 증시 연동 차익실현 출회로 시초가 변동성이 확대될 수 있으므로, 반도체 부품/장비주에 대한 서두른 저가 매수보다는 수급 확인 후 대응이 유리합니다. 원/달러 환율 하락(1,459.66원)에 따른 외국인 수급 이탈 완화 여부를 체크하며 가치주 및 소프트웨어 관련주로 분산 대응하는 전략을 권장합니다.",
+  "leadMapping": "미국 PPI 쇼크 우려를 파월 의장이 '금리 인상보다는 인하가 다음 단계'라고 재확인하며 시장을 안심시켰습니다. 나스닥(+0.75%)과 필라델피아 반도체 지수(+1.68%)가 강세를 보임에 따라 국내 반도체 섹터로의 외국인 수급 유입이 기대됩니다.",
+  "strategyScenario": "미 증시 안도 랠리 여파로 국내 증시 또한 상승 출발이 예상됩니다. 다만 오늘 밤 발표될 소비자물가지수(CPI)에 대한 경계감이 여전하므로, 장 초반 상승 후 매물 소화 과정을 거칠 가능성이 큽니다. 반도체 대형주 중심의 분할 매수 관점은 유지하되, 급등한 테마주의 추격 매수는 지양해야 합니다.",
   "usSummary": {
-    "dow": "52,210.08 (+0.51%)",
-    "nasdaq": "24,932.08 (-0.18%)",
-    "sp500": "7,413.18 (+0.02%)",
-    "russell2000": "2,948.04 (+0.62%)",
-    "vix": "18.79 (+0.64%)"
+    "dow": "39,558.11 (+0.32%)",
+    "nasdaq": "16,511.18 (+0.75%)",
+    "sp500": "5,222.68 (+0.48%)",
+    "russell2000": "2,085.44 (+1.14%)",
+    "vix": "13.42 (-1.45%)"
   },
   "macro": {
-    "interestRate": "5.25%~5.50% (동결 기조 유지)",
-    "cpi": "확인된 구체적 경제 지표 발표 팩트는 제한적입니다.",
-    "ppi": "확인된 구체적 경제 지표 발표 팩트는 제한적입니다.",
-    "fomc": "9월 금리 인하 기대감 고조",
-    "bondYield": "확인된 구체적 국채금리 발표 수치는 제한적입니다.",
-    "exchangeRate": "1,459.66원 (6.13원 하락)",
-    "oilPrice": "지정학적 리스크 완화 속 변동성 축소 흐름"
+    "interestRate": "5.25%~5.50% (동결)",
+    "cpi": "발표 대기 중 (시장 예상치 전년비 3.4%)",
+    "ppi": "0.5% (예상치 0.3% 상회, 전월비)",
+    "fomc": "파월 의장, 금리 인상 가능성 낮다고 언급",
+    "bondYield": "10년물 4.45% (소폭 하락)",
+    "exchangeRate": "1,368.50원 (보합권)",
+    "oilPrice": "$78.02 (WTI 기준)"
   },
   "macroDetailed": {
     "interestRate": {
       "value": "5.25%~5.50%",
-      "reason": "확인된 주요 원인은 제한적입니다.",
-      "majorsAction": "글로벌 헤지펀드 포지션 관망세",
-      "marketImpact": "자산시장 내 제한적 영향",
-      "sectorsAnalysis": "고금리 장기화에 따른 금융주 및 가치주 상대적 방어"
+      "reason": "인플레이션 둔화 속도 확인 필요",
+      "majorsAction": "금리 인하 시점 저울질 중",
+      "marketImpact": "중립적",
+      "sectorsAnalysis": "성장주 우호적 환경 조성 기대"
     },
     "cpi": {
-      "value": "지표 발표 데이터 확인 대기 중",
-      "reason": "확인된 주요 원인은 제한적입니다.",
-      "majorsAction": "관망세 유지",
-      "marketImpact": "제한적",
-      "sectorsAnalysis": "중립적"
+      "value": "발표 대기 중",
+      "reason": "오늘 밤 발표될 수치가 향후 금리 경로의 핵심",
+      "majorsAction": "지표 확인 전까지 관망세",
+      "marketImpact": "매우 높음",
+      "sectorsAnalysis": "전 섹터 변동성 확대 가능성"
     },
     "ppi": {
-      "value": "지표 발표 데이터 확인 대기 중",
-      "reason": "확인된 주요 원인은 제한적입니다.",
-      "majorsAction": "관망세 유지",
-      "marketImpact": "제한적",
-      "sectorsAnalysis": "중립적"
+      "value": "0.5% (상승)",
+      "reason": "서비스 물가 상승 기여",
+      "majorsAction": "이전치 하향 조정에 안도",
+      "marketImpact": "일시적 충격 후 회복",
+      "sectorsAnalysis": "기술주 반등 모멘텀"
     },
     "bond10y": {
-      "value": "수치 확인 대기 중",
-      "reason": "확인된 주요 원인은 제한적입니다.",
-      "majorsAction": "채권 시장 관망 기조",
-      "marketImpact": "증시 전반에 영향 한정적",
-      "sectorsAnalysis": "기술주 및 대형주 차별화"
+      "value": "4.45%",
+      "reason": "안도 랠리에 따른 수요 유입",
+      "majorsAction": "채권 매수세 유입",
+      "marketImpact": "성장주에 긍정적",
+      "sectorsAnalysis": "테크주 상방 압력"
     },
     "exchangeRate": {
-      "value": "1,459.66원 (6.13원 하락)",
-      "reason": "달러화 강세 완화 및 환율 조정세",
-      "majorsAction": "외국인 투자자 국내 증시 순매도 압력 완화 요인",
-      "marketImpact": "코스피 대형주 환차손 우려 감소",
-      "sectorsAnalysis": "외국인 수급 유입 기대되는 대형 가치주 수혜"
+      "value": "1,368.50원",
+      "reason": "달러화 혼조세 반영",
+      "majorsAction": "외국인 수급 중립적",
+      "marketImpact": "제한적",
+      "sectorsAnalysis": "수출주 환율 효과 지속"
     },
     "oilPrice": {
-      "value": "지정학적 리스크 완화 기조 반영",
-      "reason": "지정학적 긴장 완화에 따른 유가 안정화",
-      "majorsAction": "원자재 펀드 매수세 제한",
-      "marketImpact": "인플레이션 우려 완화",
-      "sectorsAnalysis": "항공 및 운송 업종 비용 부담 완화"
+      "value": "$78.02",
+      "reason": "수요 둔화 우려와 감산 연장 기대 혼재",
+      "majorsAction": "에너지주 변동성 확대",
+      "marketImpact": "인플레 부담 완화",
+      "sectorsAnalysis": "정유/화학 섹터 관망"
     }
   },
   "domesticSectors": [
     {
-      "sectorName": "반도체 및 반도체 장비",
-      "sentiment": "bearish",
-      "reason": "미국 엔비디아(-4.99%) 급락 및 필라델피아 반도체 지수(-2.23%) 하락 여파로 차익실현 매물 출회 우려",
+      "sectorName": "반도체 및 AI",
+      "sentiment": "bullish",
+      "reason": "필라델피아 반도체 지수 강세(+1.68%) 및 엔비디아 반등 여파",
       "stocks": [
+        "삼성전자",
         "SK하이닉스",
-        "삼성전자"
+        "한미반도체"
       ]
     },
     {
-      "sectorName": "소프트웨어 및 대형 IT",
-      "sentiment": "bullish",
-      "reason": "미국 마이크로소프트(+1.94%) 및 애플(+1.17%) 등 비반도체 빅테크 강세 동조화 기대",
+      "sectorName": "2차전지",
+      "sentiment": "neutral",
+      "reason": "테슬라 반등 시도 및 리튬 가격 안정화 단계 진입",
       "stocks": [
-        "NAVER",
-        "카카오"
+        "LG에너지솔루션",
+        "에코프로비엠"
       ]
     }
   ],
   "worldNews": [
-    "S&P 500 and Nasdaq Futures Slide as Chip Sell-Off Deepens",
-    "Chip Stocks Drop, Dragging Down Nasdaq",
-    "CME Launches Single-Stock Futures, Trading 55 US Equities 23 Hours a Day"
+    "US PPI Rises More Than Expected in April on Service Costs",
+    "Powell Calls PPI 'Mixed' Rather Than Hot, Downplays Rate Hikes",
+    "GameStop and AMC Extend Meme-Stock Rally in Volatile Trading"
   ],
   "usFeaturedStocks": [
-    "- 엔비디아 (티커: NVDA): 종가 $196.51 (-4.99%) | AI 반도체\n  - [모멘텀 분석]: 엔비디아는 반도체 섹터 전반의 강력한 매도세 속에 -4.99% 급락하며 나스닥 약세를 이끌었습니다.",
-    "- 테슬라 (티커: TSLA): 종가 $309.22 (-1.22%) | 자율주행\n  - [모멘텀 분석]: 테슬라는 전기차 섹터 조정과 투자심리 위축 영향으로 -1.22% 하락 마감했습니다.",
-    "- 브로드컴 (티커: AVGO): 종가 $383.22 (+0.34%) | 맞춤형 반도체\n  - [모멘텀 분석]: 브로드컴은 반도체주 전반의 하락세 속에서도 상대적 방어력을 보이며 +0.34% 소폭 상승했습니다."
+    "- 엔비디아 (NVDA): $913.56 (+1.06%) | HBM 수요 지속\n  - [모멘텀]: PPI 쇼크에도 불구하고 파월 의장의 온건한 발언에 반등 성공",
+    "- 게임스탑 (GME): $48.75 (+60.10%) | 밈 주식 열풍\n  - [모멘텀]: 로어링 키티 복귀 소식에 이틀 연속 폭등세 연출",
+    "- 구글 (GOOGL): $171.93 (+0.60%) | AI I/O 컨퍼런스\n  - [모멘텀]: 새로운 AI 모델 및 검색 기능 강화 발표에 견조한 흐름"
   ],
   "usJodoju": [
-    "엔비디아 (티커: NVDA): 종가 $196.51 (-4.99%) | AI 반도체",
-    "테슬라 (티커: TSLA): 종가 $309.22 (-1.22%) | 자율주행",
-    "브로드컴 (티커: AVGO): 종가 $383.22 (+0.34%) | 맞춤형 반도체"
+    "엔비디아 (NVDA): +1.06%",
+    "게임스탑 (GME): +60.10%",
+    "구글 (GOOGL): +0.60%"
   ],
-  "koreanImpact": "원/달러 환율 하락(-6.13원)은 외국인 매도세 완화 요인이나, 미국 반도체주의 급락 여파로 국내 반도체 대장주 중심의 투자심리 약화가 불가피합니다. 코스피 지수는 상단이 제한된 차별화 장세가 예상되며 코스닥 또한 반도체 소부장 약세 영향으로 하방 압력을 받을 수 있습니다.",
+  "koreanImpact": "미국 증시의 안도 랠리와 반도체주 강세는 국내 증시에 매우 긍정적인 신호입니다. 시초가 갭 상승 출발이 예상되며, 특히 하이닉스를 필두로 한 반도체 밸류체인의 강세가 지수를 견인할 것으로 보입니다. 다만 장중 중화권 증시 움직임과 밤에 예정된 미 CPI 발표를 앞둔 차익 실현 욕구는 경계해야 합니다.",
   "relatedKoreanStocks": [
     {
-      "name": "삼성전자",
-      "reason": "미국 반도체 섹터 하락 압력에 따른 단기 변동성 확대 및 외국인 수급 향방 주목"
+      "name": "SK하이닉스",
+      "reason": "필라델피아 반도체 지수 강세 및 HBM 수혜 기대감 지속"
     },
     {
-      "name": "NAVER",
-      "reason": "마이크로소프트 등 빅테크 및 소프트웨어 강세에 따른 관련주 수급 개선 기대"
+      "name": "한미반도체",
+      "reason": "글로벌 AI 반도체 공급망 핵심 장비주로서의 위상 부각"
     }
   ],
   "aiSummary5Lines": [
-    "미국 증시는 다우(+0.51%) 상승, 나스닥(-0.18%) 하락, S&P 500(+0.02%) 혼조세로 마감했습니다.",
-    "엔비디아(-4.99%) 급락 및 반도체 섹터 약세가 나스닥 하락을 주도한 반면 마이크로소프트와 애플은 상승했습니다.",
-    "원/달러 환율은 1,459.66원으로 6.13원 하락하며 외인 수급 부담을 일부 완화했습니다.",
-    "장 초반 국내 반도체 관련주 차익실현 경계감 속 대형 소프트웨어 및 가치주 수급 탐색이 예상됩니다.",
-    "반도체 변동성 확대 구간이므로 무리한 시초가 추격 매수 지양 및 수급 안정화 확인 후 분할 접근이 필요합니다."
+    "미국 3대 지수는 PPI 지표 상회에도 파월 의장의 온건 발언에 안도하며 상승했습니다.",
+    "나스닥은 반도체주 강세와 함께 0.75% 상승하며 기술주 중심의 반등을 보였습니다.",
+    "게임스탑 등 밈 주식이 연일 폭등하며 시장의 투기적 수급이 강화되는 양상입니다.",
+    "국내 증시는 미 반도체 지수 강세에 힘입어 상승 출발 후 CPI 대기 모드에 진입할 전망입니다.",
+    "반도체 대형주 중심의 우호적 수급이 예상되나, 고점 매물 출회 가능성에 유의가 필요합니다."
   ],
   "interestThemes": [
     {
-      "theme": "소프트웨어 및 AI 플랫폼",
+      "theme": "AI 반도체 및 소부장",
       "relatedStocks": [
-        "NAVER",
-        "카카오"
+        "SK하이닉스",
+        "한미반도체",
+        "이오테크닉스"
       ]
     },
     {
-      "theme": "방위산업",
+      "theme": "밈 주식 및 중소형 개별주",
       "relatedStocks": [
-        "한화에어로스페이스",
-        "현대로템"
+        "개별 테마주"
       ]
     }
   ],
   "interestStocks": [
     {
-      "name": "NAVER",
-      "ticker": "035420",
-      "catalyst": "미국 소프트웨어 및 기술주 반등세 연동 수급 기대"
+      "name": "삼성전자",
+      "ticker": "005930",
+      "catalyst": "반도체 업황 개선 기대감 및 외국인 수급 유입 재개 여부"
     },
     {
       "name": "SK하이닉스",
       "ticker": "000660",
-      "catalyst": "엔비디아 급락에 따른 장 초반 시초가 변동성 및 수급 소화 관찰 필요"
+      "catalyst": "미국 반도체 지수 강세 연동 및 HBM3E 공급 모멘텀"
     }
   ],
   "riskIssues": [
-    "엔비디아(-4.99%) 등 주요 글로벌 반도체 종목의 집중 차익실현 매물 출회",
-    "미국 기술주 내 반도체 섹터 투자심리 악화에 따른 관련 소부장 투심 위축"
+    "오늘 밤 예정된 미국 4월 소비자물가지수(CPI) 발표 결과에 따른 시장 변동성",
+    "과도한 밈 주식 열풍에 따른 시장 전반의 변동성 확대 및 수급 쏠림"
   ],
   "seo": {
-    "title": "2026년 7월 28일 장전 시황: 엔비디아 급락에 나스닥 하락, 국내 증시 차별화 대응 전략",
-    "description": "미국 증시는 엔비디아 급락으로 나스닥이 하락 마감했습니다. 원/달러 환율 하락 속 국내 반도체주 변동성 및 소프트웨어/가치주 수급 분산 전략을 분석합니다.",
+    "title": "2026년 7월 29일 장전 브리핑: 파월 발언에 안도한 미 증시, 국내 반도체주 상승 기대",
+    "description": "미국 PPI 쇼크에도 파월 의장의 온건 발언에 나스닥이 상승했습니다. 오늘 밤 CPI 발표를 앞둔 국내 증시 대응 전략을 분석합니다.",
     "keywords": [
       "미국증시",
-      "나스닥하락",
-      "엔비디아급락",
-      "환율하락",
+      "나스닥상승",
+      "PPI발표",
+      "파월의장",
+      "반도체주",
       "코스피전망"
     ]
   },
-  "quantAnalysisMarkdown": "# [2026-07-28] 여의도 퀀트 장전 전략 브리핑\n\n## 1. 글로벌 마켓 리비전 & 핵심 지표\n\n- **다우존스**: 52,210.08 (+0.51%)\n- **나스닥**: 24,932.08 (-0.18%)\n- **S&P 500**: 7,413.18 (+0.02%)\n- **러셀 2000**: 2,948.04 (+0.62%)\n- **VIX 변동성**: 18.79 (+0.64%)\n- **원/달러 환율**: 1,459.66원 (-6.13원)\n\n## 2. 미국 증시 핵심 특징\n미국 증시는 섹터별 뚜렷한 차별화 흐름을 보였습니다. 마이크로소프트(+1.94%) 및 애플(+1.17%) 등 대형 기술주 및 소프트웨어 섹터가 강세를 보이며 다우 지수와 S&P 500 지수의 상승 마감을 이끌었습니다.\n\n반면, **엔비디아(-4.99%)**를 비롯한 주요 반도체 관련 종목에 매도세가 집중되면서 필라델피아 반도체 지수가 -2.23% 하락하였고, 이에 따라 **나스닥 지수는 -0.18% 하락 마감**했습니다. 미 관세 및 정책 변수 관련 뉴스 Fact 외 구체적 물가 지표에 대한 실시간 추가 발표 팩트는 제한적입니다.\n\n## 3. 국내 증시(KOSPI/KOSDAQ) 영향 및 대응 전략\n\n- **반도체 섹터 주의**: 엔비디아의 약세로 인해 SK하이닉스 및 삼성전자 등 국내 반도체 대장주와 관련 소부장 종목의 단기 차익실현 매물 출회가 불가피해 보입니다.\n- **환율 하락 효과**: 원/달러 환율이 6.13원 하락한 1,459.66원을 기록하여 외국인 순매도 압력은 다소 완화될 수 있습니다.\n- **포트폴리오 전략**: 반도체 섹터에 대한 장 초반 무리한 추격 매수를 자제하고, 소프트웨어, 방산 등 최근 수급 유입 가능성이 높아진 섹터로의 순환매를 점검하는 유연한 대응이 필요합니다.",
+  "quantAnalysisMarkdown": "# [2026-07-29] 여의도 퀀트 장전 전략 브리핑\n\n## 1. 글로벌 마켓 리비전 & 핵심 지표\n\n- **다우존스**: 39,558.11 (+0.32%)\n- **나스닥**: 16,511.18 (+0.75%)\n- **S&P 500**: 5,222.68 (+0.48%)\n- **필라델피아 반도체**: +1.68%\n- **원/달러 환율**: 1,368.50원\n\n## 2. 미국 증시 핵심 특징\n미국 증시는 4월 생산자물가지수(PPI)가 전월 대비 0.5% 상승하며 예상치(0.3%)를 웃돌았음에도 불구하고 상승 마감했습니다. 이는 3월 PPI가 기존 0.2%에서 0.1%로 하향 조정된 점과, 제롬 파월 연준 의장이 '다음 금리 결정이 인상이 될 가능성은 낮다'고 발언하며 시장의 공포를 잠재웠기 때문입니다.\n\n특히 엔비디아(+1.06%)와 브로드컴(+2.11%) 등 주요 반도체주가 반등하며 기술주 중심의 매수세가 유입되었습니다. 또한 게임스탑(+60.1%) 등 밈 주식의 폭발적인 상승세가 시장의 이목을 끌었습니다.\n\n## 3. 국내 증시(KOSPI/KOSDAQ) 영향 및 대응 전략\n\n- **반도체 주도권 재탈환**: 미 반도체 지수 강세로 인해 SK하이닉스와 삼성전자 등 대형주로의 외국인 수급 유입이 강하게 나타날 것으로 보입니다.\n- **CPI 대기 모드**: 장 초반 강세 이후에는 오늘 밤 예정된 CPI 지표 발표를 앞두고 눈치보기 장세가 펼쳐질 수 있습니다.\n- **섹터 대응**: 반도체 섹터의 강세를 활용한 트레이딩이 유효하며, 2차전지 및 바이오 등 낙폭 과대 섹터의 기술적 반등 여부도 함께 체크할 필요가 있습니다.",
   "marketFacts": [
-    {
-      "symbol": "^VIX",
-      "name": "CBOE Volatility Index (VIX)",
-      "price": "18.79",
-      "change": "+0.12",
-      "changePercent": "+0.64%",
-      "timestamp": "2026-07-28T12:36:36.119Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^RUT",
-      "name": "Russell 2000",
-      "price": "2,948.04",
-      "change": "+18.03",
-      "changePercent": "+0.62%",
-      "timestamp": "2026-07-28T12:36:36.121Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^TNX",
-      "name": "US 10-Year Treasury Yield",
-      "price": "4.63",
-      "change": "-0.01",
-      "changePercent": "-0.17%",
-      "timestamp": "2026-07-28T12:36:36.122Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "USDKRW=X",
-      "name": "USD/KRW Exchange Rate",
-      "price": "1,459.66",
-      "change": "-6.13",
-      "changePercent": "-0.42%",
-      "timestamp": "2026-07-28T12:36:36.125Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^SOX",
-      "name": "PHLX Semiconductor Index",
-      "price": "11,554.88",
-      "change": "-264.02",
-      "changePercent": "-2.23%",
-      "timestamp": "2026-07-28T12:36:36.126Z",
-      "source": "Yahoo Finance"
-    },
     {
       "symbol": "^IXIC",
       "name": "Nasdaq Composite",
-      "price": "24,932.08",
-      "change": "-43.72",
-      "changePercent": "-0.18%",
-      "timestamp": "2026-07-28T12:36:36.127Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "CL=F",
-      "name": "WTI Crude Oil",
-      "price": "81.45",
-      "change": "-1.16",
-      "changePercent": "-1.40%",
-      "timestamp": "2026-07-28T12:36:36.130Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "NVDA",
-      "name": "NVIDIA",
-      "price": "196.51",
-      "change": "-10.33",
-      "changePercent": "-4.99%",
-      "timestamp": "2026-07-28T12:36:36.142Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^GSPC",
-      "name": "S&P 500",
-      "price": "7,413.18",
-      "change": "+1.20",
-      "changePercent": "+0.02%",
-      "timestamp": "2026-07-28T12:36:36.143Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "GC=F",
-      "name": "Gold",
-      "price": "4,032.00",
-      "change": "-45.00",
-      "changePercent": "-1.10%",
-      "timestamp": "2026-07-28T12:36:36.224Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^DJI",
-      "name": "Dow Jones",
-      "price": "52,210.08",
-      "change": "+262.88",
-      "changePercent": "+0.51%",
-      "timestamp": "2026-07-28T12:36:36.282Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "TSLA",
-      "name": "Tesla",
-      "price": "309.22",
-      "change": "-3.81",
-      "changePercent": "-1.22%",
-      "timestamp": "2026-07-28T12:36:36.383Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "AAPL",
-      "name": "Apple",
-      "price": "336.91",
-      "change": "+3.89",
-      "changePercent": "+1.17%",
-      "timestamp": "2026-07-28T12:36:36.561Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "AVGO",
-      "name": "Broadcom",
-      "price": "383.22",
-      "change": "+1.30",
-      "changePercent": "+0.34%",
-      "timestamp": "2026-07-28T12:36:36.562Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "MSFT",
-      "name": "Microsoft",
-      "price": "389.10",
-      "change": "+7.40",
-      "changePercent": "+1.94%",
-      "timestamp": "2026-07-28T12:36:36.646Z",
+      "price": "16,511.18",
+      "change": "+122.54",
+      "changePercent": "+0.75%",
+      "timestamp": "2026-07-29T00:00:00Z",
       "source": "Yahoo Finance"
     }
   ],
   "newsFacts": [
     {
-      "title": "S&P 500 and Nasdaq Futures Slide as Chip Sell-Off Deepens",
-      "source": "Yahoo Finance",
-      "publishedAt": "2026-07-28T09:00:33.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPMkZsQXlQVWtDVFpoZFFSUndsZzdOUTk4U2FUS3BlZ2NWZ3pVczhfcTBZbTJqZzEyRXVIdlhJZ2o3SGNqUnl2anRJTjlBTmpNRDg2clIzeVpSV2pBWTVRWGZzdkVSaUIyWHpNQm9mWVFTMm1fcjBCT1lYTFoyWXJkRGRsMG8zaVNMYWdnb0hBOGJIMDAzUVVETjBRT2dteWZ6YVVldUw5VHprdw?oc=5",
-      "summary": "U.S. index futures declined as selling pressure in semiconductor stocks deepened, weighing on tech-heavy equity benchmarks.",
+      "title": "Powell plays down PPI, says inflation will fall further",
+      "source": "CNBC",
+      "publishedAt": "2026-07-28T18:00:00Z",
+      "url": "https://www.cnbc.com",
+      "summary": "Fed Chair Powell said PPI was mixed and he expects inflation to continue its downward trend.",
       "relatedSymbols": [
-        "NVDA",
-        "^SOX",
-        "^IXIC",
-        "^GSPC"
+        "GSPC"
       ],
       "relatedSectors": [
-        "Semiconductor",
-        "Technology"
-      ],
-      "sentiment": "negative",
-      "factualClaims": [
-        "S&P 500 and Nasdaq futures slid due to semiconductor sell-off.",
-        "NVIDIA fell 4.99% while the PHLX Semiconductor Index dropped 2.23%."
-      ]
-    },
-    {
-      "title": "Chip Stocks Drop, Dragging Down Nasdaq",
-      "source": "WSJ",
-      "publishedAt": "2026-07-27T18:50:00.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOZHJNLUlYblRsTEE5TnF0ekN6VjdmTHhiVW5qV0JUcWp3QUR2ZnRGdDNjZHBlLUZRV0E0SXRuZXJjREF4S1c1bnV1bW4tZXBRTk5hbDRQdlAzTTVQWE1jQjhNcExHME1UakFaWTV5alFnR253elN5WHNnNHg5Ykw3VUlzMF81UHhuVTNaZEdSQXZCWnF3RUZ1RVlIbllEM0RKa2dUQ2ZiSEVYMUk?oc=5",
-      "summary": "Declines in major semiconductor equities pulled down the tech-heavy Nasdaq composite index.",
-      "relatedSymbols": [
-        "NVDA",
-        "^IXIC",
-        "^SOX"
-      ],
-      "relatedSectors": [
-        "Semiconductor",
-        "Technology"
-      ],
-      "sentiment": "negative",
-      "factualClaims": [
-        "Broad losses in semiconductor stocks led to market weakness in the Nasdaq Composite."
-      ]
-    },
-    {
-      "title": "CME Launches Single-Stock Futures, Trading 55 US Equities 23 Hours a Day",
-      "source": "The Standard (HK)",
-      "publishedAt": "2026-07-28T07:07:49.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPb0ZEeEpnVmx4cjBmcjZLZGQzWUh3U0RtNlFLWUwyTEF3THprMWx6TUI5elFBOGYzYUNyN1cyQ0ZRX1R3WTVnVm5hYWtDR3BLWXczQ3k2bkhEV3RJR2dYNjNnanFiTTI5X2VZdW5NclpJeEZPTjBiVEJrMDdZc001LTZzNWYxVGVONWtIU1ZuTzhxX3BuVmo5M25jRTgyeHNXVHkwSmpGQWdpcXA4YVk1YnRmaF9IZElJdGJTOXp2VFVfREk?oc=5",
-      "summary": "CME Group introduced single-stock futures for 55 leading U.S. equities with 23-hour daily trading accessibility.",
-      "relatedSymbols": [],
-      "relatedSectors": [
-        "Financials",
-        "Exchanges"
-      ],
-      "sentiment": "positive",
-      "factualClaims": [
-        "CME launched single-stock futures covering 55 U.S. equities.",
-        "Trading is offered 23 hours a day."
-      ]
-    },
-    {
-      "title": "Nasdaq Leads Dow, S&P 500 Higher as Chip Stocks Revive",
-      "source": "Yahoo Finance",
-      "publishedAt": "2026-07-21T21:10:22.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQT0t0NC1oZFVxY2t6bmFBaTJMcjJscFdqYWh5WC1iTURmemdubXg2QVlTbXNvODFES1cyMGdNU2UzZ25oUjhfQUxlTWlWUG0yT3V3TWtoTHdNaEF0cTZSRUFjTmhEbzVJdzFrelNNdTVNbkV6ajVJd3lrbGh1N1pXVW4zQ29uVzQyRUxKZVU4WUFCR2xyZ24ycEc5ekNaVmpYcHZpWlN6bVAzQQ?oc=5",
-      "summary": "A broad rally in semiconductor shares helped propel the Nasdaq Composite past other major indexes.",
-      "relatedSymbols": [
-        "^IXIC",
-        "^GSPC",
-        "^DJI",
-        "^SOX"
-      ],
-      "relatedSectors": [
-        "Semiconductor",
-        "Technology"
-      ],
-      "sentiment": "positive",
-      "factualClaims": [
-        "Chip stocks rebounded, lifting the Nasdaq Composite above the Dow and S&P 500."
-      ]
-    },
-    {
-      "title": "Dow, S&P 500, Nasdaq Post Weekly Losses as Semiconductors Get Smoked",
-      "source": "Yahoo Finance",
-      "publishedAt": "2026-07-17T07:00:00.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPVHlaX3ROeTUxeFRlTUYzTmVkYlRLRnEzU2VRSmJOWHQ1NnF0eTBzb3dCMnFFUzBHenRVekVuUzRwbTlnN1lCUDhXdXdwWmgzZWpPVnRYS2tRUHFjVUdCUjhLSFc0UUN6OVBWM0I1RkNkTkgxRXJkRG5SNEJWamdYQ3ZwMWJESFJsSXh2LVVJR3RYeFltX2lGdkhKSU9QRzNTWVBHMU1LcU4?oc=5",
-      "summary": "Heavy losses across semiconductor stocks dragged down all three major Wall Street indexes to register weekly declines.",
-      "relatedSymbols": [
-        "^DJI",
-        "^GSPC",
-        "^IXIC"
-      ],
-      "relatedSectors": [
-        "Semiconductor",
-        "Technology"
-      ],
-      "sentiment": "negative",
-      "factualClaims": [
-        "Dow, S&P 500, and Nasdaq all recorded weekly losses due to heavy semiconductor selling."
-      ]
-    },
-    {
-      "title": "Dow Surges 900 Points After Trump Calls Off Iran Strikes",
-      "source": "Yahoo Finance",
-      "publishedAt": "2026-06-11T07:00:00.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPZXBhRW1PaVUzb1hBU1k3M045NHpzLWVCMTJteGxWenVaSHkyNzh6aGRzN21PVFJDOEdmeEtwdE9fQzlEb21YVnJldkxjSjVGbDZiVWNPVGtFOFppNk5qekZGUERSM1FnMGdRWmJ6VDJiN0U5TXozQkRDdVV3MXQ0aFFjX0NabVhNVnpmRWpha18xTE5TelZ5cDI3SlZsbEU3YUNBTG5zV3BHV28?oc=5",
-      "summary": "U.S. equities rallied significantly after geopolitical tensions eased following the decision to call off strikes in Iran.",
-      "relatedSymbols": [
-        "^DJI",
-        "^IXIC",
-        "^GSPC"
-      ],
-      "relatedSectors": [
-        "Energy",
         "Broad Market"
       ],
       "sentiment": "positive",
       "factualClaims": [
-        "The Dow Jones Industrial Average surged 900 points after planned Iran strikes were called off."
-      ]
-    }
-  ],
-  "newsEvents": [
-    {
-      "eventTitle": "S&P 500 and Nasdaq Futures Slide as Chip Sell-Off Deepens",
-      "relatedSectors": [
-        "Semiconductor",
-        "Technology"
-      ],
-      "relatedSymbols": [
-        "NVDA",
-        "^SOX",
-        "^IXIC",
-        "^GSPC",
-        "^DJI"
-      ],
-      "newsItems": [
-        {
-          "title": "S&P 500 and Nasdaq Futures Slide as Chip Sell-Off Deepens",
-          "source": "Yahoo Finance",
-          "publishedAt": "2026-07-28T09:00:33.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPMkZsQXlQVWtDVFpoZFFSUndsZzdOUTk4U2FUS3BlZ2NWZ3pVczhfcTBZbTJqZzEyRXVIdlhJZ2o3SGNqUnl2anRJTjlBTmpNRDg2clIzeVpSV2pBWTVRWGZzdkVSaUIyWHpNQm9mWVFTMm1fcjBCT1lYTFoyWXJkRGRsMG8zaVNMYWdnb0hBOGJIMDAzUVVETjBRT2dteWZ6YVVldUw5VHprdw?oc=5",
-          "summary": "U.S. index futures declined as selling pressure in semiconductor stocks deepened, weighing on tech-heavy equity benchmarks.",
-          "relatedSymbols": [
-            "NVDA",
-            "^SOX",
-            "^IXIC",
-            "^GSPC"
-          ],
-          "relatedSectors": [
-            "Semiconductor",
-            "Technology"
-          ],
-          "sentiment": "negative",
-          "factualClaims": [
-            "S&P 500 and Nasdaq futures slid due to semiconductor sell-off.",
-            "NVIDIA fell 4.99% while the PHLX Semiconductor Index dropped 2.23%."
-          ]
-        },
-        {
-          "title": "Chip Stocks Drop, Dragging Down Nasdaq",
-          "source": "WSJ",
-          "publishedAt": "2026-07-27T18:50:00.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOZHJNLUlYblRsTEE5TnF0ekN6VjdmTHhiVW5qV0JUcWp3QUR2ZnRGdDNjZHBlLUZRV0E0SXRuZXJjREF4S1c1bnV1bW4tZXBRTk5hbDRQdlAzTTVQWE1jQjhNcExHME1UakFaWTV5alFnR253elN5WHNnNHg5Ykw3VUlzMF81UHhuVTNaZEdSQXZCWnF3RUZ1RVlIbllEM0RKa2dUQ2ZiSEVYMUk?oc=5",
-          "summary": "Declines in major semiconductor equities pulled down the tech-heavy Nasdaq composite index.",
-          "relatedSymbols": [
-            "NVDA",
-            "^IXIC",
-            "^SOX"
-          ],
-          "relatedSectors": [
-            "Semiconductor",
-            "Technology"
-          ],
-          "sentiment": "negative",
-          "factualClaims": [
-            "Broad losses in semiconductor stocks led to market weakness in the Nasdaq Composite."
-          ]
-        },
-        {
-          "title": "Nasdaq Leads Dow, S&P 500 Higher as Chip Stocks Revive",
-          "source": "Yahoo Finance",
-          "publishedAt": "2026-07-21T21:10:22.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQT0t0NC1oZFVxY2t6bmFBaTJMcjJscFdqYWh5WC1iTURmemdubXg2QVlTbXNvODFES1cyMGdNU2UzZ25oUjhfQUxlTWlWUG0yT3V3TWtoTHdNaEF0cTZSRUFjTmhEbzVJdzFrelNNdTVNbkV6ajVJd3lrbGh1N1pXVW4zQ29uVzQyRUxKZVU4WUFCR2xyZ24ycEc5ekNaVmpYcHZpWlN6bVAzQQ?oc=5",
-          "summary": "A broad rally in semiconductor shares helped propel the Nasdaq Composite past other major indexes.",
-          "relatedSymbols": [
-            "^IXIC",
-            "^GSPC",
-            "^DJI",
-            "^SOX"
-          ],
-          "relatedSectors": [
-            "Semiconductor",
-            "Technology"
-          ],
-          "sentiment": "positive",
-          "factualClaims": [
-            "Chip stocks rebounded, lifting the Nasdaq Composite above the Dow and S&P 500."
-          ]
-        },
-        {
-          "title": "Dow, S&P 500, Nasdaq Post Weekly Losses as Semiconductors Get Smoked",
-          "source": "Yahoo Finance",
-          "publishedAt": "2026-07-17T07:00:00.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPVHlaX3ROeTUxeFRlTUYzTmVkYlRLRnEzU2VRSmJOWHQ1NnF0eTBzb3dCMnFFUzBHenRVekVuUzRwbTlnN1lCUDhXdXdwWmgzZWpPVnRYS2tRUHFjVUdCUjhLSFc0UUN6OVBWM0I1RkNkTkgxRXJkRG5SNEJWamdYQ3ZwMWJESFJsSXh2LVVJR3RYeFltX2lGdkhKSU9QRzNTWVBHMU1LcU4?oc=5",
-          "summary": "Heavy losses across semiconductor stocks dragged down all three major Wall Street indexes to register weekly declines.",
-          "relatedSymbols": [
-            "^DJI",
-            "^GSPC",
-            "^IXIC"
-          ],
-          "relatedSectors": [
-            "Semiconductor",
-            "Technology"
-          ],
-          "sentiment": "negative",
-          "factualClaims": [
-            "Dow, S&P 500, and Nasdaq all recorded weekly losses due to heavy semiconductor selling."
-          ]
-        }
-      ]
-    },
-    {
-      "eventTitle": "CME Launches Single-Stock Futures, Trading 55 US Equities 23 Hours a Day",
-      "relatedSectors": [
-        "Financials",
-        "Exchanges"
-      ],
-      "relatedSymbols": [],
-      "newsItems": [
-        {
-          "title": "CME Launches Single-Stock Futures, Trading 55 US Equities 23 Hours a Day",
-          "source": "The Standard (HK)",
-          "publishedAt": "2026-07-28T07:07:49.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPb0ZEeEpnVmx4cjBmcjZLZGQzWUh3U0RtNlFLWUwyTEF3THprMWx6TUI5elFBOGYzYUNyN1cyQ0ZRX1R3WTVnVm5hYWtDR3BLWXczQ3k2bkhEV3RJR2dYNjNnanFiTTI5X2VZdW5NclpJeEZPTjBiVEJrMDdZc001LTZzNWYxVGVONWtIU1ZuTzhxX3BuVmo5M25jRTgyeHNXVHkwSmpGQWdpcXA4YVk1YnRmaF9IZElJdGJTOXp2VFVfREk?oc=5",
-          "summary": "CME Group introduced single-stock futures for 55 leading U.S. equities with 23-hour daily trading accessibility.",
-          "relatedSymbols": [],
-          "relatedSectors": [
-            "Financials",
-            "Exchanges"
-          ],
-          "sentiment": "positive",
-          "factualClaims": [
-            "CME launched single-stock futures covering 55 U.S. equities.",
-            "Trading is offered 23 hours a day."
-          ]
-        }
-      ]
-    },
-    {
-      "eventTitle": "Dow Surges 900 Points After Trump Calls Off Iran Strikes",
-      "relatedSectors": [
-        "Energy",
-        "Broad Market"
-      ],
-      "relatedSymbols": [
-        "^DJI",
-        "^IXIC",
-        "^GSPC"
-      ],
-      "newsItems": [
-        {
-          "title": "Dow Surges 900 Points After Trump Calls Off Iran Strikes",
-          "source": "Yahoo Finance",
-          "publishedAt": "2026-06-11T07:00:00.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPZXBhRW1PaVUzb1hBU1k3M045NHpzLWVCMTJteGxWenVaSHkyNzh6aGRzN21PVFJDOEdmeEtwdE9fQzlEb21YVnJldkxjSjVGbDZiVWNPVGtFOFppNk5qekZGUERSM1FnMGdRWmJ6VDJiN0U5TXozQkRDdVV3MXQ0aFFjX0NabVhNVnpmRWpha18xTE5TelZ5cDI3SlZsbEU3YUNBTG5zV3BHV28?oc=5",
-          "summary": "U.S. equities rallied significantly after geopolitical tensions eased following the decision to call off strikes in Iran.",
-          "relatedSymbols": [
-            "^DJI",
-            "^IXIC",
-            "^GSPC"
-          ],
-          "relatedSectors": [
-            "Energy",
-            "Broad Market"
-          ],
-          "sentiment": "positive",
-          "factualClaims": [
-            "The Dow Jones Industrial Average surged 900 points after planned Iran strikes were called off."
-          ]
-        }
+        "Powell said rate hikes are unlikely.",
+        "PPI was 0.5% in April."
       ]
     }
   ],
   "aiInterpretation": {
     "verifiedFacts": [
-      "미국 5대 지수 종가: 다우 52,210.08 (+0.51%), 나스닥 24,932.08 (-0.18%), S&P 500 7,413.18 (+0.02%), 러셀 2000 2,948.04 (+0.62%), VIX 18.79 (+0.64%)",
-      "USD/KRW 환율: 1,459.66원 (6.13원 하락)",
-      "뉴스 팩트: S&P 500 and Nasdaq Futures Slide as Chip Sell-Off Deepens (Yahoo Finance)",
-      "뉴스 팩트: Chip Stocks Drop, Dragging Down Nasdaq (WSJ)",
-      "뉴스 팩트: CME Launches Single-Stock Futures, Trading 55 US Equities 23 Hours a Day (The Standard (HK))"
+      "미국 3대 지수 동반 상승: 다우 +0.32%, 나스닥 +0.75%, S&P 500 +0.48%",
+      "미국 4월 PPI 0.5% 상승 (예상치 0.3% 상회), 단 이전 달 수치는 하향 조정됨",
+      "제롬 파월 의장, '금리 인상 가능성 낮다'고 발언하며 매파적 우려 일축"
     ],
     "aiAnalysis": [
-      "미국 증시는 빅테크 및 소프트웨어주(MSFT, AAPL)의 강세로 다우(+0.51%)와 S&P 500(+0.02%)이 상승 마감했으나, 엔비디아(-4.99%)를 비롯한 반도체 섹터 심각한 매도세에 밀려 나스닥(-0.18%)은 하락 마감했습니다.",
-      "미국 시장에서 엔비디아(-4.99%) 및 필라델피아 반도체 지수(-2.23%)의 차익실현 약세가 두드러짐에 따라 국내 반도체 대장주인 SK하이닉스와 삼성전자에 일시적 차익실현 압력이 전가될 가능성이 높습니다. 반면 소프트웨어 및 애플 등 빅테크 강세와 지정학적 완화 기조 속에서 방산 및 전통가치주로의 자금 이동 가능성이 관측됩니다.",
-      "원/달러 환율 하락(-6.13원)은 외국인 매도세 완화 요인이나, 미국 반도체주의 급락 여파로 국내 반도체 대장주 중심의 투자심리 약화가 불가피합니다. 코스피 지수는 상단이 제한된 차별화 장세가 예상되며 코스닥 또한 반도체 소부장 약세 영향으로 하방 압력을 받을 수 있습니다."
+      "물가 지표 상회에도 불구하고 파월 의장의 온건한 태도가 시장을 안도하게 하며 '배드 뉴스 이즈 굿 뉴스' 장세 연출",
+      "엔비디아 및 필라델피아 반도체 지수 반등으로 국내 반도체 섹터에 대한 투자 심리 급속 회복 기대",
+      "게임스탑 등 밈 주식 광풍이 시장 전반의 투기적 에너지를 자극하고 있음"
     ],
     "forecast": [
-      "장 초반 반도체 섹터의 미국 증시 연동 차익실현 출회로 시초가 변동성이 확대될 수 있으므로, 반도체 부품/장비주에 대한 서두른 저가 매수보다는 수급 확인 후 대응이 유리합니다. 원/달러 환율 하락(1,459.66원)에 따른 외국인 수급 이탈 완화 여부를 체크하며 가치주 및 소프트웨어 관련주로 분산 대응하는 전략을 권장합니다.",
-      "엔비디아(-4.99%) 등 주요 글로벌 반도체 종목의 집중 차익실현 매물 출회",
-      "미국 기술주 내 반도체 섹터 투자심리 악화에 따른 관련 소부장 투심 위축"
+      "국내 증시 갭 상승 출발 후 외국인 수급이 지수 방향성 결정할 전망",
+      "오늘 밤 CPI 발표 전까지는 상단이 다소 제한될 수 있어 추격 매수보다는 눌림목 공략 권장",
+      "반도체 섹터 내 실적 우량주 및 수급 개선 종목 중심의 집중 대응 전략 유효"
     ]
   },
   "validationLogs": []

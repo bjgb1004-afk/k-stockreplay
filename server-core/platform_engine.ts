@@ -554,6 +554,15 @@ export function validateAndNormalizeTicker(rawTicker: any, fallbackSnapshot?: an
     MASTER_STOCK_MAP[cleanCode] = masterEntry;
   }
 
+  // If still not found, allow it if it's 6 digits and provide a generic name
+  if (!masterEntry && /^[0-9]{6}$/.test(cleanCode)) {
+    masterEntry = {
+      code: cleanCode,
+      name: `종목_${cleanCode}`,
+      market: cleanCode.startsWith('0') || cleanCode.startsWith('1') ? 'KOSPI' : 'KOSDAQ'
+    };
+  }
+
   if (!masterEntry && fallbackSnapshot) {
     const rawName = fallbackSnapshot.name || fallbackSnapshot.nm;
     if (rawName && typeof rawName === 'string' && !rawName.startsWith('기업_') && !rawName.startsWith('종목_')) {
@@ -2447,79 +2456,6 @@ JSON 스키마:
         leadingStocks: []
       };
 
-      // Build categorizedFeatures dynamically from market snapshot or top tickers
-      const upperLimitSurge = (marketSnapshot || [])
-        .filter(s => (s.changeRatio !== undefined && s.changeRatio >= 10))
-        .slice(0, 5)
-        .map(s => ({
-          ticker: s.code,
-          name: KNOWN_TICKER_NAMES_LOCAL[s.code] || s.name || `기업_${s.code}`,
-          sector: s.sector && s.sector !== 'KOSPI' && s.sector !== 'KOSDAQ' ? s.sector : getSectorForStock(s.code, s.name),
-          market: s.market || (s.code.startsWith('0') || s.code.startsWith('1') ? 'KOSPI' : 'KOSDAQ'),
-          closePrice: s.price,
-          changeRate: s.changeRatio,
-          volume: s.volume,
-          tradeValuePct: Math.round((s.tradingValue || 0) / 100000000),
-          riseReason: "직접 촉매 확인 안 됨",
-          categoryType: "상한가/급등주",
-          isUpperLimit: s.changeRatio >= 29.5,
-          keywords: ["급등주"]
-        }));
-
-      const lowerLimitPlunge = (marketSnapshot || [])
-        .filter(s => (s.changeRatio !== undefined && s.changeRatio <= -10))
-        .slice(0, 5)
-        .map(s => ({
-          ticker: s.code,
-          name: KNOWN_TICKER_NAMES_LOCAL[s.code] || s.name || `기업_${s.code}`,
-          sector: s.sector && s.sector !== 'KOSPI' && s.sector !== 'KOSDAQ' ? s.sector : getSectorForStock(s.code, s.name),
-          market: s.market || (s.code.startsWith('0') || s.code.startsWith('1') ? 'KOSPI' : 'KOSDAQ'),
-          closePrice: s.price,
-          changeRate: s.changeRatio,
-          volume: s.volume,
-          tradeValuePct: Math.round((s.tradingValue || 0) / 100000000),
-          declineReason: "직접 촉매 확인 안 됨",
-          categoryType: "하한가/급락주",
-          isLowerLimit: s.changeRatio <= -29.5,
-          keywords: ["급락주"]
-        }));
-
-      const goodNewsKeywords = (marketSnapshot || [])
-        .filter(s => (s.changeRatio !== undefined && s.changeRatio > 3 && s.changeRatio < 10))
-        .slice(0, 5)
-        .map(s => ({
-          ticker: s.code,
-          name: KNOWN_TICKER_NAMES_LOCAL[s.code] || s.name || `기업_${s.code}`,
-          sector: s.sector && s.sector !== 'KOSPI' && s.sector !== 'KOSDAQ' ? s.sector : getSectorForStock(s.code, s.name),
-          market: s.market || (s.code.startsWith('0') || s.code.startsWith('1') ? 'KOSPI' : 'KOSDAQ'),
-          closePrice: s.price,
-          changeRate: s.changeRatio,
-          volume: s.volume,
-          tradeValuePct: Math.round((s.tradingValue || 0) / 100000000),
-          goodBasis: "직접 촉매 확인 안 됨",
-          categoryType: "호재 키워드 특징주",
-          goodKeywords: ["모멘텀"],
-          relatedNewsOrDisclosures: "직접 촉매 확인 안 됨"
-        }));
-
-      const badNewsKeywords = (marketSnapshot || [])
-        .filter(s => (s.changeRatio !== undefined && s.changeRatio < -3 && s.changeRatio > -10))
-        .slice(0, 5)
-        .map(s => ({
-          ticker: s.code,
-          name: KNOWN_TICKER_NAMES_LOCAL[s.code] || s.name || `기업_${s.code}`,
-          sector: s.sector || '주요 산업',
-          market: s.market || (s.code.startsWith('0') || s.code.startsWith('1') ? 'KOSPI' : 'KOSDAQ'),
-          closePrice: s.price,
-          changeRate: s.changeRatio,
-          volume: s.volume,
-          tradeValuePct: Math.round((s.tradingValue || 0) / 100000000),
-          badBasis: "직접 촉매 확인 안 됨",
-          categoryType: "악재 키워드 특징주",
-          badKeywords: ["리스크"],
-          relatedNewsOrDisclosures: "직접 촉매 확인 안 됨"
-        }));
-
       return {
         id: `report_${todayDateStr}`,
         date: todayDateStr,
@@ -2531,12 +2467,6 @@ JSON 스키마:
         published: true,
         marketOverview: mOverview,
         jodoju10: jodoju10List,
-        categorizedFeatures: {
-          upperLimitSurge,
-          lowerLimitPlunge,
-          goodNewsKeywords,
-          badNewsKeywords
-        },
         marketAnalysisSummary: `[15:50 장마감 종합 증시 분석 브리핑]\n\n시스템에서 실시간 데이터를 수집하여 AI 분석을 진행하고 있습니다. 잠시 후 최신 리포트로 업데이트됩니다.`,
         globalMacro: marketOverview || {}
       };
@@ -2572,17 +2502,14 @@ JSON 스키마:
 [엄격 분석 가이드라인 - 필수 준수 사항]
 1. 절대 시장 지수(코스피/코스닥 수치)를 임의로 조작하거나 지어내지 마십시오. 제공된 데이터를 그대로 사용하십시오.
 2. 수치가 "데이터 미수집"인 경우 본문에서 해당 숫자를 언급하지 마십시오.
-3. 반드시 Google Search Tool을 실행하여 각 종목의 실제 기사 및 공시 팩트를 조회하십시오:
-   - "{종목명} 특징주 ${todayDateStr}"
-   - "{종목명} 공시 ${todayDateStr}"
-   - "{종목명} 뉴스 ${todayDateStr}"
-4. 확인 가능한 실제 뉴스/공시/기업 이벤트가 없는 경우, 절대로 가짜 사실을 지어내지 말고 다음과 같이 명시하십시오:
+3. **가장 중요: 반드시 Google Search Tool을 실행하여 다음 정보를 수집하십시오:**
+   - **전체 시장 특징**: "오늘 상한가 종목 ${todayDateStr}", "오늘 급등주 ${todayDateStr}", "오늘 장마감 특징주 ${todayDateStr}", "오늘 하한가 급락주 ${todayDateStr}", "오늘 악재 뉴스 종목 ${todayDateStr}" 검색
+   - **종목별 분석**: 제공된 리스트의 각 종목에 대해 "{종목명} 특징주 ${todayDateStr}", "{종목명} 공시 ${todayDateStr}", "{종목명} 뉴스 ${todayDateStr}" 검색
+5. 확인 가능한 실제 뉴스/공시/기업 이벤트가 없는 경우, 절대로 가짜 사실을 지어내지 말고 다음과 같이 명시하십시오:
    "직접 촉매 확인 안 됨"
-5. 모든 종목 코드는 반드시 확장자(.KS/.KQ) 없는 6자리 숫자(예: 005930)로 통일하십시오.
-6. sector 항목에는 'KOSPI'나 'KOSDAQ' 같은 시장 구분을 입력하지 마십시오. sector는 반드시 '반도체', '방산', '바이오' 등 실제 산업 섹터만 작성하십시오.
-7. 특징주(categorizedFeatures)에는 절대로 '주도주' 태그나 명칭을 부여하지 마십시오. 특징주와 주도주는 서로 분리되어 처리됩니다.
+6. 모든 종목 코드는 반드시 확장자(.KS/.KQ) 없는 6자리 숫자(예: 005930)로 통일하십시오.
+7. sector 항목에는 'KOSPI'나 'KOSDAQ' 같은 시장 구분을 입력하지 마십시오. sector는 반드시 '반도체', '방산', '바이오' 등 실제 산업 섹터만 작성하십시오.
 8. 시장 요약(marketAnalysisSummary)은 섹션별로 이모지를 활용하여 가독성 있게 작성하십시오.
-9. [특징주 분류] 상한가/급등, 하한가/급락, 호재 키워드, 악재 키워드 4가지로 분류하여 상세 내용을 작성하십시오.
 - 매우 중요 (간결성): 시장 요약(marketAnalysisSummary)은 핵심 수급 동향 위주로 간결하게 작성하십시오. 전체 텍스트가 너무 길어지면 JSON 개체가 손상될 수 있으므로 불필요한 서술은 배제하십시오.
 
 JSON 구조 스키마 (이 구조를 엄격히 지키십시오):
@@ -2622,12 +2549,6 @@ JSON 구조 스키마 (이 구조를 엄격히 지키십시오):
       }
     }
   ],
-  "categorizedFeatures": {
-    "upperLimitSurge": [{ "ticker": "코드", "name": "명", "riseReason": "원인" }],
-    "lowerLimitPlunge": [{ "ticker": "코드", "name": "명", "declineReason": "원인" }],
-    "goodNewsKeywords": [{ "ticker": "코드", "name": "명", "goodBasis": "근거" }],
-    "badNewsKeywords": [{ "ticker": "코드", "name": "명", "badBasis": "근거" }]
-  },
   "marketAnalysisSummary": "시장 전체 흐름을 요약한 브리핑 (마크다운 포맷)"
 }
 `;
@@ -2699,18 +2620,9 @@ JSON 구조 스키마 (이 구조를 엄격히 지키십시오):
                       }
                     }
                   },
-                  categorizedFeatures: {
-                    type: Type.OBJECT,
-                    properties: {
-                      upperLimitSurge: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { ticker: { type: Type.STRING }, name: { type: Type.STRING }, riseReason: { type: Type.STRING } } } },
-                      lowerLimitPlunge: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { ticker: { type: Type.STRING }, name: { type: Type.STRING }, declineReason: { type: Type.STRING } } } },
-                      goodNewsKeywords: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { ticker: { type: Type.STRING }, name: { type: Type.STRING }, goodBasis: { type: Type.STRING } } } },
-                      badNewsKeywords: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { ticker: { type: Type.STRING }, name: { type: Type.STRING }, badBasis: { type: Type.STRING } } } }
-                    }
-                  },
                   marketAnalysisSummary: { type: Type.STRING }
                 },
-                required: ["marketOverview", "jodoju10", "categorizedFeatures", "marketAnalysisSummary"]
+                required: ["marketOverview", "jodoju10", "marketAnalysisSummary"]
               }
             }
         });
@@ -2799,15 +2711,7 @@ JSON 구조 스키마 (이 구조를 엄격히 지키십시오):
         .slice(0, 10);
 
       finalParsed.jodoju10 = processedJodoju;
-
-      if (finalParsed.categorizedFeatures) {
-        const cats = finalParsed.categorizedFeatures;
-        if (cats.upperLimitSurge) cats.upperLimitSurge = cats.upperLimitSurge.map(mergeRealData).filter((item: any): item is NonNullable<typeof item> => item !== null);
-        if (cats.lowerLimitPlunge) cats.lowerLimitPlunge = cats.lowerLimitPlunge.map(mergeRealData).filter((item: any): item is NonNullable<typeof item> => item !== null);
-        if (cats.goodNewsKeywords) cats.goodNewsKeywords = cats.goodNewsKeywords.map(mergeRealData).filter((item: any): item is NonNullable<typeof item> => item !== null);
-        if (cats.badNewsKeywords) cats.badNewsKeywords = cats.badNewsKeywords.map(mergeRealData).filter((item: any): item is NonNullable<typeof item> => item !== null);
-      }
-
+      
       // Merge real-time market overview to ensure data consistency
       if (externalMarketOverview) {
         finalParsed.marketOverview = {
@@ -2941,107 +2845,9 @@ JSON 구조 스키마 (이 구조를 엄격히 지키십시오):
       report.jodoju10 = cleaned;
     }
 
-    // Clean categorizedFeatures or auto-populate if missing
-    if (!report.categorizedFeatures || !Object.keys(report.categorizedFeatures).length) {
-      const sortedJodoju = [...(report.jodoju10 || [])].sort((a, b) => (b.changeRate || 0) - (a.changeRate || 0));
-      
-      const upperLimitSurge = sortedJodoju.slice(0, 5).map(s => ({
-        ticker: s.ticker,
-        name: s.name,
-        sector: s.sector && s.sector !== 'KOSPI' && s.sector !== 'KOSDAQ' ? s.sector : undefined,
-        market: (s as any).market || (s.ticker?.startsWith('0') || s.ticker?.startsWith('1') ? 'KOSPI' : 'KOSDAQ'),
-        closePrice: s.closePrice,
-        changeRate: s.changeRate || 0,
-        volume: s.volume || 0,
-        tradeValuePct: s.tradeValuePct || 0,
-        riseReason: s.riseReason || "직접 촉매 확인 안 됨",
-        categoryType: "상한가/급등주",
-        isUpperLimit: (s.changeRate || 0) >= 29.5,
-        keywords: ["상승모멘텀"]
-      }));
-
-      const lowerLimitPlunge = [...sortedJodoju].reverse().slice(0, 5).map(s => ({
-        ticker: s.ticker,
-        name: s.name,
-        sector: s.sector && s.sector !== 'KOSPI' && s.sector !== 'KOSDAQ' ? s.sector : undefined,
-        market: (s as any).market || (s.ticker?.startsWith('0') || s.ticker?.startsWith('1') ? 'KOSPI' : 'KOSDAQ'),
-        closePrice: s.closePrice,
-        changeRate: s.changeRate || 0,
-        volume: s.volume || 0,
-        tradeValuePct: s.tradeValuePct || 0,
-        declineReason: s.declineReason || "직접 촉매 확인 안 됨",
-        categoryType: "하한가/급락주",
-        isLowerLimit: (s.changeRate || 0) <= -29.5,
-        keywords: ["하락주의"]
-      }));
-
-      const goodNewsKeywords = sortedJodoju.slice(5, 10).map(s => ({
-        ticker: s.ticker,
-        name: s.name,
-        sector: s.sector && s.sector !== 'KOSPI' && s.sector !== 'KOSDAQ' ? s.sector : undefined,
-        market: (s as any).market || (s.ticker?.startsWith('0') || s.ticker?.startsWith('1') ? 'KOSPI' : 'KOSDAQ'),
-        closePrice: s.closePrice,
-        changeRate: s.changeRate || 0,
-        tradeValuePct: s.tradeValuePct || 0,
-        goodBasis: s.riseReason || "직접 촉매 확인 안 됨",
-        categoryType: "호재 키워드 특징주",
-        goodKeywords: ["시장관심"],
-        relatedNewsOrDisclosures: "직접 촉매 확인 안 됨"
-      }));
-
-      const badNewsKeywords = [...sortedJodoju].reverse().slice(5, 10).map(s => ({
-        ticker: s.ticker,
-        name: s.name,
-        sector: s.sector && s.sector !== 'KOSPI' && s.sector !== 'KOSDAQ' ? s.sector : undefined,
-        market: (s as any).market || (s.ticker?.startsWith('0') || s.ticker?.startsWith('1') ? 'KOSPI' : 'KOSDAQ'),
-        closePrice: s.closePrice,
-        changeRate: s.changeRate || 0,
-        tradeValuePct: s.tradeValuePct || 0,
-        badBasis: s.declineReason || "직접 촉매 확인 안 됨",
-        categoryType: "악재 키워드 특징주",
-        badKeywords: ["변동성"],
-        relatedNewsOrDisclosures: "직접 촉매 확인 안 됨"
-      }));
-
-      report.categorizedFeatures = {
-        upperLimitSurge,
-        lowerLimitPlunge,
-        goodNewsKeywords,
-        badNewsKeywords
-      };
-    }
-
-    if (report.categorizedFeatures) {
-      const cats = report.categorizedFeatures;
-      ['upperLimitSurge', 'lowerLimitPlunge', 'goodNewsKeywords', 'badNewsKeywords'].forEach((catKey) => {
-        const list = (cats as any)[catKey];
-        if (Array.isArray(list)) {
-          (cats as any)[catKey] = list.map((stk: any) => {
-            if (!stk) return null;
-            const norm = validateAndNormalizeTicker(stk.ticker || stk.code);
-            if (!norm.isValid || !norm.code) return null;
-
-            stk.ticker = norm.code;
-            stk.name = norm.name || (stk.name && !stk.name.startsWith('기업_') && !stk.name.startsWith('종목_') ? stk.name : null);
-            if (!stk.name) return null;
-
-            if (stk.sector === 'KOSPI' || stk.sector === 'KOSDAQ') {
-              stk.market = stk.sector;
-              stk.sector = undefined;
-            }
-            if (Array.isArray(stk.tags)) {
-              stk.tags = stk.tags.filter((t: string) => t !== '주도주');
-            }
-            if (stk.riseReason) stk.riseReason = replaceText(stk.riseReason);
-            if (stk.declineReason) stk.declineReason = replaceText(stk.declineReason);
-            if (stk.goodBasis) stk.goodBasis = replaceText(stk.goodBasis);
-            if (stk.badBasis) stk.badBasis = replaceText(stk.badBasis);
-            if (stk.relatedNewsOrDisclosures) stk.relatedNewsOrDisclosures = replaceText(stk.relatedNewsOrDisclosures);
-            if (stk.aiSummary) stk.aiSummary = replaceText(stk.aiSummary);
-            return stk;
-          }).filter((s: any): s is NonNullable<typeof s> => s !== null);
-        }
-      });
+    // Explicitly remove categorizedFeatures to satisfy user request of total removal from system
+    if ((report as any).categorizedFeatures) {
+      delete (report as any).categorizedFeatures;
     }
 
     // Clean features

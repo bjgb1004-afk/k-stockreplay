@@ -66,25 +66,26 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
     if (!text) return null;
     const lines = text.split('\n');
     return (
-      <div className="space-y-3 font-sans text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-left">
+      <div className="space-y-3 font-sans text-xs text-slate-700 dark:text-slate-300 leading-relaxed text-left max-w-2xl mx-auto">
         {lines.map((line, idx) => {
-          const trimmed = line.trim();
-          if (!trimmed) return <div key={idx} className="h-1.5" />;
+          // Remove markdown symbols like * and #
+          const cleanedLine = line.replace(/[*#]/g, '').trim();
+          if (!cleanedLine) return <div key={idx} className="h-1.5" />;
           
-          if (trimmed.match(/^(🌐|🔥|💡|📰|🇺🇸|🇰🇷|🚀)\s+.*$/) || trimmed.startsWith('🌐') || trimmed.startsWith('🔥') || trimmed.startsWith('💡')) {
+          if (cleanedLine.match(/^(🌐|🔥|💡|📰|🇺🇸|🇰🇷|🚀|📊|📈|📉|🔍|💰|🎯|✅|⚠️)\s+.*$/) || cleanedLine.startsWith('🌐') || cleanedLine.startsWith('🔥') || cleanedLine.startsWith('💡') || cleanedLine.startsWith('📊') || cleanedLine.startsWith('📈')) {
             return (
               <h4 key={idx} className="text-[13px] font-black text-slate-900 dark:text-white tracking-tight border-b border-indigo-500/20 pb-1.5 mt-5 mb-2 flex items-center gap-2">
-                {trimmed}
+                {cleanedLine}
               </h4>
             );
           }
 
-          if (trimmed.startsWith('- ')) {
+          if (cleanedLine.startsWith('- ')) {
             return (
               <div key={idx} className="flex items-start gap-2 pl-1.5">
                 <span className="text-indigo-500 dark:text-indigo-400 mt-1 shrink-0 text-[10px]">•</span>
-                <p className="text-slate-700 dark:text-slate-300 font-medium">
-                  {trimmed.substring(2).split(':').map((part, pIdx, arr) => (
+                <p className="text-slate-700 dark:text-slate-300 font-medium break-words">
+                  {cleanedLine.substring(2).split(':').map((part, pIdx, arr) => (
                     pIdx === 0 && arr.length > 1 ? <span key={pIdx} className="font-black text-indigo-700 dark:text-indigo-400">{part}:</span> : <span key={pIdx}>{part}</span>
                   ))}
                 </p>
@@ -92,7 +93,7 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
             );
           }
 
-          return <p key={idx} className="leading-relaxed pl-1 font-medium">{trimmed}</p>;
+          return <p key={idx} className="leading-relaxed pl-1 font-medium break-words">{cleanedLine}</p>;
         })}
       </div>
     );
@@ -179,114 +180,6 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
           </div>
         </div>
 
-        {/* Feature stocks section */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-5 shadow-sm">
-          <div className="border-b border-slate-200 dark:border-slate-800 pb-3 flex justify-between items-center">
-            <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
-              <span>당일 특징주 호재/악재 핵심 분류</span>
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* GOOD NEWS */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b border-rose-500/30 text-rose-500">
-                <span className="text-xs font-black">🔥 호재성 특징주 (수혜 회사 & 핵심 키워드)</span>
-              </div>
-              <div className="space-y-3">
-                {(() => {
-                  const goodFeatures = (report as any).features?.filter((f: any) => f.category === 'GOOD') || [];
-                  const list = goodFeatures.length > 0 ? goodFeatures : jodojuLeaders.filter((s: any) => s.newsIntensity === 'GOOD').map((s: any) => ({
-                    name: s.stockName,
-                    ticker: s.code,
-                    keywords: s.extractedKeywords,
-                    catalyst: s.newsHeadline,
-                    relatedStocks: [s.stockName]
-                  }));
-
-                  if (list.length === 0) {
-                    return <div className="text-[11px] text-slate-500 py-6 text-center">오늘 관측된 주요 호재성 특징주가 없습니다.</div>;
-                  }
-
-                  return list.map((item: any, idx: number) => (
-                    <div key={idx} className="bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-xl hover:border-indigo-500/30 transition-all space-y-3 shadow-sm group">
-                      <div className="flex flex-col gap-2 border-b border-slate-200 dark:border-slate-850 pb-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-slate-900 dark:text-slate-100 group-hover:text-indigo-500 transition-colors">
-                            {item.name} <span className="text-[10px] text-slate-500 font-mono">({item.ticker})</span>
-                          </span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        {item.keywords && item.keywords.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5">
-                            {item.keywords.slice(0, 3).map((kw: string, kIdx: number) => (
-                              <span key={kIdx} className="bg-rose-500/10 text-rose-500 border border-rose-500/10 text-[9px] font-black px-1.5 py-0.5 rounded font-mono">
-                                #{kw}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed break-keep break-words">
-                        {item.catalyst}
-                      </p>
-                    </div>
-                  ));
-                })()}
-              </div>
-            </div>
-
-            {/* BAD NEWS */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b border-sky-500/30 text-sky-500">
-                <span className="text-xs font-black">⚠️ 리스크 특징주 (악재 회사 & 핵심 키워드)</span>
-              </div>
-              <div className="space-y-3">
-                {(() => {
-                  const badFeatures = (report as any).features?.filter((f: any) => f.category === 'BAD') || [];
-                  const list = badFeatures.length > 0 ? badFeatures : jodojuLeaders.filter((s: any) => s.newsIntensity === 'BAD').map((s: any) => ({
-                    name: s.stockName,
-                    ticker: s.code,
-                    keywords: s.extractedKeywords,
-                    catalyst: s.newsHeadline,
-                    relatedStocks: [s.stockName]
-                  }));
-
-                  if (list.length === 0) {
-                    return <div className="text-[11px] text-slate-500 py-6 text-center">오늘 관측된 주요 악재성 특징주가 없습니다.</div>;
-                  }
-
-                  return list.map((item: any, idx: number) => (
-                    <div key={idx} className="bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-xl hover:border-indigo-500/30 transition-all space-y-3 shadow-sm group">
-                      <div className="flex flex-col gap-2 border-b border-slate-200 dark:border-slate-850 pb-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-slate-900 dark:text-slate-100 group-hover:text-indigo-500 transition-colors">
-                            {item.name} <span className="text-[10px] text-slate-500 font-mono">({item.ticker})</span>
-                          </span>
-                          <ArrowDownRight className="w-3.5 h-3.5 text-sky-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        {item.keywords && item.keywords.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5">
-                            {item.keywords.slice(0, 3).map((kw: string, kIdx: number) => (
-                              <span key={kIdx} className="bg-sky-500/10 text-sky-500 border border-sky-500/10 text-[9px] font-black px-1.5 py-0.5 rounded font-mono">
-                                #{kw}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed break-keep break-words">
-                        {item.catalyst}
-                      </p>
-                    </div>
-                  ));
-                })()}
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Theme and fund share */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
           <h3 className="text-xs font-black text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-2">
@@ -295,10 +188,10 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, loading, onSelec
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
             {[
-              { name: '제약 / AI 바이오 신약', pct: 42, color: 'bg-rose-500' },
-              { name: '대용량 수주 및 설비 계약', pct: 28, color: 'bg-indigo-500' },
-              { name: 'AI 하드웨어 온디바이스 반도체', pct: 18, color: 'bg-emerald-500' },
-              { name: '개별주 돌발 테마 (초전도/맥신)', pct: 12, color: 'bg-amber-500' }
+              { name: 'AI 반도체 및 HBM 밸류체인', pct: 45, color: 'bg-rose-500' },
+              { name: '자동차 및 부품 실적주', pct: 25, color: 'bg-indigo-500' },
+              { name: '제약/바이오 플랫폼 및 수출', pct: 20, color: 'bg-emerald-500' },
+              { name: '개별주 돌발 테마', pct: 10, color: 'bg-amber-500' }
             ].map((theme, idx) => (
               <div key={idx} className="space-y-1.5">
                 <div className="flex justify-between items-center text-[11px] font-black">

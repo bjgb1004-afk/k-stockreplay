@@ -162,103 +162,6 @@ export interface FeatureStock {
   relatedStocks: string[];
 }
 
-export interface UpperLimitSurgeStock {
-  ticker: string;
-  name: string;
-  closePrice: number | string;
-  changeRate: number;
-  tradeValuePct?: number;
-  tradeValueVsPrevDay?: string;
-  volume?: number;
-  isUpperLimit: boolean;
-  theme?: string;
-  themeRole?: string;
-  coreIssue?: string;
-  categoryType?: string;
-  riseReason: string;
-  supplyDemand?: { foreigner?: string; institution?: string; retail?: string };
-  themeDiffusion?: string;
-  aiSummary?: string;
-  aiAnalysis?: string;
-  news?: { title: string; date?: string; url?: string }[];
-  disclosures?: { title: string; date?: string; url?: string }[];
-  keywords: string[];
-}
-
-export interface LowerLimitPlungeStock {
-  ticker: string;
-  name: string;
-  closePrice: number | string;
-  changeRate: number;
-  tradeValuePct?: number;
-  tradeValueVsPrevDay?: string;
-  volume?: number;
-  isLowerLimit: boolean;
-  theme?: string;
-  themeRole?: string;
-  coreIssue?: string;
-  categoryType?: string;
-  declineReason: string;
-  supplyDemand?: { foreigner?: string; institution?: string; retail?: string };
-  themeDiffusion?: string;
-  aiSummary?: string;
-  aiAnalysis?: string;
-  news?: { title: string; date?: string; url?: string }[];
-  disclosures?: { title: string; date?: string; url?: string }[];
-  keywords: string[];
-}
-
-export interface GoodKeywordStock {
-  ticker: string;
-  name: string;
-  closePrice?: number | string;
-  changeRate: number;
-  tradeValuePct?: number;
-  tradeValueVsPrevDay?: string;
-  theme?: string;
-  themeRole?: string;
-  coreIssue?: string;
-  categoryType?: string;
-  goodKeywords: string[];
-  goodBasis: string;
-  relatedNewsOrDisclosures: string;
-  supplyDemand?: { foreigner?: string; institution?: string; retail?: string };
-  themeDiffusion?: string;
-  aiAnalysis?: string;
-  aiSummary?: string;
-  news?: { title: string; date?: string; url?: string }[];
-  disclosures?: { title: string; date?: string; url?: string }[];
-}
-
-export interface BadKeywordStock {
-  ticker: string;
-  name: string;
-  closePrice?: number | string;
-  changeRate: number;
-  tradeValuePct?: number;
-  tradeValueVsPrevDay?: string;
-  theme?: string;
-  themeRole?: string;
-  coreIssue?: string;
-  categoryType?: string;
-  badKeywords: string[];
-  badBasis: string;
-  relatedNewsOrDisclosures: string;
-  supplyDemand?: { foreigner?: string; institution?: string; retail?: string };
-  themeDiffusion?: string;
-  aiAnalysis?: string;
-  aiSummary?: string;
-  news?: { title: string; date?: string; url?: string }[];
-  disclosures?: { title: string; date?: string; url?: string }[];
-}
-
-export interface CategorizedFeatures {
-  upperLimitSurge: UpperLimitSurgeStock[];
-  lowerLimitPlunge: LowerLimitPlungeStock[];
-  goodNewsKeywords: GoodKeywordStock[];
-  badNewsKeywords: BadKeywordStock[];
-}
-
 export interface AfterMarketReport {
   id: string;
   date: string;
@@ -291,7 +194,6 @@ export interface AfterMarketReport {
   };
   jodoju10: JodojuAnalysis[];
   features?: FeatureStock[];
-  categorizedFeatures?: CategorizedFeatures;
   marketAnalysisSummary?: string;
   themes?: { theme: string; relatedStocks: string[] }[];
   globalMacro?: any;
