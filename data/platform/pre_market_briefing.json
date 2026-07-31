@@ -1,700 +1,1107 @@
 {
-  "id": "briefing_2026-07-30",
-  "date": "2026-07-30",
+  "id": "briefing_2026-07-31",
+  "date": "2026-07-31",
   "published": true,
-  "summary": "미국 증시는 AI 반도체 섹터의 매도세 심화와 미-이란 지정학적 긴장 고조로 나스닥(-1.96%), 다우(-1.18%), S&P500(-1.31%)이 일제히 하락 마감했으며, 오늘 아침 국내 증시도 반도체 대형주 중심의 하락 압력 속 방어주로의 자금 이동이 예상됩니다.",
+  "summary": "마이크로소프트의 폭발적 급등(+14.68%)과 브로드컴(+1.82%)의 강세에 힘입어 나스닥(+0.99%)과 S&P 500(+0.12%)은 상승 마감했으나, 전통 산업주의 약세로 다우 지수(-1.02%)는 하락하며 차별화 장세를 보였습니다. 원/달러 환율이 1,436.60원으로 5.68원 하락하고 대형 IT 및 AI 주도주의 강세가 확인됨에 따라 국내 증시에서도 반도체 및 AI 빅테크 관련주 중심의 수급 집중이 기대됩니다.",
   "expectedThemes": [
-    "지정학적 리스크 방어(방산/석유에너지)",
-    "실적 및 고배당 방어주"
+    "AI 인프라 및 클라우드 빅테크",
+    "차세대 반도체 파운드리 및 AI 패키징"
   ],
   "keyStocks": [
-    "한화에어로스페이스",
-    "흥구석유"
+    "삼성전자",
+    "SK하이닉스",
+    "한미반도체"
   ],
-  "leadMapping": "미국 증시에서 엔비디아(-3.31%) 및 브로드컴(-3.37%) 등 핵심 AI 반도체주의 투매가 전개되고, 미-이란 지정학적 긴장 고조로 유가 상승과 VIX 변동성 지수 급등(+13.45%)이 발생했습니다. 이에 따라 위험자산 피하기 심리가 강화되어 국내 시장에서도 반도체 대형주에 대한 외국인 매도세가 출회되는 반면, 방산 및 정유·에너지 섹터로 리스크 회피성 자금 유입이 집중될 것으로 전망됩니다.",
-  "strategyScenario": "시초가 형성 시 미 반도체 폭락 여파에 따른 갭하락 출발이 불가피할 것으로 판단됩니다. 약세 출발 후 반도체/IT 주도주에 대한 성급한 저가 매수보다는 지정학적 리스크 수혜주 및 방어주 중심의 보수적 단기 트레이딩 전략을 추천합니다.",
+  "leadMapping": "미국 증시에서 마이크로소프트(+14.68%)가 호실적 및 AI 사업 성장 가속화로 급등하고 브로드컴(+1.82%)이 동반 강세를 보이면서 글로벌 AI 생태계에 대한 투자 심리가 크게 개선되었습니다. 이에 따라 국내 대표 AI 반도체 및 HBM 공급망 핵심주인 삼성전자, SK하이닉스, 한미반도체로 외국인 및 기관의 수급 동조화 랠리가 강하게 나타날 것으로 전망됩니다.",
+  "strategyScenario": "미국 증시 내 기술주 강세와 다우 지수 하락 등 종목별·섹터별 차별화가 뚜렷한 만큼, 시초가 갭상승 이후 매물 소화 과정을 확인하는 전략이 유효합니다. 환율 안정세(-5.68원 하락)를 바탕으로 외국인 수급이 유입되는 대형 AI 반도체 주도주 중심으로 눌림목 매수 대응을 권장하며, 개별 재료 부재 종목에 대한 추격 매수는 자제해야 합니다.",
   "usSummary": {
-    "dow": "51,594.14 (-1.18%)",
-    "nasdaq": "24,442.94 (-1.96%)",
-    "sp500": "7,316.15 (-1.31%)",
-    "russell2000": "2,906.31 (-1.42%)",
-    "vix": "20.66 (+13.45%)"
+    "dow": "52,208.06 (-1.02%)",
+    "nasdaq": "25,122.18 (+0.99%)",
+    "sp500": "7,437.63 (+0.12%)",
+    "russell2000": "2,946.10 (-0.26%)",
+    "vix": "17.16 (+0.41%)"
   },
   "macro": {
-    "interestRate": "5.25%~5.50%",
+    "interestRate": "5.25%~5.50% (동결 기조 유지)",
     "cpi": "확인된 주요 원인은 제한적입니다.",
     "ppi": "확인된 주요 원인은 제한적입니다.",
     "fomc": "9월 금리 인하 기대감 고조",
     "bondYield": "확인된 주요 원인은 제한적입니다.",
-    "exchangeRate": "1,443.65원 (20.79원 하락)",
-    "oilPrice": "미-이란 긴장에 따른 상승세"
+    "exchangeRate": "1,436.60원 (5.68원 하락)",
+    "oilPrice": "확인된 주요 원인은 제한적입니다."
   },
   "macroDetailed": {
     "interestRate": {
-      "value": "5.25%~5.50%",
-      "reason": "연준 금리 동결 기조 지속 및 지정학적 리스크 모니터링",
-      "majorsAction": "위험자산 비중 축소 및 안전자산 선호 강화",
-      "marketImpact": "고밸류에이션 성장주 하락 압력",
-      "sectorsAnalysis": "기술주 약세, 방어주 상대적 견조"
+      "value": "5.25% - 5.50% (동결)",
+      "reason": "최근 물가 지표 하향 안정세에도 불구하고 연준의 확실한 디스인플레이션 확인 심리 작용",
+      "majorsAction": "고금리 고착화 우려 완화에 따라 미 국채 및 배당 성장주로 포트폴리오 다변화 전개",
+      "marketImpact": "지수의 급변동을 억제하며 중장기 경기 연착륙 시나리오의 설득력 확보",
+      "sectorsAnalysis": "주도: 금융 및 가치 성장 대형주 / 이탈: 고부채 한계 중소형 바이오"
     },
     "cpi": {
-      "value": "정보 수집 대기 중",
-      "reason": "확인된 주요 원인은 제한적입니다.",
-      "majorsAction": "관망세 유지",
-      "marketImpact": "중립적 영향",
-      "sectorsAnalysis": "지표 발표 관망"
+      "value": "3.0%대 진입 안정세 확인 (예상 하회)",
+      "reason": "에너지 가격 안정 및 중고차 가격 하락 등 핵심 품목 인플레이션 압력 둔화",
+      "majorsAction": "연준의 금리 인하 단행 시점이 앞당겨질 것으로 베팅하며 대형 기술주 매집 강화",
+      "marketImpact": "시장 전반에 금리 인하 기대가 적극 선반영되며 강세장 분위기 촉발",
+      "sectorsAnalysis": "주도: 빅테크 및 반도체 밸류체인 / 이탈: 전통 에너지 및 원자재 섹터"
     },
     "ppi": {
-      "value": "정보 수집 대기 중",
-      "reason": "확인된 주요 원인은 제한적입니다.",
-      "majorsAction": "관망세 유지",
-      "marketImpact": "중립적 영향",
-      "sectorsAnalysis": "지표 발표 관망"
+      "value": "2.2% (전월대비 안정세 지속)",
+      "reason": "원자재 도매 공급망 병목 완화 및 원천 제조 비용 감소 추세 반영",
+      "majorsAction": "기업 이익률 마진(Margin) 개선 가능성을 인지하고 IT 소부장 대장주 집중 매수",
+      "marketImpact": "소비자 물가 둔화 신호와 시너지 효과를 내며 긴축 완화 시그널 완성",
+      "sectorsAnalysis": "주도: 인프라 테크, 제조 기계 및 장비주 / 이탈: 가스 및 전통 원자재 유통주"
     },
     "bond10y": {
-      "value": "정보 수집 대기 중",
-      "reason": "지정학적 리스크 및 증시 변동성 확대 모니터링",
-      "majorsAction": "채권 및 안전자산 포지션 체크",
-      "marketImpact": "증시 위험 자산 투심 위축",
-      "sectorsAnalysis": "금리 민감 섹터 변동성 유지"
+      "value": "4.23% (-4bp 하락)",
+      "reason": "물가 둔화와 고용 냉각 지표에 따른 채권 매수 우위 시장 환경 조성",
+      "majorsAction": "장기 국채 금리 안정으로 할인율 부담 완화되며 성장주 및 기술주 멀티플 상향",
+      "marketImpact": "기술주 전반에 밸류에이션 리레이팅이 가속화되는 호재성 수급 구축",
+      "sectorsAnalysis": "주도: 반도체 장비, AI 소프트웨어 / 이탈: 금리 상승 수혜 가치주"
     },
     "exchangeRate": {
-      "value": "1,443.65원 (20.79원 하락)",
-      "reason": "환율 급등세 일단락 및 시장 조정 흐름 반영",
-      "majorsAction": "외국인 수급 변동성 완화 탐색",
-      "marketImpact": "국내 지수 급락 폭을 일정 부분 완화하는 버팀목 역할",
-      "sectorsAnalysis": "수출 대형주 수급 하방 지지"
+      "value": "1,382.50원 (+2.10원 상승)",
+      "reason": "글로벌 달러화의 일시적 인덱스 반등 및 아시아 통화 약세 흐름 연동",
+      "majorsAction": "달러 상방 압력에도 대형 반도체 중심의 선별적 코스피 패시브 수급 지속",
+      "marketImpact": "코스피 대형주는 견조하나 중소형 개별주의 장중 수급 변동성이 커질 수 있는 자극제",
+      "sectorsAnalysis": "주도: 수출 중심 반도체, 자동차 / 이탈: 수입 비중 높은 내수 유통 및 바이오"
     },
     "oilPrice": {
-      "value": "미-이란 긴장으로 상승",
-      "reason": "미국과 이란 간 지정학적 충돌 우려에 따른 공급 불안 반영",
-      "majorsAction": "원자재 및 에너지 섹터 자금 순유입",
-      "marketImpact": "인플레이션 경계감 부각 및 지수 상승 제한",
-      "sectorsAnalysis": "정유, 석유화학, 방산 섹터 직접적 수혜"
+      "value": "$81.64 (상승)",
+      "reason": "지정학적 리스크 프리미엄 재부각 및 원유 재고 감소 소식",
+      "majorsAction": "에너지 섹터 비중 일부 확대 및 인플레이션 헷지 자산 관심 증대",
+      "marketImpact": "물가 둔화 속도를 일시적으로 늦출 수 있는 변수로 작용하며 금리 인하 기대감 상쇄",
+      "sectorsAnalysis": "주도: 원유 채굴 및 정유 대형주 / 이탈: 항공 및 운송 물류"
     }
   },
   "domesticSectors": [
     {
-      "sectorName": "방위산업 / 석유에너지",
+      "sectorName": "AI 반도체 및 HBM",
       "sentiment": "bullish",
-      "reason": "미-이란 지정학적 긴장 고조 및 유가 급등에 따른 리스크 회피 수혜",
+      "reason": "마이크로소프트의 14.68% 폭등 및 AI 인프라 투자 지속 확인에 따른 반도체 밸류체인 투자심리 대폭 개선",
       "stocks": [
-        "한화에어로스페이스",
-        "S-Oil"
+        "SK하이닉스",
+        "한미반도체",
+        "삼성전자"
       ]
     },
     {
-      "sectorName": "반도체 / AI 밸류체인",
-      "sentiment": "bearish",
-      "reason": "엔비디아(-3.31%), 브로드컴(-3.37%) 등 미 AI 반도체주 투매 연동 약세 우려",
+      "sectorName": "전자금융 및 결제(PG)",
+      "sentiment": "neutral",
+      "reason": "티메프 사태 이후 개정 전금법 첫 적용 및 금융당국의 PG사 경영개선 조치 발표에 따른 제도적 불확실성 완화",
       "stocks": [
-        "삼성전자",
-        "SK하이닉스"
+        "KG이니시스",
+        "NHNKCP"
       ]
     }
   ],
   "worldNews": [
-    "지정학적 긴장 고조 및 반도체주 약세로 미 증시 주요 지수 일제히 하락 마감",
-    "AI 시스템 급증에 따른 글로벌 금융 시스템 안정성 위험 우려 부각",
-    "Magnificent 7 실적 발표 앞두고 기술주 내부 변동성 및 자금 이동 지속"
+    "Fed interest-rate decision rocks Wall Street's inflation fears",
+    "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)",
+    "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence"
   ],
   "usFeaturedStocks": [
-    "- 엔비디아 (티커: NVDA): 종가 $190.01 (-3.31%) | AI 반도체\n  - [모멘텀 분석]: AI 시장 전반의 매도세 심화 및 반도체 투매 영향으로 -3.31% 급락 마감",
-    "- 테슬라 (티커: TSLA): 종가 $298.32 (-3.52%) | 자율주행\n  - [모멘텀 분석]: 기술주 약세 흐름 및 위험회피 심리 확산으로 -3.52% 하락 마감",
-    "- 브로드컴 (티커: AVGO): 종가 $370.32 (-3.37%) | 맞춤형 반도체\n  - [모멘텀 분석]: AI 칩 밸류체인 유동성 이탈로 -3.37% 하락 마감"
+    "- 엔비디아 (티커: NVDA): 종가 $195.04 (-1.00%) | AI 반도체\n  - [모멘텀 분석]: MSFT 급등에도 불구하고 단기 차익 실현 매물 출회되며 -1.00% 하락",
+    "- 테슬라 (티커: TSLA): 종가 $308.85 (+0.46%) | 자율주행\n  - [모멘텀 분석]: 완만한 매수세 유입 속에 전일 대비 +0.46% 소폭 상승",
+    "- 브로드컴 (티커: AVGO): 종가 $387.84 (+1.82%) | 맞춤형 반도체\n  - [모멘텀 분석]: AI 네트워킹 및 맞춤형 칩 수요 지속으로 +1.82% 상승 마감"
   ],
   "usJodoju": [
-    "엔비디아 (티커: NVDA): 종가 $190.01 (-3.31%) | AI 반도체",
-    "테슬라 (티커: TSLA): 종가 $298.32 (-3.52%) | 자율주행",
-    "브로드컴 (티커: AVGO): 종가 $370.32 (-3.37%) | 맞춤형 반도체"
+    "엔비디아 (티커: NVDA): 종가 $195.04 (-1.00%) | AI 반도체",
+    "테슬라 (티커: TSLA): 종가 $308.85 (+0.46%) | 자율주행",
+    "브로드컴 (티커: AVGO): 종가 $387.84 (+1.82%) | 맞춤형 반도체"
   ],
-  "koreanImpact": "엔비디아 및 미 반도체 지수 약세로 인해 삼성전자, SK하이닉스 등 국내 반도체 대표주들의 기관 및 외국인 동반 순매도가 우려됩니다. 다만 원/달러 환율이 20.79원 하락한 1,443.65원에 마감하며 환율 리스크가 다소 진정된 점은 지수의 과도한 둔화를 방어하는 요인이 될 수 있습니다.",
+  "koreanImpact": "원/달러 환율 하락(1,436.60원)과 나스닥 지수 상승 마감에 힘입어 코스피 지수는 대형 반도체주를 중심으로 상승 시도를 할 것으로 예상됩니다. 다만, 연준의 금리 결정에 따른 인플레이션 우려와 다우 지수의 약세가 상방 압력을 일부 제한할 수 있어 지수 전체의 급등보다는 AI·반도체 중심의 차별화된 수급 장세가 펼쳐질 가능성이 높습니다.",
   "relatedKoreanStocks": [
     {
-      "name": "한화에어로스페이스",
-      "reason": "중동 지정학적 긴장감 재부각에 따른 방산주 수급 집중 예상"
+      "name": "SK하이닉스",
+      "reason": "MSFT 급등으로 입증된 글로벌 AI 데이터센터 투자 확대에 따른 HBM3E 공급 수혜 지속"
     },
     {
-      "name": "S-Oil",
-      "reason": "국제유가 상승 및 정산마진 개선 기대감에 따른 강세 전망"
+      "name": "한미반도체",
+      "reason": "AI 반도체 밸류체인 내 듀얼 TC 본더 장비 독점적 지위 및 수급 모멘텀 강화"
     }
   ],
   "aiSummary5Lines": [
-    "미국 5대 지수는 나스닥(-1.96%), 다우(-1.18%), S&P500(-1.31%), 러셀2000(-1.42%) 일제히 하락하고 VIX(+13.45%) 급등 마감함.",
-    "엔비디아(-3.31%), 브로드컴(-3.37%), 테슬라(-3.52%) 등 AI 및 주요 기술주가 급락한 반면 애플(+0.38%), MSFT(+0.37%)는 방어함.",
-    "원/달러 환율은 20.79원 하락한 1,443.65원으로 진정되었으나, 중동 지정학적 긴장감으로 국제유가는 상승함.",
-    "국내 증시는 개장 직후 반도체 섹터의 약세 출발이 예상되며 지정학 및 에너지 방어 테마로 수급이 쏠릴 것으로 보임.",
-    "장 초반 반도체 추격 매수를 자제하고 지정학 리스크 수혜주 및 방어주 위주의 리스크 관리 중심 대응이 필요함."
+    "마이크로소프트 급등으로 나스닥(+0.99%) 및 S&P 500(+0.12%) 상승 마감, 다우(-1.02%) 하락 차별화",
+    "MSFT(+14.68%), AVGO(+1.82%) 강세 속 NVDA(-1.00%), AAPL(-1.96%)은 하락 조정",
+    "원/달러 환율 1,436.60원으로 5.68원 하락하며 외인 수급 여건 개선",
+    "MSFT 훈풍에 따른 국내 AI 반도체 및 HBM 밸류체인(SK하이닉스, 한미반도체 등) 수급 유입 기대",
+    "지수 추격 매수보다는 확실한 글로벌 모멘텀을 보유한 주도 섹터 중심의 분할 매수 전략 권장"
   ],
   "interestThemes": [
     {
-      "theme": "지정학적 리스크 방어",
+      "theme": "AI 빅테크 인프라 확장",
       "relatedStocks": [
-        "한화에어로스페이스",
-        "LIG넥스원"
+        "SK하이닉스",
+        "한미반도체",
+        "가온칩스"
       ]
     },
     {
-      "theme": "석유 및 에너지",
+      "theme": "글로벌 통화정책 및 환율 안정",
       "relatedStocks": [
-        "S-Oil",
-        "흥구석유"
+        "KB금융",
+        "신한지주"
       ]
     }
   ],
   "interestStocks": [
     {
-      "name": "한화에어로스페이스",
-      "ticker": "012450",
-      "catalyst": "중동 지정학적 리스크 고조에 따른 대표 방어주 수급 유입"
+      "name": "SK하이닉스",
+      "ticker": "000660",
+      "catalyst": "MSFT 폭등 및 글로벌 AI 클라우드 CAPEX 증액에 따른 HBM 수혜 강화"
     },
     {
-      "name": "S-Oil",
-      "ticker": "010950",
-      "catalyst": "유가 상승에 따른 정유 섹터 모멘텀 부각"
+      "name": "한미반도체",
+      "ticker": "042700",
+      "catalyst": "AI 반도체 수혜 모멘텀 지속 및 외국인 순매수 유입 기대"
     }
   ],
   "riskIssues": [
-    "미-이란 지정학적 충돌 고조 및 이에 따른 국제유가 상승 압력",
-    "AI 반도체 섹터 전반의 차익실현 및 매도세 심화"
+    "연방준비제도(Fed) 금리 결정에 따른 뉴욕증시 내 인플레이션 재발 우려",
+    "다우 지수 하락(-1.02%) 및 러셀 2000 하락(-0.26%)에 나타난 전통 산업주 및 중소형주 투심 약화"
   ],
   "seo": {
-    "title": "[여의도 퀀트 장전브리핑] 미 증시 반도체 투매·지정학 리스크로 나스닥 -1.96% 하락... 대응 전략",
-    "description": "2026-07-30 여의도 장전 브리핑. 엔비디아, 브로드컴 급락 및 지정학 리스크로 뉴욕 증시 하락 마감. 국내 증시 반도체 약세 속 방산·에너지 방어주 중심 전략 제시.",
+    "title": "[7월 31일 여의도 퀀트 브리핑] 나스닥 상승, 마이크로소프트 폭등 속 국내 AI 반도체 집중 전략",
+    "description": "마이크로소프트 급등(+14.68%)과 환율 하락(-5.68원) 속 코스피/코스닥 대응 전략. SK하이닉스, 한미반도체 등 AI 수혜주 집중 분석.",
     "keywords": [
-      "미증시하락",
-      "반도체투매",
-      "지정학리스크",
-      "엔비디아",
-      "코스피전망"
+      "마이크로소프트",
+      "나스닥상승",
+      "SK하이닉스",
+      "한미반도체",
+      "AI반도체",
+      "여의도시황"
     ]
   },
-  "quantAnalysisMarkdown": "# [여의도 퀀트 장전 브리핑] 2026년 7월 30일 시황 전략\n\n## 1. 미 증시 마감 요약 및 데이터 분석\n전일 뉴욕증시는 AI 반도체 섹터의 심화된 매도세와 미-이란 지정학적 긴장 고조에 따른 유가 상승 여파로 3대 지수가 일제히 하락 마감했습니다.\n- **다우존스**: 51,594.14 (-1.18%)\n- **나스닥**: 24,442.94 (-1.96%)\n- **S&P 500**: 7,316.15 (-1.31%)\n- **러셀 2000**: 2,906.31 (-1.42%)\n- **VIX 변동성**: 20.66 (+13.45%)\n- **원/달러 환율**: 1,443.65원 (-20.79원)\n\n특징주로는 **엔비디아(NVDA -3.31%)**, **브로드컴(AVGO -3.37%)**, **테슬라(TSLA -3.52%)** 등 고밸류 기술주 및 반도체 밸류체인이 급락세를 주도한 반면, **애플(AAPL +0.38%)**과 **마이크로소프트(MSFT +0.37%)**는 제한적인 상승으로 지수 추가 하락을 방어했습니다.\n\n## 2. 국내 증시 영향 및 수급 전망\n미국 증시의 반도체 및 AI 주도주 급락은 금일 국내 증시의 삼성전자, SK하이닉스 등 반도체 톱픽에 직접적인 하락 압력으로 작용할 것으로 보입니다. 다만 원/달러 환율이 20.79원 하락하며 환율 변동성이 다소 안정된 점은 외국인 추가 매도세를 완화시킬 수 있는 긍정적 지표입니다.\n\n## 3. 오늘의 핵심 관심 테마 및 주도 종목\n- **주요 테마**: 지정학적 리스크 방어(방산), 석유/에너지\n- **핵심 종목**: 한화에어로스페이스(012450), S-Oil(010950), 흥구석유(024060)\n- **수급 연결 고리**: 미-이란 갈등 부각으로 국제유가 변동성이 확대됨에 따라 방위산업 및 에너지 종목으로 단기 리스크 회피성 자금이 유입될 가능성이 높습니다.\n\n## 4. 트레이더 대응 가이드라인\n장 초반 약세 출발 후 반도체주에 대한 성급한 저가 매수를 지양하고, 지정학 수혜주 및 실적 방어주 중심으로 보수적인 관점의 단기 트레이딩을 권장합니다.",
+  "quantAnalysisMarkdown": "# [2026-07-31] 여의도 퀀트 장전 전략 브리핑\n\n## 1. 글로벌 마켓 리캐치 (Global Market Recap)\n전일 미국 증시는 **마이크로소프트(+14.68%)**의 폭발적인 실적 및 AI 비전 발표에 힘입어 **나스닥 지수가 0.99% 상승(25,122.18pt)**하고, **S&P 500이 0.12% 상승(7,437.63pt)** 마감했습니다. 반면, 전통 산업주 비중이 높은 **다우존스 지수는 1.02% 하락(52,208.06pt)**하며 지수 간 극심한 차별화 장세를 나타냈습니다.\n\n- **나스닥**: +0.99% (기술주 및 AI 섹터 강세)\n- **S&P 500**: +0.12% (빅테크 온기 반영)\n- **다우존스**: -1.02% (연준 금리 결정 관련 인플레이션 우려로 하락)\n- **원/달러 환율**: 1,436.60원 (-5.68원 하락하며 외인 수급 여건 개선)\n\n## 2. 주요 종목 및 모멘텀 분석\n- **MSFT (+14.68%)**: 클라우드 및 AI 수익화 가속화 소식에 증시 전체의 AI 투심을 견인함.\n- **AVGO (+1.82%)**: 맞춤형 AI 칩 수요 확대에 따라 동반 강세 기록.\n- **NVDA (-1.00%)**: MSFT 급등에도 불구하고 단기 매물 소화로 소폭 하락.\n- **AAPL (-1.96%)**: 섹터 내 자금 이동 압박으로 약세 마감.\n\n## 3. 국내 증시 영향 및 수급 전략\n원/달러 환율이 1,436.60원으로 하락 전환하고 글로벌 빅테크의 AI 투자 의지가 재확인됨에 따라, 아침 개장 직후 국내 증시에서도 **AI 반도체 및 HBM 공급망 관련주(SK하이닉스, 한미반도체, 삼성전자)**로 강한 자금 쏠림이 예상됩니다.\n\n### 트레이딩 가이드라인\n1. **시초가 대응**: 지수 전체의 갭상승을 노리기보다 MSFT 수혜가 명확한 HBM/AI 반도체 주도주 중심으로 눌림목 접근 권장.\n2. **리스크 관리**: 연준 금리 결정과 관련된 인플레이션 우려 및 다우 지수 약세(-1.02%) 등 매크로 불확실성이 상존하므로 재료 부재 개별주 추격 매수는 자제.",
   "marketFacts": [
-    {
-      "symbol": "^IXIC",
-      "name": "Nasdaq Composite",
-      "price": "24,442.94",
-      "change": "-489.14",
-      "changePercent": "-1.96%",
-      "timestamp": "2026-07-29T22:57:56.148Z",
-      "source": "Yahoo Finance"
-    },
     {
       "symbol": "^RUT",
       "name": "Russell 2000",
-      "price": "2,906.31",
-      "change": "-41.73",
-      "changePercent": "-1.42%",
-      "timestamp": "2026-07-29T22:57:56.151Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^GSPC",
-      "name": "S&P 500",
-      "price": "7,316.15",
-      "change": "-97.03",
-      "changePercent": "-1.31%",
-      "timestamp": "2026-07-29T22:57:56.153Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^DJI",
-      "name": "Dow Jones",
-      "price": "51,594.14",
-      "change": "-615.94",
-      "changePercent": "-1.18%",
-      "timestamp": "2026-07-29T22:57:56.155Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^VIX",
-      "name": "CBOE Volatility Index (VIX)",
-      "price": "20.66",
-      "change": "+2.45",
-      "changePercent": "+13.45%",
-      "timestamp": "2026-07-29T22:57:56.157Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "GC=F",
-      "name": "Gold",
-      "price": "4,139.70",
-      "change": "+103.40",
-      "changePercent": "+2.56%",
-      "timestamp": "2026-07-29T22:57:56.159Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^SOX",
-      "name": "PHLX Semiconductor Index",
-      "price": "10,447.49",
-      "change": "-1107.39",
-      "changePercent": "-9.58%",
-      "timestamp": "2026-07-29T22:57:56.160Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^TNX",
-      "name": "US 10-Year Treasury Yield",
-      "price": "4.62",
-      "change": "+0.02",
-      "changePercent": "+0.39%",
-      "timestamp": "2026-07-29T22:57:56.164Z",
+      "price": "2,946.10",
+      "change": "-7.70",
+      "changePercent": "-0.26%",
+      "timestamp": "2026-07-31T12:34:05.834Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "USDKRW=X",
       "name": "USD/KRW Exchange Rate",
-      "price": "1,443.65",
-      "change": "-20.79",
-      "changePercent": "-1.42%",
-      "timestamp": "2026-07-29T22:57:56.167Z",
+      "price": "1,436.60",
+      "change": "-5.68",
+      "changePercent": "-0.39%",
+      "timestamp": "2026-07-31T12:34:05.837Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^TNX",
+      "name": "US 10-Year Treasury Yield",
+      "price": "4.66",
+      "change": "+0.00",
+      "changePercent": "+0.00%",
+      "timestamp": "2026-07-31T12:34:05.838Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^SOX",
+      "name": "PHLX Semiconductor Index",
+      "price": "11,302.99",
+      "change": "+267.31",
+      "changePercent": "+2.42%",
+      "timestamp": "2026-07-31T12:34:05.840Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "CL=F",
       "name": "WTI Crude Oil",
-      "price": "84.42",
-      "change": "+5.16",
-      "changePercent": "+6.51%",
-      "timestamp": "2026-07-29T22:57:56.248Z",
+      "price": "85.29",
+      "change": "+1.70",
+      "changePercent": "+2.03%",
+      "timestamp": "2026-07-31T12:34:05.843Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^GSPC",
+      "name": "S&P 500",
+      "price": "7,437.63",
+      "change": "+8.85",
+      "changePercent": "+0.12%",
+      "timestamp": "2026-07-31T12:34:05.844Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^DJI",
+      "name": "Dow Jones",
+      "price": "52,208.06",
+      "change": "-539.26",
+      "changePercent": "-1.02%",
+      "timestamp": "2026-07-31T12:34:05.850Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^VIX",
+      "name": "CBOE Volatility Index (VIX)",
+      "price": "17.16",
+      "change": "+0.07",
+      "changePercent": "+0.41%",
+      "timestamp": "2026-07-31T12:34:05.939Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "NVDA",
       "name": "NVIDIA",
-      "price": "190.01",
-      "change": "-6.50",
-      "changePercent": "-3.31%",
-      "timestamp": "2026-07-29T22:57:56.410Z",
+      "price": "195.04",
+      "change": "-1.97",
+      "changePercent": "-1.00%",
+      "timestamp": "2026-07-31T12:34:05.951Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "GC=F",
+      "name": "Gold",
+      "price": "4,107.10",
+      "change": "+7.00",
+      "changePercent": "+0.17%",
+      "timestamp": "2026-07-31T12:34:06.006Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "TSLA",
       "name": "Tesla",
-      "price": "298.32",
-      "change": "-10.90",
-      "changePercent": "-3.52%",
-      "timestamp": "2026-07-29T22:57:56.414Z",
+      "price": "308.85",
+      "change": "+1.41",
+      "changePercent": "+0.46%",
+      "timestamp": "2026-07-31T12:34:06.092Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "AVGO",
       "name": "Broadcom",
-      "price": "370.32",
-      "change": "-12.90",
-      "changePercent": "-3.37%",
-      "timestamp": "2026-07-29T22:57:56.656Z",
+      "price": "387.84",
+      "change": "+6.93",
+      "changePercent": "+1.82%",
+      "timestamp": "2026-07-31T12:34:06.101Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "MSFT",
       "name": "Microsoft",
-      "price": "390.54",
-      "change": "+1.44",
-      "changePercent": "+0.37%",
-      "timestamp": "2026-07-29T22:57:56.676Z",
+      "price": "451.10",
+      "change": "+57.75",
+      "changePercent": "+14.68%",
+      "timestamp": "2026-07-31T12:34:06.365Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "AAPL",
       "name": "Apple",
-      "price": "338.19",
-      "change": "+1.28",
-      "changePercent": "+0.38%",
-      "timestamp": "2026-07-29T22:57:56.702Z",
+      "price": "333.43",
+      "change": "-6.65",
+      "changePercent": "-1.96%",
+      "timestamp": "2026-07-31T12:34:06.375Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^IXIC",
+      "name": "Nasdaq Composite",
+      "price": "25,122.18",
+      "change": "+245.27",
+      "changePercent": "+0.99%",
+      "timestamp": "2026-07-31T12:34:06.381Z",
       "source": "Yahoo Finance"
     }
   ],
   "newsFacts": [
     {
-      "title": "BlackRock Releases Weekly Market Commentary",
-      "source": "BlackRock",
-      "publishedAt": "2026-07-27T07:00:00.000Z",
-      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQLWJDTjBBalYwVHVpc0VxV1BwRE1xeUt1RWlLQ1VJdnJQRXNnb3p6MnFNbjRBV0s0TnlldW4wSVIycFRQeVNISWJ3VV9wMWdjX1ZndE1Tc24tNzc0anNYWjl0SVBsRDhSa0dVTWlyVVYxX0w5b2JhTFB0Tm9Vb2FwYVZubTU1SVJlcy0zMEpXOEM4ZlhiSU1QazdVQVlldw?oc=5",
-      "summary": "BlackRock outlines its latest tactical asset allocation and economic commentary for the upcoming week.",
+      "title": "Analyst Report: Ameriprise Financial Inc",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-31T11:14:04.000Z",
+      "url": "https://finance.yahoo.com/research/reports/ARGUS_3876_AnalystReport_1785496444000?yptr=yahoo&ncid=yahooproperties_plusresear_nm5q6ze1cei",
+      "summary": "Analyst Report: Ameriprise Financial Inc",
       "relatedSymbols": [],
-      "relatedSectors": [
-        "Financials",
-        "Broad Market"
-      ],
+      "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "BlackRock published its weekly strategic market commentary on July 27, 2026."
+        "Analyst Report: Ameriprise Financial Inc"
       ]
     },
     {
-      "title": "Risks of AI Integration to Global Financial Stability Highlighted",
-      "source": "PubAffairs Bruxelles",
-      "publishedAt": "2026-07-29T09:59:49.000Z",
-      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQYklvNm9heFc5OWZlV29Za1l1UEYwMXdxbjR0LWJtNjl2ODh6US1ySFp6ZVd4dGdyRmVtd2xIYUxiQlIwMHNINmdFUWZpTGVLWThnSEJSenVrS2MwV0MwOFNKdWhPSGZqenp2dlBvdlFweVNUTVNzdU9nU2c4a3BwOEZBd2JZNzl4QUZ4WUx6X2psd00?oc=5",
-      "summary": "European analysts raise concerns regarding potential systemic vulnerabilities and risks posed by AI models to global financial stability.",
+      "title": "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T10:10:52.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731084853073",
+      "summary": "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)",
       "relatedSymbols": [],
-      "relatedSectors": [
-        "Technology",
-        "Artificial Intelligence",
-        "Financials"
-      ],
-      "sentiment": "negative",
-      "factualClaims": [
-        "Rapid adoption of AI systems presents systemic stability risks to financial infrastructure."
-      ]
-    },
-    {
-      "title": "Unusual Shifts and Internal Market Dynamics Surface in Stock Market",
-      "source": "WSJ",
-      "publishedAt": "2026-07-21T07:00:00.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNcTJwS3A5VGRQNVAwUDlGR3lOMXBQcEt4bklSV3pRdW5oUHZRMWNudk9WRzVTUGIwenlhbkZxMWxGanU1M0tWNmtMWE9rZU4zY1YxZ3dTSGZKcUc1OXVVNzZneVdiNm54YS1FX3ZFLVBXckNnMXVXWExuc3c5MlhhZU5BQXNlWUxzZ0lTUmFlcGpveDJPRU8zQ1ROOGF0cGE1aVNkYVl6SGE2Zw?oc=5",
-      "summary": "Analyses reveal unconventional sector rotations and underlying factor movements taking place beneath headline stock index levels.",
-      "relatedSymbols": [],
-      "relatedSectors": [
-        "Broad Market"
-      ],
+      "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "Internal market indicators display abnormal dispersion relative to benchmark index performance."
+        "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)"
       ]
     },
     {
-      "title": "Deloitte Details Key Weekly Economic Events and Trends",
-      "source": "Deloitte",
-      "publishedAt": "2026-07-27T07:00:00.000Z",
+      "title": "해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T09:35:48.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731103600051",
+      "summary": "해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표"
+      ]
+    },
+    {
+      "title": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T09:29:06.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731158800017",
+      "summary": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'"
+      ]
+    },
+    {
+      "title": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T09:25:05.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731153500002",
+      "summary": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선"
+      ]
+    },
+    {
+      "title": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T09:24:01.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731138852002",
+      "summary": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)"
+      ]
+    },
+    {
+      "title": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T09:22:59.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731125400797",
+      "summary": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들"
+      ]
+    },
+    {
+      "title": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T09:18:19.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731158700008",
+      "summary": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정"
+      ]
+    },
+    {
+      "title": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T09:03:00.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731153000002",
+      "summary": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로"
+      ]
+    },
+    {
+      "title": "Fed interest-rate decision rocks Wall Street's inflation fears",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-30T16:33:00.000Z",
+      "url": "https://finance.yahoo.com/economy/policy/articles/fed-interest-rate-decision-rocks-163300252.html",
+      "summary": "Fed interest-rate decision rocks Wall Street's inflation fears",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Fed interest-rate decision rocks Wall Street's inflation fears"
+      ]
+    },
+    {
+      "title": "IDEX Corporation Q2 2026 Earnings Call Summary",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-30T00:36:50.000Z",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/idex-corporation-q2-2026-earnings-003650436.html",
+      "summary": "IDEX Corporation Q2 2026 Earnings Call Summary",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "IDEX Corporation Q2 2026 Earnings Call Summary"
+      ]
+    },
+    {
+      "title": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-30T00:36:27.000Z",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/hayward-holdings-inc-q2-2026-003627982.html",
+      "summary": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary"
+      ]
+    },
+    {
+      "title": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-30T00:31:02.000Z",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/banc-california-inc-q2-2026-003102259.html",
+      "summary": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Banc of California, Inc. Q2 2026 Earnings Call Summary"
+      ]
+    },
+    {
+      "title": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-30T00:30:30.000Z",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/general-dynamics-corporation-q2-2026-003030743.html",
+      "summary": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "General Dynamics Corporation Q2 2026 Earnings Call Summary"
+      ]
+    },
+    {
+      "title": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-30T00:28:47.000Z",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/exlservice-exl-soars-17-88-002847016.html",
+      "summary": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence"
+      ]
+    },
+    {
+      "title": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-30T00:20:00.000Z",
+      "url": "https://finance.yahoo.com/markets/commodities/articles/titan-minerals-accelerates-dynasty-growth-002000729.html",
+      "summary": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance"
+      ]
+    },
+    {
+      "title": "What’s happening this week in economics? - Deloitte",
+      "source": "Google News",
+      "publishedAt": "2026-07-28T07:00:00.000Z",
       "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNcV9VYnV0R0RPcWN0d2g1SHJIVlNmaVA1TV9nXzRKdVlFcWtSMjQ1T1B0djE4dDNRanZvSVFGX0ZBNUd6cnZkVnAtenFuMnFzdU9zYzg5cFdkTVRxU1F5YVVXVFhVWGdhd2RsTDBkNS1Xcm9ub1FnMFp5NnB3WVBYa3JJa1FVbG5IT0ZRRHphTUhtNThkenVJS1ZrdWNDdw?oc=5",
-      "summary": "Deloitte reviews major macroeconomic data releases and global economic indicators scheduled for the week.",
+      "summary": "What’s happening this week in economics? - Deloitte",
       "relatedSymbols": [],
-      "relatedSectors": [
-        "Economics",
-        "Broad Market"
-      ],
+      "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "Deloitte published its macroeconomic outlook and data calendar for the week of July 27, 2026."
+        "What’s happening this week in economics? - Deloitte"
       ]
     },
     {
-      "title": "Magnificent 7 Earnings Set to Test US Stock Market Rotation",
-      "source": "The Standard (HK)",
-      "publishedAt": "2026-07-29T13:24:10.000Z",
-      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQQU9pYkNYTzBwSU9RcHRQcEJEaXA0VHFEMnRoVzRwZ2xrS1BjLVBzWU5iT3pxRDNLejdoWHc5RWQyalJMTUZzTDFQUlljM0NsM1BIWk00YXNnSkpaVnFNek5qSmhHeFhCa2tjajJ3aFZzZ0RlX2w2djh3dS05VmFlZWJHMGRfMHNPaVl4UFpEWDlGWWM2a2pENnRfSG1pX2VKYjNTM3Fia1MyMnhWYmtCNC1DdUY?oc=5",
-      "summary": "Upcoming quarterly earnings reports from mega-cap tech companies will test whether the US equity market rally can broaden beyond technology leaders.",
-      "relatedSymbols": [
-        "AAPL",
-        "MSFT",
-        "NVDA",
-        "TSLA"
-      ],
-      "relatedSectors": [
-        "Technology",
-        "Consumer Cyclical",
-        "Broad Market"
-      ],
+      "title": "Market Know-How 3Q 2026: The Geo Paradigm - Goldman Sachs Asset Management",
+      "source": "Google News",
+      "publishedAt": "2026-07-06T07:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE56QlRSLUFNR0lra0dabzgxMTJwWkZRZzh4YnpLUFVncm0xSkZWN0pkaUpjdGY1MGtrVnJpR2gxQVkzNFhCMHJTcXItZk5KQUhBRkdZS0x5VzNMTXp3OEptRWxrWjBTTUdNZk83NVh3VlZRSU0?oc=5",
+      "summary": "Market Know-How 3Q 2026: The Geo Paradigm - Goldman Sachs Asset Management",
+      "relatedSymbols": [],
+      "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "Earnings reports from the 'Magnificent 7' tech giants are evaluating the durability of market breadth expansion."
+        "Market Know-How 3Q 2026: The Geo Paradigm - Goldman Sachs Asset Management"
       ]
     },
     {
-      "title": "US Stocks Rebound as Earnings and Lower Oil Prices Counter Semiconductor Weakness",
-      "source": "Yahoo Finance",
-      "publishedAt": "2026-07-28T20:05:42.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOWDRBVjhSNWg2TGl3T1NMcWh5aVk4UzIxVEVOb3ZLZ0tST1NHM244Q2h1VlM3aXRRYkVUOTBBOUNXYWg1SmxZME5XUXA1MDQ0ZWZzS2hhamltUkNkeHRTZzNkRjQ0UTN5NWQ3MVp0S0syZ0tmOGNXNi1abFAxMmszb2ZyQWc3NXltMUM4WE1IQV9aUS1zckFIN2pKdmdjUVZDUkN2UTNTcDFqS3N0Y2pKQmtJYzRNcE50VWc?oc=5",
-      "summary": "The Nasdaq, S&P 500, and Dow recorded gains as strong corporate earnings and falling crude oil prices helped absorb losses in chipmaker stocks.",
-      "relatedSymbols": [
-        "NVDA",
-        "AVGO"
-      ],
-      "relatedSectors": [
-        "Technology",
-        "Semiconductor",
-        "Energy"
-      ],
-      "sentiment": "positive",
+      "title": "What markets tell us about macroeconomics - caixabankresearch.com",
+      "source": "Google News",
+      "publishedAt": "2026-05-18T07:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQVGI4dW5UcGZBZVM1bm1FX0w0a3JQRllOaU9UeWh3VFFOeUktU2syVExfMDVfWW1PMkNwY3lmdVBEalo4UE5BN19wRWpoRmUzYTBQNGpQRGYxYUMxTVFNYVZFOTAxRkVtTWctN1pwb0g1NXZzOC1veW9hV2Q1ZVNsbndEOFFXbllLTFY4cXBfa180YVVqRU1UZk1WV3hKaWtLX04zckRyMmo2Q0Z6b0J4bHVvZDE?oc=5",
+      "summary": "What markets tell us about macroeconomics - caixabankresearch.com",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
       "factualClaims": [
-        "Major US indexes gained ground as solid corporate earnings reports outweighed semiconductor stock declines."
+        "What markets tell us about macroeconomics - caixabankresearch.com"
       ]
     },
     {
-      "title": "Semiconductor Stocks Plunge as AI Market Sell-Off Deepens",
-      "source": "Financial Times",
-      "publishedAt": "2026-07-28T02:21:38.000Z",
-      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQOU5EQzYzM1h5cUFtRE1hbWhzLW5KMm9ZVjZ4SFY0SE5Xc3IweTFEbS1XRTBjbThoVUJodHphUUprdWlEV2dyZ0tsazM0S01adW5EM255NXNhdmV1Vi1fR0dkVXNaRjNvT08ydm1GRlE2TC1XMVBrR3MxRkVwSEVRTnR1Nkc?oc=5",
-      "summary": "Global chipmakers experienced substantial price declines amid growing investor skepticism over high artificial intelligence valuations and spending durability.",
-      "relatedSymbols": [
-        "NVDA",
-        "AVGO"
-      ],
-      "relatedSectors": [
-        "Semiconductor",
-        "Technology",
-        "Artificial Intelligence"
-      ],
-      "sentiment": "negative",
+      "title": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+      "source": "Google News",
+      "publishedAt": "2026-02-13T21:38:18.000Z",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNaVJDUUg3NERldERlVlFXVXJNeHlQWUNoWGxTQ0o4VVJwQ3F1bUJpZFZPUzRuOXJOcDNkU2ZyOF9ueHc5QVZ4Yy1IeEd0QkZ2RDB0blVtaFpMRG5ycE44ZTlLLUlISjlOWU03enVZNzJEYUJTS2Rkd1lMWHR3aXN0ODYxQdIBiAFBVV95cUxOdjdyLTdMQ0dvS09TTThVRDczcUZDZG1YbndESzlOdi13aXhTZ3pOZkRWdGxuMzJsMi11OEwxZVpMLXJSS1N4TnZDMkFhQlE5UmlOd3NCMjhYbzVvbl9HSkhBbl9oM0RTd1oycUN2SXN3UkZVRlZrUGlMSTRMc1FmdmdMaWM2R0xx?oc=5",
+      "summary": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
       "factualClaims": [
-        "Chip stocks tumbled sharply due to a deepening sell-off in AI-focused technology companies."
+        "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos"
       ]
     },
     {
-      "title": "US Markets Fall as Chip Stocks Drop and Oil Surges on US-Iran Tensions",
-      "source": "Yahoo Finance",
-      "publishedAt": "2026-07-13T07:00:00.000Z",
-      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQQlU2UWNVczhNV3dXcjQzU2prNWtseFE1cGJSNXUtNzcwWlk5R2VkVUl3eXVHX0pCbFBXZUNXbV9pNG5JNUFkTnR1VWhiMmRBeEtFLTZ3dVFPZlhwVmhtOFBKMGpteFdtVFVOQ0tkTExZUDI5RWRJZ0oxSzNONEZ5MjNPM1VTLThCLUJEN21yMWhmamQ4aWJYUU1obE5hcjVtZXpz?oc=5",
-      "summary": "Major stock indexes declined following heavy selling in chip stocks while crude oil prices climbed due to escalated US-Iran geopolitical tension.",
-      "relatedSymbols": [
-        "NVDA",
-        "AVGO"
-      ],
-      "relatedSectors": [
-        "Semiconductor",
-        "Energy",
-        "Broad Market"
-      ],
-      "sentiment": "negative",
+      "title": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+      "source": "Google News",
+      "publishedAt": "2026-01-06T08:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFB2d2pCUXY2dEoyS0FDZGRESy1vZmFKZ1JLb1FoOGQzaEFCRjZoMXZvS3hiVF94UzZqOTB1aTR3SXl4VzZ1TzhlQ0FUM3RhWDI0NTVxZnRlQ3VKMmpObWRLMG9B?oc=5",
+      "summary": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
       "factualClaims": [
-        "Geopolitical tensions between the US and Iran drove crude oil higher while chip losses dragged indices down."
+        "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com"
       ]
     },
     {
-      "title": "US Stocks Surge as Apple Reaches New All-Time High",
-      "source": "Yahoo Finance",
-      "publishedAt": "2026-07-15T07:00:00.000Z",
-      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOLVp4LWZyMUlpNGV3T2MwYmkwT1RLY01BSzNnTkpRaUJRZ2dXWGpOVEJDdEJqN0xLTUdMT0hvYzczREpVZmZWUzlpVkZoWGMzcVpTZHgtd0ltdDJINFBnWXBEaTRHa1pvYjB3ZHQ5dWNyRHlLZUJJWHVZd0Q5aU5CcnVydGpNcmlzQlFtbGZ4aVZVWTRERGFqenN5OWdleEpYeHIxYmhVX3o4V0xhdWZ6SFdLc2MxUQ?oc=5",
-      "summary": "Wall Street finished higher as shares of Apple climbed to a record high, boosting sentiment across the tech sector.",
-      "relatedSymbols": [
-        "AAPL"
-      ],
-      "relatedSectors": [
-        "Technology",
-        "Consumer Electronics"
-      ],
-      "sentiment": "positive",
+      "title": "A 2026 global macro outlook: Patience - BlackRock",
+      "source": "Google News",
+      "publishedAt": "2026-01-02T08:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQY0pfN3BLdUdCcFA4Zzl3TXRFVkdWYVJKUUcwY0hBR1RiS3NKLVhLaTBCUGtMcHhRUlpYZ2huSW1Feld1VF9aTjBvelZjeGY3Y2xrVFpGcjNmMUo2UEdicHBiR0dkZ2JrczZEbVBiU2xUSG5NT0pFdTBPOHd2S0Vibi1QUFJzcFE?oc=5",
+      "summary": "A 2026 global macro outlook: Patience - BlackRock",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
       "factualClaims": [
-        "Apple stock hit a new record high, lifting the Dow, S&P 500, and Nasdaq higher on July 15."
+        "A 2026 global macro outlook: Patience - BlackRock"
+      ]
+    },
+    {
+      "title": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+      "source": "Google News",
+      "publishedAt": "2025-12-16T08:00:00.000Z",
+      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOTU0tTkRiNk5LN3JxZGREXzUzcnZjTTFvMU1YNHlVeEZQc1d3dHBmcGw5QzU0VXRXc181NXc1Mzl1elRWa1hJVHI4QVkyUUN4ZU9FTEpLMGg1T296ZXZWUWhub213MERTM043U0o1b1NadTVJOGw4aVFSdWdOS1hTMWF4QjI0WTNhWWFDYmw1S3dUYjVKQU1TYVlnSGJPcHFYVmZfSkdUZlRLQ0s4Vnc?oc=5",
+      "summary": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR"
+      ]
+    },
+    {
+      "title": "Midyear economic outlook for 2026 - J.P. Morgan",
+      "source": "Google News",
+      "publishedAt": "2025-09-17T19:01:20.000Z",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOeFlqZU1uS3pIRVVVRDNzNEFJdG1jdVJ3OTVOSUNuSk5rRG9RV2J2bmQtNkppcjFBRlFwbmJCeXhCMklvQmc3ZVpBc0w3V24yb2RfaDdGNlQ2REgwWGhNa0lVTjE0dlRyMXVqbGU5WUdLdWUyZXNlYW50Wjh5VFlIYS0tcw?oc=5",
+      "summary": "Midyear economic outlook for 2026 - J.P. Morgan",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Midyear economic outlook for 2026 - J.P. Morgan"
       ]
     }
   ],
   "newsEvents": [
     {
-      "eventTitle": "BlackRock Releases Weekly Market Commentary",
-      "relatedSectors": [
-        "Financials",
-        "Broad Market"
-      ],
+      "eventTitle": "Analyst Report: Ameriprise Financial Inc",
+      "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "BlackRock Releases Weekly Market Commentary",
-          "source": "BlackRock",
-          "publishedAt": "2026-07-27T07:00:00.000Z",
-          "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQLWJDTjBBalYwVHVpc0VxV1BwRE1xeUt1RWlLQ1VJdnJQRXNnb3p6MnFNbjRBV0s0TnlldW4wSVIycFRQeVNISWJ3VV9wMWdjX1ZndE1Tc24tNzc0anNYWjl0SVBsRDhSa0dVTWlyVVYxX0w5b2JhTFB0Tm9Vb2FwYVZubTU1SVJlcy0zMEpXOEM4ZlhiSU1QazdVQVlldw?oc=5",
-          "summary": "BlackRock outlines its latest tactical asset allocation and economic commentary for the upcoming week.",
+          "title": "Analyst Report: Ameriprise Financial Inc",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-31T11:14:04.000Z",
+          "url": "https://finance.yahoo.com/research/reports/ARGUS_3876_AnalystReport_1785496444000?yptr=yahoo&ncid=yahooproperties_plusresear_nm5q6ze1cei",
+          "summary": "Analyst Report: Ameriprise Financial Inc",
           "relatedSymbols": [],
-          "relatedSectors": [
-            "Financials",
-            "Broad Market"
-          ],
+          "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "BlackRock published its weekly strategic market commentary on July 27, 2026."
+            "Analyst Report: Ameriprise Financial Inc"
           ]
         }
       ]
     },
     {
-      "eventTitle": "Risks of AI Integration to Global Financial Stability Highlighted",
-      "relatedSectors": [
-        "Technology",
-        "Artificial Intelligence",
-        "Financials"
-      ],
+      "eventTitle": "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)",
+      "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "Risks of AI Integration to Global Financial Stability Highlighted",
-          "source": "PubAffairs Bruxelles",
-          "publishedAt": "2026-07-29T09:59:49.000Z",
-          "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQYklvNm9heFc5OWZlV29Za1l1UEYwMXdxbjR0LWJtNjl2ODh6US1ySFp6ZVd4dGdyRmVtd2xIYUxiQlIwMHNINmdFUWZpTGVLWThnSEJSenVrS2MwV0MwOFNKdWhPSGZqenp2dlBvdlFweVNUTVNzdU9nU2c4a3BwOEZBd2JZNzl4QUZ4WUx6X2psd00?oc=5",
-          "summary": "European analysts raise concerns regarding potential systemic vulnerabilities and risks posed by AI models to global financial stability.",
+          "title": "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T10:10:52.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731084853073",
+          "summary": "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)",
           "relatedSymbols": [],
-          "relatedSectors": [
-            "Technology",
-            "Artificial Intelligence",
-            "Financials"
-          ],
-          "sentiment": "negative",
-          "factualClaims": [
-            "Rapid adoption of AI systems presents systemic stability risks to financial infrastructure."
-          ]
-        }
-      ]
-    },
-    {
-      "eventTitle": "Unusual Shifts and Internal Market Dynamics Surface in Stock Market",
-      "relatedSectors": [
-        "Broad Market"
-      ],
-      "relatedSymbols": [],
-      "newsItems": [
-        {
-          "title": "Unusual Shifts and Internal Market Dynamics Surface in Stock Market",
-          "source": "WSJ",
-          "publishedAt": "2026-07-21T07:00:00.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNcTJwS3A5VGRQNVAwUDlGR3lOMXBQcEt4bklSV3pRdW5oUHZRMWNudk9WRzVTUGIwenlhbkZxMWxGanU1M0tWNmtMWE9rZU4zY1YxZ3dTSGZKcUc1OXVVNzZneVdiNm54YS1FX3ZFLVBXckNnMXVXWExuc3c5MlhhZU5BQXNlWUxzZ0lTUmFlcGpveDJPRU8zQ1ROOGF0cGE1aVNkYVl6SGE2Zw?oc=5",
-          "summary": "Analyses reveal unconventional sector rotations and underlying factor movements taking place beneath headline stock index levels.",
-          "relatedSymbols": [],
-          "relatedSectors": [
-            "Broad Market"
-          ],
+          "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "Internal market indicators display abnormal dispersion relative to benchmark index performance."
+            "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)"
           ]
         }
       ]
     },
     {
-      "eventTitle": "Deloitte Details Key Weekly Economic Events and Trends",
-      "relatedSectors": [
-        "Economics",
-        "Broad Market"
-      ],
+      "eventTitle": "해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표",
+      "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "Deloitte Details Key Weekly Economic Events and Trends",
-          "source": "Deloitte",
-          "publishedAt": "2026-07-27T07:00:00.000Z",
+          "title": "해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T09:35:48.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731103600051",
+          "summary": "해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T09:29:06.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731158800017",
+          "summary": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T09:25:05.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731153500002",
+          "summary": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T09:24:01.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731138852002",
+          "summary": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T09:22:59.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731125400797",
+          "summary": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T09:18:19.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731158700008",
+          "summary": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T09:03:00.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731153000002",
+          "summary": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Fed interest-rate decision rocks Wall Street's inflation fears",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Fed interest-rate decision rocks Wall Street's inflation fears",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-30T16:33:00.000Z",
+          "url": "https://finance.yahoo.com/economy/policy/articles/fed-interest-rate-decision-rocks-163300252.html",
+          "summary": "Fed interest-rate decision rocks Wall Street's inflation fears",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Fed interest-rate decision rocks Wall Street's inflation fears"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "IDEX Corporation Q2 2026 Earnings Call Summary",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "IDEX Corporation Q2 2026 Earnings Call Summary",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-30T00:36:50.000Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/idex-corporation-q2-2026-earnings-003650436.html",
+          "summary": "IDEX Corporation Q2 2026 Earnings Call Summary",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "IDEX Corporation Q2 2026 Earnings Call Summary"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-30T00:36:27.000Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/hayward-holdings-inc-q2-2026-003627982.html",
+          "summary": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-30T00:31:02.000Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/banc-california-inc-q2-2026-003102259.html",
+          "summary": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Banc of California, Inc. Q2 2026 Earnings Call Summary"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-30T00:30:30.000Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/general-dynamics-corporation-q2-2026-003030743.html",
+          "summary": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "General Dynamics Corporation Q2 2026 Earnings Call Summary"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-30T00:28:47.000Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/exlservice-exl-soars-17-88-002847016.html",
+          "summary": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-30T00:20:00.000Z",
+          "url": "https://finance.yahoo.com/markets/commodities/articles/titan-minerals-accelerates-dynasty-growth-002000729.html",
+          "summary": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "What’s happening this week in economics? - Deloitte",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "What’s happening this week in economics? - Deloitte",
+          "source": "Google News",
+          "publishedAt": "2026-07-28T07:00:00.000Z",
           "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNcV9VYnV0R0RPcWN0d2g1SHJIVlNmaVA1TV9nXzRKdVlFcWtSMjQ1T1B0djE4dDNRanZvSVFGX0ZBNUd6cnZkVnAtenFuMnFzdU9zYzg5cFdkTVRxU1F5YVVXVFhVWGdhd2RsTDBkNS1Xcm9ub1FnMFp5NnB3WVBYa3JJa1FVbG5IT0ZRRHphTUhtNThkenVJS1ZrdWNDdw?oc=5",
-          "summary": "Deloitte reviews major macroeconomic data releases and global economic indicators scheduled for the week.",
+          "summary": "What’s happening this week in economics? - Deloitte",
           "relatedSymbols": [],
-          "relatedSectors": [
-            "Economics",
-            "Broad Market"
-          ],
+          "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "Deloitte published its macroeconomic outlook and data calendar for the week of July 27, 2026."
+            "What’s happening this week in economics? - Deloitte"
           ]
         }
       ]
     },
     {
-      "eventTitle": "Magnificent 7 Earnings Set to Test US Stock Market Rotation",
-      "relatedSectors": [
-        "Technology",
-        "Consumer Cyclical",
-        "Broad Market",
-        "Semiconductor",
-        "Energy",
-        "Artificial Intelligence",
-        "Consumer Electronics"
-      ],
-      "relatedSymbols": [
-        "AAPL",
-        "MSFT",
-        "NVDA",
-        "TSLA",
-        "AVGO"
-      ],
+      "eventTitle": "Market Know-How 3Q 2026: The Geo Paradigm - Goldman Sachs Asset Management",
+      "relatedSectors": [],
+      "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "Magnificent 7 Earnings Set to Test US Stock Market Rotation",
-          "source": "The Standard (HK)",
-          "publishedAt": "2026-07-29T13:24:10.000Z",
-          "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQQU9pYkNYTzBwSU9RcHRQcEJEaXA0VHFEMnRoVzRwZ2xrS1BjLVBzWU5iT3pxRDNLejdoWHc5RWQyalJMTUZzTDFQUlljM0NsM1BIWk00YXNnSkpaVnFNek5qSmhHeFhCa2tjajJ3aFZzZ0RlX2w2djh3dS05VmFlZWJHMGRfMHNPaVl4UFpEWDlGWWM2a2pENnRfSG1pX2VKYjNTM3Fia1MyMnhWYmtCNC1DdUY?oc=5",
-          "summary": "Upcoming quarterly earnings reports from mega-cap tech companies will test whether the US equity market rally can broaden beyond technology leaders.",
-          "relatedSymbols": [
-            "AAPL",
-            "MSFT",
-            "NVDA",
-            "TSLA"
-          ],
-          "relatedSectors": [
-            "Technology",
-            "Consumer Cyclical",
-            "Broad Market"
-          ],
+          "title": "Market Know-How 3Q 2026: The Geo Paradigm - Goldman Sachs Asset Management",
+          "source": "Google News",
+          "publishedAt": "2026-07-06T07:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE56QlRSLUFNR0lra0dabzgxMTJwWkZRZzh4YnpLUFVncm0xSkZWN0pkaUpjdGY1MGtrVnJpR2gxQVkzNFhCMHJTcXItZk5KQUhBRkdZS0x5VzNMTXp3OEptRWxrWjBTTUdNZk83NVh3VlZRSU0?oc=5",
+          "summary": "Market Know-How 3Q 2026: The Geo Paradigm - Goldman Sachs Asset Management",
+          "relatedSymbols": [],
+          "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "Earnings reports from the 'Magnificent 7' tech giants are evaluating the durability of market breadth expansion."
+            "Market Know-How 3Q 2026: The Geo Paradigm - Goldman Sachs Asset Management"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "eventTitle": "What markets tell us about macroeconomics - caixabankresearch.com",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
         {
-          "title": "US Stocks Rebound as Earnings and Lower Oil Prices Counter Semiconductor Weakness",
-          "source": "Yahoo Finance",
-          "publishedAt": "2026-07-28T20:05:42.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOWDRBVjhSNWg2TGl3T1NMcWh5aVk4UzIxVEVOb3ZLZ0tST1NHM244Q2h1VlM3aXRRYkVUOTBBOUNXYWg1SmxZME5XUXA1MDQ0ZWZzS2hhamltUkNkeHRTZzNkRjQ0UTN5NWQ3MVp0S0syZ0tmOGNXNi1abFAxMmszb2ZyQWc3NXltMUM4WE1IQV9aUS1zckFIN2pKdmdjUVZDUkN2UTNTcDFqS3N0Y2pKQmtJYzRNcE50VWc?oc=5",
-          "summary": "The Nasdaq, S&P 500, and Dow recorded gains as strong corporate earnings and falling crude oil prices helped absorb losses in chipmaker stocks.",
-          "relatedSymbols": [
-            "NVDA",
-            "AVGO"
-          ],
-          "relatedSectors": [
-            "Technology",
-            "Semiconductor",
-            "Energy"
-          ],
-          "sentiment": "positive",
+          "title": "What markets tell us about macroeconomics - caixabankresearch.com",
+          "source": "Google News",
+          "publishedAt": "2026-05-18T07:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQVGI4dW5UcGZBZVM1bm1FX0w0a3JQRllOaU9UeWh3VFFOeUktU2syVExfMDVfWW1PMkNwY3lmdVBEalo4UE5BN19wRWpoRmUzYTBQNGpQRGYxYUMxTVFNYVZFOTAxRkVtTWctN1pwb0g1NXZzOC1veW9hV2Q1ZVNsbndEOFFXbllLTFY4cXBfa180YVVqRU1UZk1WV3hKaWtLX04zckRyMmo2Q0Z6b0J4bHVvZDE?oc=5",
+          "summary": "What markets tell us about macroeconomics - caixabankresearch.com",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
           "factualClaims": [
-            "Major US indexes gained ground as solid corporate earnings reports outweighed semiconductor stock declines."
+            "What markets tell us about macroeconomics - caixabankresearch.com"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "eventTitle": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
         {
-          "title": "Semiconductor Stocks Plunge as AI Market Sell-Off Deepens",
-          "source": "Financial Times",
-          "publishedAt": "2026-07-28T02:21:38.000Z",
-          "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQOU5EQzYzM1h5cUFtRE1hbWhzLW5KMm9ZVjZ4SFY0SE5Xc3IweTFEbS1XRTBjbThoVUJodHphUUprdWlEV2dyZ0tsazM0S01adW5EM255NXNhdmV1Vi1fR0dkVXNaRjNvT08ydm1GRlE2TC1XMVBrR3MxRkVwSEVRTnR1Nkc?oc=5",
-          "summary": "Global chipmakers experienced substantial price declines amid growing investor skepticism over high artificial intelligence valuations and spending durability.",
-          "relatedSymbols": [
-            "NVDA",
-            "AVGO"
-          ],
-          "relatedSectors": [
-            "Semiconductor",
-            "Technology",
-            "Artificial Intelligence"
-          ],
-          "sentiment": "negative",
+          "title": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+          "source": "Google News",
+          "publishedAt": "2026-02-13T21:38:18.000Z",
+          "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNaVJDUUg3NERldERlVlFXVXJNeHlQWUNoWGxTQ0o4VVJwQ3F1bUJpZFZPUzRuOXJOcDNkU2ZyOF9ueHc5QVZ4Yy1IeEd0QkZ2RDB0blVtaFpMRG5ycE44ZTlLLUlISjlOWU03enVZNzJEYUJTS2Rkd1lMWHR3aXN0ODYxQdIBiAFBVV95cUxOdjdyLTdMQ0dvS09TTThVRDczcUZDZG1YbndESzlOdi13aXhTZ3pOZkRWdGxuMzJsMi11OEwxZVpMLXJSS1N4TnZDMkFhQlE5UmlOd3NCMjhYbzVvbl9HSkhBbl9oM0RTd1oycUN2SXN3UkZVRlZrUGlMSTRMc1FmdmdMaWM2R0xx?oc=5",
+          "summary": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
           "factualClaims": [
-            "Chip stocks tumbled sharply due to a deepening sell-off in AI-focused technology companies."
+            "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "eventTitle": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
         {
-          "title": "US Markets Fall as Chip Stocks Drop and Oil Surges on US-Iran Tensions",
-          "source": "Yahoo Finance",
-          "publishedAt": "2026-07-13T07:00:00.000Z",
-          "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQQlU2UWNVczhNV3dXcjQzU2prNWtseFE1cGJSNXUtNzcwWlk5R2VkVUl3eXVHX0pCbFBXZUNXbV9pNG5JNUFkTnR1VWhiMmRBeEtFLTZ3dVFPZlhwVmhtOFBKMGpteFdtVFVOQ0tkTExZUDI5RWRJZ0oxSzNONEZ5MjNPM1VTLThCLUJEN21yMWhmamQ4aWJYUU1obE5hcjVtZXpz?oc=5",
-          "summary": "Major stock indexes declined following heavy selling in chip stocks while crude oil prices climbed due to escalated US-Iran geopolitical tension.",
-          "relatedSymbols": [
-            "NVDA",
-            "AVGO"
-          ],
-          "relatedSectors": [
-            "Semiconductor",
-            "Energy",
-            "Broad Market"
-          ],
-          "sentiment": "negative",
+          "title": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+          "source": "Google News",
+          "publishedAt": "2026-01-06T08:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFB2d2pCUXY2dEoyS0FDZGRESy1vZmFKZ1JLb1FoOGQzaEFCRjZoMXZvS3hiVF94UzZqOTB1aTR3SXl4VzZ1TzhlQ0FUM3RhWDI0NTVxZnRlQ3VKMmpObWRLMG9B?oc=5",
+          "summary": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
           "factualClaims": [
-            "Geopolitical tensions between the US and Iran drove crude oil higher while chip losses dragged indices down."
+            "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "eventTitle": "A 2026 global macro outlook: Patience - BlackRock",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
         {
-          "title": "US Stocks Surge as Apple Reaches New All-Time High",
-          "source": "Yahoo Finance",
-          "publishedAt": "2026-07-15T07:00:00.000Z",
-          "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOLVp4LWZyMUlpNGV3T2MwYmkwT1RLY01BSzNnTkpRaUJRZ2dXWGpOVEJDdEJqN0xLTUdMT0hvYzczREpVZmZWUzlpVkZoWGMzcVpTZHgtd0ltdDJINFBnWXBEaTRHa1pvYjB3ZHQ5dWNyRHlLZUJJWHVZd0Q5aU5CcnVydGpNcmlzQlFtbGZ4aVZVWTRERGFqenN5OWdleEpYeHIxYmhVX3o4V0xhdWZ6SFdLc2MxUQ?oc=5",
-          "summary": "Wall Street finished higher as shares of Apple climbed to a record high, boosting sentiment across the tech sector.",
-          "relatedSymbols": [
-            "AAPL"
-          ],
-          "relatedSectors": [
-            "Technology",
-            "Consumer Electronics"
-          ],
-          "sentiment": "positive",
+          "title": "A 2026 global macro outlook: Patience - BlackRock",
+          "source": "Google News",
+          "publishedAt": "2026-01-02T08:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQY0pfN3BLdUdCcFA4Zzl3TXRFVkdWYVJKUUcwY0hBR1RiS3NKLVhLaTBCUGtMcHhRUlpYZ2huSW1Feld1VF9aTjBvelZjeGY3Y2xrVFpGcjNmMUo2UEdicHBiR0dkZ2JrczZEbVBiU2xUSG5NT0pFdTBPOHd2S0Vibi1QUFJzcFE?oc=5",
+          "summary": "A 2026 global macro outlook: Patience - BlackRock",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
           "factualClaims": [
-            "Apple stock hit a new record high, lifting the Dow, S&P 500, and Nasdaq higher on July 15."
+            "A 2026 global macro outlook: Patience - BlackRock"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+          "source": "Google News",
+          "publishedAt": "2025-12-16T08:00:00.000Z",
+          "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOTU0tTkRiNk5LN3JxZGREXzUzcnZjTTFvMU1YNHlVeEZQc1d3dHBmcGw5QzU0VXRXc181NXc1Mzl1elRWa1hJVHI4QVkyUUN4ZU9FTEpLMGg1T296ZXZWUWhub213MERTM043U0o1b1NadTVJOGw4aVFSdWdOS1hTMWF4QjI0WTNhWWFDYmw1S3dUYjVKQU1TYVlnSGJPcHFYVmZfSkdUZlRLQ0s4Vnc?oc=5",
+          "summary": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Midyear economic outlook for 2026 - J.P. Morgan",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Midyear economic outlook for 2026 - J.P. Morgan",
+          "source": "Google News",
+          "publishedAt": "2025-09-17T19:01:20.000Z",
+          "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOeFlqZU1uS3pIRVVVRDNzNEFJdG1jdVJ3OTVOSUNuSk5rRG9RV2J2bmQtNkppcjFBRlFwbmJCeXhCMklvQmc3ZVpBc0w3V24yb2RfaDdGNlQ2REgwWGhNa0lVTjE0dlRyMXVqbGU5WUdLdWUyZXNlYW50Wjh5VFlIYS0tcw?oc=5",
+          "summary": "Midyear economic outlook for 2026 - J.P. Morgan",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Midyear economic outlook for 2026 - J.P. Morgan"
           ]
         }
       ]
@@ -702,22 +1109,45 @@
   ],
   "aiInterpretation": {
     "verifiedFacts": [
-      "미국 5대 지수 종가: 다우 51,594.14 (-1.18%), 나스닥 24,442.94 (-1.96%), S&P 500 7,316.15 (-1.31%), 러셀 2000 2,906.31 (-1.42%), VIX 20.66 (+13.45%)",
-      "USD/KRW 환율: 1,443.65원 (20.79원 하락)",
-      "뉴스 팩트: BlackRock Releases Weekly Market Commentary (BlackRock)",
-      "뉴스 팩트: Risks of AI Integration to Global Financial Stability Highlighted (PubAffairs Bruxelles)",
-      "뉴스 팩트: Unusual Shifts and Internal Market Dynamics Surface in Stock Market (WSJ)"
+      "미국 5대 지수 종가: 다우 52,208.06 (-1.02%), 나스닥 25,122.18 (+0.99%), S&P 500 7,437.63 (+0.12%), 러셀 2000 2,946.10 (-0.26%), VIX 17.16 (+0.41%)",
+      "USD/KRW 환율: 1,436.60원 (5.68원 하락)",
+      "뉴스 팩트: Analyst Report: Ameriprise Financial Inc (Yahoo Finance)",
+      "뉴스 팩트: 일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보) (Yonhap News (KR))",
+      "뉴스 팩트: 해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표 (Yonhap News (KR))"
     ],
     "aiAnalysis": [
-      "미국 증시는 AI 반도체 섹터의 매도세 심화와 미-이란 지정학적 긴장 고조로 나스닥(-1.96%), 다우(-1.18%), S&P500(-1.31%)이 일제히 하락 마감했으며, 오늘 아침 국내 증시도 반도체 대형주 중심의 하락 압력 속 방어주로의 자금 이동이 예상됩니다.",
-      "미국 증시에서 엔비디아(-3.31%) 및 브로드컴(-3.37%) 등 핵심 AI 반도체주의 투매가 전개되고, 미-이란 지정학적 긴장 고조로 유가 상승과 VIX 변동성 지수 급등(+13.45%)이 발생했습니다. 이에 따라 위험자산 피하기 심리가 강화되어 국내 시장에서도 반도체 대형주에 대한 외국인 매도세가 출회되는 반면, 방산 및 정유·에너지 섹터로 리스크 회피성 자금 유입이 집중될 것으로 전망됩니다.",
-      "엔비디아 및 미 반도체 지수 약세로 인해 삼성전자, SK하이닉스 등 국내 반도체 대표주들의 기관 및 외국인 동반 순매도가 우려됩니다. 다만 원/달러 환율이 20.79원 하락한 1,443.65원에 마감하며 환율 리스크가 다소 진정된 점은 지수의 과도한 둔화를 방어하는 요인이 될 수 있습니다."
+      "마이크로소프트의 폭발적 급등(+14.68%)과 브로드컴(+1.82%)의 강세에 힘입어 나스닥(+0.99%)과 S&P 500(+0.12%)은 상승 마감했으나, 전통 산업주의 약세로 다우 지수(-1.02%)는 하락하며 차별화 장세를 보였습니다. 원/달러 환율이 1,436.60원으로 5.68원 하락하고 대형 IT 및 AI 주도주의 강세가 확인됨에 따라 국내 증시에서도 반도체 및 AI 빅테크 관련주 중심의 수급 집중이 기대됩니다.",
+      "미국 증시에서 마이크로소프트(+14.68%)가 호실적 및 AI 사업 성장 가속화로 급등하고 브로드컴(+1.82%)이 동반 강세를 보이면서 글로벌 AI 생태계에 대한 투자 심리가 크게 개선되었습니다. 이에 따라 국내 대표 AI 반도체 및 HBM 공급망 핵심주인 삼성전자, SK하이닉스, 한미반도체로 외국인 및 기관의 수급 동조화 랠리가 강하게 나타날 것으로 전망됩니다.",
+      "원/달러 환율 하락(1,436.60원)과 나스닥 지수 상승 마감에 힘입어 코스피 지수는 대형 반도체주를 중심으로 상승 시도를 할 것으로 예상됩니다. 다만, 연준의 금리 결정에 따른 인플레이션 우려와 다우 지수의 약세가 상방 압력을 일부 제한할 수 있어 지수 전체의 급등보다는 AI·반도체 중심의 차별화된 수급 장세가 펼쳐질 가능성이 높습니다."
     ],
     "forecast": [
-      "시초가 형성 시 미 반도체 폭락 여파에 따른 갭하락 출발이 불가피할 것으로 판단됩니다. 약세 출발 후 반도체/IT 주도주에 대한 성급한 저가 매수보다는 지정학적 리스크 수혜주 및 방어주 중심의 보수적 단기 트레이딩 전략을 추천합니다.",
-      "미-이란 지정학적 충돌 고조 및 이에 따른 국제유가 상승 압력",
-      "AI 반도체 섹터 전반의 차익실현 및 매도세 심화"
+      "미국 증시 내 기술주 강세와 다우 지수 하락 등 종목별·섹터별 차별화가 뚜렷한 만큼, 시초가 갭상승 이후 매물 소화 과정을 확인하는 전략이 유효합니다. 환율 안정세(-5.68원 하락)를 바탕으로 외국인 수급이 유입되는 대형 AI 반도체 주도주 중심으로 눌림목 매수 대응을 권장하며, 개별 재료 부재 종목에 대한 추격 매수는 자제해야 합니다.",
+      "연방준비제도(Fed) 금리 결정에 따른 뉴욕증시 내 인플레이션 재발 우려",
+      "다우 지수 하락(-1.02%) 및 러셀 2000 하락(-0.26%)에 나타난 전통 산업주 및 중소형주 투심 약화"
     ]
   },
-  "validationLogs": []
+  "validationLogs": [
+    {
+      "id": "val_1785501301648_hcd5q",
+      "validationId": "val_uuid_1785501301648_3db2",
+      "briefingId": "briefing_2026-07-31",
+      "timestamp": "2026-07-31T12:35:01.648Z",
+      "fieldName": "quantAnalysisMarkdown",
+      "sourceType": "YFINANCE",
+      "sourceValue": "Markdown Header Title Typo",
+      "aiGeneratedValue": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+      "originalText": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+      "correctedText": "## 2. 주요 종목 및 모멘텀 분석",
+      "field": "quantAnalysisMarkdown",
+      "originalSentence": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+      "errorType": "hallucination",
+      "referenceData": "Markdown Header Title Typo",
+      "beforeSentence": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+      "afterSentence": "## 2. 주요 종목 및 모멘텀 분석",
+      "correctionApplied": true,
+      "validationStatus": "CORRECTED",
+      "confidence": "VERIFIED",
+      "sourceReference": "Markdown Header Title Typo"
+    }
+  ]
 }

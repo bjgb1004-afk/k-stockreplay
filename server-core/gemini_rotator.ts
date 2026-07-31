@@ -39,8 +39,6 @@ export function maskKey(key: string): string {
 
 const FORBIDDEN_MODELS = [
   'gemini-3.1-pro',
-  'gemini-3.1-pro-preview',
-  'gemini-flash-latest',
   'gemini-2.5-pro',
   'gemini-1.5-pro',
   'gemini-3.0-pro',
@@ -53,16 +51,19 @@ function sanitizeModelName(requestedModel: any): string {
   }
   const lower = requestedModel.toLowerCase();
   
-  // Strictly block Pro models and unverified latest alias
-  if (lower.includes('pro') || lower.includes('latest') || FORBIDDEN_MODELS.includes(lower)) {
+  // Strictly block Pro models
+  if (lower.includes('pro') || FORBIDDEN_MODELS.includes(lower)) {
     return 'gemini-3.6-flash';
   }
 
-  if (lower.includes('2.5-flash')) {
-    return 'gemini-2.5-flash';
+  if (lower.includes('3.6-flash')) {
+    return 'gemini-3.6-flash';
   }
-  if (lower.includes('2.0-flash-lite') || lower.includes('flash-lite')) {
-    return 'gemini-2.0-flash-lite';
+  if (lower.includes('flash-lite') || lower.includes('3.1-flash-lite')) {
+    return 'gemini-3.1-flash-lite';
+  }
+  if (lower.includes('flash-latest')) {
+    return 'gemini-flash-latest';
   }
 
   return 'gemini-3.6-flash';
@@ -104,9 +105,9 @@ export function getRotatedGeminiClient(): GoogleGenAI | null {
     const primaryModel = sanitizeModelName(params?.model);
     const modelsToTry: string[] = [primaryModel];
     if (primaryModel === 'gemini-3.6-flash') {
-      modelsToTry.push('gemini-2.5-flash', 'gemini-2.0-flash-lite');
-    } else if (primaryModel === 'gemini-2.5-flash') {
-      modelsToTry.push('gemini-2.0-flash-lite');
+      modelsToTry.push('gemini-3.1-flash-lite', 'gemini-flash-latest');
+    } else if (primaryModel === 'gemini-3.1-flash-lite') {
+      modelsToTry.push('gemini-flash-latest', 'gemini-3.6-flash');
     }
 
     const MAX_TOTAL_ATTEMPTS = 6; // Reduce from 12 to 6 (2 per key)
@@ -183,7 +184,7 @@ export function getRotatedGeminiClient(): GoogleGenAI | null {
           const is429 = errStr.includes('429') || errStr.includes('resource_exhausted') || errStr.includes('quota') || 
                         errJson.includes('429') || errJson.includes('resource_exhausted') || errJson.includes('quota');
 
-          const cooldownMs = is429 ? 120000 : 60000; // 120s for quota, 60s for other errors
+          const cooldownMs = is429 ? 300000 : 60000; // 300s (5m) for quota, 60s for other errors
           keyCooldowns.set(key, Date.now() + cooldownMs);
 
           if (is429) {

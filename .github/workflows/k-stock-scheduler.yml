@@ -6,9 +6,7 @@ on:
     - cron: '40 22 * * 0-5'
     # 2. 인사이트 칼럼 1 (KST 12:00 매일) -> UTC 03:00
     - cron: '0 3 * * *'
-    # 3. 인사이트 칼럼 2 (KST 15:00 매일) -> UTC 06:00
-    - cron: '0 6 * * *'
-    # 4. KIS 토큰 갱신 & 주도주 수집 (KST 15:40 월-금) -> UTC 06:40
+    # 3. KIS 토큰 갱신 & 주도주 수집 (KST 15:40 월-금) -> UTC 06:40
     - cron: '40 6 * * 1-5'
     # 5. 장마감 브리핑 (KST 15:50 월-금) -> UTC 06:50
     - cron: '50 6 * * 1-5'
@@ -86,7 +84,6 @@ jobs:
       - name: 작업 트리거 (인사이트 칼럼)
         if: |
           github.event.schedule == '0 3 * * *' ||
-          github.event.schedule == '0 6 * * *' ||
           github.event.schedule == '0 11 * * *' ||
           (github.event_name == 'workflow_dispatch' && (github.event.inputs.job_type == 'insight_column' || github.event.inputs.job_type == 'all'))
         run: |

@@ -1,11 +1,11 @@
 {
-  "ticker": "000660",
+  "ticker": "089970",
   "guides": [
     {
       "candleIndex": 3,
       "type": "BUY_ZONE",
       "price": 0,
-      "comment": "[AI 추천 진입] SK하이닉스 | 실시간 시장 특징주 정보를 수집하고 있습니다. 뉴스가 강하게 보도되고 첫 박스권 돌파 거래대금이 확인되는 타점."
+      "comment": "[AI 추천 진입] 기업_089970 | [Yahoo Finance] Analyst Report: Ameriprise Financial Inc 뉴스가 강하게 보도되고 첫 박스권 돌파 거래대금이 확인되는 타점."
     },
     {
       "candleIndex": 7,

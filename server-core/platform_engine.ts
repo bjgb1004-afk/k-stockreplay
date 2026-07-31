@@ -1174,6 +1174,13 @@ export class PlatformEngine {
       const dateFilePath = path.join(DATA_DIR, `afternoon_report_${report.date}.json`);
       fs.writeFileSync(dateFilePath, JSON.stringify(report, null, 2));
       console.log(`[PlatformEngine] Saved date-specific report: afternoon_report_${report.date}.json`);
+      
+      // Proactively save study guides for these stocks
+      try {
+        this.proactivelySaveStudyGuides(report);
+      } catch (e) {
+        console.warn('[PlatformEngine] proactivelySaveStudyGuides failed:', e);
+      }
     }
   }
 
@@ -1487,7 +1494,62 @@ export class PlatformEngine {
     return corrected;
   }
 
-  // Fetch actual, real-time news articles from Google News RSS
+  // Fetch actual, real-time news articles from multiple RSS sources to avoid Gemini Search quotas
+  static async fetchMultiSourceNews(query: string = "US stock market"): Promise<any[]> {
+    const sources = [
+      { name: 'CNBC', url: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=401&keywords=' + encodeURIComponent(query) },
+      { name: 'Reuters', url: 'https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best-topic' },
+      { name: 'Yahoo Finance', url: 'https://finance.yahoo.com/news/rssindex' },
+      { name: 'Google News', url: `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en` },
+      { name: 'Yonhap News (KR)', url: 'https://www.yna.co.kr/rss/economy.xml' }
+    ];
+
+    const allItems: any[] = [];
+    const seenTitles = new Set<string>();
+
+    try {
+      const cheerio = await import('cheerio');
+      
+      const fetchPromises = sources.map(async (source) => {
+        try {
+          const res = await fetch(source.url, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
+            signal: AbortSignal.timeout(5000) // 5s timeout per source
+          });
+          if (!res.ok) return;
+          const text = await res.text();
+          const $ = cheerio.load(text, { xmlMode: true });
+
+          $('item').each((i, el) => {
+            if (i >= 8) return; // Limit per source
+            const title = $(el).find('title').text().trim();
+            const link = $(el).find('link').text().trim();
+            const pubDate = $(el).find('pubDate').text().trim();
+            
+            if (title && !seenTitles.has(title.toLowerCase())) {
+              seenTitles.add(title.toLowerCase());
+              allItems.push({
+                title,
+                url: link,
+                publishedAt: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
+                source: source.name
+              });
+            }
+          });
+        } catch (e) {
+          console.warn(`[News Fetch] Source ${source.name} failed:`, e.message);
+        }
+      });
+
+      await Promise.all(fetchPromises);
+      return allItems.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    } catch (err) {
+      console.error('[News Fetch] Multi-source fetch failed:', err);
+      return [];
+    }
+  }
+
+  // Fetch actual, real-time news articles from Google News RSS (Legacy fallback)
   static async fetchNewsFromGoogleRSS(query: string = "US stock market"): Promise<any[]> {
     try {
       const encodedQuery = encodeURIComponent(query);
@@ -1914,7 +1976,8 @@ Please return a valid JSON object matching the following TypeScript structure. R
       throw new Error('[PlatformEngine] GEMINI_API_KEY가 설정되지 않아 장전 브리핑을 생성할 수 없습니다.');
     }
 
-    // Pre-populate dynamic real stock names cache from Supabase database safely
+    try {
+      // Pre-populate dynamic real stock names cache from Supabase database safely
     if (!PlatformEngine.cachedRealStockNames) {
       const names = new Set<string>();
       try {
@@ -1946,8 +2009,8 @@ Please return a valid JSON object matching the following TypeScript structure. R
     const macroData = await getPlatformDataFromSupabase('macro_data', todayDateStr);
     const macroDataText = macroData ? `Interest Rate: ${macroData.interestRate}, CPI: ${macroData.cpi}, PPI: ${macroData.ppi}` : '데이터 없음';
 
-    // Fetch and ground actual news from Google News RSS
-    const rawNews = await PlatformEngine.fetchNewsFromGoogleRSS("US stock market finance");
+    // Fetch and ground actual news from multi-source RSS aggregator (CNBC, Reuters, Yahoo, Google, Yonhap)
+    const rawNews = await PlatformEngine.fetchMultiSourceNews("US stock market finance macro economy");
     let newsFacts: NewsFact[] = [];
     try {
       const googleNewsPrompt = `
@@ -1981,7 +2044,8 @@ Process this into a valid JSON array of NewsFact objects conforming strictly to 
         contents: googleNewsPrompt,
         config: {
           responseMimeType: 'application/json',
-          temperature: 0.1
+          temperature: 0.1,
+          maxOutputTokens: 2000
         }
       });
       newsFacts = cleanAndParseJson(newsResponse.text || '[]');
@@ -2140,50 +2204,6 @@ JSON 스키마:
     "bondYield": "미 10년물 국채금리 (예: 4.18%)",
     "oilPrice": "WTI 국제유가 (예: $74.50)"
   },
-  "macroDetailed": {
-    "interestRate": {
-      "value": "기준 금리 수치",
-      "reason": "해당 지표 움직임의 원인 및 배경 설명",
-      "majorsAction": "글로벌 헤지펀드 및 메이저 자금 포지션 흐름",
-      "marketImpact": "주요 자산군에 미치는 영향력",
-      "sectorsAnalysis": "수혜/피해 업종 분석"
-    },
-    "cpi": {
-      "value": "CPI 지표 수치",
-      "reason": "배경 설명",
-      "majorsAction": "자금 흐름",
-      "marketImpact": "영향력",
-      "sectorsAnalysis": "업종 분석"
-    },
-    "ppi": {
-      "value": "PPI 지표 수치",
-      "reason": "배경 설명",
-      "majorsAction": "자금 흐름",
-      "marketImpact": "영향력",
-      "sectorsAnalysis": "업종 분석"
-    },
-    "bond10y": {
-      "value": "미 10년물 국채금리 수치",
-      "reason": "배경 설명",
-      "majorsAction": "자금 흐름",
-      "marketImpact": "영향력",
-      "sectorsAnalysis": "업종 분석"
-    },
-    "exchangeRate": {
-      "value": "${mData.exchangeRate}",
-      "reason": "배경 설명",
-      "majorsAction": "자금 흐름",
-      "marketImpact": "영향력",
-      "sectorsAnalysis": "업종 분석"
-    },
-    "oilPrice": {
-      "value": "WTI 유가 수치",
-      "reason": "배경 설명",
-      "majorsAction": "자금 흐름",
-      "marketImpact": "영향력",
-      "sectorsAnalysis": "업종 분석"
-    }
-  },
   "domesticSectors": [
     {
       "sectorName": "핵심 업종명 1",
@@ -2244,6 +2264,7 @@ JSON 스키마:
           tools: [{ googleSearch: {} }],
           responseMimeType: 'application/json',
           temperature: 0.1,
+          maxOutputTokens: 4000
         }
       });
       responseText = response.text || '';
@@ -2266,6 +2287,7 @@ JSON 스키마:
           config: {
             responseMimeType: 'application/json',
             temperature: 0.1,
+            maxOutputTokens: 4000
           }
         });
         responseText = responseNoGrounding.text || '';
@@ -2276,9 +2298,18 @@ JSON 스키마:
       }
     }
 
+    let parsed: any;
     try {
-      console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON...');
-      const parsed = cleanAndParseJson(responseText);
+      console.log('[Gemini SDK] Briefing generated successfully. Parsing JSON... Length:', responseText.length);
+      if (!responseText || responseText.trim().length === 0) {
+        throw new Error('Model returned an empty response text.');
+      }
+      parsed = cleanAndParseJson(responseText);
+    } catch (parseErr: any) {
+      const sample = responseText.slice(0, 300) + (responseText.length > 300 ? '...' : '');
+      console.error('[PreMarket AI] Final JSON parse failed. Response sample:', sample);
+      throw new Error(`[Pre-Market Briefing AI Error] ${parseErr.message}. Sample: ${sample}`);
+    }
 
       // Perform deep, fail-safe programmatic correction on all generated text fields
       const correctText = (str: any): string => {
@@ -2427,6 +2458,8 @@ JSON 스키마:
         const name = KNOWN_TICKER_NAMES_LOCAL[cleanTicker] || `기업_${cleanTicker}`;
         const snapshot = marketSnapshot?.find(s => s.code === cleanTicker);
 
+        const fallbackNewsText = "실시간 시장 특징주 정보를 수집하고 있습니다.";
+
         return {
           ticker: cleanTicker,
           name,
@@ -2444,18 +2477,18 @@ JSON 스키마:
           tags: ["주도주"],
           relatedThemes: ["주요 수급 모멘텀"],
           relatedPeerGroup: [],
-          marketImpact: "데이터 수집 및 분석 진행 중입니다.",
+          marketImpact: "실시간 뉴스 기반 데이터 분석 중입니다.",
           supplyDemand: { foreigner: "미수집", institution: "미수집" },
-          riseReason: `${name} | 데이터 수집 중`,
+          riseReason: `${name} | ${fallbackNewsText.split('\n')[0] || '시장 모멘텀 분석 중'}`,
           disclosures: [],
-          news: [],
-          aiSummary: "실시간 데이터 수집 중...",
+          news: marketNews?.slice(0, 5).map(n => ({ title: n.title, url: n.url, source: n.source })) || [],
+          aiSummary: `[실시간 요약] ${fallbackNewsText}`,
           aiAnalysis: {
-            riseReasonDetailed: "데이터 분석이 완료되면 업데이트됩니다.",
-            declineReasonDetailed: "분석 중",
-            buyPoints: ["분석 중"],
-            cautionPoints: ["분석 중"],
-            tomorrowCheckpoints: ["분석 중"]
+            riseReasonDetailed: `현재 실시간 뉴스를 통해 확인된 정보: \n${fallbackNewsText}\n\n정밀 AI 분석은 호출 제한 해제 후 업데이트됩니다.`,
+            declineReasonDetailed: "실시간 시장 데이터 분석 중",
+            buyPoints: ["뉴스 모멘텀 확인 필요"],
+            cautionPoints: ["변동성 주의"],
+            tomorrowCheckpoints: ["장 초반 수급 확인"]
           }
         };
       });
@@ -2502,10 +2535,23 @@ JSON 스키마:
       return fallbackReport;
     }
 
+    const promptDate = todayDateStr;
+    
+    // Fetch multi-source RSS news for context to avoid redundant Google Searches
+    const marketNews = await PlatformEngine.fetchMultiSourceNews(`오늘 ${promptDate} 대한민국 증시 특징주 장마감 뉴스`);
+    const marketNewsText = marketNews.length > 0 
+      ? marketNews.map(n => `[${n.source}] ${n.title}`).join('\n') 
+      : '검색된 실시간 뉴스가 없습니다. 필요한 경우에만 검색 기능을 사용하십시오.';
+
     const prompt = `
 당신은 대한민국 여의도 최고의 '장마감 증시 심층 분석 전문 AI 퀀트 리서치'입니다.
 오늘 분석 대상 종목 코드는 다음과 같습니다: [${tickersToAnalyze.join(', ')}].
 오늘 날짜는 [${todayDateStr}]입니다.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[실시간 수집된 뉴스/공시 정보 (RSS 피드)]
+${marketNewsText}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [제공된 실제 시장 데이터 (팩트 기반 - 절대 수정 금지)]
@@ -2523,9 +2569,10 @@ JSON 스키마:
 [엄격 분석 가이드라인 - 필수 준수 사항]
 1. 절대 시장 지수(코스피/코스닥 수치)를 임의로 조작하거나 지어내지 마십시오. 제공된 데이터를 그대로 사용하십시오.
 2. 수치가 "데이터 미수집"인 경우 본문에서 해당 숫자를 언급하지 마십시오.
-3. **가장 중요: 반드시 Google Search Tool을 실행하여 다음 정보를 수집하십시오:**
-   - **전체 시장 특징**: "오늘 상한가 종목 ${todayDateStr}", "오늘 급등주 ${todayDateStr}", "오늘 장마감 특징주 ${todayDateStr}", "오늘 하한가 급락주 ${todayDateStr}", "오늘 악재 뉴스 종목 ${todayDateStr}" 검색
-   - **종목별 분석**: 제공된 리스트의 각 종목에 대해 "{종목명} 특징주 ${todayDateStr}", "{종목명} 공시 ${todayDateStr}", "{종목명} 뉴스 ${todayDateStr}" 검색
+3. **데이터 수집 및 분석 우선순위**: 
+   - **1순위**: 상단에 제공된 [실시간 수집된 뉴스/공시 정보 (RSS 피드)]를 최우선으로 분석하십시오.
+   - **2순위**: RSS 피드에 정보가 부족하거나 특정 종목의 구체적인 상승 사유가 없는 경우에만 Google Search Tool을 제한적으로 사용하여 보완하십시오.
+   - 불필요한 검색을 최소화하여 분석 속도와 효율성을 높이십시오.
 5. 확인 가능한 실제 뉴스/공시/기업 이벤트가 없는 경우, 절대로 가짜 사실을 지어내지 말고 다음과 같이 명시하십시오:
    "직접 촉매 확인 안 됨"
 6. 모든 종목 코드는 반드시 확장자(.KS/.KQ) 없는 6자리 숫자(예: 005930)로 통일하십시오.
@@ -2892,37 +2939,35 @@ JSON 구조 스키마 (이 구조를 엄격히 지키십시오):
 
   // Proactively build and save study guides for all analyzed stocks in a report
   private static proactivelySaveStudyGuides(report: AfterMarketReport): void {
-    if (!report.jodoju10) return;
+    if (!report || !report.jodoju10 || !Array.isArray(report.jodoju10)) return;
+
     for (const stock of report.jodoju10) {
+      if (!stock || !stock.ticker) continue;
+
       const guides: ReplayGuideInterval[] = [
         {
           candleIndex: 3,
           type: 'BUY_ZONE',
-          price: Math.round(stock.closePrice * 0.92),
-          comment: `[AI 추천 진입] ${stock.riseReason} 뉴스가 강하게 보도되고 첫 박스권 돌파 거래대금이 확인되는 타점.`
+          price: Math.round((stock.closePrice || 0) * 0.92),
+          comment: `[AI 추천 진입] ${stock.riseReason || ""} 뉴스가 강하게 보도되고 첫 박스권 돌파 거래대금이 확인되는 타점.`
         },
         {
           candleIndex: 7,
           type: 'RESISTANCE',
-          price: Math.round(stock.closePrice * 1.05),
-          comment: `[저항 확인] 매수 호가창에 과열 물량이 유입되며 단기 추세 상단 저항선 봉착. 분할 매도로 익절 담보.`
+          price: Math.round((stock.closePrice || 0) * 1.05),
+          comment: "전고점 저항 구간 매물 소화 확인 필요."
         },
         {
           candleIndex: 12,
           type: 'SUPPORT',
-          price: Math.round(stock.closePrice * 0.95),
-          comment: `[지지 확인] 전일 상승 흐름의 20분봉 중심선과 이전 박스권 고점의 다중 지지 지지대 안착 확인.`
-        },
-        {
-          candleIndex: 15,
-          type: 'STOP_LOSS',
-          price: Math.round(stock.closePrice * 0.88),
-          comment: `[추세 이탈 경고] 주요 매수세 수급 이탈 및 주요 전저점 파괴가 이루어지는 손절 마지노선.`
+          price: Math.round((stock.closePrice || 0) * 0.95),
+          comment: "장기 이평선 지지 확인 구간."
         }
       ];
+
       this.saveStudyGuide(stock.ticker, {
         ticker: stock.ticker,
-        guides
+        guides: guides
       });
     }
   }
@@ -3345,6 +3390,12 @@ ${financialAnalysis}
     }
 
     try {
+      // Fetch multi-source news for high-quality context
+      const contextNews = await PlatformEngine.fetchMultiSourceNews(`"${title}" 관련 최신 증시 경제 뉴스`);
+      const newsContextText = contextNews.length > 0 
+        ? contextNews.map(n => `[${n.source}] ${n.title}`).join('\n')
+        : '최신 RSS 뉴스가 없습니다. 필요한 경우 검색 도구를 사용하세요.';
+
       const prompt = `
 당신은 대한민국 금융 시장 및 글로벌 매크로를 정교하게 분석하는 "기관·외국인 투자가 관점의 팩트 기반 데이터 분석 에이전트 및 수석 칼럼니스트"입니다.
 소설 같은 추측, 미사여구, 감정적 표현은 완전히 배제하고, 오직 데이터, 차트 캔들, 공시, 메이저 수급, 매크로 지표 등 '확인된 팩트(Fact)'만을 바탕으로 고품격 인사이트 전문 칼럼을 작성하십시오.
@@ -3352,10 +3403,16 @@ ${financialAnalysis}
 - 칼럼 주제: "${title}"
 - 칼럼 일자: ${todayDateStr}
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[실시간 수집된 뉴스/공시 정보 (RSS 피드)]
+${newsContextText}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 [출력 및 작성 규칙]
-1. 말투: 사람이 직접 작성한 듯 자연스럽고 설득력 있는 전문 투자 칼럼니스트의 어조를 사용합니다. AI 특유의 무미건조하거나 반복적인 표현(~라고 볼 수 있습니다, ~에 대해 알아보겠습니다 등)은 절대 금지합니다.
-2. 애드센스 최적화: 가독성을 높이기 위해 HTML 태그(<h2>, <h3>, <p>, <ul>, <li>)를 완벽히 준수하며, 본문 흐름에 맞게 \\\`<!-- 애드센스 자동 광고 삽입 위치 -->\\\` 주석을 1~2개 자연스럽게 삽입해야 합니다.
-3. 소설 같은 주석이나 서론(예: "네, 작성해 드리겠습니다" 등) 없이 오직 본문 HTML 내용만 바로 출력하십시오.
+1. 데이터 활용: 상단에 제공된 RSS 피드 정보를 최우선 근거로 활용하십시오. 부족한 실시간 팩트가 있다면 Google Search Tool을 제한적으로 사용하십시오.
+2. 말투: 사람이 직접 작성한 듯 자연스럽고 설득력 있는 전문 투자 칼럼니스트의 어조를 사용합니다. AI 특유의 무미건조하거나 반복적인 표현(~라고 볼 수 있습니다, ~에 대해 알아보겠습니다 등)은 절대 금지합니다.
+3. 애드센스 최적화: 가독성을 높이기 위해 HTML 태그(<h2>, <h3>, <p>, <ul>, <li>)를 완벽히 준수하며, 본문 흐름에 맞게 \`<!-- 애드센스 자동 광고 삽입 위치 -->\` 주석을 1~2개 자연스럽게 삽입해야 합니다.
+4. 소설 같은 주석이나 서론(예: "네, 작성해 드리겠습니다" 등) 없이 오직 본문 HTML 내용만 바로 출력하십시오.
 `;
 
       const response = await ai.models.generateContent({

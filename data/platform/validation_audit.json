@@ -86,5 +86,27 @@
     "validationStatus": "CORRECTED",
     "confidence": "VERIFIED",
     "sourceReference": "Yahoo Finance ^IXIC"
+  },
+  {
+    "id": "val_1785501301648_hcd5q",
+    "validationId": "val_uuid_1785501301648_3db2",
+    "briefingId": "briefing_2026-07-31",
+    "timestamp": "2026-07-31T12:35:01.648Z",
+    "fieldName": "quantAnalysisMarkdown",
+    "sourceType": "YFINANCE",
+    "sourceValue": "Markdown Header Title Typo",
+    "aiGeneratedValue": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+    "originalText": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+    "correctedText": "## 2. 주요 종목 및 모멘텀 분석",
+    "field": "quantAnalysisMarkdown",
+    "originalSentence": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+    "errorType": "hallucination",
+    "referenceData": "Markdown Header Title Typo",
+    "beforeSentence": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+    "afterSentence": "## 2. 주요 종목 및 모멘텀 분석",
+    "correctionApplied": true,
+    "validationStatus": "CORRECTED",
+    "confidence": "VERIFIED",
+    "sourceReference": "Markdown Header Title Typo"
   }
 ]

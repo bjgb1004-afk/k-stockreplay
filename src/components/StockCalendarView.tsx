@@ -214,6 +214,119 @@ export const JULY_2026_EVENTS: CalendarEvent[] = [
   }
 ];
 
+const AUGUST_2026_EVENTS: CalendarEvent[] = [
+  {
+    id: 'aug-1',
+    day: 5,
+    title: '미국 7월 ISM 비제조업 PMI 발표',
+    type: 'macro',
+    impact: 'HIGH',
+    time: '23:00',
+    description: '미국 서비스업 경기의 확장/위축 여부를 판단하는 핵심 지표입니다.',
+    marketReaction: '50 상회 시 경기 연착륙 기대감으로 지수 상방 압력.'
+  },
+  {
+    id: 'aug-2',
+    day: 7,
+    title: '미국 7월 고용보고서 (비농업/실업률)',
+    type: 'macro',
+    impact: 'HIGH',
+    time: '21:30',
+    description: '연준의 금리 경로를 결정짓는 가장 중요한 노동시장 지표입니다.',
+    marketReaction: '고용 냉각 신호 확인 시 9월 금리 인하 기대감 고조.'
+  },
+  {
+    id: 'aug-3',
+    day: 10,
+    title: 'MSCI 8월 분기 리뷰 (지수 편입/편출 발표)',
+    type: 'kr-market',
+    impact: 'HIGH',
+    time: '06:00',
+    description: 'MSCI 한국 지수 구성 종목의 변경안이 발표되는 날입니다.',
+    marketReaction: '신규 편입 후보 종목(에코프로머티 등) 수급 집중 유의.'
+  },
+  {
+    id: 'aug-4',
+    day: 12,
+    title: '미국 7월 소비자물가지수(CPI) 발표',
+    type: 'macro',
+    impact: 'HIGH',
+    time: '21:30',
+    description: '인플레이션 둔화 추세를 최종 확인하는 핵심 매크로 지표입니다.',
+    marketReaction: '전망치 하회 시 지수 신고가 랠리 재개 가능성.'
+  },
+  {
+    id: 'aug-5',
+    day: 13,
+    title: '한국 옵션 만기일 & 미국 7월 PPI 발표',
+    type: 'option',
+    impact: 'HIGH',
+    time: '장마감 / 21:30',
+    description: '국내 선물옵션 수급 변동성과 미국 생산자물가가 겹치는 변곡점입니다.',
+    marketReaction: '장마감 동시호가 변동성 확대 및 인플레 기대 심리 변화.'
+  },
+  {
+    id: 'aug-6',
+    day: 14,
+    title: '한국 2분기 GDP(잠정치) & 미국 소매판매',
+    type: 'kr-market',
+    impact: 'MEDIUM',
+    time: '08:00 / 21:30',
+    description: '국내 경제 성장률 확정치와 미국 소비 체력을 동시에 확인합니다.',
+    marketReaction: '한국 수출 경기 확인 및 미국 경기 침체 우려 해소 여부.'
+  },
+  {
+    id: 'aug-7',
+    day: 21,
+    title: '미국 옵션 만기일 & 잭슨홀 심포지엄 개막',
+    type: 'us-market',
+    impact: 'HIGH',
+    time: '상시',
+    description: '전 세계 중앙은행 총재들이 모이는 잭슨홀 미팅에서 파월 의장의 연설이 주목됩니다.',
+    marketReaction: '금리 인하 폭(25bp vs 50bp)에 대한 강력한 힌트 기대.'
+  },
+  {
+    id: 'aug-8',
+    day: 26,
+    title: '엔비디아(NVIDIA) 2분기 실적 발표 (예정)',
+    type: 'earnings',
+    impact: 'HIGH',
+    time: '05:30',
+    description: 'AI 반도체 대장주의 실적 발표로 전 세계 HBM 섹터의 향방을 결정합니다.',
+    marketReaction: '어닝 서프라이즈 시 SK하이닉스, 한미반도체 등 소부장 폭등 가능성.'
+  },
+  {
+    id: 'aug-9',
+    day: 27,
+    title: '한국은행 금융통화위원회 (기준금리 결정)',
+    type: 'kr-market',
+    impact: 'HIGH',
+    time: '10:00',
+    description: '한은의 8월 금리 결정 및 향후 피벗(통화정책 전환) 시그널 점검.',
+    marketReaction: '금리 동결 여부보다 포워드 가이던스의 매파/비둘기파적 색채에 주목.'
+  },
+  {
+    id: 'aug-10',
+    day: 28,
+    title: '미국 7월 개인소비지출(PCE) 물가지수',
+    type: 'macro',
+    impact: 'HIGH',
+    time: '21:30',
+    description: '연준이 가장 신뢰하는 물가 지표로 9월 FOMC의 최종 가이드라인이 됩니다.',
+    marketReaction: '2.0%대 안착 확인 시 금리 인하 확신으로 위험자산 선호 심리 강화.'
+  },
+  {
+    id: 'aug-11',
+    day: 31,
+    title: 'MSCI 정기 리밸런싱 적용 (장마감)',
+    type: 'kr-market',
+    impact: 'HIGH',
+    time: '15:20~15:30',
+    description: 'MSCI 지수 변경에 따른 글로벌 패시브 자금의 대규모 유출입이 일어납니다.',
+    marketReaction: '편입/편출 종목의 기계적 매수/매도로 인한 장마감 기습 변동성.'
+  }
+];
+
 interface StockCalendarViewProps {
   onBack?: () => void;
   onSelectHistoricalStock?: (stock: any, date: string) => void;
@@ -227,9 +340,9 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
 
-  // 2026년 7월 고정값들 (수요일 시작, 31일 구성)
+  // 2026년 8월 기본 노출 (사용자 요청 반영)
   const [viewYear, setViewYear] = useState(2026);
-  const [viewMonth, setViewMonth] = useState(7);
+  const [viewMonth, setViewMonth] = useState(8);
   
   const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
   const startDayOffset = new Date(viewYear, viewMonth - 1, 1).getDay();
@@ -244,6 +357,8 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
           setCalendarEvents(data);
         } else if (viewYear === 2026 && viewMonth === 7) {
           setCalendarEvents(JULY_2026_EVENTS);
+        } else if (viewYear === 2026 && viewMonth === 8) {
+          setCalendarEvents(AUGUST_2026_EVENTS);
         } else {
           setCalendarEvents([]);
         }
@@ -252,6 +367,7 @@ export const StockCalendarView: React.FC<StockCalendarViewProps> = ({ onBack, on
       .catch(err => {
         console.error('Failed to load calendar events:', err);
         if (viewYear === 2026 && viewMonth === 7) setCalendarEvents(JULY_2026_EVENTS);
+        else if (viewYear === 2026 && viewMonth === 8) setCalendarEvents(AUGUST_2026_EVENTS);
         setLoadingEvents(false);
       });
   }, [viewYear, viewMonth]);

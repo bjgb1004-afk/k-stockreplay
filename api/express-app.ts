@@ -366,6 +366,20 @@ async function getPlatformDataFromSupabase(key: string, dateKst?: string): Promi
     } catch (_) {}
   }
 
+  // Special handling for calendar events local fallback
+  if (key.startsWith('calendar_events_')) {
+    const localPath = path.join(process.cwd(), 'data', 'platform', `${key}.json`);
+    if (fs.existsSync(localPath)) {
+      try {
+        const fileContent = fs.readFileSync(localPath, 'utf-8');
+        const parsed = JSON.parse(fileContent);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      } catch (_) {}
+    }
+  }
+
   const supabase = getSupabase();
   if (!supabase) {
     if (key === 'afternoon_report' && globalSafeCacheAfternoonReport) {
@@ -401,14 +415,36 @@ async function getPlatformDataFromSupabase(key: string, dateKst?: string): Promi
   }
 }
 
-async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<boolean> {
-  // Use dataVal.date if available, otherwise fallback
-  const dateKst = dataVal?.date || dataVal?.market_date || dataVal?.marketTradeDate || getJodojuTargetDate();
+async function savePlatformDataToSupabase(key: string, dataVal: any, explicitDateKst?: string): Promise<boolean> {
+  // Use explicit dateKst first, or dataVal fields, otherwise fallback
+  let dateKst = explicitDateKst || dataVal?.date || dataVal?.market_date || dataVal?.marketTradeDate;
+  if (!dateKst && key.startsWith('calendar_events_')) {
+    // Extract YYYY-MM from key like calendar_events_2026_08 -> 2026-08
+    const parts = key.split('_');
+    if (parts.length >= 4) {
+      dateKst = `${parts[2]}-${parts[3]}`;
+    }
+  }
+  if (!dateKst) {
+    dateKst = getJodojuTargetDate();
+  }
 
   // Strict validation to prevent empty date_kst
   if (!dateKst || typeof dateKst !== 'string') {
     console.error(`[Supabase Save] Aborting save for key '${key}' due to missing or invalid date_kst:`, dateKst);
     return false;
+  }
+
+  // Save calendar_events locally as well
+  if (key.startsWith('calendar_events_')) {
+    try {
+      const platformDir = path.join(process.cwd(), 'data', 'platform');
+      if (!fs.existsSync(platformDir)) fs.mkdirSync(platformDir, { recursive: true });
+      const localPath = path.join(platformDir, `${key}.json`);
+      fs.writeFileSync(localPath, JSON.stringify(dataVal, null, 2), 'utf-8');
+    } catch (err: any) {
+      console.warn(`[Local Save] Failed to write local calendar event file for ${key}:`, err.message);
+    }
   }
 
   if (key === 'afternoon_report') {
@@ -429,8 +465,6 @@ async function savePlatformDataToSupabase(key: string, dataVal: any): Promise<bo
   const supabase = getSupabase();
   if (!supabase) return false;
   try {
-    // Audit-grade Save: Double check existence to prevent accidental duplicate entries if upsert behaves unexpectedly
-    // though 'onConflict' should handle it, explicit logging helps.
     const { error } = await supabase
       .from('kstock_platform_data')
       .upsert({
@@ -2368,13 +2402,16 @@ CREATE TABLE kstock_platform_data (
   }
 
   
-  function saveJodojuToCacheAndStatic(stocks, targetDate) {
+  function saveJodojuToCacheAndStatic(stocks: any[], targetDate: string) {
     if (!stocks || stocks.length === 0) return;
-    const cacheData = { targetDate, stocks, timestamp: Date.now() };
+    // Strictly limit to Top 10 leading stocks as per user request
+    const top10Stocks = stocks.slice(0, 10);
+    const cacheData = { targetDate, stocks: top10Stocks, timestamp: Date.now() };
     fs.writeFileSync(JODOJU_CACHE_FILE, JSON.stringify(cacheData));
     
-    // Also save to static fallback if needed, but the main thing is JODOJU_CACHE_FILE
-    // There was probably a static file like public/data/jodoju.json, but writing to tmp cache is enough for memory
+    // Also save to Supabase so it can be retrieved across reboots and different instances
+    savePlatformDataToSupabase(`jodoju_list_${targetDate}`, cacheData).catch(e => console.error(e));
+    savePlatformDataToSupabase(`jodoju_list`, cacheData).catch(e => console.error(e));
   }
 
   app.get('/api/jodoju-list', async (req, res) => {
@@ -2394,6 +2431,21 @@ CREATE TABLE kstock_platform_data (
           }
         } catch (e) {
           console.error('[주도주 API] 캐시 파싱 에러:', e);
+        }
+      }
+
+      // 1.5. Check Supabase
+      if (!isForce) {
+        try {
+          const sbCache: any = await getPlatformDataFromSupabase(`jodoju_list_${targetDate}`);
+          if (sbCache && sbCache.targetDate === targetDate && Array.isArray(sbCache.stocks) && sbCache.stocks.length > 0) {
+            console.log(`[주도주 API] Supabase 캐시 히트! 캐시된 ${sbCache.stocks.length}개 주도주 목록 반환`);
+            // Save to local file cache as well for next time
+            fs.writeFileSync(JODOJU_CACHE_FILE, JSON.stringify(sbCache));
+            return res.json(sbCache.stocks);
+          }
+        } catch (e) {
+          console.warn('[주도주 API] Supabase 캐시 파싱 에러:', e);
         }
       }
 
@@ -4411,7 +4463,9 @@ CREATE TABLE kstock_platform_data (
       console.log(`[Cron Pipeline] Triggering Pre-Market Briefing Generation (${todayDateStr})...`);
 
       // 1. Holiday / Weekend Check: Do not generate on non-trading days
-      if (!isTradingDay(kstNow)) {
+      const dayOfWeek = getKstDayOfWeek(kstNow);
+      const isSaturday = dayOfWeek === 6;
+      if (!isTradingDay(kstNow) && !isSaturday) {
         console.log(`[Cron Pipeline] Today (${todayDateStr}) is a market holiday or weekend. Skipping pre-market briefing creation.`);
         return res.json({
           success: true,
@@ -4423,10 +4477,14 @@ CREATE TABLE kstock_platform_data (
 
       // 2. Idempotency Check: Skip if briefing already exists for today unless force flag is set
       const existing = await getPlatformDataFromSupabase('morning_briefing', todayDateStr);
-      if (existing && !req.query.force) {
-        console.log(`[Cron Pipeline] Pre-market briefing for ${todayDateStr} already exists. Skipping.`);
-        return res.json({ success: true, message: 'Already exists', isSkipped: true, date: todayDateStr });
+      const isValid = existing && existing.date === todayDateStr && existing.summary && existing.summary.length > 50;
+      
+      if (isValid && !req.query.force) {
+        console.log(`[Cron Pipeline] Valid Pre-market briefing for ${todayDateStr} already exists. Skipping redundant AI generation.`);
+        return res.json({ success: true, message: 'Already exists (Valid)', isSkipped: true, date: todayDateStr });
       }
+
+      console.log(`[Cron Pipeline] Proceeding with AI Pre-Market Briefing Generation for ${todayDateStr}...`);
 
       // 3. Generate Pre-Market Briefing
       const briefing = await PlatformEngine.getPreMarketBriefingAI();
@@ -4465,6 +4523,10 @@ CREATE TABLE kstock_platform_data (
       
       // 1. Get Top 15 Jodoju stocks
       const topStocks = await generateJodojuList().catch(() => []);
+      if (topStocks && topStocks.length > 0) {
+        saveJodojuToCacheAndStatic(topStocks, todayDateStr);
+      }
+      
       const targetStocks = topStocks.slice(0, 10);
       
       if (targetStocks.length === 0) {
@@ -4536,29 +4598,15 @@ CREATE TABLE kstock_platform_data (
       console.warn('[Post-Market News Engine] Error checking existing report:', err.message);
     }
 
-    // 2. 주말 및 평일 장외 시간 철저 제한 (KST 기준)
-    const kstParts = getKstParts(kstNow);
+    // 2. 주말 제한 (KST 기준)
     const day = getKstDayOfWeek(kstNow);
-    const hour = kstParts.hour;
-    const minute = kstParts.minute;
     const isWeekend = (day === 0 || day === 6);
-    const isOffHours = hour >= 16 || (hour < 8 || (hour === 8 && minute < 30));
 
     if (isWeekend && !force) {
       console.log(`[Post-Market News Engine] Cannot generate post-market report on weekends (${todayDateStr}). Skip.`);
       return {
         success: false,
         message: '주말에는 새로운 장마감 뉴스를 생성하거나 업데이트할 수 없습니다.',
-        isSkipped: true,
-        date: todayDateStr
-      };
-    }
-
-    if (isOffHours && !force) {
-      console.log(`[Post-Market News Engine] Cannot generate post-market report during off-hours (${hour}:${minute} KST). Allowed only 08:30 - 16:00. Skip.`);
-      return {
-        success: false,
-        message: '평일 장외 시간(오후 4시 이후 ~ 오전 8시 30분 이전)에는 새로운 장마감 뉴스를 생성하거나 업데이트할 수 없습니다.',
         isSkipped: true,
         date: todayDateStr
       };
@@ -4698,28 +4746,25 @@ CREATE TABLE kstock_platform_data (
       const isForce = req.query.force === 'true';
 
       // Determine publication slot
-      let publicationSlot: '12:00' | '15:00' | '20:00' = '12:00';
+      let publicationSlot: '12:00' | '20:00' = '12:00';
       const slotQuery = (req.query.slot || req.body.slot || '').toString().trim();
-      if (['12:00', '15:00', '20:00'].includes(slotQuery)) {
-        publicationSlot = slotQuery as '12:00' | '15:00' | '20:00';
-      } else if (['MIDDAY', 'AFTERNOON', 'NIGHT'].includes(slotQuery)) {
+      if (['12:00', '20:00'].includes(slotQuery)) {
+        publicationSlot = slotQuery as '12:00' | '20:00';
+      } else if (['MIDDAY', 'NIGHT'].includes(slotQuery)) {
         if (slotQuery === 'MIDDAY') publicationSlot = '12:00';
-        else if (slotQuery === 'AFTERNOON') publicationSlot = '15:00';
         else if (slotQuery === 'NIGHT') publicationSlot = '20:00';
       } else {
         // Auto-detect from current KST time
         const kstNow = getKstNow();
         const hour = getKstParts(kstNow).hour;
-        if (hour < 14) {
+        if (hour < 16) {
           publicationSlot = '12:00';
-        } else if (hour < 17) {
-          publicationSlot = '15:00';
         } else {
           publicationSlot = '20:00';
         }
       }
 
-      const insightType = publicationSlot === '12:00' ? 'MIDDAY' : (publicationSlot === '15:00' ? 'AFTERNOON' : 'NIGHT');
+      const insightType = publicationSlot === '12:00' ? 'MIDDAY' : 'NIGHT';
       const databaseKey = `insight_column_${reportDate}_${publicationSlot.replace(':', '')}`;
 
       console.log(`[Cron] Triggered ${publicationSlot} Insight Column Generation / Publication. Type: ${insightType}. Database Key: ${databaseKey}`);
@@ -4776,118 +4821,105 @@ error=null`);
         }
       }
 
-      // 2. Determine the next topic_index to publish by finding the first missing/unpublished index from 0 upwards
-      let nextTopicIndex = 0;
-      try {
-        const { data: allDbRecords } = await supabase
-          .from('insight_columns')
-          .select('topic_index, title, content, published_at');
-        
-        const publishedIndices = new Set<number>();
-        if (allDbRecords) {
-          allDbRecords.forEach(r => {
-            if (r.published_at && isValidInsight(r)) {
-              publishedIndices.add(r.topic_index);
-            }
-          });
-        }
-        
-        while (publishedIndices.has(nextTopicIndex)) {
-          nextTopicIndex++;
-        }
-      } catch (findErr) {
-        console.warn("[Insight Column] Error determining next index, default to 0:", findErr);
-      }
+      // 2. Fetch next unpublished topic from Supabase insight_topics (or fallback)
+      const nextTopicObj = await getNextUnpublishedTopic().catch(() => null);
+      let nextTopicIndex = nextTopicObj ? nextTopicObj.topic_index : 9999;
+      let targetTopicStr = nextTopicObj ? nextTopicObj.topic : '';
 
-      console.log(`[Insight Column] Identified next publication topic_index: #${nextTopicIndex + 1} (0-based Index: ${nextTopicIndex})`);
+      console.log(`[Insight Column] Topic lookup result: index #${nextTopicIndex + 1}, topic: "${targetTopicStr || 'Topic Pool Exhausted - Switching to Market Analysis Column'}"`);
 
       let finalTitle = '';
       let finalContent = '';
       let isAiGenerated = false;
+      let isFallbackToDaily = false;
 
-      // 3. Select content based on nextTopicIndex using MASTER_INSIGHT_TOPICS
-      const targetMasterTopic = MASTER_INSIGHT_TOPICS[nextTopicIndex];
-      finalTitle = targetMasterTopic ? targetMasterTopic.topic : `주식 전문 칼럼 시리즈 #${nextTopicIndex + 1}`;
-
-      if (nextTopicIndex < 21) {
-        // --- CASE A: Publish pre-seeded high-quality column from local posts.json or generate ---
-        console.log(`[Insight Column] Publishing pre-seeded high-quality Column #${nextTopicIndex + 1} (${finalTitle}) from local posts.json or fallback`);
-        
-        let seedPost: any = null;
-        try {
-          if (fs.existsSync(POSTS_FILE)) {
-            const localPosts = JSON.parse(fs.readFileSync(POSTS_FILE, 'utf-8'));
-            const targetId = `col_${nextTopicIndex + 1}`;
-            seedPost = localPosts.find((p: any) => {
-              const pId = p.id.toString();
-              const numId = pId.replace(/[^0-9]/g, '');
-              return `col_${numId}` === targetId;
-            });
-          }
-        } catch (seedReadErr) {
-          console.error("[Insight Column] Failed to load local seed posts:", seedReadErr);
-        }
-
-        if (seedPost && seedPost.title && seedPost.content) {
-          finalTitle = seedPost.title;
-          finalContent = seedPost.content;
-          console.log(`[Insight Column] Found pre-seeded Column: "${finalTitle}"`);
+      if (targetTopicStr) {
+        finalTitle = targetTopicStr;
+      } else {
+        // Topics exhausted: Fallback to real-time daily market analysis column
+        isFallbackToDaily = true;
+        if (publicationSlot === '12:00') {
+          finalTitle = `[장중 시황 분석] ${reportDate} 12:00 한국 증시 오전을 흔든 핵심 수급과 섹터 통찰`;
         } else {
-          finalContent = generateOfflineReportHtml(nextTopicIndex + 1, finalTitle);
-          console.log(`[Insight Column] Using offline report generator fallback for "${finalTitle}"`);
+          finalTitle = `[장마감 전체마감 분석] ${reportDate} 한국 증시 마감 총결산 및 주도주 밸류체인 분석`;
+        }
+      }
+
+      // --- Always Generate AI Essay using Topic from Supabase ---
+      console.log(`[Insight Column] Generating new AI Market Essay for Topic #${nextTopicIndex + 1} (${insightType}): "${finalTitle}"`);
+      isAiGenerated = true;
+
+      // Fetch real-time market data to prevent hallucinated market index numbers
+      const realMarket: any = await fetchMarketOverview().catch(() => ({}));
+      const realJodoju: any[] = await generateJodojuList(10).catch(() => []);
+
+      let slotInstruction = '';
+      if (publicationSlot === '12:00') {
+        if (isFallbackToDaily) {
+          slotInstruction = `오늘(${reportDate}) 12:00 기준의 한국 증시(코스피/코스닥) 오전장 실시간 흐름을 심층 분석하십시오. 주제인 "${finalTitle}"에 맞춰 당일 오전의 핵심 수급 주체와 섹터별 동향을 짚어주고, 오후장 대응 전략을 수석 애널리스트의 시각에서 전문적으로 기술하십시오.`;
+        } else {
+          slotInstruction = `오늘(${reportDate}) 12:00 기준의 한국 증시(코스피/코스닥) 오전장 흐름을 요약하되, 주제인 "${finalTitle}"에 대해 수석 리서치 센터장의 시각에서 깊이 있는 통찰을 담은 칼럼을 작성하십시오.`;
         }
       } else {
-        // --- CASE B: Daily AI Essay (Topic #22+) ---
-        console.log(`[Insight Column] Generating new AI Market Essay for Topic #${nextTopicIndex + 1} (${insightType}): "${finalTitle}"`);
-        isAiGenerated = true;
-
-        let slotInstruction = '';
-        if (publicationSlot === '12:00') {
-          slotInstruction = `오늘(${reportDate}) 12:00 기준의 한국 증시(코스피/코스닥) 오전장 흐름을 요약하고, 시장의 핵심 매크로 및 수급 이슈를 송곳처럼 예리하게 분석하는 정교한 칼럼 에세이를 작성해 주십시오.`;
-        } else if (publicationSlot === '15:00') {
-          slotInstruction = `오늘(${reportDate}) 15:00 기준의 한국 증시(코스피/코스닥) 오후장 흐름과 당일 마감 직전의 강력한 주도주 수급 이동 현황을 포착하고 요약 분석하십시오.`;
+        if (isFallbackToDaily) {
+          slotInstruction = `오늘(${reportDate}) 20:00 기준의 한국 장마감 종합 증시 상황을 총결산하십시오. 주제인 "${finalTitle}"에 맞춰 당일 시장을 주도한 밸류체인과 매크로 지표의 변화를 녹여내고, 내일 시장의 핵심 체크포인트를 실전 트레이딩 관점에서 깊이 있게 기술하십시오.`;
         } else {
-          slotInstruction = `오늘(${reportDate}) 20:00 기준의 한국 장마감 종합 증시 상황, 매크로 수급 지표(환율, 금리, 자금동향)의 추세 분석 및 내일 주식 시장의 실전 트레이딩 대응 시나리오를 고도로 정교하게 제시해 주십시오.`;
+          slotInstruction = `오늘(${reportDate}) 20:00 기준의 한국 장마감 종합 증시 상황과 매크로 지표를 녹여내어, 주제인 "${finalTitle}"에 대한 실전 트레이딩 시나리오와 철학적 깊이를 담은 심층 칼럼을 작성하십시오.`;
         }
+      }
 
         try {
           const ai = getRotatedGeminiClient();
           if (ai) {
-            const prompt = `당신은 대한민국 대표 금융투자 자산운용사의 20년 경력 수석 증시 칼럼니스트이자 금융공학 전문 리서치 헤드입니다.
-${slotInstruction}
+            const marketFactStr = `
+[실제 장마감 시장 팩트 데이터 (절대 준수 및 팩트 기반 작성)]
+- 날짜: ${reportDate}
+- 코스피 지수: ${realMarket.kospiIndex || '데이터 미수집'} (전일 대비: ${realMarket.kospiChange || '데이터 미수집'})
+- 코스닥 지수: ${realMarket.kosdaqIndex || '데이터 미수집'} (전일 대비: ${realMarket.kosdaqChange || '데이터 미수집'})
+- 원/달러 환율: ${realMarket.exchangeRate || '데이터 미수집'}
+- 외국인 순매수: ${realMarket.foreignNet || '데이터 미수집'}, 기관 순매수: ${realMarket.institutionNet || '데이터 미수집'}
+- 당일 주요 주도 종목 (Top 10): ${realJodoju.length > 0 ? realJodoju.map((s: any) => `${s.name}(${s.code}, +${s.changeRatio}%)`).join(', ') : '데이터 미수집'}`;
 
-[오늘의 심층 칼럼 주제]
-"${finalTitle}"
+            const prompt = `[역할 정의]
+당신은 15년 차 헤지펀드 애널리스트이자, 구글 SEO 및 애드센스 구조에 최적화된 블로그 에디터입니다. 
+주식 시장의 단순 뉴스 요약이 아닌, 깊이 있는 '투자 관점(Insight)'을 제시하는 전문 아티클을 작성하십시오.
 
-[애드센스 SEO 최적화 및 고품질 장문(2,500자 이상) 스토리텔링 칼럼 작성 지침]
-1. 페르소나 및 문체:
-   - 전형적인 AI 문구('요약하자면', '결론적으로', '혁신적인', '스마트 머니의 파도', '임파워', '슈퍼차지', '수급의 파도를 타는 것' 등)를 완전히 배제하십시오.
-   - 실제 최고급 금융 전문 칼럼니스트가 대형 일간지 칼럼이나 매일경제/한국경제 등 프리미엄 리서치 매체에 기고하는 듯한 차분하고 고도의 정교한 문체(‘~입니다’, ‘~으로 파악됩니다’, ‘~해야 합니다’)로 집필하십시오.
+[주제 및 소재]
+* 주제: "${finalTitle}"
+* 시장 맥락: ${slotInstruction} (기준 날짜: ${reportDate})
+* 주요 타겟/종목: "${finalTitle}" 관련 국내외 핵심 대표 주도 종목 및 밸류체인
+${marketFactStr}
 
-2. 필수 구성 요소 및 이야기 스토리텔링 (AdSense Premium Content):
-   - **분량**: 공백 제외 최소 2,500자 이상의 깊이 있는 독창적 분석 내용을 채우십시오.
-   - **인물 및 기업 비하인드 스토리**: 분석 대상 인물(예: 젠슨 황의 엔비디아 사활을 건 베팅, 최태원 회장의 SK하이닉스 십수년 HBM 결단 스토리, 워런 버핏과 피터 린치의 시장 폭락기 행동 양식 등)에 관한 흥미롭고 짧은 입체적 비하인드 스토리를 반드시 녹여내십시오.
-   - **기술적 분석 및 과거 실전 차트 스토리**: 2020년 3월 코로나 팬데믹 서킷브레이커 대폭락 복기, 2023년 이차전지 에코프로 파동, 2024년 8월 블랙 먼데이 급락 후 20일선 돌파 등의 실제 역사적 증시 스토리와 기술적 지표(거래대금 폭발, 이동평균선 정배열 수렴)를 유기적으로 연결하십시오.
+[팩트 검수 및 절대 금지 사항 (Strict Fact-Check & Anti-AI Rules - 절대 준수)]
+1. **허위 지수 및 숫자의 환각(Hallucination) 절대 금지**: 상기 [실제 장마감 시장 팩트 데이터]에 명시된 코스피/코스닥 지수, 환율, 수급액 및 종목명 외에 구체적인 가짜 수치(예: "코스피 2,865.40", "환율 1,368.50원" 등 실제 수치와 다른 지수/숫자)를 상상하여 창작하거나 조작하지 마십시오. 데이터가 '데이터 미수집'이거나 부족할 경우, 지수 숫자를 임의로 만들어 내지 말고 제공된 종목과 수급 및 산업/테마 관점의 분석으로 논리를 전개하십시오.
+2. 특정 인물 우려먹기 금지: '워런 버핏', '피터 린치', '벤저민 그레이엄' 등 진부한 거장들의 명언이나 예시는 절대로 쓰지 마십시오.
+3. AI 전형적 수식어 금지: "혁신적인", "게임 체인저", "눈부신", "주목할 만한", "흥미롭게도", "요약하자면", "결론적으로", "스마트 머니의 파도", "임파워", "슈퍼차지" 같은 단어나 진부한 수식어는 절대로 쓰지 마십시오.
+4. 원론적인 조언 금지: "투자는 신중해야 합니다", "리스크 관리가 중요합니다" 같은 뻔한 소리로 글을 마무리하지 마십시오.
 
-3. 애드센스 SEO 가독성 HTML 구조:
-   - <h2> 메인 제목 (주제와 수급 핵심 포착)
-   - 서론 <p> 단락 (칼럼의 집필 배경, 글로벌 매크로와 인물/역사적 서사 개요)
-   - <h3> 세부 주제 (최소 5개 세션):
-     1) [인물 및 역사적 서사] 글로벌 메크로 시장 환경과 "${finalTitle}" 관련 인물/기업의 사활을 건 비하인드 스토리
-     2) [수급 매커니즘] 외국인 및 기관 거대 수급 주도 세력의 동향과 스마트머니 집적 법칙
-     3) [기술적 분석 & 실전 사례] 역사적 차트 파동 복기(2020년 팬데믹, 2023년 이차전지 등)와 이동평균선/거래대금 기반의 정밀 진입 타점 설계
-     4) [밸류체인 & 기업 팩트체크] 대한민국 증시 연동 핵심 주도 종목군 분석 및 펀더멘탈 가치 평가
-     5) [트레이더 생존 심리학] 피터 린치와 워런 버핏이 강조한 리스크 관리 원칙과 계좌 보존 가이드
-   - <p>, <ul>, <li>, <strong>, <blockquote> 태그를 적절히 활용하여 단락 간 여백과 가독성을 극대화하십시오.
-   - 중간중간 "<!-- 애드센스 자동 광고 삽입 위치 -->" 주석을 자연스럽게 2~3회 배치하십시오.
+[글쓰기 스타일 & SEO 구조 (AdSense Optimized)]
+1. 제목: 
+   - 뻔한 제목 금지 (예: OO주식 전망 분석 등)
+   - 독자의 호기심과 검색 의도를 강력하게 자극하는 제목 1개 (<h2>)
+2. 본문 구조:
+   - **분량**: 공백 제외 **최소 2,500자 이상의 밀도 있고 풍부한 압도적 장문 아티클**로 작성하십시오.
+   - **서론**: 문맥 설명 없이 바로 문제 제기나 시장의 고정관념을 깨는 파격적인 화두로 시작하십시오.
+   - **본론 (<h3> 활용, 최소 4~5개 세부 세션)**: 
+     * [실제 장마감 시장 팩트 데이터]의 구체적인 팩트와 수치(매출, 영업이익률, PER, 마진율, 수주 잔고, 거래대금, 주도종목 상승률 등)를 바탕으로 논리를 전개하십시오.
+     * 단순히 "좋다/나쁘다"가 아니라 **"시장이 놓치고 있는 리스크 1가지"**와 **"모멘텀 1가지"**를 선명하게 대립시켜 깊이 있게 분석하십시오.
+     * 독자가 읽기 편하게 핵심 포인트는 **굵은 글씨(<strong>)**와 **Bullet point(<ul>/<li>)**로 가독성 높게 정리하십시오.
+     * 중간중간 "<!-- 애드센스 자동 광고 삽입 위치 -->" 주석을 자연스럽게 2~3회 배치하십시오.
+   - **결론**: 훈계조의 조언 대신, 투자자가 이번 주/이번 분기에 체크해야 할 **'실전 관전 포인트(Checklist)' 3가지**로 담백하고 명확하게 작성하십시오.
 
-4. 출력 형식:
-   - HTML 태그 본문만 출력하며, \`\`\`html 등 마크다운 블록 기호를 절대로 포함하지 마십시오.`;
+[문체]
+* 건조하지만 확신에 찬 단정한 '해요체' (~입니다, ~합니다) 또는 '하십시오체' 중 하나로 통일하십시오.
+
+[출력 형식]
+* HTML 태그 본문만 출력하며, \`\`\`html 등 마크다운 블록 기호를 절대로 포함하지 마십시오.`;
 
             const response = await ai.models.generateContent({
               model: 'gemini-3.6-flash',
               contents: prompt,
-              config: { temperature: 0.6 }
+              config: { temperature: 0.7 }
             });
 
             if (response.text) {
@@ -4905,7 +4937,6 @@ ${slotInstruction}
           finalContent = generateOfflineReportHtml(nextTopicIndex + 1, finalTitle);
           console.log("[Insight Column] Gemini failed, fell back to high-quality Offline Essay Generator.");
         }
-      }
 
       if (finalContent && !finalContent.includes('<!-- METADATA:')) {
         finalContent += `\n<!-- METADATA: {"market_date": "${reportDate}", "insight_type": "${insightType}"} -->`;
@@ -5079,10 +5110,9 @@ error=null`);
         return res.status(404).json({ error: 'NO_DATA', message: '2026-07-26 insight columns are deleted per request' });
       }
 
-      // Convert to uppercase in case of MIDDAY, AFTERNOON, NIGHT, etc.
+      // Convert to uppercase in case of MIDDAY, NIGHT, etc.
       let typeStr = String(insightType).toUpperCase();
       if (typeStr === '12:00' || typeStr === '1200') typeStr = 'MIDDAY';
-      if (typeStr === '15:00' || typeStr === '1500') typeStr = 'AFTERNOON';
       if (typeStr === '20:00' || typeStr === '2000') typeStr = 'NIGHT';
 
       const { data, error } = await supabase
@@ -5387,11 +5417,16 @@ error=null`);
     if (!year || !month) {
       return res.status(400).json({ error: 'year and month are required' });
     }
-    const key = `calendar_events_${year}_${month.toString().padStart(2, '0')}`;
-    const data = await getPlatformDataFromSupabase(key, year.toString()); 
-    if (data && Array.isArray(data)) {
+    const yStr = String(year).padStart(4, '0');
+    const mStr = String(month).padStart(2, '0');
+    const key = `calendar_events_${yStr}_${mStr}`;
+    const dateKst = `${yStr}-${mStr}`;
+
+    const data = await getPlatformDataFromSupabase(key, dateKst); 
+    if (data && Array.isArray(data) && data.length > 0) {
       return res.json(data);
     }
+
     res.json([]);
   });
 
@@ -5399,12 +5434,18 @@ error=null`);
     try {
       const now = getKstNow();
       
-      // Calculate target months (Next 2 months)
-      const targets = [];
-      for (let i = 1; i <= 2; i++) {
-        const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-        const k = getKstParts(d);
-        targets.push({ year: k.year, month: k.month });
+      // Calculate target months (Current month + Next 2 months, or explicit query target)
+      const targets: Array<{ year: string; month: string }> = [];
+      if (req.query.year && req.query.month) {
+        const y = String(req.query.year).padStart(4, '0');
+        const m = String(req.query.month).padStart(2, '0');
+        targets.push({ year: y, month: m });
+      } else {
+        for (let i = 0; i <= 2; i++) {
+          const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+          const k = getKstParts(d);
+          targets.push({ year: k.year, month: k.month });
+        }
       }
 
       console.log(`[Calendar Cron] Generating events for targets:`, targets);
@@ -5452,8 +5493,8 @@ error=null`);
         if (jsonMatch) {
           const events = JSON.parse(jsonMatch[0]);
           const key = `calendar_events_${target.year}_${target.month}`;
-          // Use year-month as date_kst for organization
-          await savePlatformDataToSupabase(key, events);
+          const dateKst = `${target.year}-${target.month}`;
+          await savePlatformDataToSupabase(key, events, dateKst);
           results.push({ target, count: events.length });
         }
       }
@@ -6132,7 +6173,9 @@ error=null`);
       console.log(`[Cron Pipeline] Triggering Pre-Market Briefing Generation (${todayDateStr})...`);
 
       // 1. Holiday / Weekend Check
-      if (!isTradingDay(kstNow)) {
+      const dayOfWeek = getKstDayOfWeek(kstNow);
+      const isSaturday = dayOfWeek === 6;
+      if (!isTradingDay(kstNow) && !isSaturday) {
         console.log(`[Cron Pipeline] Today (${todayDateStr}) is a market holiday or weekend. Skipping pre-market briefing creation.`);
         return res.json({
           success: true,
@@ -6883,17 +6926,20 @@ error=null`);
 
         if (error) {
            // Fallback to local only if Supabase schema doesn't support these columns yet
-           console.warn('[Insight Registry] Supabase sync error:', error.message);
-           if (error.message.includes('column') || error.message.includes('not found')) {
+           if (error.message.includes('column') || error.message.includes('not found') || error.message.includes('views')) {
               const minimalRows = rows.map(r => ({ 
                 id: r.id, 
                 title: r.title,
                 content: r.content,
                 is_published: r.is_published,
-                published_at: r.published_at,
-                views: r.views
+                published_at: r.published_at
               }));
-              await supabase.from('posts').upsert(minimalRows, { onConflict: 'id' });
+              const { error: minErr } = await supabase.from('posts').upsert(minimalRows, { onConflict: 'id' });
+              if (minErr) {
+                console.warn('[Insight Registry] Minimal Supabase sync note:', minErr.message);
+              }
+           } else {
+              console.warn('[Insight Registry] Supabase sync note:', error.message);
            }
         }
       }

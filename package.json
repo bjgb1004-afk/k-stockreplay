@@ -40,8 +40,6 @@
     "typescript": "~5.8.2",
     "vite": "^6.2.3"
   },
-  "devDependencies": {
-  },
   "description": "",
   "repository": {
     "type": "git",

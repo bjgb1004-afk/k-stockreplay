@@ -1109,12 +1109,23 @@ export default function App() {
 
       // Map changeRatios from JODOJU_STOCKS for any stocks that don't have it
       const processed = list.map(stk => {
+        const code = stk.code || stk.ticker || "";
+        let name = stk.name || "";
+        
+        // If name is missing or looks like a code, try to find it in JODOJU_STOCKS or a known map
+        if (!name || /^[0-9]{6}$/.test(name)) {
+          const match = JODOJU_STOCKS.find(j => j.code === code);
+          if (match) {
+            name = match.name;
+          }
+        }
+
         let ratio = stk.changeRatio;
         if (ratio === undefined) {
-          const match = JODOJU_STOCKS.find(j => j.code === stk.code);
+          const match = JODOJU_STOCKS.find(j => j.code === code);
           ratio = match ? match.changeRatio : 5.0;
         }
-        return { ...stk, changeRatio: ratio };
+        return { ...stk, code, name, changeRatio: ratio };
       });
 
       // Sort by changeRatio descending (highest rise rate first)
