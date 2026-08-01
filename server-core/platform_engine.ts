@@ -2148,7 +2148,7 @@ Process this into a valid JSON array of NewsFact objects conforming strictly to 
 ${actualIndicesFormatted}
 
 [검증된 실제 뉴스 팩트 (Grounded News Facts)]
-${newsFacts.length > 0 ? newsFacts.map((n, i) => `${i+1}) 제목: ${n.title} (출처: ${n.source}) | 주요팩트: ${n.factualClaims.join(', ')}`).join('\n') : "실제 최근 뉴스가 없거나 데이터 수집이 제한적입니다. (확인된 주요 원인은 제한적입니다.)"}
+${newsFacts.length > 0 ? newsFacts.map((n, i) => `${i+1}) 제목: ${n.title} (출처: ${n.source}) | 주요팩트: ${(n.factualClaims || []).join(', ')}`).join('\n') : "실제 최근 뉴스가 없거나 데이터 수집이 제한적입니다. (확인된 주요 원인은 제한적입니다.)"}
 
 [일관성 분석 및 서술 규정 (CRITICAL DIRECTIONAL MATCHING RULES)]
 ${directionConstraints.join('\n')}
@@ -2481,7 +2481,7 @@ JSON 스키마:
           supplyDemand: { foreigner: "미수집", institution: "미수집" },
           riseReason: `${name} | ${fallbackNewsText.split('\n')[0] || '시장 모멘텀 분석 중'}`,
           disclosures: [],
-          news: marketNews?.slice(0, 5).map(n => ({ title: n.title, url: n.url, source: n.source })) || [],
+          news: marketNews?.slice(0, 5).map(n => ({ title: n.title, url: n.url, source: n.source, date: n.date || todayDateStr })) || [],
           aiSummary: `[실시간 요약] ${fallbackNewsText}`,
           aiAnalysis: {
             riseReasonDetailed: `현재 실시간 뉴스를 통해 확인된 정보: \n${fallbackNewsText}\n\n정밀 AI 분석은 호출 제한 해제 후 업데이트됩니다.`,

@@ -1481,6 +1481,7 @@ export default function App() {
     const loadStockData = async () => {
       setIsPlaying(false);
       setHoverIndex(null);
+      setStockData([]); // Clear old data to prevent stale chart flashes
  
       // Helper to sort loaded stock candles chronologically by date/time
       const sortAndValidateCandles = (candlesList: Candle[]): Candle[] => {

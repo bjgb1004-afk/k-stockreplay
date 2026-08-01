@@ -1,34 +1,34 @@
 {
-  "id": "briefing_2026-07-31",
-  "date": "2026-07-31",
+  "id": "briefing_2026-08-01",
+  "date": "2026-08-01",
   "published": true,
-  "summary": "마이크로소프트의 폭발적 급등(+14.68%)과 브로드컴(+1.82%)의 강세에 힘입어 나스닥(+0.99%)과 S&P 500(+0.12%)은 상승 마감했으나, 전통 산업주의 약세로 다우 지수(-1.02%)는 하락하며 차별화 장세를 보였습니다. 원/달러 환율이 1,436.60원으로 5.68원 하락하고 대형 IT 및 AI 주도주의 강세가 확인됨에 따라 국내 증시에서도 반도체 및 AI 빅테크 관련주 중심의 수급 집중이 기대됩니다.",
+  "summary": "마이크로소프트의 호실적 발표(+18.99%)와 반도체 섹터의 강력한 모멘텀에 힘입어 나스닥(+3.81%)과 S&P 500(+2.37%) 등 미국 주요 지수가 급등 마감했습니다. 이에 따라 오늘 아침 국내 증시에서도 반도체 및 AI 인프라 관련주를 중심으로 강력한 외국인·기관 수급 유입이 기대됩니다.",
   "expectedThemes": [
-    "AI 인프라 및 클라우드 빅테크",
-    "차세대 반도체 파운드리 및 AI 패키징"
+    "AI 반도체 및 고성능 메모리(HBM)",
+    "지정학적 리스크 관련 석유/에너지"
   ],
   "keyStocks": [
-    "삼성전자",
     "SK하이닉스",
+    "삼성전자",
     "한미반도체"
   ],
-  "leadMapping": "미국 증시에서 마이크로소프트(+14.68%)가 호실적 및 AI 사업 성장 가속화로 급등하고 브로드컴(+1.82%)이 동반 강세를 보이면서 글로벌 AI 생태계에 대한 투자 심리가 크게 개선되었습니다. 이에 따라 국내 대표 AI 반도체 및 HBM 공급망 핵심주인 삼성전자, SK하이닉스, 한미반도체로 외국인 및 기관의 수급 동조화 랠리가 강하게 나타날 것으로 전망됩니다.",
-  "strategyScenario": "미국 증시 내 기술주 강세와 다우 지수 하락 등 종목별·섹터별 차별화가 뚜렷한 만큼, 시초가 갭상승 이후 매물 소화 과정을 확인하는 전략이 유효합니다. 환율 안정세(-5.68원 하락)를 바탕으로 외국인 수급이 유입되는 대형 AI 반도체 주도주 중심으로 눌림목 매수 대응을 권장하며, 개별 재료 부재 종목에 대한 추격 매수는 자제해야 합니다.",
+  "leadMapping": "마이크로소프트의 어닝 서프라이즈와 엔비디아(+5.65%), 브로드컴(+5.12%) 등 글로벌 반도체 거대 기업들의 동반 강세는 국내 HBM 공급망인 SK하이닉스와 삼성전자, 한미반도체에 직간접적 강력한 모멘텀을 제공하며, 엔비디아의 AI 임대 사업 확대 기조는 HD현대에렉트릭 등 전력 기기주로의 자금 쏠림을 유발할 것으로 전망됩니다.",
+  "strategyScenario": "미국 기술주 랠리로 장 초반 갭상승 출발이 예상되는 만큼, 시초가 추격 매수보다는 외인/기관의 장중 순매수 지속 여부를 확인한 뒤 AI 반도체 주도주 중심으로 분할 매수로 접근하는 전략이 유효합니다. 호르무즈 해협 유조선 피습에 따른 국제유가 변동성도 동반 점검이 필요합니다.",
   "usSummary": {
-    "dow": "52,208.06 (-1.02%)",
-    "nasdaq": "25,122.18 (+0.99%)",
-    "sp500": "7,437.63 (+0.12%)",
-    "russell2000": "2,946.10 (-0.26%)",
-    "vix": "17.16 (+0.41%)"
+    "dow": "52,485.03 (+1.73%)",
+    "nasdaq": "25,373.85 (+3.81%)",
+    "sp500": "7,489.72 (+2.37%)",
+    "russell2000": "2,931.34 (+0.86%)",
+    "vix": "15.99 (-6.44%)"
   },
   "macro": {
-    "interestRate": "5.25%~5.50% (동결 기조 유지)",
-    "cpi": "확인된 주요 원인은 제한적입니다.",
-    "ppi": "확인된 주요 원인은 제한적입니다.",
+    "interestRate": "5.25%~5.50%",
+    "cpi": "확인된 주요 원인 정보 제한적",
+    "ppi": "확인된 주요 원인 정보 제한적",
     "fomc": "9월 금리 인하 기대감 고조",
-    "bondYield": "확인된 주요 원인은 제한적입니다.",
-    "exchangeRate": "1,436.60원 (5.68원 하락)",
-    "oilPrice": "확인된 주요 원인은 제한적입니다."
+    "bondYield": "확인된 주요 원인 정보 제한적",
+    "exchangeRate": "1,442.07원 (0.21원 하락)",
+    "oilPrice": "브렌트유 $90.00 내외 (호르무즈 유조선 피습 영향)"
   },
   "macroDetailed": {
     "interestRate": {
@@ -76,72 +76,72 @@
   },
   "domesticSectors": [
     {
-      "sectorName": "AI 반도체 및 HBM",
+      "sectorName": "AI 반도체 및 장비",
       "sentiment": "bullish",
-      "reason": "마이크로소프트의 14.68% 폭등 및 AI 인프라 투자 지속 확인에 따른 반도체 밸류체인 투자심리 대폭 개선",
+      "reason": "마이크로소프트 어닝 서프라이즈와 엔비디아·브로드컴의 급등으로 반도체 업종 전반에 강력한 수급 유입 예상",
       "stocks": [
         "SK하이닉스",
-        "한미반도체",
-        "삼성전자"
+        "삼성전자",
+        "한미반도체"
       ]
     },
     {
-      "sectorName": "전자금융 및 결제(PG)",
-      "sentiment": "neutral",
-      "reason": "티메프 사태 이후 개정 전금법 첫 적용 및 금융당국의 PG사 경영개선 조치 발표에 따른 제도적 불확실성 완화",
+      "sectorName": "전력 인프라 및 데이터센터",
+      "sentiment": "bullish",
+      "reason": "빅테크 기업들의 AI 클라우드 CAPEX 지속 확대 확인에 따라 전력기기 선도업체 수혜 지속",
       "stocks": [
-        "KG이니시스",
-        "NHNKCP"
+        "HD현대에렉트릭",
+        "LS Electric"
       ]
     }
   ],
   "worldNews": [
-    "Fed interest-rate decision rocks Wall Street's inflation fears",
-    "일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보)",
-    "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence"
+    "Stocks Rally on Stellar Microsoft Earnings and Chip Stock Strength",
+    "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+    "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet"
   ],
   "usFeaturedStocks": [
-    "- 엔비디아 (티커: NVDA): 종가 $195.04 (-1.00%) | AI 반도체\n  - [모멘텀 분석]: MSFT 급등에도 불구하고 단기 차익 실현 매물 출회되며 -1.00% 하락",
-    "- 테슬라 (티커: TSLA): 종가 $308.85 (+0.46%) | 자율주행\n  - [모멘텀 분석]: 완만한 매수세 유입 속에 전일 대비 +0.46% 소폭 상승",
-    "- 브로드컴 (티커: AVGO): 종가 $387.84 (+1.82%) | 맞춤형 반도체\n  - [모멘텀 분석]: AI 네트워킹 및 맞춤형 칩 수요 지속으로 +1.82% 상승 마감"
+    "- 엔비디아 (티커: NVDA): 종가 $200.75 (+5.65%) | AI 반도체\n  - [모멘텀 분석]: 엔비디아는 Hut 8과의 196억 달러 규모 AI 임대 계약 체결 및 가와사키와의 조선업 AI 투자 소식에 힘입어 +5.65% 상승하며 반도체 랠리를 견인했습니다.",
+    "- 테슬라 (티커: TSLA): 종가 $311.21 (+4.32%) | 자율주행\n  - [모멘텀 분석]: 테슬라는 기술주 전반의 위험자산 선호 심리 회복과 함께 매수세가 유입되며 +4.32% 강세로 마감했습니다.",
+    "- 브로드컴 (티커: AVGO): 종가 $389.28 (+5.12%) | 맞춤형 반도체\n  - [모멘텀 분석]: 브로드컴은 마이크로소프트 어닝 호조와 맞물려 AI 맞춤형 칩(ASIC) 수요 지속 기대감으로 +5.12% 상승 마감했습니다."
   ],
   "usJodoju": [
-    "엔비디아 (티커: NVDA): 종가 $195.04 (-1.00%) | AI 반도체",
-    "테슬라 (티커: TSLA): 종가 $308.85 (+0.46%) | 자율주행",
-    "브로드컴 (티커: AVGO): 종가 $387.84 (+1.82%) | 맞춤형 반도체"
+    "엔비디아 (티커: NVDA): 종가 $200.75 (+5.65%) | AI 반도체",
+    "테슬라 (티커: TSLA): 종가 $311.21 (+4.32%) | 자율주행",
+    "브로드컴 (티커: AVGO): 종가 $389.28 (+5.12%) | 맞춤형 반도체"
   ],
-  "koreanImpact": "원/달러 환율 하락(1,436.60원)과 나스닥 지수 상승 마감에 힘입어 코스피 지수는 대형 반도체주를 중심으로 상승 시도를 할 것으로 예상됩니다. 다만, 연준의 금리 결정에 따른 인플레이션 우려와 다우 지수의 약세가 상방 압력을 일부 제한할 수 있어 지수 전체의 급등보다는 AI·반도체 중심의 차별화된 수급 장세가 펼쳐질 가능성이 높습니다.",
+  "koreanImpact": "마이크로소프트와 엔비디아의 급등세로 위험자산 선호 심리가 크게 개선되며 코스피 및 코스닥 지수의 강력한 상방 압력이 예상됩니다. 원/달러 환율이 1,442원선에서 소폭 안정을 찾음에 따라 대형 IT 반도체주를 중심으로 외국인 순매수세 전환이 가속화될 것으로 분석됩니다.",
   "relatedKoreanStocks": [
     {
       "name": "SK하이닉스",
-      "reason": "MSFT 급등으로 입증된 글로벌 AI 데이터센터 투자 확대에 따른 HBM3E 공급 수혜 지속"
+      "reason": "엔비디아 및 빅테크 AI 투자 확대에 따른 HBM3E/HBM4 핵심 공급사 수혜"
     },
     {
       "name": "한미반도체",
-      "reason": "AI 반도체 밸류체인 내 듀얼 TC 본더 장비 독점적 지위 및 수급 모멘텀 강화"
+      "reason": "마이크로소프트 및 미국 주요 칩 제조업체 랠리로 인한 듀얼 TC 본더 장비 수요 기대감"
     }
   ],
   "aiSummary5Lines": [
-    "마이크로소프트 급등으로 나스닥(+0.99%) 및 S&P 500(+0.12%) 상승 마감, 다우(-1.02%) 하락 차별화",
-    "MSFT(+14.68%), AVGO(+1.82%) 강세 속 NVDA(-1.00%), AAPL(-1.96%)은 하락 조정",
-    "원/달러 환율 1,436.60원으로 5.68원 하락하며 외인 수급 여건 개선",
-    "MSFT 훈풍에 따른 국내 AI 반도체 및 HBM 밸류체인(SK하이닉스, 한미반도체 등) 수급 유입 기대",
-    "지수 추격 매수보다는 확실한 글로벌 모멘텀을 보유한 주도 섹터 중심의 분할 매수 전략 권장"
+    "마이크로소프트 급등(+18.99%)과 반도체 강세로 나스닥(+3.81%), S&P 500(+2.37%) 폭등 마감",
+    "엔비디아(+5.65%), 브로드컴(+5.12%) 등 반도체주 랠리 주도, 애플(-8.66%)은 상대적 약세",
+    "원/달러 환율 1,442.07원 소폭 하락(-0.21원) 및 VIX 지수 급락(-6.44%)으로 투자심리 개선",
+    "국내 증시 개장 직후 SK하이닉스, 삼성전자, 한미반도체 등 AI 반도체 밸류체인 수급 집중 예상",
+    "갭상승 출발 후 변동성에 유의하며 대형 주도주 중심 눌림목 매수 대응 권장"
   ],
   "interestThemes": [
     {
-      "theme": "AI 빅테크 인프라 확장",
+      "theme": "AI 반도체 벨류체인",
       "relatedStocks": [
         "SK하이닉스",
         "한미반도체",
-        "가온칩스"
+        "리노공업"
       ]
     },
     {
-      "theme": "글로벌 통화정책 및 환율 안정",
+      "theme": "정유 및 에너지 리스크",
       "relatedStocks": [
-        "KB금융",
-        "신한지주"
+        "S-Oil",
+        "흥구석유"
       ]
     }
   ],
@@ -149,180 +149,257 @@
     {
       "name": "SK하이닉스",
       "ticker": "000660",
-      "catalyst": "MSFT 폭등 및 글로벌 AI 클라우드 CAPEX 증액에 따른 HBM 수혜 강화"
+      "catalyst": "MSFT 실적 호조 및 미 반도체 지수 폭등에 따른 외인 대량 매수 예상"
     },
     {
-      "name": "한미반도체",
-      "ticker": "042700",
-      "catalyst": "AI 반도체 수혜 모멘텀 지속 및 외국인 순매수 유입 기대"
+      "name": "HD현대에렉트릭",
+      "ticker": "267260",
+      "catalyst": "글로벌 AI 데이터센터 전력망 확충 수혜 지속"
     }
   ],
   "riskIssues": [
-    "연방준비제도(Fed) 금리 결정에 따른 뉴욕증시 내 인플레이션 재발 우려",
-    "다우 지수 하락(-1.02%) 및 러셀 2000 하락(-0.26%)에 나타난 전통 산업주 및 중소형주 투심 약화"
+    "호르무즈 해협 유조선 피습으로 인한 브렌트유 90달러 돌파 및 지정학적 리스크 재부각",
+    "애플 단기 급락(-8.66%)에 따른 국내 관련 IT 부품 공급망 종목의 투심 위축 가능성"
   ],
   "seo": {
-    "title": "[7월 31일 여의도 퀀트 브리핑] 나스닥 상승, 마이크로소프트 폭등 속 국내 AI 반도체 집중 전략",
-    "description": "마이크로소프트 급등(+14.68%)과 환율 하락(-5.68원) 속 코스피/코스닥 대응 전략. SK하이닉스, 한미반도체 등 AI 수혜주 집중 분석.",
+    "title": "[여의도 퀀트 장전 브리핑] MSFT·엔비디아 급등에 나스닥 +3.81% 폭등… 반도체주 강력 수급 기대",
+    "description": "2026년 8월 1일 여의도 전략분석관 브리핑: 마이크로소프트어닝 호조와 글로벌 반도체 랠리로 나스닥 급등. 오늘 아침 국장 AI 반도체 및 전력 인프라 수혜주 집중 점검.",
     "keywords": [
-      "마이크로소프트",
-      "나스닥상승",
+      "마이크로소프트 실적",
+      "엔비디아",
       "SK하이닉스",
-      "한미반도체",
-      "AI반도체",
-      "여의도시황"
+      "AI 반도체",
+      "코스피 전략"
     ]
   },
-  "quantAnalysisMarkdown": "# [2026-07-31] 여의도 퀀트 장전 전략 브리핑\n\n## 1. 글로벌 마켓 리캐치 (Global Market Recap)\n전일 미국 증시는 **마이크로소프트(+14.68%)**의 폭발적인 실적 및 AI 비전 발표에 힘입어 **나스닥 지수가 0.99% 상승(25,122.18pt)**하고, **S&P 500이 0.12% 상승(7,437.63pt)** 마감했습니다. 반면, 전통 산업주 비중이 높은 **다우존스 지수는 1.02% 하락(52,208.06pt)**하며 지수 간 극심한 차별화 장세를 나타냈습니다.\n\n- **나스닥**: +0.99% (기술주 및 AI 섹터 강세)\n- **S&P 500**: +0.12% (빅테크 온기 반영)\n- **다우존스**: -1.02% (연준 금리 결정 관련 인플레이션 우려로 하락)\n- **원/달러 환율**: 1,436.60원 (-5.68원 하락하며 외인 수급 여건 개선)\n\n## 2. 주요 종목 및 모멘텀 분석\n- **MSFT (+14.68%)**: 클라우드 및 AI 수익화 가속화 소식에 증시 전체의 AI 투심을 견인함.\n- **AVGO (+1.82%)**: 맞춤형 AI 칩 수요 확대에 따라 동반 강세 기록.\n- **NVDA (-1.00%)**: MSFT 급등에도 불구하고 단기 매물 소화로 소폭 하락.\n- **AAPL (-1.96%)**: 섹터 내 자금 이동 압박으로 약세 마감.\n\n## 3. 국내 증시 영향 및 수급 전략\n원/달러 환율이 1,436.60원으로 하락 전환하고 글로벌 빅테크의 AI 투자 의지가 재확인됨에 따라, 아침 개장 직후 국내 증시에서도 **AI 반도체 및 HBM 공급망 관련주(SK하이닉스, 한미반도체, 삼성전자)**로 강한 자금 쏠림이 예상됩니다.\n\n### 트레이딩 가이드라인\n1. **시초가 대응**: 지수 전체의 갭상승을 노리기보다 MSFT 수혜가 명확한 HBM/AI 반도체 주도주 중심으로 눌림목 접근 권장.\n2. **리스크 관리**: 연준 금리 결정과 관련된 인플레이션 우려 및 다우 지수 약세(-1.02%) 등 매크로 불확실성이 상존하므로 재료 부재 개별주 추격 매수는 자제.",
+  "quantAnalysisMarkdown": "# 2026-08-01 여의도 퀀트 장전 전략 브리핑\n\n## 1. 미 증시 마감 요약 및 다이렉트 임팩트\n전일 뉴욕 증시는 **마이크로소프트(+18.99%)**의 블록버스터급 실적 발표와 글로벌 반도체 대표주의 폭등세에 힘입어 일제히 상승 마감했습니다.\n- **다우존스**: 52,485.03 (+1.73%)\n- **나스닥**: 25,373.85 (+3.81%)\n- **S&P 500**: 7,489.72 (+2.37%)\n- **러셀 2000**: 2,931.34 (+0.86%)\n- **VIX 변동성지수**: 15.99 (-6.44%)\n\nVIX 지수가 -6.44% 급락하며 시장 내 위험자산 선호 심리가 완벽히 부활했습니다. 다만, 애플(-8.66%)은 차별화된 하락세를 보이며 섹터별 쏠림 현상이 심화되었습니다.\n\n## 2. 매크로 및 지정학적 변수 점검\n- **원/달러 환율**: 1,442.07원 (-0.21원)으로 소폭 하락하며 외국인 수급 여건이 개선되었습니다.\n- **국제유가**: 호르무즈 해협 유조선 피습 사건 발생으로 브렌트유가 90달러대에 진입(+1% 수준 상승)하며 에너지 관련 변동성이 확대되었습니다.\n\n## 3. 오늘 아침 한국 시장 주도 예상 테마 & 대응 전략\n오늘 국내 증시는 개장 직후 **AI 반도체(SK하이닉스, 삼성전자, 한미반도체)** 및 **전력 인프라(HD현대에렉트릭, LS Electric)**로의 자금 쏠림이 유력합니다.\n- **대응 가이드**: 장 초반 갭상승 출발 시 무리한 추격 매수보다는 외국인의 코스피200 선물 매수세 및 수급 지속성을 확인한 후 눌림목 구간에서 분할 매수 대응할 것을 권장합니다.",
   "marketFacts": [
     {
-      "symbol": "^RUT",
-      "name": "Russell 2000",
-      "price": "2,946.10",
-      "change": "-7.70",
-      "changePercent": "-0.26%",
-      "timestamp": "2026-07-31T12:34:05.834Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "USDKRW=X",
-      "name": "USD/KRW Exchange Rate",
-      "price": "1,436.60",
-      "change": "-5.68",
-      "changePercent": "-0.39%",
-      "timestamp": "2026-07-31T12:34:05.837Z",
+      "symbol": "^IXIC",
+      "name": "Nasdaq Composite",
+      "price": "25,373.85",
+      "change": "+930.91",
+      "changePercent": "+3.81%",
+      "timestamp": "2026-07-31T22:53:51.855Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "^TNX",
       "name": "US 10-Year Treasury Yield",
-      "price": "4.66",
-      "change": "+0.00",
-      "changePercent": "+0.00%",
-      "timestamp": "2026-07-31T12:34:05.838Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^SOX",
-      "name": "PHLX Semiconductor Index",
-      "price": "11,302.99",
-      "change": "+267.31",
-      "changePercent": "+2.42%",
-      "timestamp": "2026-07-31T12:34:05.840Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "CL=F",
-      "name": "WTI Crude Oil",
-      "price": "85.29",
-      "change": "+1.70",
-      "changePercent": "+2.03%",
-      "timestamp": "2026-07-31T12:34:05.843Z",
+      "price": "4.74",
+      "change": "+0.08",
+      "changePercent": "+1.76%",
+      "timestamp": "2026-07-31T22:53:51.858Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "^GSPC",
       "name": "S&P 500",
-      "price": "7,437.63",
-      "change": "+8.85",
-      "changePercent": "+0.12%",
-      "timestamp": "2026-07-31T12:34:05.844Z",
+      "price": "7,489.72",
+      "change": "+173.57",
+      "changePercent": "+2.37%",
+      "timestamp": "2026-07-31T22:53:51.862Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "^DJI",
       "name": "Dow Jones",
-      "price": "52,208.06",
-      "change": "-539.26",
-      "changePercent": "-1.02%",
-      "timestamp": "2026-07-31T12:34:05.850Z",
+      "price": "52,485.03",
+      "change": "+890.89",
+      "changePercent": "+1.73%",
+      "timestamp": "2026-07-31T22:53:51.863Z",
       "source": "Yahoo Finance"
     },
     {
-      "symbol": "^VIX",
-      "name": "CBOE Volatility Index (VIX)",
-      "price": "17.16",
-      "change": "+0.07",
-      "changePercent": "+0.41%",
-      "timestamp": "2026-07-31T12:34:05.939Z",
+      "symbol": "USDKRW=X",
+      "name": "USD/KRW Exchange Rate",
+      "price": "1,442.07",
+      "change": "-0.21",
+      "changePercent": "-0.01%",
+      "timestamp": "2026-07-31T22:53:51.870Z",
       "source": "Yahoo Finance"
     },
     {
-      "symbol": "NVDA",
-      "name": "NVIDIA",
-      "price": "195.04",
-      "change": "-1.97",
-      "changePercent": "-1.00%",
-      "timestamp": "2026-07-31T12:34:05.951Z",
+      "symbol": "CL=F",
+      "name": "WTI Crude Oil",
+      "price": "86.80",
+      "change": "+3.21",
+      "changePercent": "+3.84%",
+      "timestamp": "2026-07-31T22:53:51.871Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "GC=F",
       "name": "Gold",
-      "price": "4,107.10",
-      "change": "+7.00",
-      "changePercent": "+0.17%",
-      "timestamp": "2026-07-31T12:34:06.006Z",
+      "price": "4,098.60",
+      "change": "-1.50",
+      "changePercent": "-0.04%",
+      "timestamp": "2026-07-31T22:53:51.872Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^RUT",
+      "name": "Russell 2000",
+      "price": "2,931.34",
+      "change": "+25.03",
+      "changePercent": "+0.86%",
+      "timestamp": "2026-07-31T22:53:51.873Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^SOX",
+      "name": "PHLX Semiconductor Index",
+      "price": "11,311.08",
+      "change": "+863.59",
+      "changePercent": "+8.27%",
+      "timestamp": "2026-07-31T22:53:51.875Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "^VIX",
+      "name": "CBOE Volatility Index (VIX)",
+      "price": "15.99",
+      "change": "-1.10",
+      "changePercent": "-6.44%",
+      "timestamp": "2026-07-31T22:53:51.885Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "TSLA",
       "name": "Tesla",
-      "price": "308.85",
-      "change": "+1.41",
-      "changePercent": "+0.46%",
-      "timestamp": "2026-07-31T12:34:06.092Z",
+      "price": "311.21",
+      "change": "+12.89",
+      "changePercent": "+4.32%",
+      "timestamp": "2026-07-31T22:53:52.108Z",
+      "source": "Yahoo Finance"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA",
+      "price": "200.75",
+      "change": "+10.74",
+      "changePercent": "+5.65%",
+      "timestamp": "2026-07-31T22:53:52.119Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "AVGO",
       "name": "Broadcom",
-      "price": "387.84",
-      "change": "+6.93",
-      "changePercent": "+1.82%",
-      "timestamp": "2026-07-31T12:34:06.101Z",
+      "price": "389.28",
+      "change": "+18.96",
+      "changePercent": "+5.12%",
+      "timestamp": "2026-07-31T22:53:52.374Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "MSFT",
       "name": "Microsoft",
-      "price": "451.10",
-      "change": "+57.75",
-      "changePercent": "+14.68%",
-      "timestamp": "2026-07-31T12:34:06.365Z",
+      "price": "464.72",
+      "change": "+74.18",
+      "changePercent": "+18.99%",
+      "timestamp": "2026-07-31T22:53:52.397Z",
       "source": "Yahoo Finance"
     },
     {
       "symbol": "AAPL",
       "name": "Apple",
-      "price": "333.43",
-      "change": "-6.65",
-      "changePercent": "-1.96%",
-      "timestamp": "2026-07-31T12:34:06.375Z",
-      "source": "Yahoo Finance"
-    },
-    {
-      "symbol": "^IXIC",
-      "name": "Nasdaq Composite",
-      "price": "25,122.18",
-      "change": "+245.27",
-      "changePercent": "+0.99%",
-      "timestamp": "2026-07-31T12:34:06.381Z",
+      "price": "308.91",
+      "change": "-29.28",
+      "changePercent": "-8.66%",
+      "timestamp": "2026-07-31T22:53:52.399Z",
       "source": "Yahoo Finance"
     }
   ],
   "newsFacts": [
     {
-      "title": "Analyst Report: Ameriprise Financial Inc",
-      "source": "Yahoo Finance",
-      "publishedAt": "2026-07-31T11:14:04.000Z",
-      "url": "https://finance.yahoo.com/research/reports/ARGUS_3876_AnalystReport_1785496444000?yptr=yahoo&ncid=yahooproperties_plusresear_nm5q6ze1cei",
-      "summary": "Analyst Report: Ameriprise Financial Inc",
+      "title": "[신상잇슈] 배라 '산딸기가 끌리는 연유'·도미노피자 '무진장 치킨박스'",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T22:00:04.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731116400030",
+      "summary": "[신상잇슈] 배라 '산딸기가 끌리는 연유'·도미노피자 '무진장 치킨박스'",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "Analyst Report: Ameriprise Financial Inc"
+        "[신상잇슈] 배라 '산딸기가 끌리는 연유'·도미노피자 '무진장 치킨박스'"
+      ]
+    },
+    {
+      "title": "고의로 자기 팔 절단해 산재보험금 1억 넘게 가로챈 30대 집유",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T21:25:01.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731128500062",
+      "summary": "고의로 자기 팔 절단해 산재보험금 1억 넘게 가로챈 30대 집유",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "고의로 자기 팔 절단해 산재보험금 1억 넘게 가로챈 30대 집유"
+      ]
+    },
+    {
+      "title": "주유소 기름값 11주째 하락…휘발유·경유 1천800원대 유지",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T21:00:03.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731158400003",
+      "summary": "주유소 기름값 11주째 하락…휘발유·경유 1천800원대 유지",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "주유소 기름값 11주째 하락…휘발유·경유 1천800원대 유지"
+      ]
+    },
+    {
+      "title": "[부동산캘린더] 내주 부산 '더샵트리센트' 등 전국 3천34가구 분양",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T21:00:01.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731123500003",
+      "summary": "[부동산캘린더] 내주 부산 '더샵트리센트' 등 전국 3천34가구 분양",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "[부동산캘린더] 내주 부산 '더샵트리센트' 등 전국 3천34가구 분양"
+      ]
+    },
+    {
+      "title": "Want to trade SpaceX for Apple? 1inch says skip the dollars",
+      "source": "Yahoo Finance",
+      "publishedAt": "2026-07-31T19:45:00.000Z",
+      "url": "https://finance.yahoo.com/markets/crypto/articles/want-trade-spacex-apple-1inch-194500911.html",
+      "summary": "Want to trade SpaceX for Apple? 1inch says skip the dollars",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "Want to trade SpaceX for Apple? 1inch says skip the dollars"
+      ]
+    },
+    {
+      "title": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T19:34:14.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260801005500072",
+      "summary": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대"
+      ]
+    },
+    {
+      "title": "노동장관, 극한 폭염에 택배 상하차장 점검…9월까지 감독 강화",
+      "source": "Yonhap News (KR)",
+      "publishedAt": "2026-07-31T12:53:03.000Z",
+      "url": "https://www.yna.co.kr/view/AKR20260731171400530",
+      "summary": "노동장관, 극한 폭염에 택배 상하차장 점검…9월까지 감독 강화",
+      "relatedSymbols": [],
+      "relatedSectors": [],
+      "sentiment": "neutral",
+      "factualClaims": [
+        "노동장관, 극한 폭염에 택배 상하차장 점검…9월까지 감독 강화"
       ]
     },
     {
@@ -352,84 +429,6 @@
       ]
     },
     {
-      "title": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
-      "source": "Yonhap News (KR)",
-      "publishedAt": "2026-07-31T09:29:06.000Z",
-      "url": "https://www.yna.co.kr/view/AKR20260731158800017",
-      "summary": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
-      "relatedSymbols": [],
-      "relatedSectors": [],
-      "sentiment": "neutral",
-      "factualClaims": [
-        "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'"
-      ]
-    },
-    {
-      "title": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
-      "source": "Yonhap News (KR)",
-      "publishedAt": "2026-07-31T09:25:05.000Z",
-      "url": "https://www.yna.co.kr/view/AKR20260731153500002",
-      "summary": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
-      "relatedSymbols": [],
-      "relatedSectors": [],
-      "sentiment": "neutral",
-      "factualClaims": [
-        "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선"
-      ]
-    },
-    {
-      "title": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
-      "source": "Yonhap News (KR)",
-      "publishedAt": "2026-07-31T09:24:01.000Z",
-      "url": "https://www.yna.co.kr/view/AKR20260731138852002",
-      "summary": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
-      "relatedSymbols": [],
-      "relatedSectors": [],
-      "sentiment": "neutral",
-      "factualClaims": [
-        "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)"
-      ]
-    },
-    {
-      "title": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
-      "source": "Yonhap News (KR)",
-      "publishedAt": "2026-07-31T09:22:59.000Z",
-      "url": "https://www.yna.co.kr/view/AKR20260731125400797",
-      "summary": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
-      "relatedSymbols": [],
-      "relatedSectors": [],
-      "sentiment": "neutral",
-      "factualClaims": [
-        "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들"
-      ]
-    },
-    {
-      "title": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
-      "source": "Yonhap News (KR)",
-      "publishedAt": "2026-07-31T09:18:19.000Z",
-      "url": "https://www.yna.co.kr/view/AKR20260731158700008",
-      "summary": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
-      "relatedSymbols": [],
-      "relatedSectors": [],
-      "sentiment": "neutral",
-      "factualClaims": [
-        "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정"
-      ]
-    },
-    {
-      "title": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
-      "source": "Yonhap News (KR)",
-      "publishedAt": "2026-07-31T09:03:00.000Z",
-      "url": "https://www.yna.co.kr/view/AKR20260731153000002",
-      "summary": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
-      "relatedSymbols": [],
-      "relatedSectors": [],
-      "sentiment": "neutral",
-      "factualClaims": [
-        "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로"
-      ]
-    },
-    {
       "title": "Fed interest-rate decision rocks Wall Street's inflation fears",
       "source": "Yahoo Finance",
       "publishedAt": "2026-07-30T16:33:00.000Z",
@@ -443,81 +442,81 @@
       ]
     },
     {
-      "title": "IDEX Corporation Q2 2026 Earnings Call Summary",
+      "title": "Adidas Wins the World Cup and Loses the Market",
       "source": "Yahoo Finance",
-      "publishedAt": "2026-07-30T00:36:50.000Z",
-      "url": "https://finance.yahoo.com/markets/stocks/articles/idex-corporation-q2-2026-earnings-003650436.html",
-      "summary": "IDEX Corporation Q2 2026 Earnings Call Summary",
+      "publishedAt": "2026-07-30T15:28:30.000Z",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/adidas-wins-world-cup-loses-152830349.html",
+      "summary": "Adidas Wins the World Cup and Loses the Market",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "IDEX Corporation Q2 2026 Earnings Call Summary"
+        "Adidas Wins the World Cup and Loses the Market"
       ]
     },
     {
-      "title": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+      "title": "Jersey Mike’s Prices Below What Blackstone Paid For It",
       "source": "Yahoo Finance",
-      "publishedAt": "2026-07-30T00:36:27.000Z",
-      "url": "https://finance.yahoo.com/markets/stocks/articles/hayward-holdings-inc-q2-2026-003627982.html",
-      "summary": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+      "publishedAt": "2026-07-30T15:23:44.000Z",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/jersey-mike-prices-below-blackstone-152344444.html",
+      "summary": "Jersey Mike’s Prices Below What Blackstone Paid For It",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary"
+        "Jersey Mike’s Prices Below What Blackstone Paid For It"
       ]
     },
     {
-      "title": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+      "title": "Stocks Rally on Stellar Microsoft Earnings and Chip Stock Strength",
       "source": "Yahoo Finance",
-      "publishedAt": "2026-07-30T00:31:02.000Z",
-      "url": "https://finance.yahoo.com/markets/stocks/articles/banc-california-inc-q2-2026-003102259.html",
-      "summary": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+      "publishedAt": "2026-07-30T15:21:40.000Z",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/stocks-rally-stellar-microsoft-earnings-152140326.html",
+      "summary": "Stocks Rally on Stellar Microsoft Earnings and Chip Stock Strength",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "Banc of California, Inc. Q2 2026 Earnings Call Summary"
+        "Stocks Rally on Stellar Microsoft Earnings and Chip Stock Strength"
       ]
     },
     {
-      "title": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+      "title": "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
       "source": "Yahoo Finance",
-      "publishedAt": "2026-07-30T00:30:30.000Z",
-      "url": "https://finance.yahoo.com/markets/stocks/articles/general-dynamics-corporation-q2-2026-003030743.html",
-      "summary": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+      "publishedAt": "2026-07-30T15:20:40.000Z",
+      "url": "https://finance.yahoo.com/technology/ai/articles/nvidia-nvda-reportedly-anchors-hut-152040779.html",
+      "summary": "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "General Dynamics Corporation Q2 2026 Earnings Call Summary"
+        "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet"
       ]
     },
     {
-      "title": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+      "title": "Chips to ships: Nvidia plans new shipbuilding investment with Kawasaki",
       "source": "Yahoo Finance",
-      "publishedAt": "2026-07-30T00:28:47.000Z",
-      "url": "https://finance.yahoo.com/markets/stocks/articles/exlservice-exl-soars-17-88-002847016.html",
-      "summary": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+      "publishedAt": "2026-07-30T15:20:33.000Z",
+      "url": "https://finance.yahoo.com/technology/ai/articles/chips-ships-nvidia-plans-shipbuilding-152033700.html",
+      "summary": "Chips to ships: Nvidia plans new shipbuilding investment with Kawasaki",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence"
+        "Chips to ships: Nvidia plans new shipbuilding investment with Kawasaki"
       ]
     },
     {
-      "title": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+      "title": "Equifax's $2.2 million credit reporting settlement: Who qualifies",
       "source": "Yahoo Finance",
-      "publishedAt": "2026-07-30T00:20:00.000Z",
-      "url": "https://finance.yahoo.com/markets/commodities/articles/titan-minerals-accelerates-dynasty-growth-002000729.html",
-      "summary": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+      "publishedAt": "2026-07-30T13:00:00.000Z",
+      "url": "https://finance.yahoo.com/personal-finance/banking/article/equifaxs-22-million-credit-reporting-settlement-who-qualifies-130000338.html",
+      "summary": "Equifax's $2.2 million credit reporting settlement: Who qualifies",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance"
+        "Equifax's $2.2 million credit reporting settlement: Who qualifies"
       ]
     },
     {
@@ -547,42 +546,42 @@
       ]
     },
     {
-      "title": "What markets tell us about macroeconomics - caixabankresearch.com",
+      "title": "What markets tell us about macroeconomics - CaixaBank Research",
       "source": "Google News",
       "publishedAt": "2026-05-18T07:00:00.000Z",
       "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQVGI4dW5UcGZBZVM1bm1FX0w0a3JQRllOaU9UeWh3VFFOeUktU2syVExfMDVfWW1PMkNwY3lmdVBEalo4UE5BN19wRWpoRmUzYTBQNGpQRGYxYUMxTVFNYVZFOTAxRkVtTWctN1pwb0g1NXZzOC1veW9hV2Q1ZVNsbndEOFFXbllLTFY4cXBfa180YVVqRU1UZk1WV3hKaWtLX04zckRyMmo2Q0Z6b0J4bHVvZDE?oc=5",
-      "summary": "What markets tell us about macroeconomics - caixabankresearch.com",
+      "summary": "What markets tell us about macroeconomics - CaixaBank Research",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "What markets tell us about macroeconomics - caixabankresearch.com"
+        "What markets tell us about macroeconomics - CaixaBank Research"
       ]
     },
     {
-      "title": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+      "title": "7 Moments That Moved the Financial Markets in 2011 - abcnews.com",
       "source": "Google News",
       "publishedAt": "2026-02-13T21:38:18.000Z",
       "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNaVJDUUg3NERldERlVlFXVXJNeHlQWUNoWGxTQ0o4VVJwQ3F1bUJpZFZPUzRuOXJOcDNkU2ZyOF9ueHc5QVZ4Yy1IeEd0QkZ2RDB0blVtaFpMRG5ycE44ZTlLLUlISjlOWU03enVZNzJEYUJTS2Rkd1lMWHR3aXN0ODYxQdIBiAFBVV95cUxOdjdyLTdMQ0dvS09TTThVRDczcUZDZG1YbndESzlOdi13aXhTZ3pOZkRWdGxuMzJsMi11OEwxZVpMLXJSS1N4TnZDMkFhQlE5UmlOd3NCMjhYbzVvbl9HSkhBbl9oM0RTd1oycUN2SXN3UkZVRlZrUGlMSTRMc1FmdmdMaWM2R0xx?oc=5",
-      "summary": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+      "summary": "7 Moments That Moved the Financial Markets in 2011 - abcnews.com",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos"
+        "7 Moments That Moved the Financial Markets in 2011 - abcnews.com"
       ]
     },
     {
-      "title": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+      "title": "2026 Outlook: U.S. Stocks and Economy - HKTDC Research",
       "source": "Google News",
       "publishedAt": "2026-01-06T08:00:00.000Z",
       "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFB2d2pCUXY2dEoyS0FDZGRESy1vZmFKZ1JLb1FoOGQzaEFCRjZoMXZvS3hiVF94UzZqOTB1aTR3SXl4VzZ1TzhlQ0FUM3RhWDI0NTVxZnRlQ3VKMmpObWRLMG9B?oc=5",
-      "summary": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+      "summary": "2026 Outlook: U.S. Stocks and Economy - HKTDC Research",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com"
+        "2026 Outlook: U.S. Stocks and Economy - HKTDC Research"
       ]
     },
     {
@@ -599,16 +598,16 @@
       ]
     },
     {
-      "title": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+      "title": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - cepr.org",
       "source": "Google News",
       "publishedAt": "2025-12-16T08:00:00.000Z",
       "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOTU0tTkRiNk5LN3JxZGREXzUzcnZjTTFvMU1YNHlVeEZQc1d3dHBmcGw5QzU0VXRXc181NXc1Mzl1elRWa1hJVHI4QVkyUUN4ZU9FTEpLMGg1T296ZXZWUWhub213MERTM043U0o1b1NadTVJOGw4aVFSdWdOS1hTMWF4QjI0WTNhWWFDYmw1S3dUYjVKQU1TYVlnSGJPcHFYVmZfSkdUZlRLQ0s4Vnc?oc=5",
-      "summary": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+      "summary": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - cepr.org",
       "relatedSymbols": [],
       "relatedSectors": [],
       "sentiment": "neutral",
       "factualClaims": [
-        "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR"
+        "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - cepr.org"
       ]
     },
     {
@@ -627,21 +626,141 @@
   ],
   "newsEvents": [
     {
-      "eventTitle": "Analyst Report: Ameriprise Financial Inc",
+      "eventTitle": "[신상잇슈] 배라 '산딸기가 끌리는 연유'·도미노피자 '무진장 치킨박스'",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "Analyst Report: Ameriprise Financial Inc",
-          "source": "Yahoo Finance",
-          "publishedAt": "2026-07-31T11:14:04.000Z",
-          "url": "https://finance.yahoo.com/research/reports/ARGUS_3876_AnalystReport_1785496444000?yptr=yahoo&ncid=yahooproperties_plusresear_nm5q6ze1cei",
-          "summary": "Analyst Report: Ameriprise Financial Inc",
+          "title": "[신상잇슈] 배라 '산딸기가 끌리는 연유'·도미노피자 '무진장 치킨박스'",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T22:00:04.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731116400030",
+          "summary": "[신상잇슈] 배라 '산딸기가 끌리는 연유'·도미노피자 '무진장 치킨박스'",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "Analyst Report: Ameriprise Financial Inc"
+            "[신상잇슈] 배라 '산딸기가 끌리는 연유'·도미노피자 '무진장 치킨박스'"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "고의로 자기 팔 절단해 산재보험금 1억 넘게 가로챈 30대 집유",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "고의로 자기 팔 절단해 산재보험금 1억 넘게 가로챈 30대 집유",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T21:25:01.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731128500062",
+          "summary": "고의로 자기 팔 절단해 산재보험금 1억 넘게 가로챈 30대 집유",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "고의로 자기 팔 절단해 산재보험금 1억 넘게 가로챈 30대 집유"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "주유소 기름값 11주째 하락…휘발유·경유 1천800원대 유지",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "주유소 기름값 11주째 하락…휘발유·경유 1천800원대 유지",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T21:00:03.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731158400003",
+          "summary": "주유소 기름값 11주째 하락…휘발유·경유 1천800원대 유지",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "주유소 기름값 11주째 하락…휘발유·경유 1천800원대 유지"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "[부동산캘린더] 내주 부산 '더샵트리센트' 등 전국 3천34가구 분양",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "[부동산캘린더] 내주 부산 '더샵트리센트' 등 전국 3천34가구 분양",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T21:00:01.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731123500003",
+          "summary": "[부동산캘린더] 내주 부산 '더샵트리센트' 등 전국 3천34가구 분양",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "[부동산캘린더] 내주 부산 '더샵트리센트' 등 전국 3천34가구 분양"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "Want to trade SpaceX for Apple? 1inch says skip the dollars",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "Want to trade SpaceX for Apple? 1inch says skip the dollars",
+          "source": "Yahoo Finance",
+          "publishedAt": "2026-07-31T19:45:00.000Z",
+          "url": "https://finance.yahoo.com/markets/crypto/articles/want-trade-spacex-apple-1inch-194500911.html",
+          "summary": "Want to trade SpaceX for Apple? 1inch says skip the dollars",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "Want to trade SpaceX for Apple? 1inch says skip the dollars"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T19:34:14.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260801005500072",
+          "summary": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대"
+          ]
+        }
+      ]
+    },
+    {
+      "eventTitle": "노동장관, 극한 폭염에 택배 상하차장 점검…9월까지 감독 강화",
+      "relatedSectors": [],
+      "relatedSymbols": [],
+      "newsItems": [
+        {
+          "title": "노동장관, 극한 폭염에 택배 상하차장 점검…9월까지 감독 강화",
+          "source": "Yonhap News (KR)",
+          "publishedAt": "2026-07-31T12:53:03.000Z",
+          "url": "https://www.yna.co.kr/view/AKR20260731171400530",
+          "summary": "노동장관, 극한 폭염에 택배 상하차장 점검…9월까지 감독 강화",
+          "relatedSymbols": [],
+          "relatedSectors": [],
+          "sentiment": "neutral",
+          "factualClaims": [
+            "노동장관, 극한 폭염에 택배 상하차장 점검…9월까지 감독 강화"
           ]
         }
       ]
@@ -687,126 +806,6 @@
       ]
     },
     {
-      "eventTitle": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
-      "relatedSectors": [],
-      "relatedSymbols": [],
-      "newsItems": [
-        {
-          "title": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
-          "source": "Yonhap News (KR)",
-          "publishedAt": "2026-07-31T09:29:06.000Z",
-          "url": "https://www.yna.co.kr/view/AKR20260731158800017",
-          "summary": "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'",
-          "relatedSymbols": [],
-          "relatedSectors": [],
-          "sentiment": "neutral",
-          "factualClaims": [
-            "시청자미디어재단, 노인 미디어 일자리 우수모델 '최우수상'"
-          ]
-        }
-      ]
-    },
-    {
-      "eventTitle": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
-      "relatedSectors": [],
-      "relatedSymbols": [],
-      "newsItems": [
-        {
-          "title": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
-          "source": "Yonhap News (KR)",
-          "publishedAt": "2026-07-31T09:25:05.000Z",
-          "url": "https://www.yna.co.kr/view/AKR20260731153500002",
-          "summary": "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선",
-          "relatedSymbols": [],
-          "relatedSectors": [],
-          "sentiment": "neutral",
-          "factualClaims": [
-            "'티메프사태' 개정 전금법 첫 적용…PG사 등 10곳 경영개선"
-          ]
-        }
-      ]
-    },
-    {
-      "eventTitle": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
-      "relatedSectors": [],
-      "relatedSymbols": [],
-      "newsItems": [
-        {
-          "title": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
-          "source": "Yonhap News (KR)",
-          "publishedAt": "2026-07-31T09:24:01.000Z",
-          "url": "https://www.yna.co.kr/view/AKR20260731138852002",
-          "summary": "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)",
-          "relatedSymbols": [],
-          "relatedSectors": [],
-          "sentiment": "neutral",
-          "factualClaims": [
-            "금융위, '정보유출' 롯데카드 제재 감경…업무정지 4.5→1.5개월(종합2보)"
-          ]
-        }
-      ]
-    },
-    {
-      "eventTitle": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
-      "relatedSectors": [],
-      "relatedSymbols": [],
-      "newsItems": [
-        {
-          "title": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
-          "source": "Yonhap News (KR)",
-          "publishedAt": "2026-07-31T09:22:59.000Z",
-          "url": "https://www.yna.co.kr/view/AKR20260731125400797",
-          "summary": "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들",
-          "relatedSymbols": [],
-          "relatedSectors": [],
-          "sentiment": "neutral",
-          "factualClaims": [
-            "[영상] \"하루에도 수십번씩 확인\"…병원 찾는 개미 투자자들"
-          ]
-        }
-      ]
-    },
-    {
-      "eventTitle": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
-      "relatedSectors": [],
-      "relatedSymbols": [],
-      "newsItems": [
-        {
-          "title": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
-          "source": "Yonhap News (KR)",
-          "publishedAt": "2026-07-31T09:18:19.000Z",
-          "url": "https://www.yna.co.kr/view/AKR20260731158700008",
-          "summary": "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정",
-          "relatedSymbols": [],
-          "relatedSectors": [],
-          "sentiment": "neutral",
-          "factualClaims": [
-            "본느, 22억300만원 유상증자…에이치투자조합에 제3자배정"
-          ]
-        }
-      ]
-    },
-    {
-      "eventTitle": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
-      "relatedSectors": [],
-      "relatedSymbols": [],
-      "newsItems": [
-        {
-          "title": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
-          "source": "Yonhap News (KR)",
-          "publishedAt": "2026-07-31T09:03:00.000Z",
-          "url": "https://www.yna.co.kr/view/AKR20260731153000002",
-          "summary": "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로",
-          "relatedSymbols": [],
-          "relatedSectors": [],
-          "sentiment": "neutral",
-          "factualClaims": [
-            "중복상장 규제, 내달 3일부터 시행…'3%룰 준용' 유지키로"
-          ]
-        }
-      ]
-    },
-    {
       "eventTitle": "Fed interest-rate decision rocks Wall Street's inflation fears",
       "relatedSectors": [],
       "relatedSymbols": [],
@@ -827,121 +826,121 @@
       ]
     },
     {
-      "eventTitle": "IDEX Corporation Q2 2026 Earnings Call Summary",
+      "eventTitle": "Adidas Wins the World Cup and Loses the Market",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "IDEX Corporation Q2 2026 Earnings Call Summary",
+          "title": "Adidas Wins the World Cup and Loses the Market",
           "source": "Yahoo Finance",
-          "publishedAt": "2026-07-30T00:36:50.000Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/idex-corporation-q2-2026-earnings-003650436.html",
-          "summary": "IDEX Corporation Q2 2026 Earnings Call Summary",
+          "publishedAt": "2026-07-30T15:28:30.000Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/adidas-wins-world-cup-loses-152830349.html",
+          "summary": "Adidas Wins the World Cup and Loses the Market",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "IDEX Corporation Q2 2026 Earnings Call Summary"
+            "Adidas Wins the World Cup and Loses the Market"
           ]
         }
       ]
     },
     {
-      "eventTitle": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+      "eventTitle": "Jersey Mike’s Prices Below What Blackstone Paid For It",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+          "title": "Jersey Mike’s Prices Below What Blackstone Paid For It",
           "source": "Yahoo Finance",
-          "publishedAt": "2026-07-30T00:36:27.000Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/hayward-holdings-inc-q2-2026-003627982.html",
-          "summary": "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary",
+          "publishedAt": "2026-07-30T15:23:44.000Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/jersey-mike-prices-below-blackstone-152344444.html",
+          "summary": "Jersey Mike’s Prices Below What Blackstone Paid For It",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "Hayward Holdings, Inc. Q2 2026 Earnings Call Summary"
+            "Jersey Mike’s Prices Below What Blackstone Paid For It"
           ]
         }
       ]
     },
     {
-      "eventTitle": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+      "eventTitle": "Stocks Rally on Stellar Microsoft Earnings and Chip Stock Strength",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+          "title": "Stocks Rally on Stellar Microsoft Earnings and Chip Stock Strength",
           "source": "Yahoo Finance",
-          "publishedAt": "2026-07-30T00:31:02.000Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/banc-california-inc-q2-2026-003102259.html",
-          "summary": "Banc of California, Inc. Q2 2026 Earnings Call Summary",
+          "publishedAt": "2026-07-30T15:21:40.000Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/stocks-rally-stellar-microsoft-earnings-152140326.html",
+          "summary": "Stocks Rally on Stellar Microsoft Earnings and Chip Stock Strength",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "Banc of California, Inc. Q2 2026 Earnings Call Summary"
+            "Stocks Rally on Stellar Microsoft Earnings and Chip Stock Strength"
           ]
         }
       ]
     },
     {
-      "eventTitle": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+      "eventTitle": "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+          "title": "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
           "source": "Yahoo Finance",
-          "publishedAt": "2026-07-30T00:30:30.000Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/general-dynamics-corporation-q2-2026-003030743.html",
-          "summary": "General Dynamics Corporation Q2 2026 Earnings Call Summary",
+          "publishedAt": "2026-07-30T15:20:40.000Z",
+          "url": "https://finance.yahoo.com/technology/ai/articles/nvidia-nvda-reportedly-anchors-hut-152040779.html",
+          "summary": "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "General Dynamics Corporation Q2 2026 Earnings Call Summary"
+            "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet"
           ]
         }
       ]
     },
     {
-      "eventTitle": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+      "eventTitle": "Chips to ships: Nvidia plans new shipbuilding investment with Kawasaki",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+          "title": "Chips to ships: Nvidia plans new shipbuilding investment with Kawasaki",
           "source": "Yahoo Finance",
-          "publishedAt": "2026-07-30T00:28:47.000Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/exlservice-exl-soars-17-88-002847016.html",
-          "summary": "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence",
+          "publishedAt": "2026-07-30T15:20:33.000Z",
+          "url": "https://finance.yahoo.com/technology/ai/articles/chips-ships-nvidia-plans-shipbuilding-152033700.html",
+          "summary": "Chips to ships: Nvidia plans new shipbuilding investment with Kawasaki",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "ExlService (EXL) Soars 17.88%, Wins Hedge Fund Confidence"
+            "Chips to ships: Nvidia plans new shipbuilding investment with Kawasaki"
           ]
         }
       ]
     },
     {
-      "eventTitle": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+      "eventTitle": "Equifax's $2.2 million credit reporting settlement: Who qualifies",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+          "title": "Equifax's $2.2 million credit reporting settlement: Who qualifies",
           "source": "Yahoo Finance",
-          "publishedAt": "2026-07-30T00:20:00.000Z",
-          "url": "https://finance.yahoo.com/markets/commodities/articles/titan-minerals-accelerates-dynasty-growth-002000729.html",
-          "summary": "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance",
+          "publishedAt": "2026-07-30T13:00:00.000Z",
+          "url": "https://finance.yahoo.com/personal-finance/banking/article/equifaxs-22-million-credit-reporting-settlement-who-qualifies-130000338.html",
+          "summary": "Equifax's $2.2 million credit reporting settlement: Who qualifies",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "Titan Minerals accelerates Dynasty growth strategy as drilling and scoping studies advance"
+            "Equifax's $2.2 million credit reporting settlement: Who qualifies"
           ]
         }
       ]
@@ -987,61 +986,61 @@
       ]
     },
     {
-      "eventTitle": "What markets tell us about macroeconomics - caixabankresearch.com",
+      "eventTitle": "What markets tell us about macroeconomics - CaixaBank Research",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "What markets tell us about macroeconomics - caixabankresearch.com",
+          "title": "What markets tell us about macroeconomics - CaixaBank Research",
           "source": "Google News",
           "publishedAt": "2026-05-18T07:00:00.000Z",
           "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQVGI4dW5UcGZBZVM1bm1FX0w0a3JQRllOaU9UeWh3VFFOeUktU2syVExfMDVfWW1PMkNwY3lmdVBEalo4UE5BN19wRWpoRmUzYTBQNGpQRGYxYUMxTVFNYVZFOTAxRkVtTWctN1pwb0g1NXZzOC1veW9hV2Q1ZVNsbndEOFFXbllLTFY4cXBfa180YVVqRU1UZk1WV3hKaWtLX04zckRyMmo2Q0Z6b0J4bHVvZDE?oc=5",
-          "summary": "What markets tell us about macroeconomics - caixabankresearch.com",
+          "summary": "What markets tell us about macroeconomics - CaixaBank Research",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "What markets tell us about macroeconomics - caixabankresearch.com"
+            "What markets tell us about macroeconomics - CaixaBank Research"
           ]
         }
       ]
     },
     {
-      "eventTitle": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+      "eventTitle": "7 Moments That Moved the Financial Markets in 2011 - abcnews.com",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+          "title": "7 Moments That Moved the Financial Markets in 2011 - abcnews.com",
           "source": "Google News",
           "publishedAt": "2026-02-13T21:38:18.000Z",
           "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNaVJDUUg3NERldERlVlFXVXJNeHlQWUNoWGxTQ0o4VVJwQ3F1bUJpZFZPUzRuOXJOcDNkU2ZyOF9ueHc5QVZ4Yy1IeEd0QkZ2RDB0blVtaFpMRG5ycE44ZTlLLUlISjlOWU03enVZNzJEYUJTS2Rkd1lMWHR3aXN0ODYxQdIBiAFBVV95cUxOdjdyLTdMQ0dvS09TTThVRDczcUZDZG1YbndESzlOdi13aXhTZ3pOZkRWdGxuMzJsMi11OEwxZVpMLXJSS1N4TnZDMkFhQlE5UmlOd3NCMjhYbzVvbl9HSkhBbl9oM0RTd1oycUN2SXN3UkZVRlZrUGlMSTRMc1FmdmdMaWM2R0xx?oc=5",
-          "summary": "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos",
+          "summary": "7 Moments That Moved the Financial Markets in 2011 - abcnews.com",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "7 Moments That Moved the Financial Markets in 2011 - ABC News - Breaking News, Latest News and Videos"
+            "7 Moments That Moved the Financial Markets in 2011 - abcnews.com"
           ]
         }
       ]
     },
     {
-      "eventTitle": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+      "eventTitle": "2026 Outlook: U.S. Stocks and Economy - HKTDC Research",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+          "title": "2026 Outlook: U.S. Stocks and Economy - HKTDC Research",
           "source": "Google News",
           "publishedAt": "2026-01-06T08:00:00.000Z",
           "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTFB2d2pCUXY2dEoyS0FDZGRESy1vZmFKZ1JLb1FoOGQzaEFCRjZoMXZvS3hiVF94UzZqOTB1aTR3SXl4VzZ1TzhlQ0FUM3RhWDI0NTVxZnRlQ3VKMmpObWRLMG9B?oc=5",
-          "summary": "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com",
+          "summary": "2026 Outlook: U.S. Stocks and Economy - HKTDC Research",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "2026 Outlook: U.S. Stocks and Economy - research.hktdc.com"
+            "2026 Outlook: U.S. Stocks and Economy - HKTDC Research"
           ]
         }
       ]
@@ -1067,21 +1066,21 @@
       ]
     },
     {
-      "eventTitle": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+      "eventTitle": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - cepr.org",
       "relatedSectors": [],
       "relatedSymbols": [],
       "newsItems": [
         {
-          "title": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+          "title": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - cepr.org",
           "source": "Google News",
           "publishedAt": "2025-12-16T08:00:00.000Z",
           "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOTU0tTkRiNk5LN3JxZGREXzUzcnZjTTFvMU1YNHlVeEZQc1d3dHBmcGw5QzU0VXRXc181NXc1Mzl1elRWa1hJVHI4QVkyUUN4ZU9FTEpLMGg1T296ZXZWUWhub213MERTM043U0o1b1NadTVJOGw4aVFSdWdOS1hTMWF4QjI0WTNhWWFDYmw1S3dUYjVKQU1TYVlnSGJPcHFYVmZfSkdUZlRLQ0s4Vnc?oc=5",
-          "summary": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR",
+          "summary": "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - cepr.org",
           "relatedSymbols": [],
           "relatedSectors": [],
           "sentiment": "neutral",
           "factualClaims": [
-            "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - CEPR"
+            "Macro-financial disconnect in the euro area: Assessing tail risks to euro area growth and equities - cepr.org"
           ]
         }
       ]
@@ -1109,45 +1108,89 @@
   ],
   "aiInterpretation": {
     "verifiedFacts": [
-      "미국 5대 지수 종가: 다우 52,208.06 (-1.02%), 나스닥 25,122.18 (+0.99%), S&P 500 7,437.63 (+0.12%), 러셀 2000 2,946.10 (-0.26%), VIX 17.16 (+0.41%)",
-      "USD/KRW 환율: 1,436.60원 (5.68원 하락)",
-      "뉴스 팩트: Analyst Report: Ameriprise Financial Inc (Yahoo Finance)",
-      "뉴스 팩트: 일본은행, 기준금리 1% 유지…경제 성장률 전망 0.6%로 상향(종합2보) (Yonhap News (KR))",
-      "뉴스 팩트: 해수부 신청사 부지 경쟁 4파전…내달 7일 결과 발표 (Yonhap News (KR))"
+      "미국 5대 지수 종가: 다우 52,485.03 (+1.73%), 나스닥 25,373.85 (+3.81%), S&P 500 7,489.72 (+2.37%), 러셀 2000 2,931.34 (+0.86%), VIX 15.99 (-6.44%)",
+      "USD/KRW 환율: 1,442.07원 (0.21원 하락)",
+      "뉴스 팩트: [신상잇슈] 배라 '산딸기가 끌리는 연유'·도미노피자 '무진장 치킨박스' (Yonhap News (KR))",
+      "뉴스 팩트: 고의로 자기 팔 절단해 산재보험금 1억 넘게 가로챈 30대 집유 (Yonhap News (KR))",
+      "뉴스 팩트: 주유소 기름값 11주째 하락…휘발유·경유 1천800원대 유지 (Yonhap News (KR))"
     ],
     "aiAnalysis": [
-      "마이크로소프트의 폭발적 급등(+14.68%)과 브로드컴(+1.82%)의 강세에 힘입어 나스닥(+0.99%)과 S&P 500(+0.12%)은 상승 마감했으나, 전통 산업주의 약세로 다우 지수(-1.02%)는 하락하며 차별화 장세를 보였습니다. 원/달러 환율이 1,436.60원으로 5.68원 하락하고 대형 IT 및 AI 주도주의 강세가 확인됨에 따라 국내 증시에서도 반도체 및 AI 빅테크 관련주 중심의 수급 집중이 기대됩니다.",
-      "미국 증시에서 마이크로소프트(+14.68%)가 호실적 및 AI 사업 성장 가속화로 급등하고 브로드컴(+1.82%)이 동반 강세를 보이면서 글로벌 AI 생태계에 대한 투자 심리가 크게 개선되었습니다. 이에 따라 국내 대표 AI 반도체 및 HBM 공급망 핵심주인 삼성전자, SK하이닉스, 한미반도체로 외국인 및 기관의 수급 동조화 랠리가 강하게 나타날 것으로 전망됩니다.",
-      "원/달러 환율 하락(1,436.60원)과 나스닥 지수 상승 마감에 힘입어 코스피 지수는 대형 반도체주를 중심으로 상승 시도를 할 것으로 예상됩니다. 다만, 연준의 금리 결정에 따른 인플레이션 우려와 다우 지수의 약세가 상방 압력을 일부 제한할 수 있어 지수 전체의 급등보다는 AI·반도체 중심의 차별화된 수급 장세가 펼쳐질 가능성이 높습니다."
+      "마이크로소프트의 호실적 발표(+18.99%)와 반도체 섹터의 강력한 모멘텀에 힘입어 나스닥(+3.81%)과 S&P 500(+2.37%) 등 미국 주요 지수가 급등 마감했습니다. 이에 따라 오늘 아침 국내 증시에서도 반도체 및 AI 인프라 관련주를 중심으로 강력한 외국인·기관 수급 유입이 기대됩니다.",
+      "마이크로소프트의 어닝 서프라이즈와 엔비디아(+5.65%), 브로드컴(+5.12%) 등 글로벌 반도체 거대 기업들의 동반 강세는 국내 HBM 공급망인 SK하이닉스와 삼성전자, 한미반도체에 직간접적 강력한 모멘텀을 제공하며, 엔비디아의 AI 임대 사업 확대 기조는 HD현대에렉트릭 등 전력 기기주로의 자금 쏠림을 유발할 것으로 전망됩니다.",
+      "마이크로소프트와 엔비디아의 급등세로 위험자산 선호 심리가 크게 개선되며 코스피 및 코스닥 지수의 강력한 상방 압력이 예상됩니다. 원/달러 환율이 1,442원선에서 소폭 안정을 찾음에 따라 대형 IT 반도체주를 중심으로 외국인 순매수세 전환이 가속화될 것으로 분석됩니다."
     ],
     "forecast": [
-      "미국 증시 내 기술주 강세와 다우 지수 하락 등 종목별·섹터별 차별화가 뚜렷한 만큼, 시초가 갭상승 이후 매물 소화 과정을 확인하는 전략이 유효합니다. 환율 안정세(-5.68원 하락)를 바탕으로 외국인 수급이 유입되는 대형 AI 반도체 주도주 중심으로 눌림목 매수 대응을 권장하며, 개별 재료 부재 종목에 대한 추격 매수는 자제해야 합니다.",
-      "연방준비제도(Fed) 금리 결정에 따른 뉴욕증시 내 인플레이션 재발 우려",
-      "다우 지수 하락(-1.02%) 및 러셀 2000 하락(-0.26%)에 나타난 전통 산업주 및 중소형주 투심 약화"
+      "미국 기술주 랠리로 장 초반 갭상승 출발이 예상되는 만큼, 시초가 추격 매수보다는 외인/기관의 장중 순매수 지속 여부를 확인한 뒤 AI 반도체 주도주 중심으로 분할 매수로 접근하는 전략이 유효합니다. 호르무즈 해협 유조선 피습에 따른 국제유가 변동성도 동반 점검이 필요합니다.",
+      "호르무즈 해협 유조선 피습으로 인한 브렌트유 90달러 돌파 및 지정학적 리스크 재부각",
+      "애플 단기 급락(-8.66%)에 따른 국내 관련 IT 부품 공급망 종목의 투심 위축 가능성"
     ]
   },
   "validationLogs": [
     {
-      "id": "val_1785501301648_hcd5q",
-      "validationId": "val_uuid_1785501301648_3db2",
-      "briefingId": "briefing_2026-07-31",
-      "timestamp": "2026-07-31T12:35:01.648Z",
-      "fieldName": "quantAnalysisMarkdown",
+      "id": "val_1785538499028_xrdmx",
+      "validationId": "val_uuid_1785538499028_f0zx",
+      "briefingId": "briefing_2026-08-01",
+      "timestamp": "2026-07-31T22:54:59.028Z",
+      "fieldName": "worldNews",
       "sourceType": "YFINANCE",
-      "sourceValue": "Markdown Header Title Typo",
-      "aiGeneratedValue": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
-      "originalText": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
-      "correctedText": "## 2. 주요 종목 및 모멘텀 분석",
-      "field": "quantAnalysisMarkdown",
-      "originalSentence": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
+      "sourceValue": "Yonhap News (KR): 국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+      "aiGeneratedValue": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대 진입",
+      "originalText": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대 진입",
+      "correctedText": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+      "field": "worldNews",
+      "originalSentence": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대 진입",
       "errorType": "hallucination",
-      "referenceData": "Markdown Header Title Typo",
-      "beforeSentence": "## 2. 주요일렉트릭 종목 및 모멘텀 분석",
-      "afterSentence": "## 2. 주요 종목 및 모멘텀 분석",
+      "referenceData": "Yonhap News (KR): 국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
+      "beforeSentence": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대 진입",
+      "afterSentence": "국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대",
       "correctionApplied": true,
       "validationStatus": "CORRECTED",
       "confidence": "VERIFIED",
-      "sourceReference": "Markdown Header Title Typo"
+      "sourceReference": "Yonhap News (KR): 국제유가, 호르무즈 유조선 피습에 1% 상승…브렌트 90달러대"
+    },
+    {
+      "id": "val_1785538499028_zflsg",
+      "validationId": "val_uuid_1785538499028_e469",
+      "briefingId": "briefing_2026-08-01",
+      "timestamp": "2026-07-31T22:54:59.028Z",
+      "fieldName": "worldNews",
+      "sourceType": "YFINANCE",
+      "sourceValue": "Yahoo Finance: Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
+      "aiGeneratedValue": "Nvidia Reportedly Anchors Hut 8's $19.6 Billion AI Lease Bet",
+      "originalText": "Nvidia Reportedly Anchors Hut 8's $19.6 Billion AI Lease Bet",
+      "correctedText": "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
+      "field": "worldNews",
+      "originalSentence": "Nvidia Reportedly Anchors Hut 8's $19.6 Billion AI Lease Bet",
+      "errorType": "hallucination",
+      "referenceData": "Yahoo Finance: Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
+      "beforeSentence": "Nvidia Reportedly Anchors Hut 8's $19.6 Billion AI Lease Bet",
+      "afterSentence": "Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet",
+      "correctionApplied": true,
+      "validationStatus": "CORRECTED",
+      "confidence": "VERIFIED",
+      "sourceReference": "Yahoo Finance: Nvidia (NVDA) Reportedly Anchors Hut 8’s (HUT) $19.6 Billion AI Lease Bet"
+    },
+    {
+      "id": "val_1785538499028_ycohr",
+      "validationId": "val_uuid_1785538499028_eb4y",
+      "briefingId": "briefing_2026-08-01",
+      "timestamp": "2026-07-31T22:54:59.028Z",
+      "fieldName": "relatedKoreanStocks",
+      "sourceType": "YFINANCE",
+      "sourceValue": "오탈자 교정: AI 투가 -> AI 투자",
+      "aiGeneratedValue": "엔비디아 및 빅테크 AI 투가 확대에 따른 HBM3E/HBM4 핵심 공급사 수혜",
+      "originalText": "엔비디아 및 빅테크 AI 투가 확대에 따른 HBM3E/HBM4 핵심 공급사 수혜",
+      "correctedText": "엔비디아 및 빅테크 AI 투자 확대에 따른 HBM3E/HBM4 핵심 공급사 수혜",
+      "field": "relatedKoreanStocks",
+      "originalSentence": "엔비디아 및 빅테크 AI 투가 확대에 따른 HBM3E/HBM4 핵심 공급사 수혜",
+      "errorType": "hallucination",
+      "referenceData": "오탈자 교정: AI 투가 -> AI 투자",
+      "beforeSentence": "엔비디아 및 빅테크 AI 투가 확대에 따른 HBM3E/HBM4 핵심 공급사 수혜",
+      "afterSentence": "엔비디아 및 빅테크 AI 투자 확대에 따른 HBM3E/HBM4 핵심 공급사 수혜",
+      "correctionApplied": true,
+      "validationStatus": "CORRECTED",
+      "confidence": "VERIFIED",
+      "sourceReference": "오탈자 교정: AI 투가 -> AI 투자"
     }
   ]
 }

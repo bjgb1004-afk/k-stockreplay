@@ -158,6 +158,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
   const tradeSeriesRef = useRef<any>(null);
   const priceLineRef = useRef<any>(null);
   const firstCandleDateRef = useRef<string | null>(null);
+  const lastGameModeRef = useRef<'daily' | 'minute' | null>(null);
   const lastCandlesLengthRef = useRef<number>(0);
   const candlesRef = useRef(candles);
   useEffect(() => {
@@ -186,7 +187,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
 
     // Check if we need to recreate the chart
     if (chartRef.current) {
-      if (firstCandleDateRef.current === firstCandleDate) {
+      if (firstCandleDateRef.current === firstCandleDate && lastGameModeRef.current === gameMode) {
         return; // Safe to keep the existing chart
       } else {
         // Ticker/Dataset changed! Recreate the chart
@@ -300,6 +301,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
       chartRef.current = chart;
       setPriceChartInstance(chart);
       firstCandleDateRef.current = firstCandleDate;
+      lastGameModeRef.current = gameMode;
 
       const referencePrice = candles.length > 0 ? candles[candles.length - 1].close : 10000;
       const tickSize = getTickSize(referencePrice);
@@ -807,6 +809,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = ({
             candles={candles}
             height={volumeHeight}
             priceChart={priceChartInstance}
+            gameMode={gameMode}
           />
         </div>
       )}

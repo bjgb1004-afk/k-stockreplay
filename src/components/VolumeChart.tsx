@@ -11,6 +11,7 @@ interface VolumeChartProps {
   candles: Candle[];
   height: number;
   priceChart: any;
+  gameMode: 'daily' | 'minute';
 }
 
 const parseTimeToChart = (dateStr: string): string | number => {
@@ -41,20 +42,22 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
   candles,
   height,
   priceChart,
+  gameMode,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<any>(null);
   const volumeSeriesRef = useRef<any>(null);
   const firstCandleDateRef = useRef<string | null>(null);
+  const lastGameModeRef = useRef<'daily' | 'minute' | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || candles.length === 0) return;
 
     const firstCandleDate = candles[0].date;
 
-    // Recreate only if stock/dataset changes
+    // Recreate only if stock/dataset or gameMode changes
     if (chartRef.current) {
-      if (firstCandleDateRef.current === firstCandleDate) {
+      if (firstCandleDateRef.current === firstCandleDate && lastGameModeRef.current === gameMode) {
         return;
       } else {
         try {
@@ -165,6 +168,7 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
 
       chartRef.current = chart;
       firstCandleDateRef.current = firstCandleDate;
+      lastGameModeRef.current = gameMode;
 
       const volumeSeries = chart.addSeries(HistogramSeries, {
         priceFormat: {
@@ -214,7 +218,7 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
         cancelAnimationFrame(resizeAnimationFrameId);
       }
     };
-  }, [candles[0]?.date, height]);
+  }, [candles[0]?.date, height, gameMode]);
 
   // Effect to update Volume Series Data
   useEffect(() => {

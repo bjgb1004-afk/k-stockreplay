@@ -3351,52 +3351,67 @@ CREATE TABLE kstock_platform_data (
 
   // --- KST 15:40 배치 스케줄러 데몬 ---
   function setupStockBatchScheduler() {
-    console.log('[Stock Batch] Initializing KST 15:40 stock batch scheduler daemon...');
+    console.log('[Stock Batch] Initializing KST scheduler daemon (07:40 Briefing / 15:40 Batch)...');
     
-    // 1분 간격으로 현재 시간대를 체크하여 KST 15시 40분 영업일(월-금)에 일괄 수집 시작
+    // 1분 간격으로 현재 시간대를 체크하여 KST 07:40분(장전 브리핑) 및 15시 40분(장후 데이터) 영업일 실행
     setInterval(() => {
       try {
         const timeInfo = getKstTimeInfo();
         
-        // 영업일(월~금: 1~5) 이고, 15시 40분인 경우 실행
+        // 영업일(월~금: 1~5) 에만 실행
         if (timeInfo.dayOfWeek >= 1 && timeInfo.dayOfWeek <= 5) {
+          // 1. 장전 브리핑 자동화 (07:40 KST)
+          if (timeInfo.hour === 7 && timeInfo.minute === 40) {
+            console.log(`[Briefing Scheduler] Time matches 07:40 KST. Triggering pre-market briefing...`);
+            import('child_process').then(({ exec }) => {
+              exec('node scripts/ai-analyst.js morning', (err, stdout, stderr) => {
+                if (err) {
+                  console.error('[Briefing Scheduler] Morning briefing run failed:', err);
+                  return;
+                }
+                console.log('[Briefing Scheduler] Morning briefing completed successfully.', stdout);
+              });
+            }).catch(err => {
+              console.error('[Briefing Scheduler] Failed to load child_process for morning briefing:', err);
+            });
+          }
+
+          // 2. 장후 데이터 수집 및 분석 (15:40 KST)
           if (timeInfo.hour === 15 && timeInfo.minute === 40) {
-            console.log(`[Stock Batch Scheduler] Time matches 15:40 KST on a business day. Checking if market is open today...`);
+            console.log(`[Stock Batch Scheduler] Time matches 15:40 KST. Checking market status...`);
             
             isMarketOpenToday().then(isOpen => {
               if (!isOpen) {
-                console.log('[Stock Batch Scheduler] Korean stock market is closed today (Holiday). Keeping existing data and skipping automated batch run.');
+                console.log('[Stock Batch Scheduler] Market is closed today. Skipping batch.');
                 return;
               }
               
-              console.log(`[Stock Batch Scheduler] Market is open today. Triggering batch & afternoon report...`);
+              console.log(`[Stock Batch Scheduler] Market is open. Triggering batch & afternoon report...`);
               
-              // 1. Run stock batch
               runDailyStockBatch().catch(err => {
-                console.error('[Stock Batch Scheduler] Triggered batch run failed with error:', err);
+                console.error('[Stock Batch Scheduler] Batch run failed:', err);
               });
 
-              // 2. Run afternoon pipeline (Jodoju extraction + AI analysis)
               import('child_process').then(({ exec }) => {
                 exec('SKIP_DELAY=true node scripts/ai-analyst.js afternoon', (err, stdout, stderr) => {
                   if (err) {
-                    console.error('[Stock Batch Scheduler] Afternoon report run failed:', err);
+                    console.error('[Stock Batch Scheduler] Afternoon report failed:', err);
                     return;
                   }
-                  console.log('[Stock Batch Scheduler] Afternoon report completed successfully.', stdout);
+                  console.log('[Stock Batch Scheduler] Afternoon report completed.', stdout);
                 });
               }).catch(err => {
                 console.error('[Stock Batch Scheduler] Failed to load child_process for afternoon report:', err);
               });
             }).catch(err => {
-              console.error('[Stock Batch Scheduler] isMarketOpenToday check failed, fallback to triggering batch:', err);
+              console.error('[Stock Batch Scheduler] isMarketOpenToday check failed:', err);
             });
           }
         }
       } catch (err: any) {
-        console.error('[Stock Batch Scheduler] Error inside ticker loop:', err.message || err);
+        console.error('[Scheduler] Error in interval loop:', err.message || err);
       }
-    }, 60000); // 1분 주기 체킹
+    }, 60000);
   }
 
   // 2. Data Provider B: Balanced Random Simulation Provider (Fallback & Sandbox testing)
@@ -3785,7 +3800,7 @@ CREATE TABLE kstock_platform_data (
       
       candles.push({
         time: timeStr,
-        date: dateStr,
+        date: `${dateStr} ${timeStr}:00`,
         open: rounded,
         high: Math.max(rounded, roundToTick(price + (highPrice - lowPrice) * 0.015 * randomSeed())),
         low: Math.min(rounded, roundToTick(price - (highPrice - lowPrice) * 0.015 * randomSeed())),
