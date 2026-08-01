@@ -3605,6 +3605,7 @@ CREATE TABLE kstock_platform_data (
 
         const targetDay = sortedDays[sortedDays.length - 1];
         const selectedRawItems = daysMap.get(targetDay)!;
+        console.log(`[Naver Minute] Selected target day: ${targetDay} with ${selectedRawItems.length} candles.`);
 
         let totalVol = 0;
         for (let idx = 0; idx < selectedRawItems.length; idx++) {

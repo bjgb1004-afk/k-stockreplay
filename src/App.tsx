@@ -1482,10 +1482,18 @@ export default function App() {
       setIsPlaying(false);
       setHoverIndex(null);
       setStockData([]); // Clear old data to prevent stale chart flashes
+      setCurrentIndex(0); // Reset index to 0 during load
  
       // Helper to sort loaded stock candles chronologically by date/time
       const sortAndValidateCandles = (candlesList: Candle[]): Candle[] => {
-        const sorted = [...candlesList].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        const sorted = [...candlesList]
+          .filter(c => c && c.date)
+          .sort((a, b) => {
+            const da = new Date(a.date.includes(' ') ? a.date.replace(' ', 'T') : a.date).getTime();
+            const db = new Date(b.date.includes(' ') ? b.date.replace(' ', 'T') : b.date).getTime();
+            return (da || 0) - (db || 0);
+          });
+
         // Remove duplicate dates that break Lightweight Charts
         const unique = [];
         const seenDates = new Set();
@@ -1513,6 +1521,8 @@ export default function App() {
               const initialIndex = Math.min(targetStartingIndex, sorted.length - 1);
               setStockData(sorted);
               setDataProviderSource(apiData.source || 'Standard Replay Provider');
+              // Ensure we don't use generic ticker as name if selectedStock has a better one
+              const finalName = (apiData.name && !/^\d+$/.test(apiData.name)) ? apiData.name : (selectedStock.name || apiData.name);
               setWigglingPrice(sorted[initialIndex]?.open || sorted[0]?.open || 0);
               setCurrentIndex(initialIndex);
               resetSimulation(sorted[initialIndex]?.open || sorted[0]?.open || 0);
@@ -1572,6 +1582,8 @@ export default function App() {
               const initialIndex = Math.min(targetStartingIndex, sorted.length - 1);
               setStockData(sorted);
               setDataProviderSource('Precision 3-Stage Masking Pipeline (Real 1m Source)');
+              // Ensure we don't use generic ticker as name if selectedStock has a better one
+              const finalName = (apiData.name && !/^\d+$/.test(apiData.name)) ? apiData.name : (selectedStock.name || apiData.name);
               setWigglingPrice(sorted[initialIndex]?.open || sorted[0]?.open || 0);
               setCurrentIndex(initialIndex);
               resetSimulation(sorted[initialIndex]?.open || sorted[0]?.open || 0);

@@ -218,7 +218,7 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
         cancelAnimationFrame(resizeAnimationFrameId);
       }
     };
-  }, [candles[0]?.date, height, gameMode]);
+  }, [candles[0]?.date, height, gameMode, priceChart]);
 
   // Effect to update Volume Series Data
   useEffect(() => {
