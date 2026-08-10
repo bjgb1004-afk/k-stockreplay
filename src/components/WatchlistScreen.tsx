@@ -13,7 +13,7 @@ export default function WatchlistScreen() {
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [stocks, setStocks] = useState<StockOption[]>([]);
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<WatchlistItem | null>(null);
+  const [selected, setSelected] = useState<StockOption | null>(null);
 
   useEffect(() => {
     getWatchlist().then((list) => setItems(list.sort((a, b) => b.updated_at.localeCompare(a.updated_at))));
@@ -43,7 +43,15 @@ export default function WatchlistScreen() {
   }
 
   if (selected) {
-    return <CompanyDetailScreen item={selected} onBack={() => setSelected(null)} />;
+    return (
+      <CompanyDetailScreen
+        company={selected}
+        onBack={() => {
+          setSelected(null);
+          getWatchlist().then((list) => setItems(list.sort((a, b) => b.updated_at.localeCompare(a.updated_at))));
+        }}
+      />
+    );
   }
 
   return (

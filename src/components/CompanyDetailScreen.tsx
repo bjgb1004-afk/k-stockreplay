@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Screen, Section } from './ui';
 import { daysUntil, ddayLabel } from '../lib/date';
-import type { WatchlistItem } from '../lib/watchlistDb';
+import { addToWatchlist, getWatchlist, removeFromWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+
+interface CompanyRef {
+  ticker: string;
+  companyName: string;
+}
 
 interface DividendEvent {
   ticker: string;
@@ -31,47 +36,76 @@ const typeLabel: Record<HistoryEntry['type'], string> = {
   MANAGEMENT_CHANGE: '임원변경',
 };
 
-export default function CompanyDetailScreen({ item, onBack }: { item: WatchlistItem; onBack: () => void }) {
+export default function CompanyDetailScreen({ company, onBack }: { company: CompanyRef; onBack: () => void }) {
   const [dividends, setDividends] = useState<DividendEvent[]>([]);
   const [events, setEvents] = useState<InvestmentEvent[]>([]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [watchlistEntry, setWatchlistEntry] = useState<WatchlistItem | null | undefined>(undefined);
 
   useEffect(() => {
     fetch('/data/dividends.json').then((r) => r.json()).then(setDividends).catch(() => {});
     fetch('/data/events.json').then((r) => r.json()).then(setEvents).catch(() => {});
     fetch('/data/history.json').then((r) => r.json()).then(setHistory).catch(() => {});
-  }, []);
+    refreshWatchlistEntry();
+  }, [company.ticker]);
+
+  function refreshWatchlistEntry() {
+    getWatchlist().then((list) => setWatchlistEntry(list.find((w) => w.ticker === company.ticker) ?? null));
+  }
+
+  async function handleToggleWatch() {
+    if (watchlistEntry) {
+      await removeFromWatchlist(company.ticker);
+    } else {
+      await addToWatchlist(company.ticker, company.companyName);
+    }
+    refreshWatchlistEntry();
+  }
 
   const nextDividend = dividends
-    .filter((d) => d.ticker === item.ticker && daysUntil(d.exDividendDate) >= 0)
+    .filter((d) => d.ticker === company.ticker && daysUntil(d.exDividendDate) >= 0)
     .sort((a, b) => a.exDividendDate.localeCompare(b.exDividendDate))[0];
 
   const nextEvent = events
-    .filter((e) => e.ticker === item.ticker && daysUntil(e.eventDate) >= 0)
+    .filter((e) => e.ticker === company.ticker && daysUntil(e.eventDate) >= 0)
     .sort((a, b) => a.eventDate.localeCompare(b.eventDate))[0];
 
   const myHistory = history
-    .filter((h) => h.ticker === item.ticker)
+    .filter((h) => h.ticker === company.ticker)
     .sort((a, b) => b.date.localeCompare(a.date));
 
   // KST 기준 날짜 표시 - fetch-facts.mjs의 todayKst()와 같은 기준.
-  const watchedSince = new Date(item.updated_at).toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+  const watchedSince = watchlistEntry
+    ? new Date(watchlistEntry.updated_at).toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
+    : null;
 
   return (
     <Screen>
-      <header className="mb-6 flex items-center gap-2">
-        <button onClick={onBack} aria-label="뒤로" className="text-slate-400 hover:text-slate-100 -ml-1 p-1">
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <h1 className="text-lg font-bold">{item.companyName}</h1>
-          <p className="text-xs text-slate-500">{item.ticker}</p>
+      <header className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button onClick={onBack} aria-label="뒤로" className="text-slate-400 hover:text-slate-100 -ml-1 p-1">
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 className="text-lg font-bold">{company.companyName}</h1>
+            <p className="text-xs text-slate-500">{company.ticker}</p>
+          </div>
         </div>
+        {watchlistEntry !== undefined && (
+          <button
+            onClick={handleToggleWatch}
+            className={`text-xs rounded-full px-3 py-1.5 shrink-0 ${
+              watchlistEntry ? 'bg-slate-800 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'
+            }`}
+          >
+            {watchlistEntry ? '관심종목에서 삭제' : '+ 관심종목 추가'}
+          </button>
+        )}
       </header>
 
       <Section title="🛂 COMPANY PASSPORT">
         <div className="space-y-2 text-sm">
-          <Row label="관심종목 등록일" value={watchedSince} />
+          {watchedSince && <Row label="관심종목 등록일" value={watchedSince} />}
           <Row label="다음 배당" value={nextDividend ? `${nextDividend.exDividendDate} (${ddayLabel(daysUntil(nextDividend.exDividendDate))}) · 주당 ${nextDividend.dividendPerShare.toLocaleString()}원` : '예정된 배당 없음'} />
           <Row label="다음 일정" value={nextEvent ? `${nextEvent.title} · ${nextEvent.eventDate} (${ddayLabel(daysUntil(nextEvent.eventDate))})` : '예정된 일정 없음'} />
         </div>

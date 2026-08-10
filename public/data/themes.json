@@ -1,0 +1,9 @@
+[
+  { "id": "semiconductor", "label": "반도체", "tickers": ["005930", "000660"] },
+  { "id": "auto", "label": "자동차", "tickers": ["005380", "012330"] },
+  { "id": "platform", "label": "IT 플랫폼", "tickers": ["035720", "035420", "323410"] },
+  { "id": "battery", "label": "2차전지", "tickers": ["051910", "006400", "003670"] },
+  { "id": "bio", "label": "바이오", "tickers": ["207940", "068270"] },
+  { "id": "materials_energy", "label": "소재 · 에너지", "tickers": ["005490", "015760"] },
+  { "id": "electronics", "label": "가전 · 전자", "tickers": ["066570"] }
+]
