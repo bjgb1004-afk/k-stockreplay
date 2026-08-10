@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Screen, Section } from './ui';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+import { daysUntil, ddayLabel } from '../lib/date';
 
 interface DividendEvent {
   ticker: string;
@@ -9,19 +10,6 @@ interface DividendEvent {
   paymentDate: string;
   dividendPerShare: number;
   cycle: string;
-}
-
-function daysUntil(dateStr: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const target = new Date(dateStr);
-  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
-}
-
-function ddayLabel(days: number): string {
-  if (days === 0) return 'D-DAY';
-  if (days < 0) return `D+${-days}`;
-  return `D-${days}`;
 }
 
 export default function DividendScreen() {
