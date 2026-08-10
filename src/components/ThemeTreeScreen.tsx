@@ -29,7 +29,7 @@ export default function ThemeTreeScreen() {
     return <CompanyDetailScreen company={selected} onBack={() => setSelected(null)} />;
   }
 
-  const companyByTicker = new Map(stocks.map((s) => [s.ticker, s]));
+  const companyByTicker = new Map<string, StockOption>(stocks.map((s) => [s.ticker, s]));
 
   return (
     <Screen>
