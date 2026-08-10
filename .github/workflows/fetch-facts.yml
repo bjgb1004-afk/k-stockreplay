@@ -1,0 +1,32 @@
+name: Fetch DART facts
+
+on:
+  schedule:
+    # 07:00 KST daily (22:00 UTC previous day)
+    - cron: '0 22 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch today's disclosures
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+        run: node scripts/fetch-facts.mjs
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/today.json
+          git diff --staged --quiet || git commit -m "chore: update today.json ($(date -u +%Y-%m-%d))"
+          git push
