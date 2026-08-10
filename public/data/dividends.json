@@ -1,0 +1,7 @@
+[
+  { "ticker": "005930", "companyName": "삼성전자", "exDividendDate": "2026-08-14", "paymentDate": "2026-09-20", "dividendPerShare": 361, "cycle": "분기" },
+  { "ticker": "000660", "companyName": "SK하이닉스", "exDividendDate": "2026-08-29", "paymentDate": "2026-10-15", "dividendPerShare": 300, "cycle": "분기" },
+  { "ticker": "005380", "companyName": "현대차", "exDividendDate": "2026-09-30", "paymentDate": "2026-11-14", "dividendPerShare": 2100, "cycle": "반기" },
+  { "ticker": "005490", "companyName": "POSCO홀딩스", "exDividendDate": "2026-09-30", "paymentDate": "2026-11-20", "dividendPerShare": 4000, "cycle": "반기" },
+  { "ticker": "015760", "companyName": "한국전력", "exDividendDate": "2026-12-30", "paymentDate": "2027-04-15", "dividendPerShare": 150, "cycle": "연간" }
+]
