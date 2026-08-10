@@ -1,0 +1,106 @@
+import { useEffect, useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
+import { Screen, Section } from './ui';
+import { daysUntil, ddayLabel } from '../lib/date';
+import type { WatchlistItem } from '../lib/watchlistDb';
+
+interface DividendEvent {
+  ticker: string;
+  exDividendDate: string;
+  dividendPerShare: number;
+  cycle: string;
+}
+
+interface InvestmentEvent {
+  ticker: string;
+  eventDate: string;
+  title: string;
+}
+
+interface HistoryEntry {
+  ticker: string;
+  date: string;
+  type: 'DISCLOSURE' | 'CONTRACT' | 'DIVIDEND' | 'MANAGEMENT_CHANGE';
+  title: string;
+}
+
+const typeLabel: Record<HistoryEntry['type'], string> = {
+  DISCLOSURE: '공시',
+  CONTRACT: '계약',
+  DIVIDEND: '배당',
+  MANAGEMENT_CHANGE: '임원변경',
+};
+
+export default function CompanyDetailScreen({ item, onBack }: { item: WatchlistItem; onBack: () => void }) {
+  const [dividends, setDividends] = useState<DividendEvent[]>([]);
+  const [events, setEvents] = useState<InvestmentEvent[]>([]);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+
+  useEffect(() => {
+    fetch('/data/dividends.json').then((r) => r.json()).then(setDividends).catch(() => {});
+    fetch('/data/events.json').then((r) => r.json()).then(setEvents).catch(() => {});
+    fetch('/data/history.json').then((r) => r.json()).then(setHistory).catch(() => {});
+  }, []);
+
+  const nextDividend = dividends
+    .filter((d) => d.ticker === item.ticker && daysUntil(d.exDividendDate) >= 0)
+    .sort((a, b) => a.exDividendDate.localeCompare(b.exDividendDate))[0];
+
+  const nextEvent = events
+    .filter((e) => e.ticker === item.ticker && daysUntil(e.eventDate) >= 0)
+    .sort((a, b) => a.eventDate.localeCompare(b.eventDate))[0];
+
+  const myHistory = history
+    .filter((h) => h.ticker === item.ticker)
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  // KST 기준 날짜 표시 - fetch-facts.mjs의 todayKst()와 같은 기준.
+  const watchedSince = new Date(item.updated_at).toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+
+  return (
+    <Screen>
+      <header className="mb-6 flex items-center gap-2">
+        <button onClick={onBack} aria-label="뒤로" className="text-slate-400 hover:text-slate-100 -ml-1 p-1">
+          <ArrowLeft size={20} />
+        </button>
+        <div>
+          <h1 className="text-lg font-bold">{item.companyName}</h1>
+          <p className="text-xs text-slate-500">{item.ticker}</p>
+        </div>
+      </header>
+
+      <Section title="🛂 COMPANY PASSPORT">
+        <div className="space-y-2 text-sm">
+          <Row label="관심종목 등록일" value={watchedSince} />
+          <Row label="다음 배당" value={nextDividend ? `${nextDividend.exDividendDate} (${ddayLabel(daysUntil(nextDividend.exDividendDate))}) · 주당 ${nextDividend.dividendPerShare.toLocaleString()}원` : '예정된 배당 없음'} />
+          <Row label="다음 일정" value={nextEvent ? `${nextEvent.title} · ${nextEvent.eventDate} (${ddayLabel(daysUntil(nextEvent.eventDate))})` : '예정된 일정 없음'} />
+        </div>
+      </Section>
+
+      <Section title="📜 HISTORY">
+        {myHistory.length === 0 ? (
+          <p className="text-sm text-slate-500">아직 기록된 히스토리가 없습니다.</p>
+        ) : (
+          <ul className="space-y-2">
+            {myHistory.map((h, i) => (
+              <li key={`${h.date}-${i}`} className="flex items-start gap-2 text-sm border-b border-slate-800 pb-2">
+                <span className="text-xs text-slate-500 shrink-0 w-20">{h.date}</span>
+                <span className="text-xs bg-slate-800 text-slate-300 rounded px-1.5 py-0.5 shrink-0">{typeLabel[h.type]}</span>
+                <span className="text-slate-200">{h.title}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
+    </Screen>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between bg-slate-900 rounded-lg px-3 py-2">
+      <span className="text-slate-500 text-xs">{label}</span>
+      <span className="text-slate-200 text-xs text-right ml-2">{value}</span>
+    </div>
+  );
+}
