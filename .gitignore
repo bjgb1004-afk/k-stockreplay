@@ -7,10 +7,8 @@ coverage/
 .env*
 !.env.example
 
-# Dynamic Cache & Leaderboard files
-jodoju_cache.json
-leaderboard_ilbong.json
-leaderboard_danta.json
+# Supabase CLI local cache
+supabase/.temp/
 
 # Temporary / Test Files
 test.js
