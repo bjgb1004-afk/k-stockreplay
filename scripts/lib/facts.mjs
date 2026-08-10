@@ -22,8 +22,16 @@ export function levelFor(changeCount) {
   return 'GREEN';
 }
 
+// changesByTicker: Map<ticker, { companyName, changeCount }>. Keyed by ticker (not
+// companyName) so the client can join this feed against the local IndexedDB
+// watchlist - which also keys by ticker - without fragile display-name matching.
 export function buildMyStockRadar(changesByTicker) {
   return [...changesByTicker.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .map(([companyName, changeCount]) => ({ companyName, changeCount, level: levelFor(changeCount) }));
+    .sort((a, b) => b[1].changeCount - a[1].changeCount)
+    .map(([ticker, { companyName, changeCount }]) => ({
+      ticker,
+      companyName,
+      changeCount,
+      level: levelFor(changeCount),
+    }));
 }

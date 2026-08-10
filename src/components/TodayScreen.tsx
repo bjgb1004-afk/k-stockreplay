@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Screen, Section, Stat } from './ui';
+import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 
 type ChangeLevel = 'RED' | 'ORANGE' | 'GREEN';
 type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
@@ -8,7 +9,7 @@ interface TodayData {
   date: string;
   summary: { newEvents: number; importantFacts: number; dividendEvents: number; relationChanges: number };
   newToday: { id: string; companyName: string; type: string; title: string; time: string }[];
-  myStockRadar: { companyName: string; changeCount: number; level: ChangeLevel }[];
+  myStockRadar: { ticker: string; companyName: string; changeCount: number; level: ChangeLevel }[];
   upcoming: { tomorrow: { dividend: number; shareholderMeeting: number }; thisWeek: { earnings: number; dividend: number } };
   factChecks: { question: string; status: FactStatus }[];
 }
@@ -35,6 +36,7 @@ const factStatusLabel: Record<FactStatus, string> = {
 
 export default function TodayScreen() {
   const [data, setData] = useState<TodayData | null>(null);
+  const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -45,7 +47,18 @@ export default function TodayScreen() {
       })
       .then(setData)
       .catch(() => setError(true));
+    getWatchlist().then(setWatchlist);
   }, []);
+
+  // 서버는 유저별 워치리스트를 모른다 (§2-3 로컬 우선 저장) - data.myStockRadar는
+  // "오늘 공시 있었던 회사 전체" 목록일 뿐이다. "내 종목 변화"는 로컬 워치리스트가
+  // 멤버십의 기준이고, 그 종목이 오늘 피드에 없으면 변화 없음(GREEN)으로 채운다.
+  const myRadar = useMemo(() => {
+    const feedByTicker = new Map((data?.myStockRadar ?? []).map((s) => [s.ticker, s]));
+    return watchlist
+      .map((w) => feedByTicker.get(w.ticker) ?? { ticker: w.ticker, companyName: w.companyName, changeCount: 0, level: 'GREEN' as ChangeLevel })
+      .sort((a, b) => b.changeCount - a.changeCount);
+  }, [data, watchlist]);
 
   if (error) {
     return (
@@ -91,19 +104,25 @@ export default function TodayScreen() {
       </Section>
 
       <Section title="🔴 내 종목 변화">
-        <ul className="space-y-2">
-          {data.myStockRadar.map((stock) => (
-            <li key={stock.companyName} className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${levelDot[stock.level]}`} />
-                {stock.companyName}
-              </span>
-              <span className="text-slate-400">
-                {stock.changeCount > 0 ? `${stock.changeCount}건 변화` : '변화 없음'}
-              </span>
-            </li>
-          ))}
-        </ul>
+        {myRadar.length === 0 ? (
+          <p className="text-sm text-slate-500">
+            아직 관심종목이 없습니다. MY STOCK RADAR 탭에서 추가해보세요.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {myRadar.map((stock) => (
+              <li key={stock.ticker} className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${levelDot[stock.level]}`} />
+                  {stock.companyName}
+                </span>
+                <span className="text-slate-400">
+                  {stock.changeCount > 0 ? `${stock.changeCount}건 변화` : '변화 없음'}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </Section>
 
       <Section title="📅 앞으로의 투자 일정">

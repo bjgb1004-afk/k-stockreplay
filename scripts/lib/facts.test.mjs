@@ -11,11 +11,15 @@ assert.equal(levelFor(1), 'ORANGE');
 assert.equal(levelFor(2), 'ORANGE');
 assert.equal(levelFor(3), 'RED');
 
-const radar = buildMyStockRadar(new Map([['삼성전자', 3], ['현대차', 0], ['SK하이닉스', 1]]));
+const radar = buildMyStockRadar(new Map([
+  ['005930', { companyName: '삼성전자', changeCount: 3 }],
+  ['005380', { companyName: '현대차', changeCount: 0 }],
+  ['000660', { companyName: 'SK하이닉스', changeCount: 1 }],
+]));
 assert.deepEqual(radar, [
-  { companyName: '삼성전자', changeCount: 3, level: 'RED' },
-  { companyName: 'SK하이닉스', changeCount: 1, level: 'ORANGE' },
-  { companyName: '현대차', changeCount: 0, level: 'GREEN' },
+  { ticker: '005930', companyName: '삼성전자', changeCount: 3, level: 'RED' },
+  { ticker: '000660', companyName: 'SK하이닉스', changeCount: 1, level: 'ORANGE' },
+  { ticker: '005380', companyName: '현대차', changeCount: 0, level: 'GREEN' },
 ]);
 
 console.log('facts.mjs: all checks passed');

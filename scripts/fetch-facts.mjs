@@ -54,6 +54,7 @@ for (const [ticker, corpCode] of Object.entries(corpCodes)) {
   for (const d of disclosures) {
     newToday.push({
       id: d.rcept_no,
+      ticker,
       companyName,
       type: classify(d.report_nm),
       title: d.report_nm,
@@ -61,7 +62,8 @@ for (const [ticker, corpCode] of Object.entries(corpCodes)) {
     });
   }
   if (disclosures.length > 0) {
-    changesByTicker.set(companyName, (changesByTicker.get(companyName) ?? 0) + disclosures.length);
+    const prev = changesByTicker.get(ticker)?.changeCount ?? 0;
+    changesByTicker.set(ticker, { companyName, changeCount: prev + disclosures.length });
   }
 }
 

@@ -8,15 +8,15 @@
     "relationChanges": 2
   },
   "newToday": [
-    { "id": "e1", "companyName": "삼성전자", "type": "DISCLOSURE", "title": "신규 시설투자 공시 (평택 캠퍼스 증설)", "time": "09:12" },
-    { "id": "e2", "companyName": "SK하이닉스", "type": "CONTRACT", "title": "대규모 공급계약 체결", "time": "10:41" },
-    { "id": "e3", "companyName": "현대차", "type": "DIVIDEND", "title": "중간배당 결정 공시", "time": "15:32" },
-    { "id": "e4", "companyName": "카카오", "type": "MANAGEMENT_CHANGE", "title": "대표이사 변경", "time": "16:05" }
+    { "id": "e1", "ticker": "005930", "companyName": "삼성전자", "type": "DISCLOSURE", "title": "신규 시설투자 공시 (평택 캠퍼스 증설)", "time": "09:12" },
+    { "id": "e2", "ticker": "000660", "companyName": "SK하이닉스", "type": "CONTRACT", "title": "대규모 공급계약 체결", "time": "10:41" },
+    { "id": "e3", "ticker": "005380", "companyName": "현대차", "type": "DIVIDEND", "title": "중간배당 결정 공시", "time": "15:32" },
+    { "id": "e4", "ticker": "035720", "companyName": "카카오", "type": "MANAGEMENT_CHANGE", "title": "대표이사 변경", "time": "16:05" }
   ],
   "myStockRadar": [
-    { "companyName": "삼성전자", "changeCount": 3, "level": "RED" },
-    { "companyName": "SK하이닉스", "changeCount": 2, "level": "ORANGE" },
-    { "companyName": "현대차", "changeCount": 0, "level": "GREEN" }
+    { "ticker": "005930", "companyName": "삼성전자", "changeCount": 3, "level": "RED" },
+    { "ticker": "000660", "companyName": "SK하이닉스", "changeCount": 2, "level": "ORANGE" },
+    { "ticker": "005380", "companyName": "현대차", "changeCount": 0, "level": "GREEN" }
   ],
   "upcoming": {
     "tomorrow": { "dividend": 3, "shareholderMeeting": 1 },
