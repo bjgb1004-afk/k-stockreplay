@@ -1,0 +1,17 @@
+[
+  { "ticker": "005930", "companyName": "삼성전자" },
+  { "ticker": "000660", "companyName": "SK하이닉스" },
+  { "ticker": "005380", "companyName": "현대차" },
+  { "ticker": "035720", "companyName": "카카오" },
+  { "ticker": "035420", "companyName": "NAVER" },
+  { "ticker": "051910", "companyName": "LG화학" },
+  { "ticker": "006400", "companyName": "삼성SDI" },
+  { "ticker": "207940", "companyName": "삼성바이오로직스" },
+  { "ticker": "005490", "companyName": "POSCO홀딩스" },
+  { "ticker": "068270", "companyName": "셀트리온" },
+  { "ticker": "003670", "companyName": "포스코퓨처엠" },
+  { "ticker": "012330", "companyName": "현대모비스" },
+  { "ticker": "066570", "companyName": "LG전자" },
+  { "ticker": "323410", "companyName": "카카오뱅크" },
+  { "ticker": "015760", "companyName": "한국전력" }
+]

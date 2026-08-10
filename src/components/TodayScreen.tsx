@@ -1,4 +1,5 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
+import { Screen, Section, Stat } from './ui';
 
 type ChangeLevel = 'RED' | 'ORANGE' | 'GREEN';
 type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
@@ -123,31 +124,5 @@ export default function TodayScreen() {
         </ul>
       </Section>
     </Screen>
-  );
-}
-
-function Screen({ children }: { children: ReactNode }) {
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 px-4 py-6 max-w-md mx-auto">
-      {children}
-    </div>
-  );
-}
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="mb-6">
-      <h2 className="text-sm font-semibold text-slate-300 mb-3">{title}</h2>
-      {children}
-    </section>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="bg-slate-900 rounded-lg px-3 py-2">
-      <p className="text-slate-500 text-xs">{label}</p>
-      <p className="text-lg font-bold">{value}</p>
-    </div>
   );
 }
