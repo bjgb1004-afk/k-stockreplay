@@ -37,6 +37,9 @@ export default function WatchlistScreen() {
     await addToWatchlist(stock.ticker, stock.companyName);
     setItems(await getWatchlist());
     setQuery('');
+    // D1 온보딩(§6-12): 추가하자마자 바로 상세(COMPANY PASSPORT + HISTORY)로
+    // 이동해서 최근 히스토리를 바로 보여준다 - 목록에 남겨두고 따로 찾게 하지 않는다.
+    setSelected(stock);
   }
 
   async function handleRemove(ticker: string) {

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Screen, Section } from './ui';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { daysUntil, ddayLabel } from '../lib/date';
+import { afterTax } from '../lib/tax';
 
 interface DividendEvent {
   ticker: string;
@@ -71,9 +72,17 @@ export default function DividendScreen() {
                   <span>배당락 {d.exDividendDate} · {d.cycle}</span>
                   <span>주당 {d.dividendPerShare.toLocaleString()}원</span>
                 </div>
+                <div className="text-xs text-emerald-400 mt-1">
+                  세후 실수령액(주당) 약 {afterTax(d.dividendPerShare).toLocaleString()}원
+                </div>
               </li>
             ))}
           </ul>
+        )}
+        {myDividends.length > 0 && (
+          <p className="text-xs text-slate-600 mt-3">
+            * 배당소득세 15.4%(원천징수 기준) 적용 추정치입니다. 금융소득 2천만원 초과 시 종합과세 대상이 될 수 있어요.
+          </p>
         )}
       </Section>
     </Screen>
