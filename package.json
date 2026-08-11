@@ -21,7 +21,8 @@
     "react-dom": "^19.0.1",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3"
+    "vite": "^6.2.3",
+    "web-push": "^3.6.7"
   },
   "description": "K-STOCKREPLAY — 관심종목의 공시·이벤트·배당을 매일 정리해서 보여주는 서비스",
   "repository": {

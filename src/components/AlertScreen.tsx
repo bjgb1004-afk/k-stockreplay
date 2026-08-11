@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Bell, BellOff } from 'lucide-react';
 import { Screen, Section } from './ui';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { getReadIds, markRead } from '../lib/alertsDb';
+import { pushSupport, getExistingSubscription, subscribeToPush, unsubscribeFromPush, type PushSupport } from '../lib/push';
 
 type EventType = 'DISCLOSURE' | 'CONTRACT' | 'DIVIDEND' | 'MANAGEMENT_CHANGE';
 
@@ -95,6 +97,8 @@ export default function AlertScreen() {
         </p>
       </header>
 
+      <PushSection />
+
       <Section title="🔔 알림">
         {watchlist.length === 0 ? (
           <p className="text-sm text-slate-500">
@@ -127,5 +131,61 @@ export default function AlertScreen() {
         )}
       </Section>
     </Screen>
+  );
+}
+
+function PushSection() {
+  const [support, setSupport] = useState<PushSupport>('unsupported');
+  const [subscribed, setSubscribed] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSupport(pushSupport());
+    getExistingSubscription().then((sub) => setSubscribed(!!sub));
+  }, []);
+
+  async function handleToggle() {
+    setBusy(true);
+    setError(null);
+    try {
+      if (subscribed) {
+        await unsubscribeFromPush();
+        setSubscribed(false);
+      } else {
+        await subscribeToPush();
+        setSubscribed(true);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '알 수 없는 오류');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (support === 'unsupported') return null;
+
+  return (
+    <div className="mb-6 bg-slate-900 rounded-lg px-3 py-2.5 flex items-center justify-between gap-3">
+      <div className="min-w-0">
+        <p className="text-sm font-medium">브라우저 알림</p>
+        <p className="text-xs text-slate-500 mt-0.5">
+          {support === 'unconfigured'
+            ? '아직 서버에 설정되지 않았습니다.'
+            : subscribed
+              ? '관심종목에 새 소식이 있으면 알려드려요.'
+              : '꺼져 있습니다 - 눌러서 켜보세요.'}
+        </p>
+        {error && <p className="text-xs text-red-400 mt-0.5">{error}</p>}
+      </div>
+      <button
+        onClick={handleToggle}
+        disabled={busy || support === 'unconfigured'}
+        className={`shrink-0 rounded-full p-2 ${subscribed ? 'bg-slate-800 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'} disabled:opacity-50`}
+        aria-label={subscribed ? '알림 끄기' : '알림 켜기'}
+      >
+        {subscribed ? <BellOff size={16} /> : <Bell size={16} />}
+      </button>
+    </div>
   );
 }
