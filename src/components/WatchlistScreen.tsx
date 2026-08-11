@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { X, ChevronRight } from 'lucide-react';
+import { X, ChevronRight, Share2 } from 'lucide-react';
 import { Screen, Section } from './ui';
 import { addToWatchlist, getWatchlist, removeFromWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+import { shareReport } from '../lib/share';
 import CompanyDetailScreen from './CompanyDetailScreen';
 
 interface StockOption {
@@ -14,6 +15,7 @@ export default function WatchlistScreen() {
   const [stocks, setStocks] = useState<StockOption[]>([]);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<StockOption | null>(null);
+  const [shareMsg, setShareMsg] = useState<string | null>(null);
 
   useEffect(() => {
     getWatchlist().then((list) => setItems(list.sort((a, b) => b.updated_at.localeCompare(a.updated_at))));
@@ -42,6 +44,18 @@ export default function WatchlistScreen() {
     setItems(await getWatchlist());
   }
 
+  async function handleShare() {
+    const names = items.map((i) => i.companyName).join(', ');
+    const text = `내 관심종목 리포트\n${names}\n\nK-STOCKREPLAY에서 매일 확인: https://k-stockreplay.pe.kr`;
+    try {
+      const result = await shareReport('내 관심종목 리포트', text);
+      setShareMsg(result === 'copied' ? '클립보드에 복사했어요' : null);
+    } catch {
+      // 사용자가 공유 시트를 취소한 경우 등 - 조용히 무시.
+    }
+    setTimeout(() => setShareMsg(null), 2000);
+  }
+
   if (selected) {
     return (
       <CompanyDetailScreen
@@ -56,9 +70,22 @@ export default function WatchlistScreen() {
 
   return (
     <Screen>
-      <header className="mb-6">
-        <h1 className="text-lg font-bold">MY STOCK RADAR</h1>
-        <p className="text-xs text-slate-500">관심종목 {items.length}개 · 이 기기에만 저장됩니다</p>
+      <header className="mb-6 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-lg font-bold">MY STOCK RADAR</h1>
+          <p className="text-xs text-slate-500">
+            {shareMsg ?? `관심종목 ${items.length}개 · 이 기기에만 저장됩니다`}
+          </p>
+        </div>
+        {items.length > 0 && (
+          <button
+            onClick={handleShare}
+            aria-label="관심종목 리포트 공유"
+            className="shrink-0 text-slate-400 hover:text-slate-100 p-1.5"
+          >
+            <Share2 size={18} />
+          </button>
+        )}
       </header>
 
       <Section title="종목 추가">

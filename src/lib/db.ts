@@ -3,7 +3,7 @@
 // database at different versions independently is a VersionError waiting
 // to happen, so every store's schema lives here.
 const DB_NAME = 'kstockreplay';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 export function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -15,6 +15,9 @@ export function openDb(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains('read_alerts')) {
         db.createObjectStore('read_alerts', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('streak')) {
+        db.createObjectStore('streak', { keyPath: 'id' });
       }
     };
     req.onsuccess = () => resolve(req.result);

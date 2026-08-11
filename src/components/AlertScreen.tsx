@@ -1,35 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Bell, BellOff } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Bell, BellOff, CalendarPlus } from 'lucide-react';
 import { Screen, Section } from './ui';
-import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
-import { getReadIds, markRead } from '../lib/alertsDb';
 import { pushSupport, getExistingSubscription, subscribeToPush, unsubscribeFromPush, type PushSupport } from '../lib/push';
-
-type EventType = 'DISCLOSURE' | 'CONTRACT' | 'DIVIDEND' | 'MANAGEMENT_CHANGE';
-
-interface TodayEntry {
-  id: string;
-  ticker: string;
-  companyName: string;
-  type: EventType;
-  title: string;
-}
-
-interface HistoryEntry {
-  ticker: string;
-  date: string;
-  type: EventType;
-  title: string;
-}
-
-interface AlertItem {
-  id: string;
-  ticker: string;
-  companyName: string;
-  date: string;
-  type: EventType;
-  title: string;
-}
+import { useAlerts, type EventType } from '../lib/useAlerts';
+import { downloadIcs, type IcsEvent } from '../lib/ics';
+import type { WatchlistItem } from '../lib/watchlistDb';
 
 const typeLabel: Record<EventType, string> = {
   DISCLOSURE: '공시',
@@ -39,54 +14,7 @@ const typeLabel: Record<EventType, string> = {
 };
 
 export default function AlertScreen() {
-  const [todayDate, setTodayDate] = useState<string | null>(null);
-  const [todayEntries, setTodayEntries] = useState<TodayEntry[]>([]);
-  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
-  const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
-  const [readIds, setReadIds] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    fetch('/data/today.json')
-      .then((r) => r.json())
-      .then((data) => {
-        setTodayDate(data.date);
-        setTodayEntries(data.newToday ?? []);
-      })
-      .catch(() => {});
-    fetch('/data/history.json').then((r) => r.json()).then(setHistoryEntries).catch(() => {});
-    getWatchlist().then(setWatchlist);
-    getReadIds().then(setReadIds);
-  }, []);
-
-  // 서버는 유저별 워치리스트를 모른다 (§2-3) - 워치리스트가 알림 대상의 기준.
-  // today.json과 history.json 둘 다 오늘 날짜 항목을 가질 수 있어서, 내용 기반
-  // id(ticker_date_title)로 합쳐서 자연스럽게 중복 제거한다.
-  const alerts = useMemo(() => {
-    const watchedByTicker = new Map<string, string>(watchlist.map((w) => [w.ticker, w.companyName]));
-    const merged = new Map<string, AlertItem>();
-
-    for (const e of todayEntries) {
-      if (!watchedByTicker.has(e.ticker) || !todayDate) continue;
-      const id = `${e.ticker}_${todayDate}_${e.title}`;
-      merged.set(id, { id, ticker: e.ticker, companyName: watchedByTicker.get(e.ticker)!, date: todayDate, type: e.type, title: e.title });
-    }
-    for (const h of historyEntries) {
-      if (!watchedByTicker.has(h.ticker)) continue;
-      const id = `${h.ticker}_${h.date}_${h.title}`;
-      if (merged.has(id)) continue;
-      merged.set(id, { id, ticker: h.ticker, companyName: watchedByTicker.get(h.ticker)!, date: h.date, type: h.type, title: h.title });
-    }
-
-    return [...merged.values()].sort((a, b) => b.date.localeCompare(a.date));
-  }, [todayEntries, historyEntries, watchlist, todayDate]);
-
-  const unreadCount = alerts.filter((a) => !readIds.has(a.id)).length;
-
-  async function handleOpen(alert: AlertItem) {
-    if (readIds.has(alert.id)) return;
-    await markRead(alert.id);
-    setReadIds((prev) => new Set(prev).add(alert.id));
-  }
+  const { alerts, readIds, unreadCount, watchlist, markRead } = useAlerts();
 
   return (
     <Screen>
@@ -98,6 +26,7 @@ export default function AlertScreen() {
       </header>
 
       <PushSection />
+      <CalendarSection watchlist={watchlist} />
 
       <Section title="🔔 알림">
         {watchlist.length === 0 ? (
@@ -113,7 +42,7 @@ export default function AlertScreen() {
               return (
                 <li key={a.id}>
                   <button
-                    onClick={() => handleOpen(a)}
+                    onClick={() => markRead(a.id)}
                     className={`w-full text-left rounded-lg px-3 py-2.5 ${isRead ? 'bg-slate-900/50' : 'bg-slate-900'}`}
                   >
                     <div className="flex items-center gap-2 text-sm">
@@ -187,5 +116,57 @@ function PushSection() {
         {subscribed ? <BellOff size={16} /> : <Bell size={16} />}
       </button>
     </div>
+  );
+}
+
+function CalendarSection({ watchlist }: { watchlist: WatchlistItem[] }) {
+  const [busy, setBusy] = useState(false);
+
+  async function handleExport() {
+    setBusy(true);
+    try {
+      const watched = new Set(watchlist.map((w) => w.ticker));
+      const [dividends, events] = await Promise.all([
+        fetch('/data/dividends.json').then((r) => r.json()),
+        fetch('/data/events.json').then((r) => r.json()),
+      ]);
+
+      const icsEvents: IcsEvent[] = [
+        ...dividends
+          .filter((d: { ticker: string }) => watched.has(d.ticker))
+          .map((d: { ticker: string; companyName: string; exDividendDate: string }) => ({
+            uid: `dividend-${d.ticker}-${d.exDividendDate}`,
+            date: d.exDividendDate,
+            title: `${d.companyName} 배당락일`,
+          })),
+        ...events
+          .filter((e: { ticker: string }) => watched.has(e.ticker))
+          .map((e: { ticker: string; companyName: string; eventDate: string; title: string }) => ({
+            uid: `event-${e.ticker}-${e.eventDate}`,
+            date: e.eventDate,
+            title: `${e.companyName} ${e.title}`,
+          })),
+      ];
+
+      downloadIcs('k-stockreplay-일정.ics', icsEvents);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (watchlist.length === 0) return null;
+
+  return (
+    <button
+      onClick={handleExport}
+      disabled={busy}
+      className="w-full mb-6 bg-slate-900 rounded-lg px-3 py-2.5 flex items-center gap-3 text-left disabled:opacity-50"
+    >
+      <CalendarPlus size={16} className="text-emerald-400 shrink-0" />
+      <div>
+        <p className="text-sm font-medium">캘린더에 배당·일정 추가</p>
+        <p className="text-xs text-slate-500 mt-0.5">관심종목의 배당락일·투자일정을 .ics로 내보내요.</p>
+      </div>
+    </button>
   );
 }

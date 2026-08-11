@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Newspaper, Star, CalendarDays, CalendarClock, Network, Link2, Bell } from 'lucide-react';
 import TodayScreen from './components/TodayScreen';
 import WatchlistScreen from './components/WatchlistScreen';
@@ -7,6 +7,8 @@ import EventCalendarScreen from './components/EventCalendarScreen';
 import ThemeTreeScreen from './components/ThemeTreeScreen';
 import ValueChainScreen from './components/ValueChainScreen';
 import AlertScreen from './components/AlertScreen';
+import { useAlerts } from './lib/useAlerts';
+import { updateAppBadge } from './lib/badge';
 
 type Tab = 'today' | 'watchlist' | 'dividend' | 'events' | 'themes' | 'valuechain' | 'alerts';
 
@@ -22,6 +24,9 @@ const SCREENS: Record<Tab, ReactNode> = {
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('today');
+  const { unreadCount } = useAlerts();
+
+  useEffect(() => updateAppBadge(unreadCount), [unreadCount]);
 
   return (
     <>
@@ -35,20 +40,39 @@ export default function App() {
           <TabButton active={tab === 'events'} label="EVENTS" icon={<CalendarClock size={16} />} onClick={() => setTab('events')} />
           <TabButton active={tab === 'themes'} label="THEME" icon={<Network size={16} />} onClick={() => setTab('themes')} />
           <TabButton active={tab === 'valuechain'} label="CHAIN" icon={<Link2 size={16} />} onClick={() => setTab('valuechain')} />
-          <TabButton active={tab === 'alerts'} label="ALERT" icon={<Bell size={16} />} onClick={() => setTab('alerts')} />
+          <TabButton active={tab === 'alerts'} label="ALERT" icon={<Bell size={16} />} badgeCount={unreadCount} onClick={() => setTab('alerts')} />
         </div>
       </nav>
     </>
   );
 }
 
-function TabButton({ active, label, icon, onClick }: { active: boolean; label: string; icon: ReactNode; onClick: () => void }) {
+function TabButton({
+  active,
+  label,
+  icon,
+  badgeCount,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  icon: ReactNode;
+  badgeCount?: number;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center gap-0.5 py-2 text-[9px] leading-tight text-center px-0.5 ${active ? 'text-slate-100' : 'text-slate-500'}`}
+      className={`relative flex flex-col items-center gap-0.5 py-2 text-[9px] leading-tight text-center px-0.5 ${active ? 'text-slate-100' : 'text-slate-500'}`}
     >
-      {icon}
+      <span className="relative">
+        {icon}
+        {!!badgeCount && (
+          <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[8px] leading-none rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-0.5">
+            {badgeCount > 9 ? '9+' : badgeCount}
+          </span>
+        )}
+      </span>
       {label}
     </button>
   );

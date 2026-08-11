@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Screen, Section, Stat } from './ui';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+import { recordVisit } from '../lib/streakDb';
 
 type ChangeLevel = 'RED' | 'ORANGE' | 'GREEN';
 type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
@@ -38,6 +39,7 @@ export default function TodayScreen() {
   const [data, setData] = useState<TodayData | null>(null);
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [error, setError] = useState(false);
+  const [streak, setStreak] = useState<number | null>(null);
 
   useEffect(() => {
     fetch('/data/today.json')
@@ -48,6 +50,7 @@ export default function TodayScreen() {
       .then(setData)
       .catch(() => setError(true));
     getWatchlist().then(setWatchlist);
+    recordVisit().then(({ currentStreak }) => setStreak(currentStreak));
   }, []);
 
   // 서버는 유저별 워치리스트를 모른다 (§2-3 로컬 우선 저장) - data.myStockRadar는
@@ -78,9 +81,16 @@ export default function TodayScreen() {
 
   return (
     <Screen>
-      <header className="mb-6">
-        <h1 className="text-lg font-bold">TODAY</h1>
-        <p className="text-xs text-slate-500">{data.date}</p>
+      <header className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-lg font-bold">TODAY</h1>
+          <p className="text-xs text-slate-500">{data.date}</p>
+        </div>
+        {!!streak && streak > 1 && (
+          <span className="text-xs bg-orange-500/15 text-orange-400 rounded-full px-2.5 py-1 shrink-0">
+            🔥 {streak}일 연속 방문
+          </span>
+        )}
       </header>
 
       <Section title="🆕 오늘 새로 생긴 것">
