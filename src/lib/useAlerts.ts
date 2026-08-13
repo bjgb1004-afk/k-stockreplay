@@ -1,20 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getWatchlist, type WatchlistItem } from './watchlistDb';
 import { getReadIds, markRead as markReadInDb } from './alertsDb';
+import { getAllHistory, type DisclosureRecord, type DisclosureType } from './disclosuresDb';
 
-export type EventType = 'DISCLOSURE' | 'CONTRACT' | 'DIVIDEND' | 'MANAGEMENT_CHANGE';
+export type EventType = DisclosureType;
 
 interface TodayEntry {
   id: string;
   ticker: string;
   companyName: string;
-  type: EventType;
-  title: string;
-}
-
-interface HistoryEntry {
-  ticker: string;
-  date: string;
   type: EventType;
   title: string;
 }
@@ -43,7 +37,7 @@ function daysBetween(a: string, b: string): number {
 export function useAlerts() {
   const [todayDate, setTodayDate] = useState<string | null>(null);
   const [todayEntries, setTodayEntries] = useState<TodayEntry[]>([]);
-  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+  const [historyEntries, setHistoryEntries] = useState<DisclosureRecord[]>([]);
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
 
@@ -55,13 +49,14 @@ export function useAlerts() {
         setTodayEntries(data.newToday ?? []);
       })
       .catch(() => {});
-    fetch('/data/history.json').then((r) => r.json()).then(setHistoryEntries).catch(() => {});
+    getAllHistory().then(setHistoryEntries).catch(() => {});
     getWatchlist().then(setWatchlist);
     getReadIds().then(setReadIds);
   }, []);
 
-  // today.json과 history.json 둘 다 오늘 날짜 항목을 가질 수 있어서, 내용 기반
-  // id(ticker_date_title)로 합쳐서 자연스럽게 중복 제거한다.
+  // today.json(방금 fetch)과 로컬 disclosures 스토어(과거에 쌓아둔 것) 둘 다 오늘
+  // 날짜 항목을 가질 수 있어서, 내용 기반 id(ticker_date_title)로 합쳐서 자연스럽게
+  // 중복 제거한다.
   const alerts = useMemo(() => {
     const watchedByTicker = new Map<string, string>(watchlist.map((w) => [w.ticker, w.companyName]));
     const merged = new Map<string, Omit<AlertItem, 'silentSurprise'>>();

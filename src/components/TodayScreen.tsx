@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Screen, Section, Stat } from './ui';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { recordVisit } from '../lib/streakDb';
+import { ingestToday, pruneOld, type DisclosureType } from '../lib/disclosuresDb';
 
 type ChangeLevel = 'RED' | 'ORANGE' | 'GREEN';
 type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
@@ -9,7 +10,7 @@ type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
 interface TodayData {
   date: string;
   summary: { newEvents: number; importantFacts: number; dividendEvents: number; relationChanges: number };
-  newToday: { id: string; companyName: string; type: string; title: string; time: string }[];
+  newToday: { id: string; ticker: string; companyName: string; type: DisclosureType; title: string; time: string }[];
   myStockRadar: { ticker: string; companyName: string; changeCount: number; level: ChangeLevel }[];
   upcoming: { tomorrow: { dividend: number; shareholderMeeting: number }; thisWeek: { earnings: number; dividend: number } };
   factChecks: { question: string; status: FactStatus }[];
@@ -47,7 +48,11 @@ export default function TodayScreen() {
         if (!res.ok) throw new Error('failed to load today.json');
         return res.json();
       })
-      .then(setData)
+      .then((json: TodayData) => {
+        setData(json);
+        ingestToday(json.newToday.map((item) => ({ ...item, date: json.date })));
+        pruneOld();
+      })
       .catch(() => setError(true));
     getWatchlist().then(setWatchlist);
     recordVisit().then(({ currentStreak }) => setStreak(currentStreak));

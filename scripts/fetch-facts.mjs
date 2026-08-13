@@ -8,7 +8,7 @@
 //
 // Usage: DART_API_KEY=xxx node scripts/fetch-facts.mjs
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { classify, buildMyStockRadar, dedupeDisclosures } from './lib/facts.mjs';
 
 const API_KEY = process.env.DART_API_KEY;
@@ -17,54 +17,85 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const stocks = JSON.parse(readFileSync(new URL('../public/data/stocks.json', import.meta.url)));
-const corpCodes = JSON.parse(readFileSync(new URL('./dart-corp-codes.json', import.meta.url)));
-const companyByTicker = Object.fromEntries(stocks.map((s) => [s.ticker, s.companyName]));
-
 function todayKst() {
   const kst = new Date(Date.now() + 9 * 60 * 60 * 1000);
   return kst.toISOString().slice(0, 10).replace(/-/g, '');
 }
 
-async function fetchDisclosures(ticker, corpCode, date) {
-  const url = new URL('https://opendart.fss.or.kr/api/list.json');
-  url.searchParams.set('crtfc_key', API_KEY);
-  url.searchParams.set('corp_code', corpCode);
-  url.searchParams.set('bgn_de', date);
-  url.searchParams.set('end_de', date);
-  url.searchParams.set('page_count', '20');
+// Market-wide query (no corp_code) instead of one call per tracked ticker -
+// this scales to the full KRX universe without the call count scaling with
+// how many companies we track. pblntf_ty narrows it to the two "사건성"
+// categories: I=거래소공시(수시공시 - 계약/임원변경/소송 등), B=주요사항보고
+// (증자/감자/합병/자기주식 등). A(정기공시)/J(공정위공시) etc. run 400-700+/day
+// and are mostly routine - out of scope until the earnings-calendar phase.
+const PBLNTF_TYPES = ['I', 'B'];
 
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`DART list.json failed for ${ticker}: ${res.status}`);
-  const body = await res.json();
-  // status "013" = no matching disclosures for the range, not an error.
-  if (body.status !== '000' && body.status !== '013') {
-    throw new Error(`DART list.json error for ${ticker}: ${body.status} ${body.message}`);
+async function fetchByType(type, date) {
+  const items = [];
+  let page = 1;
+  for (;;) {
+    const url = new URL('https://opendart.fss.or.kr/api/list.json');
+    url.searchParams.set('crtfc_key', API_KEY);
+    url.searchParams.set('pblntf_ty', type);
+    url.searchParams.set('bgn_de', date);
+    url.searchParams.set('end_de', date);
+    url.searchParams.set('page_no', String(page));
+    url.searchParams.set('page_count', '100');
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`DART list.json failed for type ${type} page ${page}: ${res.status}`);
+    const body = await res.json();
+    if (body.status === '013') break; // no matching disclosures for the range, not an error.
+    if (body.status !== '000') throw new Error(`DART list.json error (${type}): ${body.status} ${body.message}`);
+
+    items.push(...(body.list ?? []));
+    if (page >= body.total_page) break;
+    page++;
   }
-  return body.list ?? [];
+  return items;
 }
 
 const date = todayKst();
-const newToday = [];
-const changesByTicker = new Map();
+const rawLists = await Promise.all(PBLNTF_TYPES.map((type) => fetchByType(type, date)));
+// stock_code is empty for non-listed reporters (bond issuers, funds, etc.) - not tickers we can show.
+// report_nm trimmed here (DART pads it to a fixed width) so dedupe's "(정정 등 N건)"
+// suffix doesn't land after a run of trailing spaces.
+const raw = rawLists.flat()
+  .filter((d) => d.stock_code)
+  .map((d) => ({ ...d, report_nm: d.report_nm.trim() }));
 
-for (const [ticker, corpCode] of Object.entries(corpCodes)) {
-  const companyName = companyByTicker[ticker] ?? ticker;
-  const disclosures = dedupeDisclosures(await fetchDisclosures(ticker, corpCode, date));
-  for (const d of disclosures) {
+const byTicker = new Map();
+for (const d of raw) {
+  if (!byTicker.has(d.stock_code)) byTicker.set(d.stock_code, []);
+  byTicker.get(d.stock_code).push(d);
+}
+
+let newToday = [];
+const changesByTicker = new Map();
+for (const [ticker, disclosures] of byTicker) {
+  const companyName = disclosures[0].corp_name.trim();
+  const deduped = dedupeDisclosures(disclosures);
+  for (const d of deduped) {
     newToday.push({
       id: d.rcept_no,
       ticker,
       companyName,
       type: classify(d.report_nm),
-      title: d.report_nm,
-      time: d.rcept_dt === date ? '' : d.rcept_dt,
+      title: d.report_nm.trim(),
+      time: '',
     });
   }
-  if (disclosures.length > 0) {
-    const prev = changesByTicker.get(ticker)?.changeCount ?? 0;
-    changesByTicker.set(ticker, { companyName, changeCount: prev + disclosures.length });
-  }
+  changesByTicker.set(ticker, { companyName, changeCount: deduped.length });
+}
+
+const totalBeforeCap = newToday.length;
+newToday.sort((a, b) => b.id.localeCompare(a.id)); // rcept_no is a receipt timestamp - latest first.
+// ponytail: flat feed cap at 60 so the page stays scrollable; myStockRadar below
+// isn't affected (client filters it to the user's own watchlist, which is small).
+// Add pagination/"더보기" if 60 turns out to be too tight.
+newToday = newToday.slice(0, 60);
+if (totalBeforeCap > newToday.length) {
+  console.log(`(${totalBeforeCap} disclosures today, showing latest ${newToday.length})`);
 }
 
 const myStockRadar = buildMyStockRadar(changesByTicker);
@@ -88,4 +119,4 @@ const today = {
 };
 
 writeFileSync(new URL('../public/data/today.json', import.meta.url), JSON.stringify(today, null, 2) + '\n');
-console.log(`Wrote ${newToday.length} disclosure(s) across ${changesByTicker.size} companies to public/data/today.json`);
+console.log(`Wrote public/data/today.json: ${newToday.length} in feed, ${changesByTicker.size} companies had activity today`);

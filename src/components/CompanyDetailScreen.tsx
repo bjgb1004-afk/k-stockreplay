@@ -4,6 +4,7 @@ import { Screen, Section } from './ui';
 import { daysUntil, ddayLabel } from '../lib/date';
 import { addToWatchlist, getWatchlist, removeFromWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { getVoteCounts, castVote, type Vote, type VoteCounts } from '../lib/votes';
+import { getHistoryForTicker, type DisclosureRecord } from '../lib/disclosuresDb';
 
 interface CompanyRef {
   ticker: string;
@@ -23,14 +24,7 @@ interface InvestmentEvent {
   title: string;
 }
 
-interface HistoryEntry {
-  ticker: string;
-  date: string;
-  type: 'DISCLOSURE' | 'CONTRACT' | 'DIVIDEND' | 'MANAGEMENT_CHANGE';
-  title: string;
-}
-
-const typeLabel: Record<HistoryEntry['type'], string> = {
+const typeLabel: Record<DisclosureRecord['type'], string> = {
   DISCLOSURE: '공시',
   CONTRACT: '계약',
   DIVIDEND: '배당',
@@ -40,13 +34,14 @@ const typeLabel: Record<HistoryEntry['type'], string> = {
 export default function CompanyDetailScreen({ company, onBack }: { company: CompanyRef; onBack: () => void }) {
   const [dividends, setDividends] = useState<DividendEvent[]>([]);
   const [events, setEvents] = useState<InvestmentEvent[]>([]);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [history, setHistory] = useState<DisclosureRecord[]>([]);
   const [watchlistEntry, setWatchlistEntry] = useState<WatchlistItem | null | undefined>(undefined);
 
   useEffect(() => {
     fetch('/data/dividends.json').then((r) => r.json()).then(setDividends).catch(() => {});
     fetch('/data/events.json').then((r) => r.json()).then(setEvents).catch(() => {});
-    fetch('/data/history.json').then((r) => r.json()).then(setHistory).catch(() => {});
+    // §HISTORY: 서버 스텁이 아니라 방문할 때마다 TodayScreen이 쌓아온 로컬 기록.
+    getHistoryForTicker(company.ticker).then(setHistory).catch(() => {});
     refreshWatchlistEntry();
   }, [company.ticker]);
 
@@ -71,9 +66,8 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
     .filter((e) => e.ticker === company.ticker && daysUntil(e.eventDate) >= 0)
     .sort((a, b) => a.eventDate.localeCompare(b.eventDate))[0];
 
-  const myHistory = history
-    .filter((h) => h.ticker === company.ticker)
-    .sort((a, b) => b.date.localeCompare(a.date));
+  // getHistoryForTicker가 이미 이 종목으로 필터링 + 최신순 정렬해서 준다.
+  const myHistory = history;
 
   // KST 기준 날짜 표시 - fetch-facts.mjs의 todayKst()와 같은 기준.
   const watchedSince = watchlistEntry

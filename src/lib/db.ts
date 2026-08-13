@@ -3,7 +3,7 @@
 // database at different versions independently is a VersionError waiting
 // to happen, so every store's schema lives here.
 const DB_NAME = 'kstockreplay';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 export function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -18,6 +18,13 @@ export function openDb(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains('streak')) {
         db.createObjectStore('streak', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('disclosures')) {
+        // 서버(today.json)는 오늘자만 주고 잊는다(§2-3 무상태) - 방문할 때마다
+        // 받은 걸 여기 쌓아서, 서버 저장 없이 브라우저에만 진짜 히스토리가 생기게 한다.
+        const store = db.createObjectStore('disclosures', { keyPath: 'id' });
+        store.createIndex('ticker', 'ticker');
+        store.createIndex('date', 'date');
       }
     };
     req.onsuccess = () => resolve(req.result);
