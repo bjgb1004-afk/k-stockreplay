@@ -9,7 +9,7 @@
 // Usage: DART_API_KEY=xxx node scripts/fetch-facts.mjs
 
 import { readFileSync, writeFileSync } from 'node:fs';
-import { classify, buildMyStockRadar } from './lib/facts.mjs';
+import { classify, buildMyStockRadar, dedupeDisclosures } from './lib/facts.mjs';
 
 const API_KEY = process.env.DART_API_KEY;
 if (!API_KEY) {
@@ -50,7 +50,7 @@ const changesByTicker = new Map();
 
 for (const [ticker, corpCode] of Object.entries(corpCodes)) {
   const companyName = companyByTicker[ticker] ?? ticker;
-  const disclosures = await fetchDisclosures(ticker, corpCode, date);
+  const disclosures = dedupeDisclosures(await fetchDisclosures(ticker, corpCode, date));
   for (const d of disclosures) {
     newToday.push({
       id: d.rcept_no,

@@ -16,6 +16,26 @@ export function classify(reportName) {
   return 'DISCLOSURE';
 }
 
+// DART re-files a revised report (e.g. "[기재정정]...") as a brand-new list
+// entry each time - a single stock option grant can show up 5x in one day.
+// Collapse same report_nm entries per ticker into one, keeping the latest
+// (highest rcept_no) and tagging the title with the total count.
+export function dedupeDisclosures(disclosures) {
+  const groups = new Map();
+  for (const d of disclosures) {
+    const existing = groups.get(d.report_nm);
+    if (!existing || d.rcept_no > existing.rcept_no) {
+      groups.set(d.report_nm, { ...d, count: (existing?.count ?? 0) + 1 });
+    } else {
+      existing.count += 1;
+    }
+  }
+  return [...groups.values()].map((d) => ({
+    ...d,
+    report_nm: d.count > 1 ? `${d.report_nm} (정정 등 ${d.count}건)` : d.report_nm,
+  }));
+}
+
 export function levelFor(changeCount) {
   if (changeCount >= 3) return 'RED';
   if (changeCount >= 1) return 'ORANGE';
