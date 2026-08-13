@@ -1,7 +1,0 @@
-[
-  { "ticker": "005930", "companyName": "삼성전자", "eventDate": "2026-08-12", "type": "SHAREHOLDER_MEETING", "title": "임시주주총회" },
-  { "ticker": "005930", "companyName": "삼성전자", "eventDate": "2026-10-08", "type": "EARNINGS", "title": "3분기 실적발표" },
-  { "ticker": "000660", "companyName": "SK하이닉스", "eventDate": "2026-10-23", "type": "EARNINGS", "title": "3분기 실적발표" },
-  { "ticker": "005380", "companyName": "현대차", "eventDate": "2026-08-20", "type": "EARNINGS", "title": "2분기 실적발표" },
-  { "ticker": "035420", "companyName": "NAVER", "eventDate": "2026-09-04", "type": "SHAREHOLDER_MEETING", "title": "정기주주총회" }
-]

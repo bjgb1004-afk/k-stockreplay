@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Bell, BellOff, CalendarPlus } from 'lucide-react';
+import { Bell, BellOff } from 'lucide-react';
 import { Screen, Section } from './ui';
 import { pushSupport, getExistingSubscription, subscribeToPush, unsubscribeFromPush, type PushSupport } from '../lib/push';
 import { useAlerts, type EventType } from '../lib/useAlerts';
-import { downloadIcs, type IcsEvent } from '../lib/ics';
-import type { WatchlistItem } from '../lib/watchlistDb';
 
 const typeLabel: Record<EventType, string> = {
   DISCLOSURE: '공시',
@@ -26,7 +24,6 @@ export default function AlertScreen() {
       </header>
 
       <PushSection />
-      <CalendarSection watchlist={watchlist} />
 
       <Section title="🔔 알림">
         {watchlist.length === 0 ? (
@@ -122,54 +119,3 @@ function PushSection() {
   );
 }
 
-function CalendarSection({ watchlist }: { watchlist: WatchlistItem[] }) {
-  const [busy, setBusy] = useState(false);
-
-  async function handleExport() {
-    setBusy(true);
-    try {
-      const watched = new Set(watchlist.map((w) => w.ticker));
-      const [dividends, events] = await Promise.all([
-        fetch('/data/dividends.json').then((r) => r.json()),
-        fetch('/data/events.json').then((r) => r.json()),
-      ]);
-
-      const icsEvents: IcsEvent[] = [
-        ...dividends
-          .filter((d: { ticker: string }) => watched.has(d.ticker))
-          .map((d: { ticker: string; companyName: string; exDividendDate: string }) => ({
-            uid: `dividend-${d.ticker}-${d.exDividendDate}`,
-            date: d.exDividendDate,
-            title: `${d.companyName} 배당락일`,
-          })),
-        ...events
-          .filter((e: { ticker: string }) => watched.has(e.ticker))
-          .map((e: { ticker: string; companyName: string; eventDate: string; title: string }) => ({
-            uid: `event-${e.ticker}-${e.eventDate}`,
-            date: e.eventDate,
-            title: `${e.companyName} ${e.title}`,
-          })),
-      ];
-
-      downloadIcs('k-stockreplay-일정.ics', icsEvents);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  if (watchlist.length === 0) return null;
-
-  return (
-    <button
-      onClick={handleExport}
-      disabled={busy}
-      className="w-full mb-6 bg-slate-900 rounded-lg px-3 py-2.5 flex items-center gap-3 text-left disabled:opacity-50"
-    >
-      <CalendarPlus size={16} className="text-emerald-400 shrink-0" />
-      <div>
-        <p className="text-sm font-medium">캘린더에 배당·일정 추가</p>
-        <p className="text-xs text-slate-500 mt-0.5">관심종목의 배당락일·투자일정을 .ics로 내보내요.</p>
-      </div>
-    </button>
-  );
-}

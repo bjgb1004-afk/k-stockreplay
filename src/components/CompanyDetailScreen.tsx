@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
 import { Screen, Section } from './ui';
-import { daysUntil, ddayLabel } from '../lib/date';
 import { addToWatchlist, getWatchlist, removeFromWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { getVoteCounts, castVote, type Vote, type VoteCounts } from '../lib/votes';
 import { getHistoryForTicker, type DisclosureRecord } from '../lib/disclosuresDb';
@@ -9,19 +8,6 @@ import { getHistoryForTicker, type DisclosureRecord } from '../lib/disclosuresDb
 interface CompanyRef {
   ticker: string;
   companyName: string;
-}
-
-interface DividendEvent {
-  ticker: string;
-  exDividendDate: string;
-  dividendPerShare: number;
-  cycle: string;
-}
-
-interface InvestmentEvent {
-  ticker: string;
-  eventDate: string;
-  title: string;
 }
 
 const typeLabel: Record<DisclosureRecord['type'], string> = {
@@ -32,14 +18,10 @@ const typeLabel: Record<DisclosureRecord['type'], string> = {
 };
 
 export default function CompanyDetailScreen({ company, onBack }: { company: CompanyRef; onBack: () => void }) {
-  const [dividends, setDividends] = useState<DividendEvent[]>([]);
-  const [events, setEvents] = useState<InvestmentEvent[]>([]);
   const [history, setHistory] = useState<DisclosureRecord[]>([]);
   const [watchlistEntry, setWatchlistEntry] = useState<WatchlistItem | null | undefined>(undefined);
 
   useEffect(() => {
-    fetch('/data/dividends.json').then((r) => r.json()).then(setDividends).catch(() => {});
-    fetch('/data/events.json').then((r) => r.json()).then(setEvents).catch(() => {});
     // §HISTORY: 서버 스텁이 아니라 방문할 때마다 TodayScreen이 쌓아온 로컬 기록.
     getHistoryForTicker(company.ticker).then(setHistory).catch(() => {});
     refreshWatchlistEntry();
@@ -57,14 +39,6 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
     }
     refreshWatchlistEntry();
   }
-
-  const nextDividend = dividends
-    .filter((d) => d.ticker === company.ticker && daysUntil(d.exDividendDate) >= 0)
-    .sort((a, b) => a.exDividendDate.localeCompare(b.exDividendDate))[0];
-
-  const nextEvent = events
-    .filter((e) => e.ticker === company.ticker && daysUntil(e.eventDate) >= 0)
-    .sort((a, b) => a.eventDate.localeCompare(b.eventDate))[0];
 
   // getHistoryForTicker가 이미 이 종목으로 필터링 + 최신순 정렬해서 준다.
   const myHistory = history;
@@ -98,13 +72,13 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
         )}
       </header>
 
-      <Section title="🛂 COMPANY PASSPORT">
-        <div className="space-y-2 text-sm">
-          {watchedSince && <Row label="관심종목 등록일" value={watchedSince} />}
-          <Row label="다음 배당" value={nextDividend ? `${nextDividend.exDividendDate} (${ddayLabel(daysUntil(nextDividend.exDividendDate))}) · 주당 ${nextDividend.dividendPerShare.toLocaleString()}원` : '예정된 배당 없음'} />
-          <Row label="다음 일정" value={nextEvent ? `${nextEvent.title} · ${nextEvent.eventDate} (${ddayLabel(daysUntil(nextEvent.eventDate))})` : '예정된 일정 없음'} />
-        </div>
-      </Section>
+      {watchedSince && (
+        <Section title="🛂 COMPANY PASSPORT">
+          <div className="space-y-2 text-sm">
+            <Row label="관심종목 등록일" value={watchedSince} />
+          </div>
+        </Section>
+      )}
 
       <VoteSection ticker={company.ticker} />
 
