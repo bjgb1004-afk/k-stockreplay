@@ -1,6 +1,7 @@
 import { openDb } from './db';
 
 export type DisclosureType = 'DISCLOSURE' | 'CONTRACT' | 'DIVIDEND' | 'MANAGEMENT_CHANGE';
+export type Sentiment = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'MIXED';
 
 export interface DisclosureRecord {
   id: string; // rcept_no - globally unique, doubles as the store's keyPath
@@ -9,6 +10,8 @@ export interface DisclosureRecord {
   type: DisclosureType;
   title: string;
   date: string; // YYYY-MM-DD, the today.json date this was fetched under
+  sentiment: Sentiment;
+  meaning: string;
 }
 
 const STORE = 'disclosures';

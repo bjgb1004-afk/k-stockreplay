@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { classify, levelFor, buildMyStockRadar, dedupeDisclosures } from './facts.mjs';
+import { classify, levelFor, buildMyStockRadar, dedupeDisclosures, interpret } from './facts.mjs';
 
 assert.equal(classify('중간배당 결정 공시'), 'DIVIDEND');
 assert.equal(classify('대규모 공급계약 체결'), 'CONTRACT');
@@ -37,5 +37,14 @@ assert.deepEqual(
   deduped.find((d) => d.rcept_no === '20260813001333'),
   { rcept_no: '20260813001333', report_nm: '지급수단별ㆍ지급기간별지급금액및분쟁조정기구에관한사항', count: 1 },
 );
+
+assert.equal(interpret('부도발생').sentiment, 'NEGATIVE');
+// DART 실제 표준 서식명 - "감사"와 "의견" 사이에 괄호가 끼어드는 실제 사례.
+assert.equal(interpret('반기검토(감사)의견부적정등사실확인(자본잠식률100분의50이상또는자기자본10억원미만포함)').sentiment, 'NEGATIVE');
+assert.equal(interpret('무상증자결정').sentiment, 'POSITIVE');
+assert.equal(interpret('매출액또는손익구조30%(대규모법인은15%)이상변경').sentiment, 'MIXED');
+assert.equal(interpret('소송등의판결ㆍ결정').sentiment, 'MIXED');
+assert.equal(interpret('아무 패턴에도 안 걸리는 제목').sentiment, 'NEUTRAL');
+assert.ok(interpret('아무 패턴에도 안 걸리는 제목').meaning.length > 0);
 
 console.log('facts.mjs: all checks passed');

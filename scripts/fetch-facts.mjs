@@ -9,7 +9,7 @@
 // Usage: DART_API_KEY=xxx node scripts/fetch-facts.mjs
 
 import { writeFileSync } from 'node:fs';
-import { classify, buildMyStockRadar, dedupeDisclosures } from './lib/facts.mjs';
+import { classify, buildMyStockRadar, dedupeDisclosures, interpret } from './lib/facts.mjs';
 
 const API_KEY = process.env.DART_API_KEY;
 if (!API_KEY) {
@@ -76,6 +76,7 @@ for (const [ticker, disclosures] of byTicker) {
   const companyName = disclosures[0].corp_name.trim();
   const deduped = dedupeDisclosures(disclosures);
   for (const d of deduped) {
+    const { sentiment, meaning } = interpret(d.report_nm);
     newToday.push({
       id: d.rcept_no,
       ticker,
@@ -83,6 +84,8 @@ for (const [ticker, disclosures] of byTicker) {
       type: classify(d.report_nm),
       title: d.report_nm.trim(),
       time: '',
+      sentiment,
+      meaning,
     });
   }
   changesByTicker.set(ticker, { companyName, changeCount: deduped.length });

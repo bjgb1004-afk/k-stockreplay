@@ -87,11 +87,14 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
           <p className="text-sm text-slate-500">아직 기록된 히스토리가 없습니다.</p>
         ) : (
           <ul className="space-y-2">
-            {myHistory.map((h, i) => (
-              <li key={`${h.date}-${i}`} className="flex items-start gap-2 text-sm border-b border-slate-800 pb-2">
-                <span className="text-xs text-slate-500 shrink-0 w-20">{h.date}</span>
-                <span className="text-xs bg-slate-800 text-slate-300 rounded px-1.5 py-0.5 shrink-0">{typeLabel[h.type]}</span>
-                <span className="text-slate-200">{h.title}</span>
+            {myHistory.map((h) => (
+              <li key={h.id} className="border-b border-slate-800 pb-2">
+                <div className="flex items-start gap-2 text-sm">
+                  <span className="text-xs text-slate-500 shrink-0 w-20">{h.date}</span>
+                  <span className="text-xs bg-slate-800 text-slate-300 rounded px-1.5 py-0.5 shrink-0">{typeLabel[h.type]}</span>
+                  <span className="text-slate-200">{h.title}</span>
+                </div>
+                <p className="text-xs text-slate-500 mt-1 pl-[4.75rem]">{h.meaning}</p>
               </li>
             ))}
           </ul>

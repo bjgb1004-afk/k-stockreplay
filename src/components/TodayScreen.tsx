@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Screen, Section, Stat } from './ui';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { recordVisit } from '../lib/streakDb';
-import { ingestToday, pruneOld, type DisclosureType } from '../lib/disclosuresDb';
+import { ingestToday, pruneOld, type DisclosureType, type Sentiment } from '../lib/disclosuresDb';
 
 type ChangeLevel = 'RED' | 'ORANGE' | 'GREEN';
 type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
@@ -10,11 +10,27 @@ type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
 interface TodayData {
   date: string;
   summary: { newEvents: number; importantFacts: number; dividendEvents: number; relationChanges: number };
-  newToday: { id: string; ticker: string; companyName: string; type: DisclosureType; title: string; time: string }[];
+  newToday: {
+    id: string;
+    ticker: string;
+    companyName: string;
+    type: DisclosureType;
+    title: string;
+    time: string;
+    sentiment: Sentiment;
+    meaning: string;
+  }[];
   myStockRadar: { ticker: string; companyName: string; changeCount: number; level: ChangeLevel }[];
   upcoming: { tomorrow: { dividend: number; shareholderMeeting: number }; thisWeek: { earnings: number; dividend: number } };
   factChecks: { question: string; status: FactStatus }[];
 }
+
+const sentimentDot: Record<Sentiment, string> = {
+  POSITIVE: 'bg-emerald-500',
+  NEGATIVE: 'bg-red-500',
+  MIXED: 'bg-amber-500',
+  NEUTRAL: 'bg-slate-600',
+};
 
 const levelDot: Record<ChangeLevel, string> = {
   RED: 'bg-red-500',
@@ -107,12 +123,16 @@ export default function TodayScreen() {
         </div>
         <ul className="space-y-2">
           {data.newToday.map((item) => (
-            <li key={item.id} className="flex items-center justify-between text-sm border-b border-slate-800 pb-2">
-              <div>
-                <span className="font-medium">{item.companyName}</span>
-                <span className="text-slate-400 ml-2">{item.title}</span>
+            <li key={item.id} className="border-b border-slate-800 pb-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${sentimentDot[item.sentiment]}`} />
+                  <span className="font-medium truncate">{item.companyName}</span>
+                  <span className="text-slate-400 truncate">{item.title}</span>
+                </span>
+                <span className="text-slate-500 text-xs shrink-0 ml-2">{item.time}</span>
               </div>
-              <span className="text-slate-500 text-xs shrink-0 ml-2">{item.time}</span>
+              <p className="text-xs text-slate-500 mt-1 pl-3">{item.meaning}</p>
             </li>
           ))}
         </ul>
