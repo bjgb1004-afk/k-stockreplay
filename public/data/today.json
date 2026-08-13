@@ -1,29 +1,121 @@
 {
-  "date": "2026-08-11",
-  "generatedAt": "2026-08-11T07:00:00+09:00",
+  "date": "2026-08-13",
+  "generatedAt": "2026-08-13T09:37:19.219Z",
   "summary": {
-    "newEvents": 12,
-    "importantFacts": 3,
-    "dividendEvents": 5,
-    "relationChanges": 2
+    "newEvents": 9,
+    "importantFacts": 0,
+    "dividendEvents": 0,
+    "relationChanges": 0
   },
   "newToday": [
-    { "id": "e1", "ticker": "005930", "companyName": "삼성전자", "type": "DISCLOSURE", "title": "신규 시설투자 공시 (평택 캠퍼스 증설)", "time": "09:12" },
-    { "id": "e2", "ticker": "000660", "companyName": "SK하이닉스", "type": "CONTRACT", "title": "대규모 공급계약 체결", "time": "10:41" },
-    { "id": "e3", "ticker": "005380", "companyName": "현대차", "type": "DIVIDEND", "title": "중간배당 결정 공시", "time": "15:32" },
-    { "id": "e4", "ticker": "035720", "companyName": "카카오", "type": "MANAGEMENT_CHANGE", "title": "대표이사 변경", "time": "16:05" }
+    {
+      "id": "20260813001739",
+      "ticker": "323410",
+      "companyName": "카카오뱅크",
+      "type": "DISCLOSURE",
+      "title": "지급수단별ㆍ지급기간별지급금액및분쟁조정기구에관한사항",
+      "time": ""
+    },
+    {
+      "id": "20260813001333",
+      "ticker": "035720",
+      "companyName": "카카오",
+      "type": "DISCLOSURE",
+      "title": "지급수단별ㆍ지급기간별지급금액및분쟁조정기구에관한사항",
+      "time": ""
+    },
+    {
+      "id": "20260813000659",
+      "ticker": "035720",
+      "companyName": "카카오",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주식매수선택권부여에관한신고",
+      "time": ""
+    },
+    {
+      "id": "20260813000651",
+      "ticker": "035720",
+      "companyName": "카카오",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주식매수선택권부여에관한신고",
+      "time": ""
+    },
+    {
+      "id": "20260813000636",
+      "ticker": "035720",
+      "companyName": "카카오",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주식매수선택권부여에관한신고",
+      "time": ""
+    },
+    {
+      "id": "20260813000624",
+      "ticker": "035720",
+      "companyName": "카카오",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주식매수선택권부여에관한신고",
+      "time": ""
+    },
+    {
+      "id": "20260813000613",
+      "ticker": "035720",
+      "companyName": "카카오",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주식매수선택권부여에관한신고",
+      "time": ""
+    },
+    {
+      "id": "20260813001051",
+      "ticker": "066570",
+      "companyName": "LG전자",
+      "type": "DISCLOSURE",
+      "title": "지급수단별ㆍ지급기간별지급금액및분쟁조정기구에관한사항",
+      "time": ""
+    },
+    {
+      "id": "20260813800423",
+      "ticker": "051910",
+      "companyName": "LG화학",
+      "type": "DISCLOSURE",
+      "title": "기업설명회(IR)개최(안내공시)              ",
+      "time": ""
+    }
   ],
   "myStockRadar": [
-    { "ticker": "005930", "companyName": "삼성전자", "changeCount": 3, "level": "RED" },
-    { "ticker": "000660", "companyName": "SK하이닉스", "changeCount": 2, "level": "ORANGE" },
-    { "ticker": "005380", "companyName": "현대차", "changeCount": 0, "level": "GREEN" }
+    {
+      "ticker": "035720",
+      "companyName": "카카오",
+      "changeCount": 6,
+      "level": "RED"
+    },
+    {
+      "ticker": "323410",
+      "companyName": "카카오뱅크",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "066570",
+      "companyName": "LG전자",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "051910",
+      "companyName": "LG화학",
+      "changeCount": 1,
+      "level": "ORANGE"
+    }
   ],
   "upcoming": {
-    "tomorrow": { "dividend": 3, "shareholderMeeting": 1 },
-    "thisWeek": { "earnings": 8, "dividend": 12 }
+    "tomorrow": {
+      "dividend": 0,
+      "shareholderMeeting": 0
+    },
+    "thisWeek": {
+      "earnings": 0,
+      "dividend": 0
+    }
   },
-  "factChecks": [
-    { "question": "삼성전자, 대규모 인수 추진설?", "status": "CONFIRMED" },
-    { "question": "B기업 상장폐지설?", "status": "UNCONFIRMED" }
-  ]
+  "factChecks": []
 }
