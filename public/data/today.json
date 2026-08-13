@@ -1,8 +1,8 @@
 {
   "date": "2026-08-13",
-  "generatedAt": "2026-08-13T09:37:19.219Z",
+  "generatedAt": "2026-08-13T10:18:59.209Z",
   "summary": {
-    "newEvents": 9,
+    "newEvents": 5,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
@@ -29,39 +29,7 @@
       "ticker": "035720",
       "companyName": "카카오",
       "type": "DISCLOSURE",
-      "title": "[기재정정]주식매수선택권부여에관한신고",
-      "time": ""
-    },
-    {
-      "id": "20260813000651",
-      "ticker": "035720",
-      "companyName": "카카오",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주식매수선택권부여에관한신고",
-      "time": ""
-    },
-    {
-      "id": "20260813000636",
-      "ticker": "035720",
-      "companyName": "카카오",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주식매수선택권부여에관한신고",
-      "time": ""
-    },
-    {
-      "id": "20260813000624",
-      "ticker": "035720",
-      "companyName": "카카오",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주식매수선택권부여에관한신고",
-      "time": ""
-    },
-    {
-      "id": "20260813000613",
-      "ticker": "035720",
-      "companyName": "카카오",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주식매수선택권부여에관한신고",
+      "title": "[기재정정]주식매수선택권부여에관한신고 (정정 등 5건)",
       "time": ""
     },
     {
@@ -85,8 +53,8 @@
     {
       "ticker": "035720",
       "companyName": "카카오",
-      "changeCount": 6,
-      "level": "RED"
+      "changeCount": 2,
+      "level": "ORANGE"
     },
     {
       "ticker": "323410",
