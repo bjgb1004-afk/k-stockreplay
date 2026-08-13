@@ -5,6 +5,8 @@ assert.equal(classify('중간배당 결정 공시'), 'DIVIDEND');
 assert.equal(classify('대규모 공급계약 체결'), 'CONTRACT');
 assert.equal(classify('대표이사 변경'), 'MANAGEMENT_CHANGE');
 assert.equal(classify('신규 시설투자 공시'), 'DISCLOSURE');
+assert.equal(classify('임원ㆍ주요주주특정증권등소유상황보고서'), 'INSIDER');
+assert.equal(classify('주식등의대량보유상황보고서(약식)'), 'INSIDER');
 
 assert.equal(levelFor(0), 'GREEN');
 assert.equal(levelFor(1), 'ORANGE');

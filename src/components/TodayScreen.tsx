@@ -84,6 +84,11 @@ export default function TodayScreen() {
       .sort((a, b) => b.changeCount - a.changeCount);
   }, [data, watchlist]);
 
+  // today.json은 로컬 히스토리 적재를 위해 오늘자 전체를 담고 있어서(위 ingestToday),
+  // 화면에 그걸 다 뿌리면 스크롤이 끝없어진다 - 표시만 앞쪽 60개로 자른다.
+  const DISPLAY_LIMIT = 60;
+  const shownNewToday = data?.newToday.slice(0, DISPLAY_LIMIT) ?? [];
+
   if (error) {
     return (
       <Screen>
@@ -122,7 +127,7 @@ export default function TodayScreen() {
           <Stat label="관계 변화" value={data.summary.relationChanges} />
         </div>
         <ul className="space-y-2">
-          {data.newToday.map((item) => (
+          {shownNewToday.map((item) => (
             <li key={item.id} className="border-b border-slate-800 pb-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-1.5 min-w-0">
@@ -136,6 +141,11 @@ export default function TodayScreen() {
             </li>
           ))}
         </ul>
+        {data.newToday.length > shownNewToday.length && (
+          <p className="text-xs text-slate-600 mt-2">
+            시장 전체 {data.newToday.length}건 중 최신 {shownNewToday.length}건 표시 중 (내 관심종목 변화는 아래에서 빠짐없이 확인 가능)
+          </p>
+        )}
       </Section>
 
       <Section title="🔴 내 종목 변화">

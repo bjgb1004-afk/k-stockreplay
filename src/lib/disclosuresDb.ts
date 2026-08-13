@@ -1,6 +1,6 @@
 import { openDb } from './db';
 
-export type DisclosureType = 'DISCLOSURE' | 'CONTRACT' | 'DIVIDEND' | 'MANAGEMENT_CHANGE';
+export type DisclosureType = 'DISCLOSURE' | 'CONTRACT' | 'DIVIDEND' | 'MANAGEMENT_CHANGE' | 'INSIDER';
 export type Sentiment = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL' | 'MIXED';
 
 export interface DisclosureRecord {

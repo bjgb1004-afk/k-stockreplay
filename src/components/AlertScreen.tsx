@@ -9,6 +9,7 @@ const typeLabel: Record<EventType, string> = {
   CONTRACT: '계약',
   DIVIDEND: '배당',
   MANAGEMENT_CHANGE: '임원변경',
+  INSIDER: '내부자매매',
 };
 
 export default function AlertScreen() {

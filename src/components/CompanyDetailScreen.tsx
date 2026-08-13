@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
 import { Screen, Section } from './ui';
-import { addToWatchlist, getWatchlist, removeFromWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+import { addToWatchlist, getWatchlist, removeFromWatchlist, updateThesis, type WatchlistItem } from '../lib/watchlistDb';
 import { getVoteCounts, castVote, type Vote, type VoteCounts } from '../lib/votes';
 import { getHistoryForTicker, type DisclosureRecord } from '../lib/disclosuresDb';
 
@@ -15,6 +15,7 @@ const typeLabel: Record<DisclosureRecord['type'], string> = {
   CONTRACT: '계약',
   DIVIDEND: '배당',
   MANAGEMENT_CHANGE: '임원변경',
+  INSIDER: '내부자매매',
 };
 
 export default function CompanyDetailScreen({ company, onBack }: { company: CompanyRef; onBack: () => void }) {
@@ -47,6 +48,9 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
   const watchedSince = watchlistEntry
     ? new Date(watchlistEntry.updated_at).toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
     : null;
+  const daysHeld = watchlistEntry
+    ? Math.floor((Date.now() - new Date(watchlistEntry.updated_at).getTime()) / 86_400_000)
+    : null;
 
   return (
     <Screen>
@@ -72,11 +76,18 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
         )}
       </header>
 
-      {watchedSince && (
+      {watchedSince && watchlistEntry && (
         <Section title="🛂 COMPANY PASSPORT">
-          <div className="space-y-2 text-sm">
+          <div className="space-y-2 text-sm mb-3">
             <Row label="관심종목 등록일" value={watchedSince} />
+            <Row label="보유 기간" value={`${daysHeld}일째`} />
           </div>
+          <ThesisBox ticker={company.ticker} initialThesis={watchlistEntry.thesis ?? ''} />
+          {!!daysHeld && daysHeld >= 90 && (
+            <p className="text-xs text-amber-400 mt-2">
+              ⏳ {daysHeld}일째 보유 중이에요 - 처음 논리가 아직 유효한지 다시 확인해보세요.
+            </p>
+          )}
         </Section>
       )}
 
@@ -164,6 +175,29 @@ function VoteSection({ ticker }: { ticker: string }) {
         </div>
       )}
     </Section>
+  );
+}
+
+// 매수/관심 논리를 적어두면, 나중에 새 공시가 뜰 때마다(§HISTORY 바로 위) 그 이유를
+// 다시 보게 된다 - 자동으로 "이 공시가 논리와 맞는지" 판정하진 않는다(AI 없이는
+// 신뢰할 만한 매칭이 안 됨) - 대신 항상 눈에 보이게 해서 사람이 직접 대조하게 한다.
+function ThesisBox({ ticker, initialThesis }: { ticker: string; initialThesis: string }) {
+  const [text, setText] = useState(initialThesis);
+
+  useEffect(() => setText(initialThesis), [ticker, initialThesis]);
+
+  return (
+    <div>
+      <label className="text-xs text-slate-500">💭 왜 이 종목을 보고 있나요?</label>
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onBlur={() => text !== initialThesis && updateThesis(ticker, text)}
+        placeholder="예: 반도체 업황 반등 기대, 신사업 진출 기대..."
+        rows={2}
+        className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-slate-600 resize-none"
+      />
+    </div>
   );
 }
 

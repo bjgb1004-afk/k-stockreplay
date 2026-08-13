@@ -24,11 +24,13 @@ function todayKst() {
 
 // Market-wide query (no corp_code) instead of one call per tracked ticker -
 // this scales to the full KRX universe without the call count scaling with
-// how many companies we track. pblntf_ty narrows it to the two "사건성"
+// how many companies we track. pblntf_ty narrows it to three "사건성"
 // categories: I=거래소공시(수시공시 - 계약/임원변경/소송 등), B=주요사항보고
-// (증자/감자/합병/자기주식 등). A(정기공시)/J(공정위공시) etc. run 400-700+/day
-// and are mostly routine - out of scope until the earnings-calendar phase.
-const PBLNTF_TYPES = ['I', 'B'];
+// (증자/감자/합병/자기주식 등), D=지분공시(임원ㆍ주요주주 지분변동, 5%룰 대량보유 -
+// 내부자 매매 신호. 다른 데서 잘 안 챙겨보는 정보라 이 앱의 실질적 차별점).
+// A(정기공시)/J(공정위공시) etc. run 400-700+/day and are mostly routine - out
+// of scope until the earnings-calendar phase.
+const PBLNTF_TYPES = ['I', 'B', 'D'];
 
 async function fetchByType(type, date) {
   const items = [];
@@ -91,15 +93,12 @@ for (const [ticker, disclosures] of byTicker) {
   changesByTicker.set(ticker, { companyName, changeCount: deduped.length });
 }
 
-const totalBeforeCap = newToday.length;
 newToday.sort((a, b) => b.id.localeCompare(a.id)); // rcept_no is a receipt timestamp - latest first.
-// ponytail: flat feed cap at 60 so the page stays scrollable; myStockRadar below
-// isn't affected (client filters it to the user's own watchlist, which is small).
-// Add pagination/"더보기" if 60 turns out to be too tight.
-newToday = newToday.slice(0, 60);
-if (totalBeforeCap > newToday.length) {
-  console.log(`(${totalBeforeCap} disclosures today, showing latest ${newToday.length})`);
-}
+// 예전엔 여기서 상위 60개로 잘랐는데, 그러면 그 뒤로 밀린 항목은 클라이언트
+// disclosuresDb에도 영영 안 쌓인다 - 조용한 회사의 INSIDER(내부자매매) 같은 게
+// 그날 시끄러운 회사들에 밀려 사라지는 식. "얼마나 보여줄지"는 화면(TodayScreen)의
+// 관심사고, 여기 today.json은 오늘자 전체를 정직하게 다 담는다 - gzip하면
+// 몇십KB 수준이라 페이로드 크기는 문제가 안 된다.
 
 const myStockRadar = buildMyStockRadar(changesByTicker);
 
