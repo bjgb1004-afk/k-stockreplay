@@ -1,32 +1,14 @@
 {
-  "date": "2026-08-14",
-  "generatedAt": "2026-08-13T22:27:58.525Z",
+  "date": "2026-08-15",
+  "generatedAt": "2026-08-14T22:09:25.615Z",
   "summary": {
-    "newEvents": 1,
+    "newEvents": 0,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
-  "newToday": [
-    {
-      "id": "20260813001788",
-      "ticker": "288980",
-      "companyName": "모아데이타",
-      "type": "DISCLOSURE",
-      "title": "주요사항보고서(유상증자결정)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
-    }
-  ],
-  "myStockRadar": [
-    {
-      "ticker": "288980",
-      "companyName": "모아데이타",
-      "changeCount": 1,
-      "level": "ORANGE"
-    }
-  ],
+  "newToday": [],
+  "myStockRadar": [],
   "upcoming": {
     "tomorrow": {
       "dividend": 0,
