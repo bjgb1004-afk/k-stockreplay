@@ -1,14 +1,48 @@
 {
-  "date": "2026-08-17",
-  "generatedAt": "2026-08-16T22:07:10.261Z",
+  "date": "2026-08-18",
+  "generatedAt": "2026-08-17T22:10:35.604Z",
   "summary": {
-    "newEvents": 0,
+    "newEvents": 2,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
-  "newToday": [],
-  "myStockRadar": [],
+  "newToday": [
+    {
+      "id": "20260814004306",
+      "ticker": "000300",
+      "companyName": "DH오토넥스",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주요사항보고서(타법인주식및출자증권양도결정)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260814004305",
+      "ticker": "006620",
+      "companyName": "동구바이오제약",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주요사항보고서(영업정지) (정정 등 2건)",
+      "time": "",
+      "sentiment": "NEGATIVE",
+      "meaning": "영업 정지 - 사업 중단 관련, 부정적인 신호"
+    }
+  ],
+  "myStockRadar": [
+    {
+      "ticker": "000300",
+      "companyName": "DH오토넥스",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "006620",
+      "companyName": "동구바이오제약",
+      "changeCount": 1,
+      "level": "ORANGE"
+    }
+  ],
   "upcoming": {
     "tomorrow": {
       "dividend": 0,
