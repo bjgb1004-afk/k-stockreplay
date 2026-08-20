@@ -1,6 +1,6 @@
 {
-  "date": "2026-08-20",
-  "generatedAt": "2026-08-19T22:11:32.258Z",
+  "date": "2026-08-21",
+  "generatedAt": "2026-08-20T22:13:26.441Z",
   "summary": {
     "newEvents": 1,
     "importantFacts": 0,
@@ -9,11 +9,11 @@
   },
   "newToday": [
     {
-      "id": "20260819000386",
-      "ticker": "247660",
-      "companyName": "나노씨엠에스",
+      "id": "20260820000443",
+      "ticker": "227950",
+      "companyName": "엔투텍",
       "type": "DISCLOSURE",
-      "title": "주요사항보고서(유상증자결정)",
+      "title": "주요사항보고서(전환사채권발행결정) (정정 등 2건)",
       "time": "",
       "sentiment": "MIXED",
       "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
@@ -21,8 +21,8 @@
   ],
   "myStockRadar": [
     {
-      "ticker": "247660",
-      "companyName": "나노씨엠에스",
+      "ticker": "227950",
+      "companyName": "엔투텍",
       "changeCount": 1,
       "level": "ORANGE"
     }
