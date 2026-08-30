@@ -22,7 +22,8 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~5.8.2",
     "vite": "^6.2.3",
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz"
   },
   "description": "K-STOCKREPLAY — 관심종목의 공시·이벤트·배당을 매일 정리해서 보여주는 서비스",
   "repository": {
@@ -35,5 +36,8 @@
   "bugs": {
     "url": "https://github.com/bjgb1004-afk/k-stockreplay/issues"
   },
-  "homepage": "https://github.com/bjgb1004-afk/k-stockreplay#readme"
+  "homepage": "https://github.com/bjgb1004-afk/k-stockreplay#readme",
+  "devDependencies": {
+    "tsx": "^4.23.13"
+  }
 }
