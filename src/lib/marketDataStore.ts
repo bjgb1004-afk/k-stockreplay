@@ -25,16 +25,16 @@ export async function saveDataset(
     throw new Error('저장할 데이터가 없습니다.');
   }
 
-  const dates = rows.map((row) => row.date);
+  const sorted = [...rows].sort((a, b) => a.date.localeCompare(b.date));
   const dataset: Dataset = {
     id: crypto.randomUUID(),
     fileName: meta.fileName,
     symbol: meta.symbol,
     market: meta.market,
     timeframe: meta.timeframe,
-    startDate: dates.reduce((min, d) => (d < min ? d : min)),
-    endDate: dates.reduce((max, d) => (d > max ? d : max)),
-    rowCount: rows.length,
+    startDate: sorted[0].date,
+    endDate: sorted.at(-1)!.date,
+    rowCount: sorted.length,
     createdAt: new Date().toISOString(),
   };
 
@@ -43,12 +43,13 @@ export async function saveDataset(
     const tx = db.transaction(['datasets', 'market_data'], 'readwrite');
     tx.objectStore('datasets').put(dataset);
     const marketDataStore = tx.objectStore('market_data');
-    for (const row of rows) {
+    for (const row of sorted) {
       const stored: StoredMarketDataRow = { ...row, datasetId: dataset.id };
       marketDataStore.add(stored);
     }
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error ?? new Error('저장이 중단되었습니다.'));
   });
 
   return dataset.id;
@@ -58,6 +59,7 @@ export function listDatasets(): Promise<Dataset[]> {
   return withStore('datasets', 'readonly', (store) => store.getAll());
 }
 
+// Returns rows sorted ascending by date (guaranteed by saveDataset's insert order).
 export function getMarketData(datasetId: string): Promise<MarketDataRow[]> {
   return withStore('market_data', 'readonly', (store) =>
     store.index('datasetId').getAll(datasetId),
@@ -79,5 +81,6 @@ export async function deleteDataset(datasetId: string): Promise<void> {
     };
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error ?? new Error('삭제가 중단되었습니다.'));
   });
 }
