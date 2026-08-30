@@ -3,7 +3,7 @@
 // database at different versions independently is a VersionError waiting
 // to happen, so every store's schema lives here.
 const DB_NAME = 'kstockreplay';
-const DB_VERSION = 5;
+const DB_VERSION = 6;
 
 export function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -34,6 +34,15 @@ export function openDb(): Promise<IDBDatabase> {
         // OHLCV 행 1건당 1레코드. datasetId로만 조회하므로 자동증가 키 + 인덱스만 있으면 된다.
         const store = db.createObjectStore('market_data', { autoIncrement: true });
         store.createIndex('datasetId', 'datasetId');
+      }
+      if (!db.objectStoreNames.contains('replay_sessions')) {
+        // 가상매매 세션 1건당 1행 (§6) - 실제 가계부 거래(watchlist 등)와 분리된 별도 저장소.
+        db.createObjectStore('replay_sessions', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('replay_trades')) {
+        // 세션 내 가상 매수/매도 기록. sessionId로만 조회하므로 인덱스 하나면 충분하다.
+        const store = db.createObjectStore('replay_trades', { keyPath: 'id' });
+        store.createIndex('sessionId', 'sessionId');
       }
     };
     req.onsuccess = () => resolve(req.result);
