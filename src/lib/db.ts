@@ -3,7 +3,7 @@
 // database at different versions independently is a VersionError waiting
 // to happen, so every store's schema lives here.
 const DB_NAME = 'kstockreplay';
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 
 export function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -25,6 +25,15 @@ export function openDb(): Promise<IDBDatabase> {
         const store = db.createObjectStore('disclosures', { keyPath: 'id' });
         store.createIndex('ticker', 'ticker');
         store.createIndex('date', 'date');
+      }
+      if (!db.objectStoreNames.contains('datasets')) {
+        // 리플레이용 업로드 파일 1건당 메타데이터 1행 (§3 datasets).
+        db.createObjectStore('datasets', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('market_data')) {
+        // OHLCV 행 1건당 1레코드. datasetId로만 조회하므로 자동증가 키 + 인덱스만 있으면 된다.
+        const store = db.createObjectStore('market_data', { autoIncrement: true });
+        store.createIndex('datasetId', 'datasetId');
       }
     };
     req.onsuccess = () => resolve(req.result);
