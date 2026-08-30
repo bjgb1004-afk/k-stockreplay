@@ -1,14 +1,122 @@
 {
-  "date": "2026-08-30",
-  "generatedAt": "2026-08-29T23:39:36.383Z",
+  "date": "2026-08-31",
+  "generatedAt": "2026-08-30T23:57:50.307Z",
   "summary": {
-    "newEvents": 0,
+    "newEvents": 7,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
-  "newToday": [],
-  "myStockRadar": [],
+  "newToday": [
+    {
+      "id": "20260831800007",
+      "ticker": "009540",
+      "companyName": "HD한국조선해양",
+      "type": "DISCLOSURE",
+      "title": "중대재해발생(자회사의 주요경영사항)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260831800003",
+      "ticker": "002020",
+      "companyName": "코오롱",
+      "type": "DISCLOSURE",
+      "title": "중대재해발생(자회사의 주요경영사항)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260831800002",
+      "ticker": "003070",
+      "companyName": "코오롱글로벌",
+      "type": "DISCLOSURE",
+      "title": "중대재해발생",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260831800001",
+      "ticker": "329180",
+      "companyName": "HD현대중공업",
+      "type": "DISCLOSURE",
+      "title": "중대재해발생",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260831000011",
+      "ticker": "022220",
+      "companyName": "티케이지애강",
+      "type": "DISCLOSURE",
+      "title": "공개매수설명서",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260831000008",
+      "ticker": "022220",
+      "companyName": "티케이지애강",
+      "type": "DISCLOSURE",
+      "title": "공개매수신고서",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260828001963",
+      "ticker": "008600",
+      "companyName": "윌비스",
+      "type": "DISCLOSURE",
+      "title": "주요사항보고서(채권은행등의관리절차중단)",
+      "time": "",
+      "sentiment": "NEGATIVE",
+      "meaning": "채권단 관리절차 관련 - 부정적인 신호"
+    }
+  ],
+  "myStockRadar": [
+    {
+      "ticker": "022220",
+      "companyName": "티케이지애강",
+      "changeCount": 2,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "002020",
+      "companyName": "코오롱",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "009540",
+      "companyName": "HD한국조선해양",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "329180",
+      "companyName": "HD현대중공업",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "003070",
+      "companyName": "코오롱글로벌",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "008600",
+      "companyName": "윌비스",
+      "changeCount": 1,
+      "level": "ORANGE"
+    }
+  ],
   "upcoming": {
     "tomorrow": {
       "dividend": 0,
