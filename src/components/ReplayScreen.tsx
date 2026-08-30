@@ -4,7 +4,7 @@ import { Screen, Section } from './ui';
 import { parseSpreadsheetFile } from '../lib/marketDataParse';
 import { detectColumnMapping, normalizeRows, type MarketDataRow } from '../lib/marketDataNormalize';
 import { saveDataset, listDatasets, getMarketData, deleteDataset, type Dataset } from '../lib/marketDataStore';
-import ReplayPlayback from './ReplayPlayback';
+import ReplayTrading from './ReplayTrading';
 
 type View = { kind: 'list' } | { kind: 'upload' } | { kind: 'play'; dataset: Dataset; rows: MarketDataRow[] };
 
@@ -42,7 +42,7 @@ export default function ReplayScreen() {
             <p className="text-xs text-slate-500">{view.dataset.startDate} ~ {view.dataset.endDate}</p>
           </div>
         </header>
-        <ReplayPlayback rows={view.rows} />
+        <ReplayTrading datasetId={view.dataset.id} rows={view.rows} />
       </Screen>
     );
   }

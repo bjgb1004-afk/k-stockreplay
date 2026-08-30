@@ -12,7 +12,13 @@ const SPEED_MS = { slow: 1000, normal: 500, fast: 200 } as const;
 type Speed = keyof typeof SPEED_MS;
 const SPEED_LABEL: Record<Speed, string> = { slow: '느리게', normal: '보통', fast: '빠르게' };
 
-export default function ReplayPlayback({ rows }: { rows: MarketDataRow[] }) {
+export default function ReplayPlayback({
+  rows,
+  onCursorChange,
+}: {
+  rows: MarketDataRow[];
+  onCursorChange?: (cursor: number, row: MarketDataRow) => void;
+}) {
   const [cursor, setCursor] = useState(() => clampCursor(INITIAL_REVEAL, rows.length));
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState<Speed>('normal');
@@ -21,6 +27,10 @@ export default function ReplayPlayback({ rows }: { rows: MarketDataRow[] }) {
     setCursor(clampCursor(INITIAL_REVEAL, rows.length));
     setIsPlaying(false);
   }, [rows]);
+
+  useEffect(() => {
+    if (rows.length > 0) onCursorChange?.(cursor, rows[cursor - 1]);
+  }, [cursor, rows]);
 
   useEffect(() => {
     if (!isPlaying) return;
