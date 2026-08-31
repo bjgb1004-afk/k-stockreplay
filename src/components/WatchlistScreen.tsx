@@ -11,12 +11,20 @@ interface StockOption {
   market: 'KR' | 'US';
 }
 
+interface PriceInfo {
+  ticker: string;
+  close: number;
+  changePct: number;
+  date: string;
+}
+
 export default function WatchlistScreen() {
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [stocks, setStocks] = useState<StockOption[]>([]);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<StockOption | null>(null);
   const [shareMsg, setShareMsg] = useState<string | null>(null);
+  const [prices, setPrices] = useState<Map<string, PriceInfo>>(new Map());
 
   useEffect(() => {
     getWatchlist().then((list) => setItems(list.sort((a, b) => b.updated_at.localeCompare(a.updated_at))));
@@ -29,6 +37,10 @@ export default function WatchlistScreen() {
         ...us.map((s: { ticker: string; companyName: string }) => ({ ...s, market: 'US' as const })),
       ]);
     });
+    fetch('/data/prices.json')
+      .then((r) => r.json())
+      .then((rows: PriceInfo[]) => setPrices(new Map(rows.map((r) => [r.ticker, r]))))
+      .catch(() => {});
   }, []);
 
   const watchedTickers = useMemo(() => new Set(items.map((i) => i.ticker)), [items]);
@@ -138,15 +150,28 @@ export default function WatchlistScreen() {
               >
                 <button
                   onClick={() => setSelected(item)}
-                  className="flex-1 flex items-center justify-between text-left py-1.5 min-w-0"
+                  className="flex-1 flex items-start justify-between text-left py-1.5 min-w-0 gap-2"
                 >
-                  <span className="truncate">
-                    <span className="font-medium">{item.companyName}</span>
-                    <span className={`ml-1.5 text-[10px] rounded px-1 py-0.5 ${item.market === 'US' ? 'bg-cyan-500/15 text-cyan-400' : 'bg-slate-800 text-slate-400'}`}>
-                      {item.market}
+                  <div className="flex flex-col min-w-0">
+                    <span className="truncate">
+                      <span className="font-medium">{item.companyName}</span>
+                      <span className={`ml-1.5 text-[10px] rounded px-1 py-0.5 ${item.market === 'US' ? 'bg-cyan-500/15 text-cyan-400' : 'bg-slate-800 text-slate-400'}`}>
+                        {item.market}
+                      </span>
+                      <span className="text-slate-500 ml-2 text-xs">{item.ticker}</span>
                     </span>
-                    <span className="text-slate-500 ml-2 text-xs">{item.ticker}</span>
-                  </span>
+                    {item.market === 'KR' && prices.has(item.ticker) ? (
+                      <p className="text-xs mt-0.5">
+                        {prices.get(item.ticker)!.close.toLocaleString()}원{' '}
+                        <span className={prices.get(item.ticker)!.changePct >= 0 ? 'text-red-400' : 'text-blue-400'}>
+                          {prices.get(item.ticker)!.changePct >= 0 ? '+' : ''}
+                          {prices.get(item.ticker)!.changePct.toFixed(2)}%
+                        </span>
+                      </p>
+                    ) : item.market === 'US' ? (
+                      <p className="text-xs text-slate-600 mt-0.5">가격 정보 미지원</p>
+                    ) : null}
+                  </div>
                   <ChevronRight size={16} className="text-slate-600 shrink-0 ml-1" />
                 </button>
                 <button
