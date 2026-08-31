@@ -22,6 +22,7 @@ async function fetchForDate(basDt) {
   let page = 1;
   for (;;) {
     const url = new URL('https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo');
+    // Note: data.go.kr keys are sometimes issued already percent-encoded; URLSearchParams may double-encode them.
     url.searchParams.set('serviceKey', API_KEY);
     url.searchParams.set('resultType', 'json');
     url.searchParams.set('basDt', basDt);
@@ -54,7 +55,7 @@ for (let daysAgo = 0; daysAgo <= 5; daysAgo++) {
     break;
   }
 }
-if (!rows) {
+if (!rows || rows.length === 0) {
   console.error('No price data found in the last 5 days.');
   process.exit(1);
 }
