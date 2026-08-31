@@ -1,2 +1,21 @@
+@import "pretendard/dist/web/variable/pretendardvariable.css";
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* ponytail: neutral scale realiased from Tailwind's default slate (blue-tinted)
+   to zinc (true neutral) - single-point fix, no per-component edits needed. */
+@theme {
+  --font-sans: 'Pretendard Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-slate-50: #fafafa;
+  --color-slate-100: #f4f4f5;
+  --color-slate-200: #e4e4e7;
+  --color-slate-300: #d4d4d8;
+  --color-slate-400: #a1a1aa;
+  --color-slate-500: #71717a;
+  --color-slate-600: #52525b;
+  --color-slate-700: #3f3f46;
+  --color-slate-800: #27272a;
+  --color-slate-900: #18181b;
+  --color-slate-950: #09090b;
+}

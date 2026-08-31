@@ -195,7 +195,7 @@ function ThesisBox({ ticker, initialThesis }: { ticker: string; initialThesis: s
         onBlur={() => text !== initialThesis && updateThesis(ticker, text)}
         placeholder="예: 반도체 업황 반등 기대, 신사업 진출 기대..."
         rows={2}
-        className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-slate-600 resize-none"
+        className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600 resize-none"
       />
     </div>
   );

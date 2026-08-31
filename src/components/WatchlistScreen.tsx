@@ -96,7 +96,7 @@ export default function WatchlistScreen() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="종목명 검색 (예: 삼성전자)"
-          className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-slate-600"
+          className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
         />
         {suggestions.length > 0 && (
           <ul className="mt-2 border border-slate-800 rounded-lg divide-y divide-slate-800 overflow-hidden">

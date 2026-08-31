@@ -66,6 +66,60 @@ export default function ReplayScreen() {
         </button>
       </header>
 
+      <details className="mb-6 bg-slate-900 rounded-lg px-3 py-2 text-sm text-slate-300 open:pb-3">
+        <summary className="cursor-pointer text-slate-100 font-medium py-1">사용법 자세히 보기 (데이터는 어디서 받나요?)</summary>
+
+        <div className="mt-3 space-y-4 text-xs text-slate-400">
+          <div>
+            <p className="text-slate-200 font-medium mb-1">1. 데이터 파일 구하기</p>
+            <p>공통적으로 PC용 HTS의 차트 화면에서 마우스 우클릭 → "엑셀로 저장" 계열 메뉴를 찾으면 됩니다. 증권사별로 알려진 위치는 아래와 같은데, 프로그램 버전에 따라 메뉴 이름이나 위치가 조금 다를 수 있으니 참고용으로 보고 안 보이면 차트 화면에서 "엑셀"이나 "저장"으로 검색해보세요.</p>
+            <ul className="list-disc list-inside mt-1 space-y-0.5">
+              <li><span className="text-slate-300">키움증권(영웅문4/S)</span> — 차트 창 우클릭 → "다른 이름으로 저장" 또는 "Excel로 저장"</li>
+              <li><span className="text-slate-300">삼성증권(POP HTS)</span> — 차트 우클릭 → "데이터 추출" / "엑셀 저장"</li>
+              <li><span className="text-slate-300">NH투자증권(나무)</span> — 차트 화면 상단 툴바의 엑셀 아이콘</li>
+              <li><span className="text-slate-300">한국투자증권(eBEST/한국투자 HTS)</span> — 차트 우클릭 → "엑셀로 저장"</li>
+              <li><span className="text-slate-300">대신증권(크레온)</span> — 차트 우클릭 → "차트 데이터 저장"</li>
+              <li>그 외 증권사도 대부분 같은 패턴(차트 우클릭 → 엑셀/저장 계열)을 씁니다.</li>
+            </ul>
+            <ul className="list-disc list-inside mt-2 space-y-0.5">
+              <li>모바일(MTS) 앱은 보통 이 기능이 없어서 PC용 HTS가 필요합니다.</li>
+              <li>네이버 금융(finance.naver.com) 종목 페이지에서도 일별 시세를 받을 수 있는 경우가 있습니다.</li>
+              <li>일봉(하루 단위) 기준 최근 6개월~2년 정도 받으면 재생용으로 충분합니다.</li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-slate-200 font-medium mb-1">2. 파일 형식</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              <li>CSV, 구형 엑셀(.xls), 최신 엑셀(.xlsx) 전부 업로드 가능합니다.</li>
+              <li>한글이 깨지는 CP949(EUC-KR) 인코딩 파일도 자동으로 알아서 처리하니 신경 쓰지 않아도 됩니다.</li>
+              <li>필요한 컬럼은 날짜·시가·고가·저가·종가·거래량 6개뿐입니다. 컬럼 순서는 상관없고, "일자 / 시간"이나 "현재가"처럼 이름이 정확히 안 맞아도 비슷한 이름을 자동으로 찾아 연결합니다.</li>
+              <li>컬럼을 못 찾으면 어떤 컬럼이 빠졌는지 화면에 바로 알려줍니다.</li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-slate-200 font-medium mb-1">3. 업로드 → 재생 준비</p>
+            <p>위 "업로드" 버튼 → 파일 선택 → 자동으로 행 개수가 확인되면 종목명(또는 코드)과 코스피/코스닥을 입력하고 저장합니다. 저장된 종목은 아래 목록에 기간·행 개수와 함께 남고, 언제든 삭제할 수 있습니다. 목록에서 종목을 누르면 투자금을 먼저 입력하는데, 여기서 정한 금액 안에서만 매수가 가능합니다(초과하면 매수 버튼이 자동으로 막힙니다).</p>
+          </div>
+
+          <div>
+            <p className="text-slate-200 font-medium mb-1">4. 재생하며 연습하기</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              <li>처음엔 앞쪽 30개 봉만 보이고, 재생 버튼이나 "다음 구간"으로 한 봉씩 진행합니다. 다음 봉으로 넘어갈 때는 종가가 바로 뜨지 않고 잠깐 위아래로 흔들리다 확정됩니다.</li>
+              <li>슬라이더로 원하는 시점으로 바로 건너뛸 수 있고, 재생 속도(느리게/보통/빠르게)도 바꿀 수 있습니다.</li>
+              <li>매수/매도는 수량을 직접 입력하거나, 10%/25%/50%/100% 버튼으로 그 시점 남은 현금 기준 수량을 자동 계산할 수 있습니다. 여러 번 나눠 사면(분할매수) 평단가가 자동으로 다시 계산되고, 차트에 노란 점선으로 표시됩니다.</li>
+              <li>매수·매도한 지점은 차트에 화살표로 남습니다(매수는 초록 아래쪽, 매도는 빨강 위쪽). 매도할 때마다 그 매도의 손익이, 하단에는 누적 총 손익이 표시됩니다.</li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-slate-200 font-medium mb-1">5. 데이터는 어디에 저장되나요</p>
+            <p>업로드한 파일과 매매 기록은 서버로 전송되지 않고 이 브라우저(기기)에만 저장됩니다. 다른 기기나 브라우저에서는 다시 업로드해야 하고, 브라우저 저장공간(사이트 데이터)을 지우면 함께 사라집니다.</p>
+          </div>
+        </div>
+      </details>
+
       <Section title="저장된 데이터">
         {datasets.length === 0 ? (
           <p className="text-sm text-slate-500">업로드한 데이터가 없습니다.</p>
@@ -153,7 +207,7 @@ function UploadForm({ onDone, onCancel }: { onDone: () => void; onCancel: () => 
               value={symbol}
               onChange={(e) => setSymbol(e.target.value)}
               placeholder="종목명 또는 코드 (예: 삼성전자)"
-              className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-slate-600"
+              className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
             />
             <select
               value={market}
