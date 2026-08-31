@@ -27,6 +27,7 @@ jobs:
         run: node scripts/fetch-facts.mjs
 
       - name: Fetch KR closing prices
+        continue-on-error: true
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
         run: node scripts/fetch-prices.mjs
@@ -34,7 +35,8 @@ jobs:
       - name: Check for changes
         id: diff
         run: |
-          git add public/data/today.json public/data/prices.json
+          git add public/data/today.json
+          git add public/data/prices.json 2>/dev/null || true
           git diff --staged --quiet && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Commit and push

@@ -48,7 +48,9 @@ export default function WatchlistScreen() {
   const suggestions = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.trim().toLowerCase();
-    return stocks.filter((s) => !watchedTickers.has(s.ticker) && s.companyName.toLowerCase().includes(q)).slice(0, 5);
+    return stocks
+      .filter((s) => !watchedTickers.has(s.ticker) && (s.companyName.toLowerCase().includes(q) || s.ticker.toLowerCase().includes(q)))
+      .slice(0, 5);
   }, [query, stocks, watchedTickers]);
 
   async function handleAdd(stock: StockOption) {
@@ -113,7 +115,7 @@ export default function WatchlistScreen() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="종목명 검색 (예: 삼성전자)"
+          placeholder="종목명/티커 검색 (예: 삼성전자, AAPL)"
           className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
         />
         {suggestions.length > 0 && (
@@ -170,6 +172,8 @@ export default function WatchlistScreen() {
                       </p>
                     ) : item.market === 'US' ? (
                       <p className="text-xs text-slate-600 mt-0.5">가격 정보 미지원</p>
+                    ) : item.market === 'KR' ? (
+                      <p className="text-xs text-slate-600 mt-0.5">종가 정보 없음</p>
                     ) : null}
                   </div>
                   <ChevronRight size={16} className="text-slate-600 shrink-0 ml-1" />
