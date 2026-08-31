@@ -8,6 +8,7 @@ import { getHistoryForTicker, type DisclosureRecord } from '../lib/disclosuresDb
 interface CompanyRef {
   ticker: string;
   companyName: string;
+  market?: 'KR' | 'US';
 }
 
 const typeLabel: Record<DisclosureRecord['type'], string> = {
@@ -36,7 +37,7 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
     if (watchlistEntry) {
       await removeFromWatchlist(company.ticker);
     } else {
-      await addToWatchlist(company.ticker, company.companyName);
+      await addToWatchlist(company.ticker, company.companyName, company.market ?? 'KR');
     }
     refreshWatchlistEntry();
   }

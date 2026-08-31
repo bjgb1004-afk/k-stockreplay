@@ -8,6 +8,7 @@ import CompanyDetailScreen from './CompanyDetailScreen';
 interface StockOption {
   ticker: string;
   companyName: string;
+  market: 'KR' | 'US';
 }
 
 export default function WatchlistScreen() {
@@ -19,10 +20,15 @@ export default function WatchlistScreen() {
 
   useEffect(() => {
     getWatchlist().then((list) => setItems(list.sort((a, b) => b.updated_at.localeCompare(a.updated_at))));
-    fetch('/data/stocks.json')
-      .then((res) => res.json())
-      .then(setStocks)
-      .catch(() => setStocks([]));
+    Promise.all([
+      fetch('/data/stocks.json').then((r) => r.json()).catch(() => []),
+      fetch('/data/us-stocks.json').then((r) => r.json()).catch(() => []),
+    ]).then(([kr, us]) => {
+      setStocks([
+        ...kr.map((s: { ticker: string; companyName: string }) => ({ ...s, market: 'KR' as const })),
+        ...us.map((s: { ticker: string; companyName: string }) => ({ ...s, market: 'US' as const })),
+      ]);
+    });
   }, []);
 
   const watchedTickers = useMemo(() => new Set(items.map((i) => i.ticker)), [items]);
@@ -34,7 +40,7 @@ export default function WatchlistScreen() {
   }, [query, stocks, watchedTickers]);
 
   async function handleAdd(stock: StockOption) {
-    await addToWatchlist(stock.ticker, stock.companyName);
+    await addToWatchlist(stock.ticker, stock.companyName, stock.market);
     setItems(await getWatchlist());
     setQuery('');
     // D1 온보딩(§6-12): 추가하자마자 바로 상세(COMPANY PASSPORT + HISTORY)로
@@ -106,7 +112,12 @@ export default function WatchlistScreen() {
                   onClick={() => handleAdd(s)}
                   className="w-full text-left px-3 py-2 text-sm hover:bg-slate-900 flex justify-between"
                 >
-                  <span>{s.companyName}</span>
+                  <span className="flex items-center gap-1.5 min-w-0">
+                    <span className="truncate">{s.companyName}</span>
+                    <span className={`text-[10px] shrink-0 rounded px-1 py-0.5 ${s.market === 'US' ? 'bg-cyan-500/15 text-cyan-400' : 'bg-slate-800 text-slate-400'}`}>
+                      {s.market}
+                    </span>
+                  </span>
                   <span className="text-slate-500">{s.ticker}</span>
                 </button>
               </li>
@@ -131,6 +142,9 @@ export default function WatchlistScreen() {
                 >
                   <span className="truncate">
                     <span className="font-medium">{item.companyName}</span>
+                    <span className={`ml-1.5 text-[10px] rounded px-1 py-0.5 ${item.market === 'US' ? 'bg-cyan-500/15 text-cyan-400' : 'bg-slate-800 text-slate-400'}`}>
+                      {item.market}
+                    </span>
                     <span className="text-slate-500 ml-2 text-xs">{item.ticker}</span>
                   </span>
                   <ChevronRight size={16} className="text-slate-600 shrink-0 ml-1" />
