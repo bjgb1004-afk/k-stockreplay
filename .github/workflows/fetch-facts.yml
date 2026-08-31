@@ -26,10 +26,15 @@ jobs:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: node scripts/fetch-facts.mjs
 
+      - name: Fetch KR closing prices
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: node scripts/fetch-prices.mjs
+
       - name: Check for changes
         id: diff
         run: |
-          git add public/data/today.json
+          git add public/data/today.json public/data/prices.json
           git diff --staged --quiet && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Commit and push
