@@ -12,14 +12,6 @@
     "companyName": "Goldman Sachs Physical Gold ETF"
   },
   {
-    "ticker": "AAC",
-    "companyName": "Ares Acquisition Corp III"
-  },
-  {
-    "ticker": "AAC-UN",
-    "companyName": "Ares Acquisition Corp III"
-  },
-  {
     "ticker": "AACB",
     "companyName": "Artius II Acquisition Inc."
   },
@@ -34,46 +26,6 @@
   {
     "ticker": "AACG",
     "companyName": "ATA Creativity Global"
-  },
-  {
-    "ticker": "AACI",
-    "companyName": "Armada Acquisition Corp. III"
-  },
-  {
-    "ticker": "AACIU",
-    "companyName": "Armada Acquisition Corp. III"
-  },
-  {
-    "ticker": "AACIW",
-    "companyName": "Armada Acquisition Corp. III"
-  },
-  {
-    "ticker": "AACO",
-    "companyName": "Abony Acquisition Corp. I"
-  },
-  {
-    "ticker": "AACOU",
-    "companyName": "Abony Acquisition Corp. I"
-  },
-  {
-    "ticker": "AACOW",
-    "companyName": "Abony Acquisition Corp. I"
-  },
-  {
-    "ticker": "AACP",
-    "companyName": "Apogee Acquisition Corp"
-  },
-  {
-    "ticker": "AACPR",
-    "companyName": "Apogee Acquisition Corp"
-  },
-  {
-    "ticker": "AACPU",
-    "companyName": "Apogee Acquisition Corp"
-  },
-  {
-    "ticker": "AACPW",
-    "companyName": "Apogee Acquisition Corp"
   },
   {
     "ticker": "AADX",
@@ -244,18 +196,6 @@
     "companyName": "ARBOR REALTY TRUST INC"
   },
   {
-    "ticker": "ABR-PD",
-    "companyName": "ARBOR REALTY TRUST INC"
-  },
-  {
-    "ticker": "ABR-PE",
-    "companyName": "ARBOR REALTY TRUST INC"
-  },
-  {
-    "ticker": "ABR-PF",
-    "companyName": "ARBOR REALTY TRUST INC"
-  },
-  {
     "ticker": "ABSI",
     "companyName": "Absci Corp"
   },
@@ -304,18 +244,6 @@
     "companyName": "Arcosa, Inc."
   },
   {
-    "ticker": "ACAA",
-    "companyName": "Averin Capital Acquisition Corp."
-  },
-  {
-    "ticker": "ACAAU",
-    "companyName": "Averin Capital Acquisition Corp."
-  },
-  {
-    "ticker": "ACAAW",
-    "companyName": "Averin Capital Acquisition Corp."
-  },
-  {
     "ticker": "ACAD",
     "companyName": "ACADIA PHARMACEUTICALS INC"
   },
@@ -358,18 +286,6 @@
   {
     "ticker": "ACFN",
     "companyName": "ACORN ENERGY, INC."
-  },
-  {
-    "ticker": "ACGC",
-    "companyName": "ACP Holdings Acquisition Corp."
-  },
-  {
-    "ticker": "ACGCU",
-    "companyName": "ACP Holdings Acquisition Corp."
-  },
-  {
-    "ticker": "ACGCW",
-    "companyName": "ACP Holdings Acquisition Corp."
   },
   {
     "ticker": "ACGL",
@@ -472,19 +388,7 @@
     "companyName": "abrdn Income Credit Strategies Fund"
   },
   {
-    "ticker": "ACP-PA",
-    "companyName": "abrdn Income Credit Strategies Fund"
-  },
-  {
     "ticker": "ACR",
-    "companyName": "ACRES Commercial Realty Corp."
-  },
-  {
-    "ticker": "ACR-PC",
-    "companyName": "ACRES Commercial Realty Corp."
-  },
-  {
-    "ticker": "ACR-PD",
     "companyName": "ACRES Commercial Realty Corp."
   },
   {
@@ -613,10 +517,6 @@
   },
   {
     "ticker": "ADC",
-    "companyName": "AGREE REALTY CORP"
-  },
-  {
-    "ticker": "ADC-PA",
     "companyName": "AGREE REALTY CORP"
   },
   {
@@ -754,30 +654,6 @@
   {
     "ticker": "ADZCF",
     "companyName": "DEUTSCHE BANK AKTIENGESELLSCHAFT"
-  },
-  {
-    "ticker": "AEAE",
-    "companyName": "AltEnergy Acquisition Corp"
-  },
-  {
-    "ticker": "AEAEU",
-    "companyName": "AltEnergy Acquisition Corp"
-  },
-  {
-    "ticker": "AEAEW",
-    "companyName": "AltEnergy Acquisition Corp"
-  },
-  {
-    "ticker": "AEAQ",
-    "companyName": "Activate Energy Acquisition Corp."
-  },
-  {
-    "ticker": "AEAQU",
-    "companyName": "Activate Energy Acquisition Corp."
-  },
-  {
-    "ticker": "AEAQW",
-    "companyName": "Activate Energy Acquisition Corp."
   },
   {
     "ticker": "AEBI",
@@ -940,10 +816,6 @@
     "companyName": "Aeva Technologies, Inc."
   },
   {
-    "ticker": "AEXA",
-    "companyName": "American Exceptionalism Acquisition Corp. A"
-  },
-  {
     "ticker": "AEYE",
     "companyName": "AUDIOEYE INC"
   },
@@ -1068,30 +940,6 @@
     "companyName": "FEDERAL AGRICULTURAL MORTGAGE CORP"
   },
   {
-    "ticker": "AGM-PD",
-    "companyName": "FEDERAL AGRICULTURAL MORTGAGE CORP"
-  },
-  {
-    "ticker": "AGM-PE",
-    "companyName": "FEDERAL AGRICULTURAL MORTGAGE CORP"
-  },
-  {
-    "ticker": "AGM-PF",
-    "companyName": "FEDERAL AGRICULTURAL MORTGAGE CORP"
-  },
-  {
-    "ticker": "AGM-PG",
-    "companyName": "FEDERAL AGRICULTURAL MORTGAGE CORP"
-  },
-  {
-    "ticker": "AGM-PH",
-    "companyName": "FEDERAL AGRICULTURAL MORTGAGE CORP"
-  },
-  {
-    "ticker": "AGM-PI",
-    "companyName": "FEDERAL AGRICULTURAL MORTGAGE CORP"
-  },
-  {
     "ticker": "AGMB",
     "companyName": "Agomab Therapeutics NV"
   },
@@ -1200,18 +1048,6 @@
     "companyName": "American Heritage International Inc."
   },
   {
-    "ticker": "AHL-PD",
-    "companyName": "ASPEN INSURANCE HOLDINGS LTD"
-  },
-  {
-    "ticker": "AHL-PE",
-    "companyName": "ASPEN INSURANCE HOLDINGS LTD"
-  },
-  {
-    "ticker": "AHL-PF",
-    "companyName": "ASPEN INSURANCE HOLDINGS LTD"
-  },
-  {
     "ticker": "AHMA",
     "companyName": "AMBITIONS ENTERPRISE MANAGEMENT CO. L.L.C"
   },
@@ -1232,31 +1068,7 @@
     "companyName": "AH Realty Trust, Inc."
   },
   {
-    "ticker": "AHRT-PA",
-    "companyName": "AH Realty Trust, Inc."
-  },
-  {
     "ticker": "AHT",
-    "companyName": "ASHFORD HOSPITALITY TRUST INC"
-  },
-  {
-    "ticker": "AHT-PD",
-    "companyName": "ASHFORD HOSPITALITY TRUST INC"
-  },
-  {
-    "ticker": "AHT-PF",
-    "companyName": "ASHFORD HOSPITALITY TRUST INC"
-  },
-  {
-    "ticker": "AHT-PG",
-    "companyName": "ASHFORD HOSPITALITY TRUST INC"
-  },
-  {
-    "ticker": "AHT-PH",
-    "companyName": "ASHFORD HOSPITALITY TRUST INC"
-  },
-  {
-    "ticker": "AHT-PI",
     "companyName": "ASHFORD HOSPITALITY TRUST INC"
   },
   {
@@ -1318,18 +1130,6 @@
   {
     "ticker": "AII",
     "companyName": "American Integrity Insurance Group, Inc."
-  },
-  {
-    "ticker": "AIIA",
-    "companyName": "AI Infrastructure Acquisition Corp."
-  },
-  {
-    "ticker": "AIIA-RI",
-    "companyName": "AI Infrastructure Acquisition Corp."
-  },
-  {
-    "ticker": "AIIA-UN",
-    "companyName": "AI Infrastructure Acquisition Corp."
   },
   {
     "ticker": "AIIO",
@@ -1588,10 +1388,6 @@
     "companyName": "ALBEMARLE CORP"
   },
   {
-    "ticker": "ALB-PA",
-    "companyName": "ALBEMARLE CORP"
-  },
-  {
     "ticker": "ALBC",
     "companyName": "Alternative Ballistics Corp"
   },
@@ -1606,18 +1402,6 @@
   {
     "ticker": "ALCO",
     "companyName": "ALICO, INC."
-  },
-  {
-    "ticker": "ALCUF",
-    "companyName": "Alchemy Investments Acquisition Corp 1"
-  },
-  {
-    "ticker": "ALCWF",
-    "companyName": "Alchemy Investments Acquisition Corp 1"
-  },
-  {
-    "ticker": "ALCYF",
-    "companyName": "Alchemy Investments Acquisition Corp 1"
   },
   {
     "ticker": "ALDA",
@@ -1656,18 +1440,6 @@
     "companyName": "ALLEGRO.EU SA/ADR"
   },
   {
-    "ticker": "ALF",
-    "companyName": "Centurion Acquisition Corp."
-  },
-  {
-    "ticker": "ALFUU",
-    "companyName": "Centurion Acquisition Corp."
-  },
-  {
-    "ticker": "ALFUW",
-    "companyName": "Centurion Acquisition Corp."
-  },
-  {
     "ticker": "ALG",
     "companyName": "ALAMO GROUP INC"
   },
@@ -1700,18 +1472,6 @@
     "companyName": "Alignment Healthcare, Inc."
   },
   {
-    "ticker": "ALIS",
-    "companyName": "Calisa Acquisition Corp"
-  },
-  {
-    "ticker": "ALISR",
-    "companyName": "Calisa Acquisition Corp"
-  },
-  {
-    "ticker": "ALISU",
-    "companyName": "Calisa Acquisition Corp"
-  },
-  {
     "ticker": "ALIT",
     "companyName": "Alight, Inc. / Delaware"
   },
@@ -1729,22 +1489,6 @@
   },
   {
     "ticker": "ALL",
-    "companyName": "ALLSTATE CORP"
-  },
-  {
-    "ticker": "ALL-PB",
-    "companyName": "ALLSTATE CORP"
-  },
-  {
-    "ticker": "ALL-PH",
-    "companyName": "ALLSTATE CORP"
-  },
-  {
-    "ticker": "ALL-PI",
-    "companyName": "ALLSTATE CORP"
-  },
-  {
-    "ticker": "ALL-PJ",
     "companyName": "ALLSTATE CORP"
   },
   {
@@ -1840,22 +1584,6 @@
     "companyName": "Alps Group Inc"
   },
   {
-    "ticker": "ALPX",
-    "companyName": "Alpex Acquisition Corp"
-  },
-  {
-    "ticker": "ALPXR",
-    "companyName": "Alpex Acquisition Corp"
-  },
-  {
-    "ticker": "ALPXU",
-    "companyName": "Alpex Acquisition Corp"
-  },
-  {
-    "ticker": "ALPXW",
-    "companyName": "Alpex Acquisition Corp"
-  },
-  {
     "ticker": "ALRM",
     "companyName": "Alarm.com Holdings, Inc."
   },
@@ -1868,24 +1596,8 @@
     "companyName": "ALR Technologies SG Ltd."
   },
   {
-    "ticker": "ALSAF",
-    "companyName": "Alpha Star Acquisition Corp"
-  },
-  {
     "ticker": "ALSN",
     "companyName": "Allison Transmission Holdings Inc"
-  },
-  {
-    "ticker": "ALSTF",
-    "companyName": "Alpha Star Acquisition Corp"
-  },
-  {
-    "ticker": "ALSUF",
-    "companyName": "Alpha Star Acquisition Corp"
-  },
-  {
-    "ticker": "ALSWF",
-    "companyName": "Alpha Star Acquisition Corp"
   },
   {
     "ticker": "ALT",
@@ -1897,10 +1609,6 @@
   },
   {
     "ticker": "ALTG",
-    "companyName": "ALTA EQUIPMENT GROUP INC."
-  },
-  {
-    "ticker": "ALTG-PA",
     "companyName": "ALTA EQUIPMENT GROUP INC."
   },
   {
@@ -1918,18 +1626,6 @@
   {
     "ticker": "ALTX",
     "companyName": "ALTEX INDUSTRIES INC"
-  },
-  {
-    "ticker": "ALUB",
-    "companyName": "Alussa Energy Acquisition Corp. II"
-  },
-  {
-    "ticker": "ALUB-UN",
-    "companyName": "Alussa Energy Acquisition Corp. II"
-  },
-  {
-    "ticker": "ALUB-WT",
-    "companyName": "Alussa Energy Acquisition Corp. II"
   },
   {
     "ticker": "ALUR",
@@ -1976,20 +1672,8 @@
     "companyName": "Antero Midstream Corp"
   },
   {
-    "ticker": "AMAC",
-    "companyName": "AMR Resources Acquisition Corp."
-  },
-  {
-    "ticker": "AMACU",
-    "companyName": "AMR Resources Acquisition Corp."
-  },
-  {
     "ticker": "AMAL",
     "companyName": "Amalgamated Financial Corp."
-  },
-  {
-    "ticker": "AMAN",
-    "companyName": "Amanat Acquisition Corp."
   },
   {
     "ticker": "AMAT",
@@ -2065,14 +1749,6 @@
   },
   {
     "ticker": "AMH",
-    "companyName": "American Homes 4 Rent"
-  },
-  {
-    "ticker": "AMH-PG",
-    "companyName": "American Homes 4 Rent"
-  },
-  {
-    "ticker": "AMH-PH",
     "companyName": "American Homes 4 Rent"
   },
   {
@@ -2280,10 +1956,6 @@
     "companyName": "ABERCROMBIE & FITCH CO /DE/"
   },
   {
-    "ticker": "ANG-PD",
-    "companyName": "American National Group Inc."
-  },
-  {
     "ticker": "ANGH",
     "companyName": "Anghami Inc"
   },
@@ -2450,10 +2122,6 @@
   {
     "ticker": "APAM",
     "companyName": "Artisan Partners Asset Management Inc."
-  },
-  {
-    "ticker": "APBD",
-    "companyName": "AParadise II Acquisition Corp."
   },
   {
     "ticker": "APC",
@@ -2768,10 +2436,6 @@
     "companyName": "Ares Management Corp"
   },
   {
-    "ticker": "ARES-PB",
-    "companyName": "Ares Management Corp"
-  },
-  {
     "ticker": "ARGX",
     "companyName": "ARGENX SE"
   },
@@ -2860,10 +2524,6 @@
     "companyName": "Armour Residential REIT, Inc."
   },
   {
-    "ticker": "ARR-PC",
-    "companyName": "Armour Residential REIT, Inc."
-  },
-  {
     "ticker": "ARRKF",
     "companyName": "ARRAS MINERALS CORP."
   },
@@ -2882,18 +2542,6 @@
   {
     "ticker": "ARSTY",
     "companyName": "Ariston Holding N.V./ADR"
-  },
-  {
-    "ticker": "ARTC",
-    "companyName": "Art Technology Acquisition Corp."
-  },
-  {
-    "ticker": "ARTCU",
-    "companyName": "Art Technology Acquisition Corp."
-  },
-  {
-    "ticker": "ARTCW",
-    "companyName": "Art Technology Acquisition Corp."
   },
   {
     "ticker": "ARTL",
@@ -2960,14 +2608,6 @@
     "companyName": "ASSOCIATED BANC-CORP"
   },
   {
-    "ticker": "ASB-PE",
-    "companyName": "ASSOCIATED BANC-CORP"
-  },
-  {
-    "ticker": "ASB-PF",
-    "companyName": "ASSOCIATED BANC-CORP"
-  },
-  {
     "ticker": "ASBA",
     "companyName": "ASSOCIATED BANC-CORP"
   },
@@ -2984,20 +2624,8 @@
     "companyName": "Ardmore Shipping Corp"
   },
   {
-    "ticker": "ASCBF",
-    "companyName": "ASPAC II Acquisition Corp."
-  },
-  {
     "ticker": "ASCIX",
     "companyName": "Angel Oak Strategic Credit Fund"
-  },
-  {
-    "ticker": "ASCRF",
-    "companyName": "ASPAC II Acquisition Corp."
-  },
-  {
-    "ticker": "ASCWF",
-    "companyName": "ASPAC II Acquisition Corp."
   },
   {
     "ticker": "ASFH",
@@ -3066,18 +2694,6 @@
   {
     "ticker": "ASO",
     "companyName": "Academy Sports & Outdoors, Inc."
-  },
-  {
-    "ticker": "ASPC",
-    "companyName": "ASPAC III Acquisition Corp."
-  },
-  {
-    "ticker": "ASPCR",
-    "companyName": "ASPAC III Acquisition Corp."
-  },
-  {
-    "ticker": "ASPCU",
-    "companyName": "ASPAC III Acquisition Corp."
   },
   {
     "ticker": "ASPI",
@@ -3152,20 +2768,12 @@
     "companyName": "ASURE SOFTWARE INC"
   },
   {
-    "ticker": "ASUUF",
-    "companyName": "ASPAC II Acquisition Corp."
-  },
-  {
     "ticker": "ASX",
     "companyName": "ASE Technology Holding Co., Ltd."
   },
   {
     "ticker": "ASYS",
     "companyName": "AMTECH SYSTEMS INC"
-  },
-  {
-    "ticker": "ATAC",
-    "companyName": "Albatross Acquisition Corp"
   },
   {
     "ticker": "ATAI",
@@ -3212,18 +2820,6 @@
     "companyName": "Alphatec Holdings, Inc."
   },
   {
-    "ticker": "ATEK",
-    "companyName": "Athena Technology Acquisition Corp. II"
-  },
-  {
-    "ticker": "ATEKU",
-    "companyName": "Athena Technology Acquisition Corp. II"
-  },
-  {
-    "ticker": "ATEKW",
-    "companyName": "Athena Technology Acquisition Corp. II"
-  },
-  {
     "ticker": "ATEN",
     "companyName": "A10 Networks, Inc."
   },
@@ -3242,22 +2838,6 @@
   {
     "ticker": "ATGL",
     "companyName": "Alpha Technology Group Ltd"
-  },
-  {
-    "ticker": "ATH-PA",
-    "companyName": "Athene Holding Ltd."
-  },
-  {
-    "ticker": "ATH-PB",
-    "companyName": "Athene Holding Ltd."
-  },
-  {
-    "ticker": "ATH-PD",
-    "companyName": "Athene Holding Ltd."
-  },
-  {
-    "ticker": "ATH-PE",
-    "companyName": "Athene Holding Ltd."
   },
   {
     "ticker": "ATHE",
@@ -3408,10 +2988,6 @@
     "companyName": "Atlantic Union Bankshares Corp"
   },
   {
-    "ticker": "AUB-PA",
-    "companyName": "Atlantic Union Bankshares Corp"
-  },
-  {
     "ticker": "AUBN",
     "companyName": "AUBURN NATIONAL BANCORPORATION, INC"
   },
@@ -3494,10 +3070,6 @@
   {
     "ticker": "AVA",
     "companyName": "AVISTA CORP"
-  },
-  {
-    "ticker": "AVAC",
-    "companyName": "American Ventures Acquisition Corp. I"
   },
   {
     "ticker": "AVAH",
@@ -3720,18 +3292,6 @@
     "companyName": "AXIM BIOTECHNOLOGIES, INC."
   },
   {
-    "ticker": "AXIN",
-    "companyName": "Axiom Intelligence Acquisition Corp 1"
-  },
-  {
-    "ticker": "AXINR",
-    "companyName": "Axiom Intelligence Acquisition Corp 1"
-  },
-  {
-    "ticker": "AXINU",
-    "companyName": "Axiom Intelligence Acquisition Corp 1"
-  },
-  {
     "ticker": "AXON",
     "companyName": "AXON ENTERPRISE, INC."
   },
@@ -3749,10 +3309,6 @@
   },
   {
     "ticker": "AXS",
-    "companyName": "AXIS CAPITAL HOLDINGS LTD"
-  },
-  {
-    "ticker": "AXS-PE",
     "companyName": "AXIS CAPITAL HOLDINGS LTD"
   },
   {
@@ -3848,10 +3404,6 @@
     "companyName": "BOEING CO"
   },
   {
-    "ticker": "BA-PA",
-    "companyName": "BOEING CO"
-  },
-  {
     "ticker": "BABA",
     "companyName": "Alibaba Group Holding Ltd"
   },
@@ -3870,58 +3422,6 @@
   {
     "ticker": "BAC",
     "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PB",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PE",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PK",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PL",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PM",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PN",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PO",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PP",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PQ",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BAC-PS",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BACC",
-    "companyName": "Blue Acquisition Corp/Cayman"
-  },
-  {
-    "ticker": "BACCR",
-    "companyName": "Blue Acquisition Corp/Cayman"
-  },
-  {
-    "ticker": "BACCU",
-    "companyName": "Blue Acquisition Corp/Cayman"
   },
   {
     "ticker": "BACRP",
@@ -3997,10 +3497,6 @@
   },
   {
     "ticker": "BANC",
-    "companyName": "BANC OF CALIFORNIA, INC."
-  },
-  {
-    "ticker": "BANC-PF",
     "companyName": "BANC OF CALIFORNIA, INC."
   },
   {
@@ -4116,18 +3612,6 @@
     "companyName": "Concrete Pumping Holdings, Inc."
   },
   {
-    "ticker": "BBCQ",
-    "companyName": "Bleichroeder Acquisition Corp. II"
-  },
-  {
-    "ticker": "BBCQU",
-    "companyName": "Bleichroeder Acquisition Corp. II"
-  },
-  {
-    "ticker": "BBCQW",
-    "companyName": "Bleichroeder Acquisition Corp. II"
-  },
-  {
     "ticker": "BBD",
     "companyName": "BANK BRADESCO"
   },
@@ -4216,10 +3700,6 @@
     "companyName": "BRUNSWICK CORP"
   },
   {
-    "ticker": "BC-PC",
-    "companyName": "BRUNSWICK CORP"
-  },
-  {
     "ticker": "BCAB",
     "companyName": "BioAtla, Inc."
   },
@@ -4262,18 +3742,6 @@
   {
     "ticker": "BCCG",
     "companyName": "Blue Chip Capital Group Inc."
-  },
-  {
-    "ticker": "BCCQ",
-    "companyName": "Bleichroeder Acquisition Corp. III"
-  },
-  {
-    "ticker": "BCCQU",
-    "companyName": "Bleichroeder Acquisition Corp. III"
-  },
-  {
-    "ticker": "BCCQW",
-    "companyName": "Bleichroeder Acquisition Corp. III"
   },
   {
     "ticker": "BCDA",
@@ -4432,10 +3900,6 @@
     "companyName": "BANCROFT FUND LTD"
   },
   {
-    "ticker": "BCV-PA",
-    "companyName": "BANCROFT FUND LTD"
-  },
-  {
     "ticker": "BCX",
     "companyName": "BlackRock Resources & Commodities Strategy Trust"
   },
@@ -4532,18 +3996,6 @@
     "companyName": "Bloom Energy Corp"
   },
   {
-    "ticker": "BEAG",
-    "companyName": "Bold Eagle Acquisition Corp."
-  },
-  {
-    "ticker": "BEAGR",
-    "companyName": "Bold Eagle Acquisition Corp."
-  },
-  {
-    "ticker": "BEAGU",
-    "companyName": "Bold Eagle Acquisition Corp."
-  },
-  {
     "ticker": "BEAM",
     "companyName": "Beam Therapeutics Inc."
   },
@@ -4628,10 +4080,6 @@
     "companyName": "Brookfield Renewable Partners L.P."
   },
   {
-    "ticker": "BEP-PA",
-    "companyName": "Brookfield Renewable Partners L.P."
-  },
-  {
     "ticker": "BEPC",
     "companyName": "Brookfield Renewable Corp"
   },
@@ -4704,14 +4152,6 @@
     "companyName": "BREAD FINANCIAL HOLDINGS, INC."
   },
   {
-    "ticker": "BFH-PA",
-    "companyName": "BREAD FINANCIAL HOLDINGS, INC."
-  },
-  {
-    "ticker": "BFH-PB",
-    "companyName": "BREAD FINANCIAL HOLDINGS, INC."
-  },
-  {
     "ticker": "BFLY",
     "companyName": "Butterfly Network, Inc."
   },
@@ -4737,14 +4177,6 @@
   },
   {
     "ticker": "BFS",
-    "companyName": "SAUL CENTERS, INC."
-  },
-  {
-    "ticker": "BFS-PD",
-    "companyName": "SAUL CENTERS, INC."
-  },
-  {
-    "ticker": "BFS-PE",
     "companyName": "SAUL CENTERS, INC."
   },
   {
@@ -4856,18 +4288,6 @@
     "companyName": "Blue Hat Interactive Entertainment Technology"
   },
   {
-    "ticker": "BHAV",
-    "companyName": "BHAV Acquisition Corp"
-  },
-  {
-    "ticker": "BHAVR",
-    "companyName": "BHAV Acquisition Corp"
-  },
-  {
-    "ticker": "BHAVU",
-    "companyName": "BHAV Acquisition Corp"
-  },
-  {
     "ticker": "BHB",
     "companyName": "BAR HARBOR BANKSHARES"
   },
@@ -4932,14 +4352,6 @@
     "companyName": "Braemar Hotels & Resorts Inc."
   },
   {
-    "ticker": "BHR-PB",
-    "companyName": "Braemar Hotels & Resorts Inc."
-  },
-  {
-    "ticker": "BHR-PD",
-    "companyName": "Braemar Hotels & Resorts Inc."
-  },
-  {
     "ticker": "BHRB",
     "companyName": "Burke & Herbert Financial Services Corp."
   },
@@ -4984,20 +4396,8 @@
     "companyName": "BioCorRx Inc."
   },
   {
-    "ticker": "BID",
-    "companyName": "Tribeca Strategic Acquisition Corp."
-  },
-  {
     "ticker": "BIDU",
     "companyName": "Baidu, Inc."
-  },
-  {
-    "ticker": "BIDWR",
-    "companyName": "Tribeca Strategic Acquisition Corp."
-  },
-  {
-    "ticker": "BIDWU",
-    "companyName": "Tribeca Strategic Acquisition Corp."
   },
   {
     "ticker": "BIIB",
@@ -5068,14 +4468,6 @@
     "companyName": "Brookfield Infrastructure Partners L.P."
   },
   {
-    "ticker": "BIP-PA",
-    "companyName": "Brookfield Infrastructure Partners L.P."
-  },
-  {
-    "ticker": "BIP-PB",
-    "companyName": "Brookfield Infrastructure Partners L.P."
-  },
-  {
     "ticker": "BIPC",
     "companyName": "Brookfield Infrastructure Corp"
   },
@@ -5140,18 +4532,6 @@
     "companyName": "BIOVIE INC."
   },
   {
-    "ticker": "BIXI",
-    "companyName": "Bitcoin Infrastructure Acquisition Corp Ltd"
-  },
-  {
-    "ticker": "BIXIU",
-    "companyName": "Bitcoin Infrastructure Acquisition Corp Ltd"
-  },
-  {
-    "ticker": "BIXIW",
-    "companyName": "Bitcoin Infrastructure Acquisition Corp Ltd"
-  },
-  {
     "ticker": "BIXT",
     "companyName": "BIOXYTRAN, INC"
   },
@@ -5206,18 +4586,6 @@
   {
     "ticker": "BKH",
     "companyName": "BLACK HILLS CORP /SD/"
-  },
-  {
-    "ticker": "BKHA",
-    "companyName": "Black Hawk Acquisition Corp"
-  },
-  {
-    "ticker": "BKHAR",
-    "companyName": "Black Hawk Acquisition Corp"
-  },
-  {
-    "ticker": "BKHAU",
-    "companyName": "Black Hawk Acquisition Corp"
   },
   {
     "ticker": "BKKT",
@@ -5396,18 +4764,6 @@
     "companyName": "Blue Line Protection Group, Inc."
   },
   {
-    "ticker": "BLRK",
-    "companyName": "Bluerock Acquisition Corp."
-  },
-  {
-    "ticker": "BLRKU",
-    "companyName": "Bluerock Acquisition Corp."
-  },
-  {
-    "ticker": "BLRKW",
-    "companyName": "Bluerock Acquisition Corp."
-  },
-  {
     "ticker": "BLRX",
     "companyName": "BioLineRx Ltd."
   },
@@ -5432,18 +4788,6 @@
     "companyName": "AMERICAN BATTERY MATERIALS, INC."
   },
   {
-    "ticker": "BLUW",
-    "companyName": "Blue Water Acquisition Corp. III"
-  },
-  {
-    "ticker": "BLUWU",
-    "companyName": "Blue Water Acquisition Corp. III"
-  },
-  {
-    "ticker": "BLUWW",
-    "companyName": "Blue Water Acquisition Corp. III"
-  },
-  {
     "ticker": "BLW",
     "companyName": "BLACKROCK Ltd DURATION INCOME TRUST"
   },
@@ -5454,18 +4798,6 @@
   {
     "ticker": "BLZE",
     "companyName": "Backblaze, Inc."
-  },
-  {
-    "ticker": "BLZR",
-    "companyName": "Trailblazer Acquisition Corp."
-  },
-  {
-    "ticker": "BLZRU",
-    "companyName": "Trailblazer Acquisition Corp."
-  },
-  {
-    "ticker": "BLZRW",
-    "companyName": "Trailblazer Acquisition Corp."
   },
   {
     "ticker": "BMA",
@@ -5512,22 +4844,6 @@
     "companyName": "BADGER METER INC"
   },
   {
-    "ticker": "BML-PG",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BML-PH",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BML-PJ",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
-    "ticker": "BML-PL",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
     "ticker": "BMM",
     "companyName": "Blue Moon Metals Inc."
   },
@@ -5550,10 +4866,6 @@
   {
     "ticker": "BMO",
     "companyName": "BANK OF MONTREAL /CAN/"
-  },
-  {
-    "ticker": "BMOK",
-    "companyName": "BM Acquisition Corp."
   },
   {
     "ticker": "BMPA",
@@ -5700,10 +5012,6 @@
     "companyName": "Bank of New York Mellon Corp"
   },
   {
-    "ticker": "BNY-PK",
-    "companyName": "Bank of New York Mellon Corp"
-  },
-  {
     "ticker": "BOBS",
     "companyName": "Bob's Discount Furniture, Inc."
   },
@@ -5729,14 +5037,6 @@
   },
   {
     "ticker": "BOH",
-    "companyName": "BANK OF HAWAII CORP"
-  },
-  {
-    "ticker": "BOH-PA",
-    "companyName": "BANK OF HAWAII CORP"
-  },
-  {
-    "ticker": "BOH-PB",
     "companyName": "BANK OF HAWAII CORP"
   },
   {
@@ -5928,14 +5228,6 @@
     "companyName": "Burcon NutraScience Corp"
   },
   {
-    "ticker": "BREZ",
-    "companyName": "Breeze Acquisition Corp. II"
-  },
-  {
-    "ticker": "BREZR",
-    "companyName": "Breeze Acquisition Corp. II"
-  },
-  {
     "ticker": "BRFAF",
     "companyName": "BROOKFIELD Corp /ON/"
   },
@@ -5974,18 +5266,6 @@
   {
     "ticker": "BRKCF",
     "companyName": "BARKSDALE RESOURCES CORP."
-  },
-  {
-    "ticker": "BRKH",
-    "companyName": "Burtech Acquisition Corp II"
-  },
-  {
-    "ticker": "BRKHU",
-    "companyName": "Burtech Acquisition Corp II"
-  },
-  {
-    "ticker": "BRKHW",
-    "companyName": "Burtech Acquisition Corp II"
   },
   {
     "ticker": "BRKR",
@@ -6130,18 +5410,6 @@
   {
     "ticker": "BRZL",
     "companyName": "Adapti, Inc."
-  },
-  {
-    "ticker": "BSAA",
-    "companyName": "BEST SPAC I Acquisition Corp."
-  },
-  {
-    "ticker": "BSAAR",
-    "companyName": "BEST SPAC I Acquisition Corp."
-  },
-  {
-    "ticker": "BSAAU",
-    "companyName": "BEST SPAC I Acquisition Corp."
   },
   {
     "ticker": "BSAC",
@@ -6492,10 +5760,6 @@
     "companyName": "Babcock & Wilcox Enterprises, Inc."
   },
   {
-    "ticker": "BW-PA",
-    "companyName": "Babcock & Wilcox Enterprises, Inc."
-  },
-  {
     "ticker": "BWA",
     "companyName": "BORGWARNER INC"
   },
@@ -6534,18 +5798,6 @@
   {
     "ticker": "BWIN",
     "companyName": "Baldwin Insurance Group, Inc."
-  },
-  {
-    "ticker": "BWIV",
-    "companyName": "Blue Water Acquisition Corp. IV"
-  },
-  {
-    "ticker": "BWIV-UN",
-    "companyName": "Blue Water Acquisition Corp. IV"
-  },
-  {
-    "ticker": "BWIV-WT",
-    "companyName": "Blue Water Acquisition Corp. IV"
   },
   {
     "ticker": "BWLP",
@@ -6648,18 +5900,6 @@
     "companyName": "BEYOND MEAT, INC."
   },
   {
-    "ticker": "BYNO",
-    "companyName": "byNordic Acquisition Corp"
-  },
-  {
-    "ticker": "BYNOU",
-    "companyName": "byNordic Acquisition Corp"
-  },
-  {
-    "ticker": "BYNOW",
-    "companyName": "byNordic Acquisition Corp"
-  },
-  {
     "ticker": "BYRN",
     "companyName": "Byrna Technologies Inc."
   },
@@ -6713,14 +5953,6 @@
   },
   {
     "ticker": "C",
-    "companyName": "CITIGROUP INC"
-  },
-  {
-    "ticker": "C-PN",
-    "companyName": "CITIGROUP INC"
-  },
-  {
-    "ticker": "C-PR",
     "companyName": "CITIGROUP INC"
   },
   {
@@ -6790,18 +6022,6 @@
   {
     "ticker": "CAI",
     "companyName": "Caris Life Sciences, Inc."
-  },
-  {
-    "ticker": "CAII",
-    "companyName": "Collective Acquisition Corp. II"
-  },
-  {
-    "ticker": "CAIIU",
-    "companyName": "Collective Acquisition Corp. II"
-  },
-  {
-    "ticker": "CAIIW",
-    "companyName": "Collective Acquisition Corp. II"
   },
   {
     "ticker": "CAJFF",
@@ -6880,36 +6100,12 @@
     "companyName": "CrossAmerica Partners LP"
   },
   {
-    "ticker": "CAPN",
-    "companyName": "Cayson Acquisition Corp"
-  },
-  {
-    "ticker": "CAPNR",
-    "companyName": "Cayson Acquisition Corp"
-  },
-  {
-    "ticker": "CAPNU",
-    "companyName": "Cayson Acquisition Corp"
-  },
-  {
     "ticker": "CAPR",
     "companyName": "CAPRICOR THERAPEUTICS, INC."
   },
   {
     "ticker": "CAPS",
     "companyName": "Capstone Holding Corp."
-  },
-  {
-    "ticker": "CAQ",
-    "companyName": "Cambridge Acquisition Corp."
-  },
-  {
-    "ticker": "CAQUU",
-    "companyName": "Cambridge Acquisition Corp."
-  },
-  {
-    "ticker": "CAQUW",
-    "companyName": "Cambridge Acquisition Corp."
   },
   {
     "ticker": "CAR",
@@ -6974,14 +6170,6 @@
   {
     "ticker": "CAT",
     "companyName": "CATERPILLAR INC"
-  },
-  {
-    "ticker": "CATL",
-    "companyName": "Catalyst Acquisition Corp."
-  },
-  {
-    "ticker": "CATLU",
-    "companyName": "Catalyst Acquisition Corp."
   },
   {
     "ticker": "CATO",
@@ -7144,18 +6332,6 @@
     "companyName": "Crescent Capital BDC, Inc."
   },
   {
-    "ticker": "CCAQ",
-    "companyName": "COLLECTIVE ACQUISITION CORP."
-  },
-  {
-    "ticker": "CCAQU",
-    "companyName": "COLLECTIVE ACQUISITION CORP."
-  },
-  {
-    "ticker": "CCAQW",
-    "companyName": "COLLECTIVE ACQUISITION CORP."
-  },
-  {
     "ticker": "CCB",
     "companyName": "COASTAL FINANCIAL CORP"
   },
@@ -7230,18 +6406,6 @@
   {
     "ticker": "CCIF",
     "companyName": "Carlyle Credit Income Fund"
-  },
-  {
-    "ticker": "CCII",
-    "companyName": "Cohen Circle Acquisition Corp. II"
-  },
-  {
-    "ticker": "CCIIU",
-    "companyName": "Cohen Circle Acquisition Corp. II"
-  },
-  {
-    "ticker": "CCIIW",
-    "companyName": "Cohen Circle Acquisition Corp. II"
   },
   {
     "ticker": "CCIL",
@@ -7378,14 +6542,6 @@
   {
     "ticker": "CDPMF",
     "companyName": "Cerro de Pasco Resources Inc."
-  },
-  {
-    "ticker": "CDR-PB",
-    "companyName": "CEDAR REALTY TRUST, INC."
-  },
-  {
-    "ticker": "CDR-PC",
-    "companyName": "CEDAR REALTY TRUST, INC."
   },
   {
     "ticker": "CDRE",
@@ -7596,18 +6752,6 @@
     "companyName": "CITIZENS FINANCIAL GROUP INC/RI"
   },
   {
-    "ticker": "CFG-PE",
-    "companyName": "CITIZENS FINANCIAL GROUP INC/RI"
-  },
-  {
-    "ticker": "CFG-PH",
-    "companyName": "CITIZENS FINANCIAL GROUP INC/RI"
-  },
-  {
-    "ticker": "CFG-PI",
-    "companyName": "CITIZENS FINANCIAL GROUP INC/RI"
-  },
-  {
     "ticker": "CFNB",
     "companyName": "CALIFORNIA FIRST LEASING CORP"
   },
@@ -7628,16 +6772,8 @@
     "companyName": "CULLEN/FROST BANKERS, INC."
   },
   {
-    "ticker": "CFR-PB",
-    "companyName": "CULLEN/FROST BANKERS, INC."
-  },
-  {
     "ticker": "CFSU",
     "companyName": "Complete Financial Solutions Inc."
-  },
-  {
-    "ticker": "CFTR-PA",
-    "companyName": "Cantor Fitzgerald Income Trust, Inc."
   },
   {
     "ticker": "CG",
@@ -7722,18 +6858,6 @@
   {
     "ticker": "CHAI",
     "companyName": "Core AI Holdings, Inc."
-  },
-  {
-    "ticker": "CHAR",
-    "companyName": "Charlton Aria Acquisition Corp"
-  },
-  {
-    "ticker": "CHARR",
-    "companyName": "Charlton Aria Acquisition Corp"
-  },
-  {
-    "ticker": "CHARU",
-    "companyName": "Charlton Aria Acquisition Corp"
   },
   {
     "ticker": "CHCI",
@@ -7824,14 +6948,6 @@
     "companyName": "Cherry Hill Mortgage Investment Corp"
   },
   {
-    "ticker": "CHMI-PA",
-    "companyName": "Cherry Hill Mortgage Investment Corp"
-  },
-  {
-    "ticker": "CHMI-PB",
-    "companyName": "Cherry Hill Mortgage Investment Corp"
-  },
-  {
     "ticker": "CHNR",
     "companyName": "CHINA NATURAL RESOURCES INC"
   },
@@ -7844,20 +6960,8 @@
     "companyName": "ChowChow Cloud International Holdings Ltd"
   },
   {
-    "ticker": "CHPG",
-    "companyName": "ChampionsGate Acquisition Corp"
-  },
-  {
     "ticker": "CHPGF",
     "companyName": "Chesapeake Gold Corp"
-  },
-  {
-    "ticker": "CHPGR",
-    "companyName": "ChampionsGate Acquisition Corp"
-  },
-  {
-    "ticker": "CHPGU",
-    "companyName": "ChampionsGate Acquisition Corp"
   },
   {
     "ticker": "CHPT",
@@ -8016,22 +7120,6 @@
     "companyName": "CHIMERA INVESTMENT CORP"
   },
   {
-    "ticker": "CIM-PA",
-    "companyName": "CHIMERA INVESTMENT CORP"
-  },
-  {
-    "ticker": "CIM-PB",
-    "companyName": "CHIMERA INVESTMENT CORP"
-  },
-  {
-    "ticker": "CIM-PC",
-    "companyName": "CHIMERA INVESTMENT CORP"
-  },
-  {
-    "ticker": "CIM-PD",
-    "companyName": "CHIMERA INVESTMENT CORP"
-  },
-  {
     "ticker": "CIMG",
     "companyName": "CIMG Inc."
   },
@@ -8148,18 +7236,6 @@
     "companyName": "Columbia Financial, Inc./MD/"
   },
   {
-    "ticker": "CLBR",
-    "companyName": "Colombier Acquisition Corp. III"
-  },
-  {
-    "ticker": "CLBR-UN",
-    "companyName": "Colombier Acquisition Corp. III"
-  },
-  {
-    "ticker": "CLBR-WT",
-    "companyName": "Colombier Acquisition Corp. III"
-  },
-  {
     "ticker": "CLBT",
     "companyName": "Cellebrite DI Ltd."
   },
@@ -8181,10 +7257,6 @@
   },
   {
     "ticker": "CLDT",
-    "companyName": "Chatham Lodging Trust"
-  },
-  {
-    "ticker": "CLDT-PA",
     "companyName": "Chatham Lodging Trust"
   },
   {
@@ -8372,10 +7444,6 @@
     "companyName": "COMMERCIAL METALS Co"
   },
   {
-    "ticker": "CMCAF",
-    "companyName": "Piermont Valley Acquisition Corp"
-  },
-  {
     "ticker": "CMCL",
     "companyName": "Caledonia Mining Corp Plc"
   },
@@ -8398,14 +7466,6 @@
   {
     "ticker": "CMCT",
     "companyName": "Creative Media & Community Trust Corp"
-  },
-  {
-    "ticker": "CMCUF",
-    "companyName": "Piermont Valley Acquisition Corp"
-  },
-  {
-    "ticker": "CMCWF",
-    "companyName": "Piermont Valley Acquisition Corp"
   },
   {
     "ticker": "CMDB",
@@ -8492,31 +7552,11 @@
     "companyName": "Costamare Inc."
   },
   {
-    "ticker": "CMRE-PB",
-    "companyName": "Costamare Inc."
-  },
-  {
-    "ticker": "CMRE-PC",
-    "companyName": "Costamare Inc."
-  },
-  {
-    "ticker": "CMRE-PD",
-    "companyName": "Costamare Inc."
-  },
-  {
     "ticker": "CMRF",
     "companyName": "CIM GROUP, INC."
   },
   {
     "ticker": "CMS",
-    "companyName": "CMS ENERGY CORP"
-  },
-  {
-    "ticker": "CMS-PB",
-    "companyName": "CONSUMERS ENERGY CO"
-  },
-  {
-    "ticker": "CMS-PC",
     "companyName": "CMS ENERGY CORP"
   },
   {
@@ -8570,18 +7610,6 @@
   {
     "ticker": "CNCKW",
     "companyName": "Coincheck Group N.V."
-  },
-  {
-    "ticker": "CNDA",
-    "companyName": "Concord Acquisition Corp II"
-  },
-  {
-    "ticker": "CNDAU",
-    "companyName": "Concord Acquisition Corp II"
-  },
-  {
-    "ticker": "CNDAW",
-    "companyName": "Concord Acquisition Corp II"
   },
   {
     "ticker": "CNDHF",
@@ -8677,10 +7705,6 @@
   },
   {
     "ticker": "CNO",
-    "companyName": "CNO Financial Group, Inc."
-  },
-  {
-    "ticker": "CNO-PA",
     "companyName": "CNO Financial Group, Inc."
   },
   {
@@ -8828,18 +7852,6 @@
     "companyName": "Compass Diversified Holdings"
   },
   {
-    "ticker": "CODI-PA",
-    "companyName": "Compass Diversified Holdings"
-  },
-  {
-    "ticker": "CODI-PB",
-    "companyName": "Compass Diversified Holdings"
-  },
-  {
-    "ticker": "CODI-PC",
-    "companyName": "Compass Diversified Holdings"
-  },
-  {
     "ticker": "CODQL",
     "companyName": "Coronado Global Resources Inc."
   },
@@ -8853,26 +7865,6 @@
   },
   {
     "ticker": "COF",
-    "companyName": "CAPITAL ONE FINANCIAL CORP"
-  },
-  {
-    "ticker": "COF-PI",
-    "companyName": "CAPITAL ONE FINANCIAL CORP"
-  },
-  {
-    "ticker": "COF-PJ",
-    "companyName": "CAPITAL ONE FINANCIAL CORP"
-  },
-  {
-    "ticker": "COF-PK",
-    "companyName": "CAPITAL ONE FINANCIAL CORP"
-  },
-  {
-    "ticker": "COF-PL",
-    "companyName": "CAPITAL ONE FINANCIAL CORP"
-  },
-  {
-    "ticker": "COF-PN",
     "companyName": "CAPITAL ONE FINANCIAL CORP"
   },
   {
@@ -8906,18 +7898,6 @@
   {
     "ticker": "COKE",
     "companyName": "Coca-Cola Consolidated, Inc."
-  },
-  {
-    "ticker": "COLA",
-    "companyName": "Columbus Acquisition Corp/Cayman Islands"
-  },
-  {
-    "ticker": "COLAR",
-    "companyName": "Columbus Acquisition Corp/Cayman Islands"
-  },
-  {
-    "ticker": "COLAU",
-    "companyName": "Columbus Acquisition Corp/Cayman Islands"
   },
   {
     "ticker": "COLB",
@@ -8974,18 +7954,6 @@
   {
     "ticker": "COPAF",
     "companyName": "COPAUR MINERALS INC."
-  },
-  {
-    "ticker": "COPL",
-    "companyName": "Copley Acquisition Corp"
-  },
-  {
-    "ticker": "COPL-UN",
-    "companyName": "Copley Acquisition Corp"
-  },
-  {
-    "ticker": "COPL-WT",
-    "companyName": "Copley Acquisition Corp"
   },
   {
     "ticker": "COPR",
@@ -9220,48 +8188,8 @@
     "companyName": "Crane Co"
   },
   {
-    "ticker": "CRAC",
-    "companyName": "Crown Reserve Acquisition Corp. I"
-  },
-  {
-    "ticker": "CRACR",
-    "companyName": "Crown Reserve Acquisition Corp. I"
-  },
-  {
-    "ticker": "CRACU",
-    "companyName": "Crown Reserve Acquisition Corp. I"
-  },
-  {
-    "ticker": "CRACW",
-    "companyName": "Crown Reserve Acquisition Corp. I"
-  },
-  {
     "ticker": "CRAI",
     "companyName": "CRA INTERNATIONAL, INC."
-  },
-  {
-    "ticker": "CRAN",
-    "companyName": "Crane Harbor Acquisition Corp. II"
-  },
-  {
-    "ticker": "CRANR",
-    "companyName": "Crane Harbor Acquisition Corp. II"
-  },
-  {
-    "ticker": "CRANU",
-    "companyName": "Crane Harbor Acquisition Corp. II"
-  },
-  {
-    "ticker": "CRAQ",
-    "companyName": "Cal Redwood Acquisition Corp."
-  },
-  {
-    "ticker": "CRAQR",
-    "companyName": "Cal Redwood Acquisition Corp."
-  },
-  {
-    "ticker": "CRAQU",
-    "companyName": "Cal Redwood Acquisition Corp."
   },
   {
     "ticker": "CRARF",
@@ -9548,10 +8476,6 @@
     "companyName": "COSCIENS Biopharma Inc."
   },
   {
-    "ticker": "CSCM",
-    "companyName": "Crestone Strategic Capital Acquisition Corp"
-  },
-  {
     "ticker": "CSCO",
     "companyName": "CISCO SYSTEMS, INC."
   },
@@ -9604,10 +8528,6 @@
     "companyName": "CENTERSPACE"
   },
   {
-    "ticker": "CSTAF",
-    "companyName": "Constellation Acquisition Corp I"
-  },
-  {
     "ticker": "CSTE",
     "companyName": "Caesarstone Ltd."
   },
@@ -9618,14 +8538,6 @@
   {
     "ticker": "CSTM",
     "companyName": "CONSTELLIUM SE"
-  },
-  {
-    "ticker": "CSTUF",
-    "companyName": "Constellation Acquisition Corp I"
-  },
-  {
-    "ticker": "CSTWF",
-    "companyName": "Constellation Acquisition Corp I"
   },
   {
     "ticker": "CSUI",
@@ -9646,26 +8558,6 @@
   {
     "ticker": "CSX",
     "companyName": "CSX CORP"
-  },
-  {
-    "ticker": "CTA-PA",
-    "companyName": "EIDP, Inc."
-  },
-  {
-    "ticker": "CTA-PB",
-    "companyName": "EIDP, Inc."
-  },
-  {
-    "ticker": "CTAA",
-    "companyName": "Clearthink 1 Acquisition Corp."
-  },
-  {
-    "ticker": "CTAAR",
-    "companyName": "Clearthink 1 Acquisition Corp."
-  },
-  {
-    "ticker": "CTAAU",
-    "companyName": "Clearthink 1 Acquisition Corp."
   },
   {
     "ticker": "CTAS",
@@ -9725,10 +8617,6 @@
   },
   {
     "ticker": "CTO",
-    "companyName": "CTO Realty Growth, Inc."
-  },
-  {
-    "ticker": "CTO-PA",
     "companyName": "CTO Realty Growth, Inc."
   },
   {
@@ -10188,18 +9076,6 @@
     "companyName": "DOMINION ENERGY, INC"
   },
   {
-    "ticker": "DAAQ",
-    "companyName": "Digital Asset Acquisition Corp."
-  },
-  {
-    "ticker": "DAAQU",
-    "companyName": "Digital Asset Acquisition Corp."
-  },
-  {
-    "ticker": "DAAQW",
-    "companyName": "Digital Asset Acquisition Corp."
-  },
-  {
     "ticker": "DAC",
     "companyName": "Danaos Corp"
   },
@@ -10333,18 +9209,6 @@
   },
   {
     "ticker": "DBRG",
-    "companyName": "DigitalBridge Group, Inc."
-  },
-  {
-    "ticker": "DBRG-PH",
-    "companyName": "DigitalBridge Group, Inc."
-  },
-  {
-    "ticker": "DBRG-PI",
-    "companyName": "DigitalBridge Group, Inc."
-  },
-  {
-    "ticker": "DBRG-PJ",
     "companyName": "DigitalBridge Group, Inc."
   },
   {
@@ -10576,18 +9440,6 @@
     "companyName": "DOLLAR GENERAL CORP"
   },
   {
-    "ticker": "DGAC",
-    "companyName": "DISCIPLINED GROWTH ACQUISITION Corp"
-  },
-  {
-    "ticker": "DGAC-RI",
-    "companyName": "DISCIPLINED GROWTH ACQUISITION Corp"
-  },
-  {
-    "ticker": "DGAC-UN",
-    "companyName": "DISCIPLINED GROWTH ACQUISITION Corp"
-  },
-  {
     "ticker": "DGCOF",
     "companyName": "Daura Capital Corp."
   },
@@ -10796,10 +9648,6 @@
     "companyName": "Dynagas LNG Partners LP"
   },
   {
-    "ticker": "DLNG-PA",
-    "companyName": "Dynagas LNG Partners LP"
-  },
-  {
     "ticker": "DLO",
     "companyName": "dLocal Ltd"
   },
@@ -10809,18 +9657,6 @@
   },
   {
     "ticker": "DLR",
-    "companyName": "DIGITAL REALTY TRUST, INC."
-  },
-  {
-    "ticker": "DLR-PJ",
-    "companyName": "DIGITAL REALTY TRUST, INC."
-  },
-  {
-    "ticker": "DLR-PK",
-    "companyName": "DIGITAL REALTY TRUST, INC."
-  },
-  {
-    "ticker": "DLR-PL",
     "companyName": "DIGITAL REALTY TRUST, INC."
   },
   {
@@ -10850,18 +9686,6 @@
   {
     "ticker": "DMA",
     "companyName": "Destra Multi-Alternative Fund"
-  },
-  {
-    "ticker": "DMAA",
-    "companyName": "Drugs Made In America Acquisition Corp."
-  },
-  {
-    "ticker": "DMAAR",
-    "companyName": "Drugs Made In America Acquisition Corp."
-  },
-  {
-    "ticker": "DMAAU",
-    "companyName": "Drugs Made In America Acquisition Corp."
   },
   {
     "ticker": "DMAC",
@@ -11092,18 +9916,6 @@
     "companyName": "DRDGOLD LTD"
   },
   {
-    "ticker": "DRDB",
-    "companyName": "Roman DBDR Acquisition Corp. II"
-  },
-  {
-    "ticker": "DRDBU",
-    "companyName": "Roman DBDR Acquisition Corp. II"
-  },
-  {
-    "ticker": "DRDBW",
-    "companyName": "Roman DBDR Acquisition Corp. II"
-  },
-  {
     "ticker": "DRDGF",
     "companyName": "DRDGOLD LTD"
   },
@@ -11172,18 +9984,6 @@
     "companyName": "Dryden Gold Corp."
   },
   {
-    "ticker": "DSAC",
-    "companyName": "Daedalus Special Acquisition Corp."
-  },
-  {
-    "ticker": "DSACU",
-    "companyName": "Daedalus Special Acquisition Corp."
-  },
-  {
-    "ticker": "DSACW",
-    "companyName": "Daedalus Special Acquisition Corp."
-  },
-  {
     "ticker": "DSC",
     "companyName": "DSC Holdings Ltd."
   },
@@ -11249,10 +10049,6 @@
   },
   {
     "ticker": "DSX",
-    "companyName": "DIANA SHIPPING INC."
-  },
-  {
-    "ticker": "DSX-PB",
     "companyName": "DIANA SHIPPING INC."
   },
   {
@@ -11332,18 +10128,6 @@
     "companyName": "DATELINE RESOURCES LTD/ADR"
   },
   {
-    "ticker": "DTSQ",
-    "companyName": "DT Cloud Star Acquisition Corp"
-  },
-  {
-    "ticker": "DTSQR",
-    "companyName": "DT Cloud Star Acquisition Corp"
-  },
-  {
-    "ticker": "DTSQU",
-    "companyName": "DT Cloud Star Acquisition Corp"
-  },
-  {
     "ticker": "DTSS",
     "companyName": "Datasea Intelligent Technology Ltd."
   },
@@ -11357,10 +10141,6 @@
   },
   {
     "ticker": "DUK",
-    "companyName": "Duke Energy CORP"
-  },
-  {
-    "ticker": "DUK-PA",
     "companyName": "Duke Energy CORP"
   },
   {
@@ -11441,10 +10221,6 @@
   },
   {
     "ticker": "DX",
-    "companyName": "DYNEX CAPITAL INC"
-  },
-  {
-    "ticker": "DX-PC",
     "companyName": "DYNEX CAPITAL INC"
   },
   {
@@ -11652,10 +10428,6 @@
     "companyName": "Eagle Point Credit Co"
   },
   {
-    "ticker": "ECC-PD",
-    "companyName": "Eagle Point Credit Co"
-  },
-  {
     "ticker": "ECCC",
     "companyName": "Eagle Point Credit Co"
   },
@@ -11669,10 +10441,6 @@
   },
   {
     "ticker": "ECF",
-    "companyName": "ELLSWORTH GROWTH & INCOME FUND LTD"
-  },
-  {
-    "ticker": "ECF-PA",
     "companyName": "ELLSWORTH GROWTH & INCOME FUND LTD"
   },
   {
@@ -11836,18 +10604,6 @@
     "companyName": "Ellington Financial Inc."
   },
   {
-    "ticker": "EFC-PB",
-    "companyName": "Ellington Financial Inc."
-  },
-  {
-    "ticker": "EFC-PC",
-    "companyName": "Ellington Financial Inc."
-  },
-  {
-    "ticker": "EFC-PD",
-    "companyName": "Ellington Financial Inc."
-  },
-  {
     "ticker": "EFGH",
     "companyName": "Embed Financial Group Holdings"
   },
@@ -11906,18 +10662,6 @@
   {
     "ticker": "EGG",
     "companyName": "ENIGMATIG LTD"
-  },
-  {
-    "ticker": "EGHA",
-    "companyName": "EGH Acquisition Corp."
-  },
-  {
-    "ticker": "EGHAR",
-    "companyName": "EGH Acquisition Corp."
-  },
-  {
-    "ticker": "EGHAU",
-    "companyName": "EGH Acquisition Corp."
   },
   {
     "ticker": "EGHT",
@@ -12180,10 +10924,6 @@
     "companyName": "Nexera Energy Inc."
   },
   {
-    "ticker": "EMCGF",
-    "companyName": "Embrace Change Acquisition Corp."
-  },
-  {
     "ticker": "EMD",
     "companyName": "WESTERN ASSET EMERGING MARKETS DEBT FUND INC."
   },
@@ -12210,14 +10950,6 @@
   {
     "ticker": "EMICF",
     "companyName": "EMERA INC"
-  },
-  {
-    "ticker": "EMIS",
-    "companyName": "Emmis Acquisition Corp."
-  },
-  {
-    "ticker": "EMISR",
-    "companyName": "Emmis Acquisition Corp."
   },
   {
     "ticker": "EML",
@@ -12472,10 +11204,6 @@
     "companyName": "EMPIRE PETROLEUM CORP"
   },
   {
-    "ticker": "EP-PC",
-    "companyName": "KINDER MORGAN, INC."
-  },
-  {
     "ticker": "EPAC",
     "companyName": "ENERPAC TOOL GROUP CORP"
   },
@@ -12508,18 +11236,6 @@
     "companyName": "EPR PROPERTIES"
   },
   {
-    "ticker": "EPR-PC",
-    "companyName": "EPR PROPERTIES"
-  },
-  {
-    "ticker": "EPR-PE",
-    "companyName": "EPR PROPERTIES"
-  },
-  {
-    "ticker": "EPR-PG",
-    "companyName": "EPR PROPERTIES"
-  },
-  {
     "ticker": "EPRT",
     "companyName": "ESSENTIAL PROPERTIES REALTY TRUST, INC."
   },
@@ -12549,14 +11265,6 @@
   },
   {
     "ticker": "EQH",
-    "companyName": "Equitable Holdings, Inc."
-  },
-  {
-    "ticker": "EQH-PA",
-    "companyName": "Equitable Holdings, Inc."
-  },
-  {
-    "ticker": "EQH-PC",
     "companyName": "Equitable Holdings, Inc."
   },
   {
@@ -12752,10 +11460,6 @@
     "companyName": "Energy Transfer LP"
   },
   {
-    "ticker": "ET-PI",
-    "companyName": "Energy Transfer LP"
-  },
-  {
     "ticker": "ETB",
     "companyName": "Eaton Vance Tax-Managed Buy-Write Income Fund"
   },
@@ -12904,30 +11608,6 @@
     "companyName": "Eurobank SA/ADR"
   },
   {
-    "ticker": "EURK",
-    "companyName": "Eureka Acquisition Corp"
-  },
-  {
-    "ticker": "EURKR",
-    "companyName": "Eureka Acquisition Corp"
-  },
-  {
-    "ticker": "EURKU",
-    "companyName": "Eureka Acquisition Corp"
-  },
-  {
-    "ticker": "EVAC",
-    "companyName": "EQV Ventures Acquisition Corp. II"
-  },
-  {
-    "ticker": "EVAC-UN",
-    "companyName": "EQV Ventures Acquisition Corp. II"
-  },
-  {
-    "ticker": "EVAC-WT",
-    "companyName": "EQV Ventures Acquisition Corp. II"
-  },
-  {
     "ticker": "EVAWF",
     "companyName": "Vertical Aerospace Ltd."
   },
@@ -13020,18 +11700,6 @@
     "companyName": "Evotec SE"
   },
   {
-    "ticker": "EVOX",
-    "companyName": "Evolution Global Acquisition Corp"
-  },
-  {
-    "ticker": "EVOXU",
-    "companyName": "Evolution Global Acquisition Corp"
-  },
-  {
-    "ticker": "EVOXW",
-    "companyName": "Evolution Global Acquisition Corp"
-  },
-  {
     "ticker": "EVR",
     "companyName": "Evercore Inc."
   },
@@ -13066,18 +11734,6 @@
   {
     "ticker": "EW",
     "companyName": "Edwards Lifesciences Corp"
-  },
-  {
-    "ticker": "EWAV",
-    "companyName": "East West Ave Acquisition Corp."
-  },
-  {
-    "ticker": "EWAVR",
-    "companyName": "East West Ave Acquisition Corp."
-  },
-  {
-    "ticker": "EWAVU",
-    "companyName": "East West Ave Acquisition Corp."
   },
   {
     "ticker": "EWBC",
@@ -13216,18 +11872,6 @@
     "companyName": "FORD MOTOR CO"
   },
   {
-    "ticker": "F-PB",
-    "companyName": "FORD MOTOR CO"
-  },
-  {
-    "ticker": "F-PC",
-    "companyName": "FORD MOTOR CO"
-  },
-  {
-    "ticker": "F-PD",
-    "companyName": "FORD MOTOR CO"
-  },
-  {
     "ticker": "FA",
     "companyName": "FIRST ADVANTAGE CORP"
   },
@@ -13238,18 +11882,6 @@
   {
     "ticker": "FAC",
     "companyName": "Factorial Energy Inc."
-  },
-  {
-    "ticker": "FACT",
-    "companyName": "FACT II Acquisition Corp."
-  },
-  {
-    "ticker": "FACTU",
-    "companyName": "FACT II Acquisition Corp."
-  },
-  {
-    "ticker": "FACTW",
-    "companyName": "FACT II Acquisition Corp."
   },
   {
     "ticker": "FACWW",
@@ -13337,10 +11969,6 @@
   },
   {
     "ticker": "FBRT",
-    "companyName": "Franklin BSP Realty Trust, Inc."
-  },
-  {
-    "ticker": "FBRT-PE",
     "companyName": "Franklin BSP Realty Trust, Inc."
   },
   {
@@ -13452,18 +12080,6 @@
     "companyName": "Four Corners Property Trust, Inc."
   },
   {
-    "ticker": "FCRS",
-    "companyName": "FutureCrest Acquisition Corp."
-  },
-  {
-    "ticker": "FCRS-UN",
-    "companyName": "FutureCrest Acquisition Corp."
-  },
-  {
-    "ticker": "FCRS-WT",
-    "companyName": "FutureCrest Acquisition Corp."
-  },
-  {
     "ticker": "FCT",
     "companyName": "FIRST TRUST SENIOR FLOATING RATE INCOME FUND II"
   },
@@ -13486,18 +12102,6 @@
   {
     "ticker": "FDCTD",
     "companyName": "FDCTECH, INC."
-  },
-  {
-    "ticker": "FDMM",
-    "companyName": "Freedom Metals Acquisition Corp."
-  },
-  {
-    "ticker": "FDMMU",
-    "companyName": "Freedom Metals Acquisition Corp."
-  },
-  {
-    "ticker": "FDMMW",
-    "companyName": "Freedom Metals Acquisition Corp."
   },
   {
     "ticker": "FDMT",
@@ -13584,18 +12188,6 @@
     "companyName": "Ferrovial N.V."
   },
   {
-    "ticker": "FERA",
-    "companyName": "Fifth Era Acquisition Corp I"
-  },
-  {
-    "ticker": "FERAR",
-    "companyName": "Fifth Era Acquisition Corp I"
-  },
-  {
-    "ticker": "FERAU",
-    "companyName": "Fifth Era Acquisition Corp I"
-  },
-  {
     "ticker": "FERG",
     "companyName": "Ferguson Enterprises Inc. /DE/"
   },
@@ -13680,18 +12272,6 @@
     "companyName": "FGI Industries Ltd."
   },
   {
-    "ticker": "FGII",
-    "companyName": "FG Imperii Acquisition Corp."
-  },
-  {
-    "ticker": "FGIIU",
-    "companyName": "FG Imperii Acquisition Corp."
-  },
-  {
-    "ticker": "FGIIW",
-    "companyName": "FG Imperii Acquisition Corp."
-  },
-  {
     "ticker": "FGIWW",
     "companyName": "FGI Industries Ltd."
   },
@@ -13748,18 +12328,6 @@
     "companyName": "FIRST HORIZON CORP"
   },
   {
-    "ticker": "FHN-PE",
-    "companyName": "FIRST HORIZON CORP"
-  },
-  {
-    "ticker": "FHN-PF",
-    "companyName": "FIRST HORIZON CORP"
-  },
-  {
-    "ticker": "FHN-PH",
-    "companyName": "FIRST HORIZON CORP"
-  },
-  {
     "ticker": "FHTX",
     "companyName": "Foghorn Therapeutics Inc."
   },
@@ -13794,18 +12362,6 @@
   {
     "ticker": "FIGS",
     "companyName": "FIGS, Inc."
-  },
-  {
-    "ticker": "FIGX",
-    "companyName": "FIGX Capital Acquisition Corp."
-  },
-  {
-    "ticker": "FIGXU",
-    "companyName": "FIGX Capital Acquisition Corp."
-  },
-  {
-    "ticker": "FIGXW",
-    "companyName": "FIGX Capital Acquisition Corp."
   },
   {
     "ticker": "FIISO",
@@ -13869,22 +12425,6 @@
   },
   {
     "ticker": "FITB",
-    "companyName": "FIFTH THIRD BANCORP"
-  },
-  {
-    "ticker": "FITB-PA",
-    "companyName": "FIFTH THIRD BANCORP"
-  },
-  {
-    "ticker": "FITB-PI",
-    "companyName": "FIFTH THIRD BANCORP"
-  },
-  {
-    "ticker": "FITB-PK",
-    "companyName": "FIFTH THIRD BANCORP"
-  },
-  {
-    "ticker": "FITB-PM",
     "companyName": "FIFTH THIRD BANCORP"
   },
   {
@@ -13953,14 +12493,6 @@
   },
   {
     "ticker": "FLG",
-    "companyName": "FLAGSTAR BANK, NATIONAL ASSOCIATION"
-  },
-  {
-    "ticker": "FLG-PA",
-    "companyName": "FLAGSTAR BANK, NATIONAL ASSOCIATION"
-  },
-  {
-    "ticker": "FLG-PU",
     "companyName": "FLAGSTAR BANK, NATIONAL ASSOCIATION"
   },
   {
@@ -14066,18 +12598,6 @@
   {
     "ticker": "FLZH",
     "companyName": "Flash Sports & Media Holdings, Inc."
-  },
-  {
-    "ticker": "FMAC",
-    "companyName": "Future Money Acquisition Corp"
-  },
-  {
-    "ticker": "FMACR",
-    "companyName": "Future Money Acquisition Corp"
-  },
-  {
-    "ticker": "FMACU",
-    "companyName": "Future Money Acquisition Corp"
   },
   {
     "ticker": "FMAO",
@@ -14432,10 +12952,6 @@
     "companyName": "Shift4 Payments, Inc."
   },
   {
-    "ticker": "FOUR-PA",
-    "companyName": "Shift4 Payments, Inc."
-  },
-  {
     "ticker": "FOX",
     "companyName": "Fox Corp"
   },
@@ -14616,10 +13132,6 @@
     "companyName": "FEDERAL REALTY INVESTMENT TRUST"
   },
   {
-    "ticker": "FRT-PC",
-    "companyName": "FEDERAL REALTY INVESTMENT TRUST"
-  },
-  {
     "ticker": "FRTJF",
     "companyName": "Fortis Inc."
   },
@@ -14654,18 +13166,6 @@
   {
     "ticker": "FSEA",
     "companyName": "First Seacoast Bancorp, Inc."
-  },
-  {
-    "ticker": "FSHP",
-    "companyName": "Flag Ship Acquisition Corp"
-  },
-  {
-    "ticker": "FSHPR",
-    "companyName": "Flag Ship Acquisition Corp"
-  },
-  {
-    "ticker": "FSHPU",
-    "companyName": "Flag Ship Acquisition Corp"
   },
   {
     "ticker": "FSI",
@@ -14770,18 +13270,6 @@
   {
     "ticker": "FTH",
     "companyName": "Faeth Therapeutics, Inc."
-  },
-  {
-    "ticker": "FTHA",
-    "companyName": "Forefront Tech Holdings Acquisition Corp"
-  },
-  {
-    "ticker": "FTHAU",
-    "companyName": "Forefront Tech Holdings Acquisition Corp"
-  },
-  {
-    "ticker": "FTHAW",
-    "companyName": "Forefront Tech Holdings Acquisition Corp"
   },
   {
     "ticker": "FTHM",
@@ -14932,28 +13420,12 @@
     "companyName": "F3 Uranium Corp."
   },
   {
-    "ticker": "FVAV",
-    "companyName": "Fortress Value Acquisition Corp. V"
-  },
-  {
     "ticker": "FVCB",
     "companyName": "FVCBankcorp, Inc."
   },
   {
     "ticker": "FVGPY",
     "companyName": "FinVolution Group"
-  },
-  {
-    "ticker": "FVN",
-    "companyName": "Future Vision II Acquisition Corp."
-  },
-  {
-    "ticker": "FVNNR",
-    "companyName": "Future Vision II Acquisition Corp."
-  },
-  {
-    "ticker": "FVNNU",
-    "companyName": "Future Vision II Acquisition Corp."
   },
   {
     "ticker": "FVR",
@@ -14966,22 +13438,6 @@
   {
     "ticker": "FVTI",
     "companyName": "Fortune Valley Treasures, Inc."
-  },
-  {
-    "ticker": "FWAC",
-    "companyName": "Futurewave Acquisition Corp"
-  },
-  {
-    "ticker": "FWACR",
-    "companyName": "Futurewave Acquisition Corp"
-  },
-  {
-    "ticker": "FWACU",
-    "companyName": "Futurewave Acquisition Corp"
-  },
-  {
-    "ticker": "FWACW",
-    "companyName": "Futurewave Acquisition Corp"
   },
   {
     "ticker": "FWDI",
@@ -15014,18 +13470,6 @@
   {
     "ticker": "FXA",
     "companyName": "Invesco CurrencyShares Australian Dollar Trust"
-  },
-  {
-    "ticker": "FXAC",
-    "companyName": "FortuneX Acquisition Corp"
-  },
-  {
-    "ticker": "FXACU",
-    "companyName": "FortuneX Acquisition Corp"
-  },
-  {
-    "ticker": "FXACW",
-    "companyName": "FortuneX Acquisition Corp"
   },
   {
     "ticker": "FXB",
@@ -15080,18 +13524,6 @@
     "companyName": "GABELLI EQUITY TRUST INC"
   },
   {
-    "ticker": "GAB-PG",
-    "companyName": "GABELLI EQUITY TRUST INC"
-  },
-  {
-    "ticker": "GAB-PH",
-    "companyName": "GABELLI EQUITY TRUST INC"
-  },
-  {
-    "ticker": "GAB-PK",
-    "companyName": "GABELLI EQUITY TRUST INC"
-  },
-  {
     "ticker": "GABC",
     "companyName": "GERMAN AMERICAN BANCORP, INC."
   },
@@ -15133,10 +13565,6 @@
   },
   {
     "ticker": "GAM",
-    "companyName": "GENERAL AMERICAN INVESTORS CO INC"
-  },
-  {
-    "ticker": "GAM-PB",
     "companyName": "GENERAL AMERICAN INVESTORS CO INC"
   },
   {
@@ -15380,10 +13808,6 @@
     "companyName": "Glidelogic Corp."
   },
   {
-    "ticker": "GDMT",
-    "companyName": "Gold Mountain Acquisition Corp."
-  },
-  {
     "ticker": "GDO",
     "companyName": "WESTERN ASSET GLOBAL CORPORATE OPPORTUNITY FUND INC."
   },
@@ -15412,10 +13836,6 @@
     "companyName": "Gold Strike Resources Corp."
   },
   {
-    "ticker": "GDST",
-    "companyName": "Chi Special Acquisition Corp."
-  },
-  {
     "ticker": "GDTC",
     "companyName": "CytoMed Therapeutics Ltd"
   },
@@ -15425,14 +13845,6 @@
   },
   {
     "ticker": "GDV",
-    "companyName": "GABELLI DIVIDEND & INCOME TRUST"
-  },
-  {
-    "ticker": "GDV-PH",
-    "companyName": "GABELLI DIVIDEND & INCOME TRUST"
-  },
-  {
-    "ticker": "GDV-PK",
     "companyName": "GABELLI DIVIDEND & INCOME TRUST"
   },
   {
@@ -15672,10 +14084,6 @@
     "companyName": "GAMCO Global Gold, Natural Resources & Income Trust"
   },
   {
-    "ticker": "GGN-PB",
-    "companyName": "GAMCO Global Gold, Natural Resources & Income Trust"
-  },
-  {
     "ticker": "GGOXF",
     "companyName": "Galleon Gold Corp."
   },
@@ -15705,14 +14113,6 @@
   },
   {
     "ticker": "GGT",
-    "companyName": "GABELLI MULTIMEDIA TRUST INC."
-  },
-  {
-    "ticker": "GGT-PE",
-    "companyName": "GABELLI MULTIMEDIA TRUST INC."
-  },
-  {
-    "ticker": "GGT-PG",
     "companyName": "GABELLI MULTIMEDIA TRUST INC."
   },
   {
@@ -15916,10 +14316,6 @@
     "companyName": "GLOBE LIFE INC."
   },
   {
-    "ticker": "GL-PD",
-    "companyName": "GLOBE LIFE INC."
-  },
-  {
     "ticker": "GLAD",
     "companyName": "GLADSTONE CAPITAL CORP"
   },
@@ -15974,18 +14370,6 @@
   {
     "ticker": "GLE",
     "companyName": "Global Engine Group Holding Ltd"
-  },
-  {
-    "ticker": "GLED",
-    "companyName": "GalaxyEdge Acquisition Corp"
-  },
-  {
-    "ticker": "GLED-RI",
-    "companyName": "GalaxyEdge Acquisition Corp"
-  },
-  {
-    "ticker": "GLED-UN",
-    "companyName": "GalaxyEdge Acquisition Corp"
   },
   {
     "ticker": "GLEI",
@@ -16056,18 +14440,6 @@
     "companyName": "Gloo Holdings, Inc."
   },
   {
-    "ticker": "GLOP-PA",
-    "companyName": "GasLog Partners LP"
-  },
-  {
-    "ticker": "GLOP-PB",
-    "companyName": "GasLog Partners LP"
-  },
-  {
-    "ticker": "GLOP-PC",
-    "companyName": "GasLog Partners LP"
-  },
-  {
     "ticker": "GLP",
     "companyName": "GLOBAL PARTNERS LP"
   },
@@ -16101,14 +14473,6 @@
   },
   {
     "ticker": "GLU",
-    "companyName": "GABELLI GLOBAL UTILITY & INCOME TRUST"
-  },
-  {
-    "ticker": "GLU-PA",
-    "companyName": "GABELLI GLOBAL UTILITY & INCOME TRUST"
-  },
-  {
-    "ticker": "GLU-PB",
     "companyName": "GABELLI GLOBAL UTILITY & INCOME TRUST"
   },
   {
@@ -16228,22 +14592,6 @@
     "companyName": "Global Net Lease, Inc."
   },
   {
-    "ticker": "GNL-PA",
-    "companyName": "Global Net Lease, Inc."
-  },
-  {
-    "ticker": "GNL-PB",
-    "companyName": "Global Net Lease, Inc."
-  },
-  {
-    "ticker": "GNL-PD",
-    "companyName": "Global Net Lease, Inc."
-  },
-  {
-    "ticker": "GNL-PE",
-    "companyName": "Global Net Lease, Inc."
-  },
-  {
     "ticker": "GNLN",
     "companyName": "Greenlane Holdings, Inc."
   },
@@ -16277,10 +14625,6 @@
   },
   {
     "ticker": "GNT",
-    "companyName": "GAMCO Natural Resources, Gold & Income Trust"
-  },
-  {
-    "ticker": "GNT-PA",
     "companyName": "GAMCO Natural Resources, Gold & Income Trust"
   },
   {
@@ -16396,32 +14740,8 @@
     "companyName": "GREENPOWER MOTOR Co INC."
   },
   {
-    "ticker": "GPAC",
-    "companyName": "General Purpose Acquisition Corp."
-  },
-  {
-    "ticker": "GPACU",
-    "companyName": "General Purpose Acquisition Corp."
-  },
-  {
-    "ticker": "GPACW",
-    "companyName": "General Purpose Acquisition Corp."
-  },
-  {
     "ticker": "GPAEF",
     "companyName": "Pacific Airport Group"
-  },
-  {
-    "ticker": "GPAT",
-    "companyName": "GP-Act III Acquisition Corp."
-  },
-  {
-    "ticker": "GPATU",
-    "companyName": "GP-Act III Acquisition Corp."
-  },
-  {
-    "ticker": "GPATW",
-    "companyName": "GP-Act III Acquisition Corp."
   },
   {
     "ticker": "GPC",
@@ -16464,10 +14784,6 @@
     "companyName": "Granite Point Mortgage Trust Inc."
   },
   {
-    "ticker": "GPMT-PA",
-    "companyName": "Granite Point Mortgage Trust Inc."
-  },
-  {
     "ticker": "GPMTF",
     "companyName": "GPM Metals Inc."
   },
@@ -16504,10 +14820,6 @@
     "companyName": "Hyperscale Data, Inc."
   },
   {
-    "ticker": "GPUS-PD",
-    "companyName": "Hyperscale Data, Inc."
-  },
-  {
     "ticker": "GPUSF",
     "companyName": "Alset Capital Inc."
   },
@@ -16533,10 +14845,6 @@
   },
   {
     "ticker": "GRBK",
-    "companyName": "Green Brick Partners, Inc."
-  },
-  {
-    "ticker": "GRBK-PA",
     "companyName": "Green Brick Partners, Inc."
   },
   {
@@ -16724,18 +15032,6 @@
     "companyName": "GOLDMAN SACHS GROUP INC"
   },
   {
-    "ticker": "GS-PA",
-    "companyName": "GOLDMAN SACHS GROUP INC"
-  },
-  {
-    "ticker": "GS-PC",
-    "companyName": "GOLDMAN SACHS GROUP INC"
-  },
-  {
-    "ticker": "GS-PD",
-    "companyName": "GOLDMAN SACHS GROUP INC"
-  },
-  {
     "ticker": "GSAC",
     "companyName": "GELSTAT CORP"
   },
@@ -16772,18 +15068,6 @@
     "companyName": "Goosehead Insurance, Inc."
   },
   {
-    "ticker": "GSHR",
-    "companyName": "Gesher Acquisition Corp. II"
-  },
-  {
-    "ticker": "GSHRU",
-    "companyName": "Gesher Acquisition Corp. II"
-  },
-  {
-    "ticker": "GSHRW",
-    "companyName": "Gesher Acquisition Corp. II"
-  },
-  {
     "ticker": "GSIT",
     "companyName": "GSI TECHNOLOGY INC"
   },
@@ -16804,10 +15088,6 @@
     "companyName": "Global Ship Lease, Inc."
   },
   {
-    "ticker": "GSL-PB",
-    "companyName": "Global Ship Lease, Inc."
-  },
-  {
     "ticker": "GSM",
     "companyName": "Ferroglobe PLC"
   },
@@ -16822,30 +15102,6 @@
   {
     "ticker": "GSOL",
     "companyName": "Grayscale Solana Staking ETF"
-  },
-  {
-    "ticker": "GSRF",
-    "companyName": "GSR IV Acquisition Corp."
-  },
-  {
-    "ticker": "GSRFR",
-    "companyName": "GSR IV Acquisition Corp."
-  },
-  {
-    "ticker": "GSRFU",
-    "companyName": "GSR IV Acquisition Corp."
-  },
-  {
-    "ticker": "GSRV",
-    "companyName": "GSR V Acquisition Corp."
-  },
-  {
-    "ticker": "GSRVR",
-    "companyName": "GSR V Acquisition Corp."
-  },
-  {
-    "ticker": "GSRVU",
-    "companyName": "GSR V Acquisition Corp."
   },
   {
     "ticker": "GSTK",
@@ -16908,22 +15164,6 @@
     "companyName": "Gores Holdings X, Inc. / CI"
   },
   {
-    "ticker": "GTERA",
-    "companyName": "Globa Terra Acquisition Corp"
-  },
-  {
-    "ticker": "GTERR",
-    "companyName": "Globa Terra Acquisition Corp"
-  },
-  {
-    "ticker": "GTERU",
-    "companyName": "Globa Terra Acquisition Corp"
-  },
-  {
-    "ticker": "GTERW",
-    "companyName": "Globa Terra Acquisition Corp"
-  },
-  {
     "ticker": "GTES",
     "companyName": "Gates Industrial Corp Ltd."
   },
@@ -16972,18 +15212,6 @@
     "companyName": "GETTY REALTY CORP /MD/"
   },
   {
-    "ticker": "GUAC",
-    "companyName": "Berto Acquisition Corp. II"
-  },
-  {
-    "ticker": "GUACU",
-    "companyName": "Berto Acquisition Corp. II"
-  },
-  {
-    "ticker": "GUACW",
-    "companyName": "Berto Acquisition Corp. II"
-  },
-  {
     "ticker": "GUER",
     "companyName": "Guerrilla RF, Inc."
   },
@@ -17004,20 +15232,12 @@
     "companyName": "GABELLI UTILITY TRUST"
   },
   {
-    "ticker": "GUT-PC",
-    "companyName": "GABELLI UTILITY TRUST"
-  },
-  {
     "ticker": "GUTS",
     "companyName": "FRACTYL HEALTH, INC."
   },
   {
     "ticker": "GVA",
     "companyName": "GRANITE CONSTRUCTION INC"
-  },
-  {
-    "ticker": "GVAC",
-    "companyName": "Gravity Acquisition Corp."
   },
   {
     "ticker": "GVH",
@@ -17120,18 +15340,6 @@
     "companyName": "HACHIJUNI BANK LTD"
   },
   {
-    "ticker": "HACQ",
-    "companyName": "HCM IV Acquisition Corp."
-  },
-  {
-    "ticker": "HACQU",
-    "companyName": "HCM IV Acquisition Corp."
-  },
-  {
-    "ticker": "HACQW",
-    "companyName": "HCM IV Acquisition Corp."
-  },
-  {
     "ticker": "HAE",
     "companyName": "HAEMONETICS CORP"
   },
@@ -17186,18 +15394,6 @@
   {
     "ticker": "HASI",
     "companyName": "HA Sustainable Infrastructure Capital, Inc."
-  },
-  {
-    "ticker": "HAVA",
-    "companyName": "Harvard Ave Acquisition Corp"
-  },
-  {
-    "ticker": "HAVAR",
-    "companyName": "Harvard Ave Acquisition Corp"
-  },
-  {
-    "ticker": "HAVAU",
-    "companyName": "Harvard Ave Acquisition Corp"
   },
   {
     "ticker": "HAWK",
@@ -17272,28 +15468,12 @@
     "companyName": "HCA Healthcare, Inc."
   },
   {
-    "ticker": "HCAC",
-    "companyName": "Hall Chadwick Acquisition Corp"
-  },
-  {
-    "ticker": "HCACR",
-    "companyName": "Hall Chadwick Acquisition Corp"
-  },
-  {
-    "ticker": "HCACU",
-    "companyName": "Hall Chadwick Acquisition Corp"
-  },
-  {
     "ticker": "HCAI",
     "companyName": "Huachen AI Parking Management Technology Holding Co., Ltd"
   },
   {
     "ticker": "HCAT",
     "companyName": "Health Catalyst, Inc."
-  },
-  {
-    "ticker": "HCAX",
-    "companyName": "Hall Chadwick Acquisition Corp II"
   },
   {
     "ticker": "HCC",
@@ -17338,18 +15518,6 @@
   {
     "ticker": "HCM",
     "companyName": "HUTCHMED (China) Ltd"
-  },
-  {
-    "ticker": "HCMA",
-    "companyName": "HCM III ACQUISITION CORP."
-  },
-  {
-    "ticker": "HCMAU",
-    "companyName": "HCM III ACQUISITION CORP."
-  },
-  {
-    "ticker": "HCMAW",
-    "companyName": "HCM III ACQUISITION CORP."
   },
   {
     "ticker": "HCMC",
@@ -17472,14 +15640,6 @@
     "companyName": "HIGHLAND OPPORTUNITIES & INCOME FUND"
   },
   {
-    "ticker": "HFRO-PA",
-    "companyName": "HIGHLAND OPPORTUNITIES & INCOME FUND"
-  },
-  {
-    "ticker": "HFRO-PB",
-    "companyName": "HIGHLAND OPPORTUNITIES & INCOME FUND"
-  },
-  {
     "ticker": "HFUS",
     "companyName": "Hartford Creative Group, Inc."
   },
@@ -17549,10 +15709,6 @@
   },
   {
     "ticker": "HIG",
-    "companyName": "HARTFORD INSURANCE GROUP, INC."
-  },
-  {
-    "ticker": "HIG-PG",
     "companyName": "HARTFORD INSURANCE GROUP, INC."
   },
   {
@@ -17636,10 +15792,6 @@
     "companyName": "HECLA MINING CO/DE/"
   },
   {
-    "ticker": "HL-PB",
-    "companyName": "HECLA MINING CO/DE/"
-  },
-  {
     "ticker": "HLEO",
     "companyName": "Helio Corp /FL/"
   },
@@ -17706,10 +15858,6 @@
   {
     "ticker": "HLX",
     "companyName": "HELIX ENERGY SOLUTIONS GROUP INC"
-  },
-  {
-    "ticker": "HLXC",
-    "companyName": "Helix Acquisition Corp. III"
   },
   {
     "ticker": "HLYK",
@@ -17896,10 +16044,6 @@
     "companyName": "Hewlett Packard Enterprise Co"
   },
   {
-    "ticker": "HPE-PC",
-    "companyName": "Hewlett Packard Enterprise Co"
-  },
-  {
     "ticker": "HPF",
     "companyName": "JOHN HANCOCK PREFERRED INCOME FUND II"
   },
@@ -17921,10 +16065,6 @@
   },
   {
     "ticker": "HPP",
-    "companyName": "Hudson Pacific Properties, Inc."
-  },
-  {
-    "ticker": "HPP-PC",
     "companyName": "Hudson Pacific Properties, Inc."
   },
   {
@@ -18436,30 +16576,6 @@
     "companyName": "IBC Advanced Alloys Corp."
   },
   {
-    "ticker": "IACO",
-    "companyName": "Idea Acquisition Corp."
-  },
-  {
-    "ticker": "IACOU",
-    "companyName": "Idea Acquisition Corp."
-  },
-  {
-    "ticker": "IACOW",
-    "companyName": "Idea Acquisition Corp."
-  },
-  {
-    "ticker": "IACQ",
-    "companyName": "Irenic Acquisition Corp."
-  },
-  {
-    "ticker": "IACQU",
-    "companyName": "Irenic Acquisition Corp."
-  },
-  {
-    "ticker": "IACQW",
-    "companyName": "Irenic Acquisition Corp."
-  },
-  {
     "ticker": "IAE",
     "companyName": "Voya Asia Pacific High Dividend Equity Income Fund"
   },
@@ -18490,14 +16606,6 @@
   {
     "ticker": "IAUX-WT",
     "companyName": "i-80 Gold Corp."
-  },
-  {
-    "ticker": "IBAC",
-    "companyName": "IB Acquisition Corp."
-  },
-  {
-    "ticker": "IBACR",
-    "companyName": "IB Acquisition Corp."
   },
   {
     "ticker": "IBATF",
@@ -18612,10 +16720,6 @@
     "companyName": "Icon Energy Corp"
   },
   {
-    "ticker": "ICR-PA",
-    "companyName": "InPoint Commercial Real Estate Income, Inc."
-  },
-  {
     "ticker": "ICRL",
     "companyName": "InPoint Commercial Real Estate Income, Inc."
   },
@@ -18672,10 +16776,6 @@
     "companyName": "Industria de Diseno Textil Inditex SA / ADR"
   },
   {
-    "ticker": "IDIA",
-    "companyName": "Innovative Digital Investors Acquisition Corp."
-  },
-  {
     "ticker": "IDN",
     "companyName": "Intellicheck, Inc."
   },
@@ -18714,18 +16814,6 @@
   {
     "ticker": "IE",
     "companyName": "Ivanhoe Electric Inc."
-  },
-  {
-    "ticker": "IEAG",
-    "companyName": "Infinite Eagle Acquisition Corp."
-  },
-  {
-    "ticker": "IEAGR",
-    "companyName": "Infinite Eagle Acquisition Corp."
-  },
-  {
-    "ticker": "IEAGU",
-    "companyName": "Infinite Eagle Acquisition Corp."
   },
   {
     "ticker": "IEGCF",
@@ -18790,18 +16878,6 @@
   {
     "ticker": "IGA",
     "companyName": "Voya Global Advantage & Premium Opportunity Fund"
-  },
-  {
-    "ticker": "IGAC",
-    "companyName": "Invest Green Acquisition Corp"
-  },
-  {
-    "ticker": "IGACR",
-    "companyName": "Invest Green Acquisition Corp"
-  },
-  {
-    "ticker": "IGACU",
-    "companyName": "Invest Green Acquisition Corp"
   },
   {
     "ticker": "IGC",
@@ -18884,10 +16960,6 @@
     "companyName": "INNOVATIVE INDUSTRIAL PROPERTIES INC"
   },
   {
-    "ticker": "IIPR-PA",
-    "companyName": "INNOVATIVE INDUSTRIAL PROPERTIES INC"
-  },
-  {
     "ticker": "IKT",
     "companyName": "Inhibikase Therapeutics, Inc."
   },
@@ -18912,18 +16984,6 @@
     "companyName": "Triller Group Inc."
   },
   {
-    "ticker": "ILLU",
-    "companyName": "Illumination Acquisition Corp. I"
-  },
-  {
-    "ticker": "ILLUU",
-    "companyName": "Illumination Acquisition Corp. I"
-  },
-  {
-    "ticker": "ILLUW",
-    "companyName": "Illumination Acquisition Corp. I"
-  },
-  {
     "ticker": "ILMN",
     "companyName": "ILLUMINA, INC."
   },
@@ -18942,22 +17002,6 @@
   {
     "ticker": "IMAA",
     "companyName": "IMA Tech"
-  },
-  {
-    "ticker": "IMAQ",
-    "companyName": "International Media Acquisition Corp."
-  },
-  {
-    "ticker": "IMAQR",
-    "companyName": "International Media Acquisition Corp."
-  },
-  {
-    "ticker": "IMAQU",
-    "companyName": "International Media Acquisition Corp."
-  },
-  {
-    "ticker": "IMAQW",
-    "companyName": "International Media Acquisition Corp."
   },
   {
     "ticker": "IMAX",
@@ -19066,18 +17110,6 @@
   {
     "ticker": "INAB",
     "companyName": "IN8BIO, INC."
-  },
-  {
-    "ticker": "INAC",
-    "companyName": "Indigo Acquisition Corp."
-  },
-  {
-    "ticker": "INACR",
-    "companyName": "Indigo Acquisition Corp."
-  },
-  {
-    "ticker": "INACU",
-    "companyName": "Indigo Acquisition Corp."
   },
   {
     "ticker": "INBK",
@@ -19225,14 +17257,6 @@
   },
   {
     "ticker": "INN",
-    "companyName": "Summit Hotel Properties, Inc."
-  },
-  {
-    "ticker": "INN-PE",
-    "companyName": "Summit Hotel Properties, Inc."
-  },
-  {
-    "ticker": "INN-PF",
     "companyName": "Summit Hotel Properties, Inc."
   },
   {
@@ -19432,44 +17456,8 @@
     "companyName": "MERRILL LYNCH DEPOSITOR INC INDEXPLUS TRUST SERIES 2003-1"
   },
   {
-    "ticker": "IPCX",
-    "companyName": "Inflection Point Acquisition Corp. III"
-  },
-  {
-    "ticker": "IPCXR",
-    "companyName": "Inflection Point Acquisition Corp. III"
-  },
-  {
-    "ticker": "IPCXU",
-    "companyName": "Inflection Point Acquisition Corp. III"
-  },
-  {
     "ticker": "IPDN",
     "companyName": "Professional Diversity Network, Inc."
-  },
-  {
-    "ticker": "IPEX",
-    "companyName": "Inflection Point Acquisition Corp. V"
-  },
-  {
-    "ticker": "IPEXR",
-    "companyName": "Inflection Point Acquisition Corp. V"
-  },
-  {
-    "ticker": "IPEXU",
-    "companyName": "Inflection Point Acquisition Corp. V"
-  },
-  {
-    "ticker": "IPFX",
-    "companyName": "Inflection Point Acquisition Corp. VI"
-  },
-  {
-    "ticker": "IPFXU",
-    "companyName": "Inflection Point Acquisition Corp. VI"
-  },
-  {
-    "ticker": "IPFXW",
-    "companyName": "Inflection Point Acquisition Corp. VI"
   },
   {
     "ticker": "IPGLF",
@@ -19576,18 +17564,6 @@
     "companyName": "Ingersoll Rand Inc."
   },
   {
-    "ticker": "IRAB",
-    "companyName": "Iris Acquisition Corp II"
-  },
-  {
-    "ticker": "IRAB-UN",
-    "companyName": "Iris Acquisition Corp II"
-  },
-  {
-    "ticker": "IRAB-WT",
-    "companyName": "Iris Acquisition Corp II"
-  },
-  {
     "ticker": "IRD",
     "companyName": "Opus Genetics, Inc."
   },
@@ -19680,18 +17656,6 @@
     "companyName": "iShares S&P GSCI Commodity-Indexed Trust"
   },
   {
-    "ticker": "ISNR",
-    "companyName": "Snow Rothschild Acquisition Corp."
-  },
-  {
-    "ticker": "ISNRU",
-    "companyName": "Snow Rothschild Acquisition Corp."
-  },
-  {
-    "ticker": "ISNRW",
-    "companyName": "Snow Rothschild Acquisition Corp."
-  },
-  {
     "ticker": "ISOU",
     "companyName": "IsoEnergy Ltd."
   },
@@ -19734,18 +17698,6 @@
   {
     "ticker": "ITGR",
     "companyName": "Integer Holdings Corp"
-  },
-  {
-    "ticker": "ITHA",
-    "companyName": "ITHAX Acquisition Corp III"
-  },
-  {
-    "ticker": "ITHAU",
-    "companyName": "ITHAX Acquisition Corp III"
-  },
-  {
-    "ticker": "ITHAW",
-    "companyName": "ITHAX Acquisition Corp III"
   },
   {
     "ticker": "ITHEY",
@@ -19860,10 +17812,6 @@
     "companyName": "Invesco Mortgage Capital Inc."
   },
   {
-    "ticker": "IVR-PC",
-    "companyName": "Invesco Mortgage Capital Inc."
-  },
-  {
     "ticker": "IVT",
     "companyName": "InvenTrust Properties Corp."
   },
@@ -19904,22 +17852,6 @@
     "companyName": "JACOBS SOLUTIONS INC."
   },
   {
-    "ticker": "JAB",
-    "companyName": "JAB Acquisition Corp I"
-  },
-  {
-    "ticker": "JABRR",
-    "companyName": "JAB Acquisition Corp I"
-  },
-  {
-    "ticker": "JABRU",
-    "companyName": "JAB Acquisition Corp I"
-  },
-  {
-    "ticker": "JABRW",
-    "companyName": "JAB Acquisition Corp I"
-  },
-  {
     "ticker": "JACK",
     "companyName": "JACK IN THE BOX INC"
   },
@@ -19958,10 +17890,6 @@
   {
     "ticker": "JANX",
     "companyName": "Janux Therapeutics, Inc."
-  },
-  {
-    "ticker": "JATT",
-    "companyName": "JATT II Acquisition Corp."
   },
   {
     "ticker": "JAYGF",
@@ -20066,18 +17994,6 @@
   {
     "ticker": "JEM",
     "companyName": "707 Cayman Holdings Ltd."
-  },
-  {
-    "ticker": "JENA",
-    "companyName": "JENA ACQUISITION Corp II"
-  },
-  {
-    "ticker": "JENA-RI",
-    "companyName": "JENA ACQUISITION Corp II"
-  },
-  {
-    "ticker": "JENA-UN",
-    "companyName": "JENA ACQUISITION Corp II"
   },
   {
     "ticker": "JETBF",
@@ -20268,30 +18184,6 @@
     "companyName": "JPMORGAN CHASE & CO"
   },
   {
-    "ticker": "JPM-PC",
-    "companyName": "JPMORGAN CHASE & CO"
-  },
-  {
-    "ticker": "JPM-PD",
-    "companyName": "JPMORGAN CHASE & CO"
-  },
-  {
-    "ticker": "JPM-PJ",
-    "companyName": "JPMORGAN CHASE & CO"
-  },
-  {
-    "ticker": "JPM-PK",
-    "companyName": "JPMORGAN CHASE & CO"
-  },
-  {
-    "ticker": "JPM-PL",
-    "companyName": "JPMORGAN CHASE & CO"
-  },
-  {
-    "ticker": "JPM-PM",
-    "companyName": "JPMORGAN CHASE & CO"
-  },
-  {
     "ticker": "JPOTF",
     "companyName": "Jackpot Digital Inc."
   },
@@ -20372,18 +18264,6 @@
     "companyName": "Jowell Global Ltd."
   },
   {
-    "ticker": "JWSMF",
-    "companyName": "Jaws Mustang Acquisition Corp"
-  },
-  {
-    "ticker": "JWSUF",
-    "companyName": "Jaws Mustang Acquisition Corp"
-  },
-  {
-    "ticker": "JWSWF",
-    "companyName": "Jaws Mustang Acquisition Corp"
-  },
-  {
     "ticker": "JXADF",
     "companyName": "JX Advanced Metals Corporation/ADR"
   },
@@ -20404,10 +18284,6 @@
     "companyName": "Jackson Financial Inc."
   },
   {
-    "ticker": "JXN-PA",
-    "companyName": "Jackson Financial Inc."
-  },
-  {
     "ticker": "JYD",
     "companyName": "Jayud Global Logistics Ltd"
   },
@@ -20422,10 +18298,6 @@
   {
     "ticker": "JZXN",
     "companyName": "Jiuzi Holdings, Inc."
-  },
-  {
-    "ticker": "KACLF",
-    "companyName": "Kairous Acquisition Corp. Ltd"
   },
   {
     "ticker": "KAI",
@@ -20524,32 +18396,8 @@
     "companyName": "Kingsoft Cloud Holdings Ltd"
   },
   {
-    "ticker": "KCA-UN",
-    "companyName": "Kensington Capital Acquisition Corp. VI"
-  },
-  {
-    "ticker": "KCAC-UN",
-    "companyName": "Kensington Capital Acquisition Corp. VI"
-  },
-  {
-    "ticker": "KCAC-WT",
-    "companyName": "Kensington Capital Acquisition Corp. VI"
-  },
-  {
     "ticker": "KCCFF",
     "companyName": "Kutcho Copper Corp."
-  },
-  {
-    "ticker": "KCHV",
-    "companyName": "Kochav Defense Acquisition Corp."
-  },
-  {
-    "ticker": "KCHVR",
-    "companyName": "Kochav Defense Acquisition Corp."
-  },
-  {
-    "ticker": "KCHVU",
-    "companyName": "Kochav Defense Acquisition Corp."
   },
   {
     "ticker": "KCLHF",
@@ -20632,36 +18480,8 @@
     "companyName": "KEYCORP /NEW/"
   },
   {
-    "ticker": "KEY-PI",
-    "companyName": "KEYCORP /NEW/"
-  },
-  {
-    "ticker": "KEY-PJ",
-    "companyName": "KEYCORP /NEW/"
-  },
-  {
-    "ticker": "KEY-PK",
-    "companyName": "KEYCORP /NEW/"
-  },
-  {
-    "ticker": "KEY-PL",
-    "companyName": "KEYCORP /NEW/"
-  },
-  {
     "ticker": "KEYS",
     "companyName": "Keysight Technologies, Inc."
-  },
-  {
-    "ticker": "KEYY",
-    "companyName": "Keystone Acquisition Corp."
-  },
-  {
-    "ticker": "KEYYU",
-    "companyName": "Keystone Acquisition Corp."
-  },
-  {
-    "ticker": "KEYYW",
-    "companyName": "Keystone Acquisition Corp."
   },
   {
     "ticker": "KF",
@@ -20670,18 +18490,6 @@
   {
     "ticker": "KFFB",
     "companyName": "Kentucky First Federal Bancorp"
-  },
-  {
-    "ticker": "KFII",
-    "companyName": "K&F GROWTH ACQUISITION CORP. II"
-  },
-  {
-    "ticker": "KFIIR",
-    "companyName": "K&F GROWTH ACQUISITION CORP. II"
-  },
-  {
-    "ticker": "KFIIU",
-    "companyName": "K&F GROWTH ACQUISITION CORP. II"
   },
   {
     "ticker": "KFRC",
@@ -20744,18 +18552,6 @@
     "companyName": "KIMCO REALTY CORP"
   },
   {
-    "ticker": "KIM-PL",
-    "companyName": "KIMCO REALTY CORP"
-  },
-  {
-    "ticker": "KIM-PM",
-    "companyName": "KIMCO REALTY CORP"
-  },
-  {
-    "ticker": "KIM-PN",
-    "companyName": "KIMCO REALTY CORP"
-  },
-  {
     "ticker": "KINS",
     "companyName": "KINGSTONE COMPANIES, INC."
   },
@@ -20785,10 +18581,6 @@
   },
   {
     "ticker": "KKR",
-    "companyName": "KKR & Co. Inc."
-  },
-  {
-    "ticker": "KKR-PD",
     "companyName": "KKR & Co. Inc."
   },
   {
@@ -20992,18 +18784,6 @@
     "companyName": "KOSS CORP"
   },
   {
-    "ticker": "KOYN",
-    "companyName": "CSLM Digital Asset Acquisition Corp III, Ltd"
-  },
-  {
-    "ticker": "KOYNU",
-    "companyName": "CSLM Digital Asset Acquisition Corp III, Ltd"
-  },
-  {
-    "ticker": "KOYNW",
-    "companyName": "CSLM Digital Asset Acquisition Corp III, Ltd"
-  },
-  {
     "ticker": "KOZAY",
     "companyName": "Turk Altin Isletmeleri A.S./ADR"
   },
@@ -21048,27 +18828,11 @@
     "companyName": "KROGER CO"
   },
   {
-    "ticker": "KRAQ",
-    "companyName": "KRAKacquisition Corp"
-  },
-  {
-    "ticker": "KRAQU",
-    "companyName": "KRAKacquisition Corp"
-  },
-  {
-    "ticker": "KRAQW",
-    "companyName": "KRAKacquisition Corp"
-  },
-  {
     "ticker": "KRC",
     "companyName": "KILROY REALTY CORP"
   },
   {
     "ticker": "KREF",
-    "companyName": "KKR Real Estate Finance Trust Inc."
-  },
-  {
-    "ticker": "KREF-PA",
     "companyName": "KKR Real Estate Finance Trust Inc."
   },
   {
@@ -21122,18 +18886,6 @@
   {
     "ticker": "KRRO",
     "companyName": "Korro Bio, Inc."
-  },
-  {
-    "ticker": "KRSP",
-    "companyName": "Rice Acquisition Corp 3"
-  },
-  {
-    "ticker": "KRSP-UN",
-    "companyName": "Rice Acquisition Corp 3"
-  },
-  {
-    "ticker": "KRSP-WT",
-    "companyName": "Rice Acquisition Corp 3"
   },
   {
     "ticker": "KRT",
@@ -21220,18 +18972,6 @@
     "companyName": "Pasithea Therapeutics Corp."
   },
   {
-    "ticker": "KTWO",
-    "companyName": "K2 Capital Acquisition Corp"
-  },
-  {
-    "ticker": "KTWOR",
-    "companyName": "K2 Capital Acquisition Corp"
-  },
-  {
-    "ticker": "KTWOU",
-    "companyName": "K2 Capital Acquisition Corp"
-  },
-  {
     "ticker": "KUBR",
     "companyName": "Kuber Resources Corp"
   },
@@ -21246,18 +18986,6 @@
   {
     "ticker": "KUST",
     "companyName": "KUSTOM ENTERTAINMENT, INC."
-  },
-  {
-    "ticker": "KVACF",
-    "companyName": "Keen Vision Acquisition Corp."
-  },
-  {
-    "ticker": "KVAUF",
-    "companyName": "Keen Vision Acquisition Corp."
-  },
-  {
-    "ticker": "KVAWF",
-    "companyName": "Keen Vision Acquisition Corp."
   },
   {
     "ticker": "KVHI",
@@ -21388,18 +19116,6 @@
     "companyName": "SEALSQ Corp"
   },
   {
-    "ticker": "LAFA",
-    "companyName": "LaFayette Acquisition Corp."
-  },
-  {
-    "ticker": "LAFAR",
-    "companyName": "LaFayette Acquisition Corp."
-  },
-  {
-    "ticker": "LAFAU",
-    "companyName": "LaFayette Acquisition Corp."
-  },
-  {
     "ticker": "LAGH",
     "companyName": "Lagarosse Holdings Ltd"
   },
@@ -21444,28 +19160,12 @@
     "companyName": "LANDMARK BANCORP INC"
   },
   {
-    "ticker": "LARS",
-    "companyName": "Laris Growth Acquisition Corp."
-  },
-  {
     "ticker": "LASE",
     "companyName": "Laser Photonics Corp"
   },
   {
     "ticker": "LASR",
     "companyName": "NLIGHT, INC."
-  },
-  {
-    "ticker": "LATA",
-    "companyName": "Galata Acquisition Corp. II"
-  },
-  {
-    "ticker": "LATAU",
-    "companyName": "Galata Acquisition Corp. II"
-  },
-  {
-    "ticker": "LATAW",
-    "companyName": "Galata Acquisition Corp. II"
   },
   {
     "ticker": "LAUR",
@@ -21640,10 +19340,6 @@
     "companyName": "LINCOLN ELECTRIC HOLDINGS INC"
   },
   {
-    "ticker": "LEDR",
-    "companyName": "Leader's Advantage Acquisition Corp."
-  },
-  {
     "ticker": "LEDS",
     "companyName": "SemiLEDs Corp"
   },
@@ -21720,18 +19416,6 @@
     "companyName": "Lexaria Bioscience Corp."
   },
   {
-    "ticker": "LFAC",
-    "companyName": "Leapfrog Acquisition Corp"
-  },
-  {
-    "ticker": "LFACU",
-    "companyName": "Leapfrog Acquisition Corp"
-  },
-  {
-    "ticker": "LFACW",
-    "companyName": "Leapfrog Acquisition Corp"
-  },
-  {
     "ticker": "LFCR",
     "companyName": "LIFECORE BIOMEDICAL, INC. DE"
   },
@@ -21757,10 +19441,6 @@
   },
   {
     "ticker": "LFT",
-    "companyName": "Lument Finance Trust, Inc."
-  },
-  {
-    "ticker": "LFT-PA",
     "companyName": "Lument Finance Trust, Inc."
   },
   {
@@ -22028,18 +19708,6 @@
     "companyName": "LKQ CORP"
   },
   {
-    "ticker": "LKSP",
-    "companyName": "Lake Superior Acquisition Corp"
-  },
-  {
-    "ticker": "LKSPR",
-    "companyName": "Lake Superior Acquisition Corp"
-  },
-  {
-    "ticker": "LKSPU",
-    "companyName": "Lake Superior Acquisition Corp"
-  },
-  {
     "ticker": "LKYLY",
     "companyName": "Locksley Resources Limited/ADR"
   },
@@ -22120,10 +19788,6 @@
     "companyName": "LINCOLN NATIONAL CORP"
   },
   {
-    "ticker": "LNC-PD",
-    "companyName": "LINCOLN NATIONAL CORP"
-  },
-  {
     "ticker": "LND",
     "companyName": "BrasilAgro - Brazilian Agricultural Real Estate Co"
   },
@@ -22193,10 +19857,6 @@
   },
   {
     "ticker": "LOB",
-    "companyName": "Live Oak Bancshares, Inc."
-  },
-  {
-    "ticker": "LOB-PA",
     "companyName": "Live Oak Bancshares, Inc."
   },
   {
@@ -22284,44 +19944,8 @@
     "companyName": "Logistic Properties of the Americas"
   },
   {
-    "ticker": "LPAA",
-    "companyName": "Launch One Acquisition Corp."
-  },
-  {
-    "ticker": "LPAAU",
-    "companyName": "Launch One Acquisition Corp."
-  },
-  {
-    "ticker": "LPAAW",
-    "companyName": "Launch One Acquisition Corp."
-  },
-  {
-    "ticker": "LPBB",
-    "companyName": "Launch Two Acquisition Corp."
-  },
-  {
-    "ticker": "LPBBU",
-    "companyName": "Launch Two Acquisition Corp."
-  },
-  {
-    "ticker": "LPBBW",
-    "companyName": "Launch Two Acquisition Corp."
-  },
-  {
     "ticker": "LPCN",
     "companyName": "Lipocine Inc."
-  },
-  {
-    "ticker": "LPCV",
-    "companyName": "Launchpad Cadenza Acquisition Corp I"
-  },
-  {
-    "ticker": "LPCVU",
-    "companyName": "Launchpad Cadenza Acquisition Corp I"
-  },
-  {
-    "ticker": "LPCVW",
-    "companyName": "Launchpad Cadenza Acquisition Corp I"
   },
   {
     "ticker": "LPG",
@@ -22644,18 +20268,6 @@
     "companyName": "Lamb Weston Holdings, Inc."
   },
   {
-    "ticker": "LWAC",
-    "companyName": "LightWave Acquisition Corp."
-  },
-  {
-    "ticker": "LWACU",
-    "companyName": "LightWave Acquisition Corp."
-  },
-  {
-    "ticker": "LWACW",
-    "companyName": "LightWave Acquisition Corp."
-  },
-  {
     "ticker": "LWAY",
     "companyName": "Lifeway Foods, Inc."
   },
@@ -22685,10 +20297,6 @@
   },
   {
     "ticker": "LXP",
-    "companyName": "LXP Industrial Trust"
-  },
-  {
-    "ticker": "LXP-PC",
     "companyName": "LXP Industrial Trust"
   },
   {
@@ -22764,28 +20372,12 @@
     "companyName": "MID AMERICA APARTMENT COMMUNITIES INC."
   },
   {
-    "ticker": "MAA-PI",
-    "companyName": "MID AMERICA APARTMENT COMMUNITIES INC."
-  },
-  {
     "ticker": "MAAS",
     "companyName": "Maase Inc."
   },
   {
     "ticker": "MAC",
     "companyName": "MACERICH CO"
-  },
-  {
-    "ticker": "MACI",
-    "companyName": "Melar Acquisition Corp. I/Cayman"
-  },
-  {
-    "ticker": "MACIU",
-    "companyName": "Melar Acquisition Corp. I/Cayman"
-  },
-  {
-    "ticker": "MACIW",
-    "companyName": "Melar Acquisition Corp. I/Cayman"
   },
   {
     "ticker": "MACT",
@@ -23068,18 +20660,6 @@
     "companyName": "Moelis & Co"
   },
   {
-    "ticker": "MCAG",
-    "companyName": "Mountain Crest Acquisition Corp. V"
-  },
-  {
-    "ticker": "MCAGR",
-    "companyName": "Mountain Crest Acquisition Corp. V"
-  },
-  {
-    "ticker": "MCAGU",
-    "companyName": "Mountain Crest Acquisition Corp. V"
-  },
-  {
     "ticker": "MCAH",
     "companyName": "Mountain Crest Acquisition 6 Corp."
   },
@@ -23110,18 +20690,6 @@
   {
     "ticker": "MCFT",
     "companyName": "MasterCraft Boat Holdings, Inc."
-  },
-  {
-    "ticker": "MCGA",
-    "companyName": "Yorkville Acquisition Corp."
-  },
-  {
-    "ticker": "MCGAU",
-    "companyName": "Yorkville Acquisition Corp."
-  },
-  {
-    "ticker": "MCGAW",
-    "companyName": "Yorkville Acquisition Corp."
   },
   {
     "ticker": "MCHB",
@@ -23368,24 +20936,8 @@
     "companyName": "METHANEX CORP"
   },
   {
-    "ticker": "MER-PK",
-    "companyName": "BANK OF AMERICA CORP /DE/"
-  },
-  {
     "ticker": "MERC",
     "companyName": "MERCER INTERNATIONAL INC."
-  },
-  {
-    "ticker": "MESH",
-    "companyName": "Meshflow Acquisition Corp"
-  },
-  {
-    "ticker": "MESHU",
-    "companyName": "Meshflow Acquisition Corp"
-  },
-  {
-    "ticker": "MESHW",
-    "companyName": "Meshflow Acquisition Corp"
   },
   {
     "ticker": "MESO",
@@ -23393,18 +20945,6 @@
   },
   {
     "ticker": "MET",
-    "companyName": "METLIFE INC"
-  },
-  {
-    "ticker": "MET-PA",
-    "companyName": "METLIFE INC"
-  },
-  {
-    "ticker": "MET-PE",
-    "companyName": "METLIFE INC"
-  },
-  {
-    "ticker": "MET-PF",
     "companyName": "METLIFE INC"
   },
   {
@@ -23432,31 +20972,11 @@
     "companyName": "METRO INC./ADR"
   },
   {
-    "ticker": "MEVO",
-    "companyName": "M Evo Global Acquisition Corp II"
-  },
-  {
-    "ticker": "MEVOU",
-    "companyName": "M Evo Global Acquisition Corp II"
-  },
-  {
-    "ticker": "MEVOW",
-    "companyName": "M Evo Global Acquisition Corp II"
-  },
-  {
     "ticker": "MF",
     "companyName": "MindForge Inc."
   },
   {
     "ticker": "MFA",
-    "companyName": "MFA FINANCIAL, INC."
-  },
-  {
-    "ticker": "MFA-PB",
-    "companyName": "MFA FINANCIAL, INC."
-  },
-  {
-    "ticker": "MFA-PC",
     "companyName": "MFA FINANCIAL, INC."
   },
   {
@@ -23692,18 +21212,6 @@
     "companyName": "NFT Ltd"
   },
   {
-    "ticker": "MIAC",
-    "companyName": "Meridian3 Industrials Acquisition Corp"
-  },
-  {
-    "ticker": "MIACU",
-    "companyName": "Meridian3 Industrials Acquisition Corp"
-  },
-  {
-    "ticker": "MIACW",
-    "companyName": "Meridian3 Industrials Acquisition Corp"
-  },
-  {
     "ticker": "MIAX",
     "companyName": "MIAMI INTERNATIONAL HOLDINGS, INC."
   },
@@ -23796,18 +21304,6 @@
     "companyName": "TPG Mortgage Investment Trust, Inc."
   },
   {
-    "ticker": "MITT-PA",
-    "companyName": "TPG Mortgage Investment Trust, Inc."
-  },
-  {
-    "ticker": "MITT-PB",
-    "companyName": "TPG Mortgage Investment Trust, Inc."
-  },
-  {
-    "ticker": "MITT-PC",
-    "companyName": "TPG Mortgage Investment Trust, Inc."
-  },
-  {
     "ticker": "MITUF",
     "companyName": "Mitsui Chemicals Inc"
   },
@@ -23840,18 +21336,6 @@
     "companyName": "MARKEL GROUP INC."
   },
   {
-    "ticker": "MKLY",
-    "companyName": "McKinley Acquisition Corp"
-  },
-  {
-    "ticker": "MKLYR",
-    "companyName": "McKinley Acquisition Corp"
-  },
-  {
-    "ticker": "MKLYU",
-    "companyName": "McKinley Acquisition Corp"
-  },
-  {
     "ticker": "MKSI",
     "companyName": "MKS INC"
   },
@@ -23866,18 +21350,6 @@
   {
     "ticker": "MKZR",
     "companyName": "MacKenzie Realty Capital, Inc."
-  },
-  {
-    "ticker": "MLAA",
-    "companyName": "Mountain Lake Acquisition Corp. II"
-  },
-  {
-    "ticker": "MLAAU",
-    "companyName": "Mountain Lake Acquisition Corp. II"
-  },
-  {
-    "ticker": "MLAAW",
-    "companyName": "Mountain Lake Acquisition Corp. II"
   },
   {
     "ticker": "MLAB",
@@ -24018,18 +21490,6 @@
   {
     "ticker": "MMTRS",
     "companyName": "MILLS MUSIC TRUST"
-  },
-  {
-    "ticker": "MMTX",
-    "companyName": "Miluna Acquisition Corp"
-  },
-  {
-    "ticker": "MMTXU",
-    "companyName": "Miluna Acquisition Corp"
-  },
-  {
-    "ticker": "MMTXW",
-    "companyName": "Miluna Acquisition Corp"
   },
   {
     "ticker": "MMTZF",
@@ -24368,18 +21828,6 @@
     "companyName": "Mercalot Inc."
   },
   {
-    "ticker": "MRCO",
-    "companyName": "Mercator Acquisition Corp."
-  },
-  {
-    "ticker": "MRCOU",
-    "companyName": "Mercator Acquisition Corp."
-  },
-  {
-    "ticker": "MRCOW",
-    "companyName": "Mercator Acquisition Corp."
-  },
-  {
     "ticker": "MRCY",
     "companyName": "MERCURY SYSTEMS INC"
   },
@@ -24477,42 +21925,6 @@
   },
   {
     "ticker": "MS",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PA",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PE",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PF",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PI",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PK",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PL",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PO",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PP",
-    "companyName": "MORGAN STANLEY"
-  },
-  {
-    "ticker": "MS-PQ",
     "companyName": "MORGAN STANLEY"
   },
   {
@@ -24636,24 +22048,12 @@
     "companyName": "Maison Solutions Inc."
   },
   {
-    "ticker": "MSSAF",
-    "companyName": "Metal Sky Star Acquisition Corp"
-  },
-  {
     "ticker": "MSSE",
     "companyName": "Morgan Stanley Ethereum Trust"
   },
   {
     "ticker": "MSSHY",
     "companyName": "Mitsui-Soko Holdings Co Limited/ADR"
-  },
-  {
-    "ticker": "MSSUF",
-    "companyName": "Metal Sky Star Acquisition Corp"
-  },
-  {
-    "ticker": "MSSWF",
-    "companyName": "Metal Sky Star Acquisition Corp"
   },
   {
     "ticker": "MSTR",
@@ -24672,43 +22072,7 @@
     "companyName": "Metalla Royalty & Streaming Ltd."
   },
   {
-    "ticker": "MTAK",
-    "companyName": "Market Technology Acquisition Corp"
-  },
-  {
-    "ticker": "MTAKU",
-    "companyName": "Market Technology Acquisition Corp"
-  },
-  {
-    "ticker": "MTAL",
-    "companyName": "Metals Acquisition Corp. II"
-  },
-  {
-    "ticker": "MTAL-UN",
-    "companyName": "Metals Acquisition Corp. II"
-  },
-  {
-    "ticker": "MTAL-WT",
-    "companyName": "Metals Acquisition Corp. II"
-  },
-  {
     "ticker": "MTB",
-    "companyName": "M&T BANK CORP"
-  },
-  {
-    "ticker": "MTB-PH",
-    "companyName": "M&T BANK CORP"
-  },
-  {
-    "ticker": "MTB-PJ",
-    "companyName": "M&T BANK CORP"
-  },
-  {
-    "ticker": "MTB-PK",
-    "companyName": "M&T BANK CORP"
-  },
-  {
-    "ticker": "MTB-PL",
     "companyName": "M&T BANK CORP"
   },
   {
@@ -24824,10 +22188,6 @@
     "companyName": "MESA ROYALTY TRUST/TX"
   },
   {
-    "ticker": "MTRL",
-    "companyName": "Material Resource Acquisition Corp."
-  },
-  {
     "ticker": "MTRN",
     "companyName": "MATERION Corp"
   },
@@ -24906,18 +22266,6 @@
   {
     "ticker": "MUYNY",
     "companyName": "Muyuan Foods Co. Ltd/ADR"
-  },
-  {
-    "ticker": "MUZE",
-    "companyName": "Muzero Acquisition Corp"
-  },
-  {
-    "ticker": "MUZEU",
-    "companyName": "Muzero Acquisition Corp"
-  },
-  {
-    "ticker": "MUZEW",
-    "companyName": "Muzero Acquisition Corp"
   },
   {
     "ticker": "MVBF",
@@ -25052,40 +22400,12 @@
     "companyName": "My Size, Inc."
   },
   {
-    "ticker": "MYX",
-    "companyName": "Maywood Acquisition Corp. 2"
-  },
-  {
-    "ticker": "MYXXR",
-    "companyName": "Maywood Acquisition Corp. 2"
-  },
-  {
-    "ticker": "MYXXU",
-    "companyName": "Maywood Acquisition Corp. 2"
-  },
-  {
-    "ticker": "MYXXW",
-    "companyName": "Maywood Acquisition Corp. 2"
-  },
-  {
     "ticker": "MZHOF",
     "companyName": "MIZUHO FINANCIAL GROUP INC"
   },
   {
     "ticker": "MZTI",
     "companyName": "MARZETTI CO"
-  },
-  {
-    "ticker": "MZYX",
-    "companyName": "MOZAYYX Acquisition Corp."
-  },
-  {
-    "ticker": "MZYX-UN",
-    "companyName": "MOZAYYX Acquisition Corp."
-  },
-  {
-    "ticker": "MZYX-WT",
-    "companyName": "MOZAYYX Acquisition Corp."
   },
   {
     "ticker": "NA",
@@ -25400,15 +22720,7 @@
     "companyName": "Virtus Convertible & Income Fund"
   },
   {
-    "ticker": "NCV-PA",
-    "companyName": "Virtus Convertible & Income Fund"
-  },
-  {
     "ticker": "NCZ",
-    "companyName": "Virtus Convertible & Income Fund II"
-  },
-  {
-    "ticker": "NCZ-PA",
     "companyName": "Virtus Convertible & Income Fund II"
   },
   {
@@ -25457,30 +22769,6 @@
   },
   {
     "ticker": "NEE",
-    "companyName": "NEXTERA ENERGY INC"
-  },
-  {
-    "ticker": "NEE-PN",
-    "companyName": "NEXTERA ENERGY INC"
-  },
-  {
-    "ticker": "NEE-PS",
-    "companyName": "NEXTERA ENERGY INC"
-  },
-  {
-    "ticker": "NEE-PT",
-    "companyName": "NEXTERA ENERGY INC"
-  },
-  {
-    "ticker": "NEE-PU",
-    "companyName": "NEXTERA ENERGY INC"
-  },
-  {
-    "ticker": "NEE-PV",
-    "companyName": "NEXTERA ENERGY INC"
-  },
-  {
-    "ticker": "NEE-PW",
     "companyName": "NEXTERA ENERGY INC"
   },
   {
@@ -25689,14 +22977,6 @@
   },
   {
     "ticker": "NGL",
-    "companyName": "NGL Energy Partners LP"
-  },
-  {
-    "ticker": "NGL-PB",
-    "companyName": "NGL Energy Partners LP"
-  },
-  {
-    "ticker": "NGL-PC",
     "companyName": "NGL Energy Partners LP"
   },
   {
@@ -25956,22 +23236,6 @@
     "companyName": "ANNALY CAPITAL MANAGEMENT INC"
   },
   {
-    "ticker": "NLY-PF",
-    "companyName": "ANNALY CAPITAL MANAGEMENT INC"
-  },
-  {
-    "ticker": "NLY-PG",
-    "companyName": "ANNALY CAPITAL MANAGEMENT INC"
-  },
-  {
-    "ticker": "NLY-PI",
-    "companyName": "ANNALY CAPITAL MANAGEMENT INC"
-  },
-  {
-    "ticker": "NLY-PJ",
-    "companyName": "ANNALY CAPITAL MANAGEMENT INC"
-  },
-  {
     "ticker": "NMAD",
     "companyName": "NOMAD POWER SOLUTIONS, INC."
   },
@@ -26038,18 +23302,6 @@
   {
     "ticker": "NMM",
     "companyName": "Navios Maritime Partners L.P."
-  },
-  {
-    "ticker": "NMP",
-    "companyName": "NMP Acquisition Corp."
-  },
-  {
-    "ticker": "NMPAR",
-    "companyName": "NMP Acquisition Corp."
-  },
-  {
-    "ticker": "NMPAU",
-    "companyName": "NMP Acquisition Corp."
   },
   {
     "ticker": "NMPGY",
@@ -26264,18 +23516,6 @@
     "companyName": "Neptune Insurance Holdings Inc."
   },
   {
-    "ticker": "NPAC",
-    "companyName": "New Providence Acquisition Corp. III/Cayman"
-  },
-  {
-    "ticker": "NPACU",
-    "companyName": "New Providence Acquisition Corp. III/Cayman"
-  },
-  {
-    "ticker": "NPACW",
-    "companyName": "New Providence Acquisition Corp. III/Cayman"
-  },
-  {
     "ticker": "NPB",
     "companyName": "NORTHPOINTE BANCSHARES INC"
   },
@@ -26376,10 +23616,6 @@
     "companyName": "NexPoint Real Estate Finance, Inc."
   },
   {
-    "ticker": "NREF-PA",
-    "companyName": "NexPoint Real Estate Finance, Inc."
-  },
-  {
     "ticker": "NRG",
     "companyName": "NRG ENERGY, INC."
   },
@@ -26470,14 +23706,6 @@
   {
     "ticker": "NRXS",
     "companyName": "Neuraxis, INC"
-  },
-  {
-    "ticker": "NSAI",
-    "companyName": "NorthStrive Acquisition Corp I."
-  },
-  {
-    "ticker": "NSAIU",
-    "companyName": "NorthStrive Acquisition Corp I."
   },
   {
     "ticker": "NSARO",
@@ -26658,18 +23886,6 @@
   {
     "ticker": "NTWK",
     "companyName": "NETSOL TECHNOLOGIES INC"
-  },
-  {
-    "ticker": "NTWO",
-    "companyName": "Newbury Street II Acquisition Corp"
-  },
-  {
-    "ticker": "NTWOU",
-    "companyName": "Newbury Street II Acquisition Corp"
-  },
-  {
-    "ticker": "NTWOW",
-    "companyName": "Newbury Street II Acquisition Corp"
   },
   {
     "ticker": "NTZ",
@@ -26964,10 +24180,6 @@
     "companyName": "NEXPOINT DIVERSIFIED REAL ESTATE TRUST"
   },
   {
-    "ticker": "NXDT-PA",
-    "companyName": "NEXPOINT DIVERSIFIED REAL ESTATE TRUST"
-  },
-  {
     "ticker": "NXE",
     "companyName": "NexGen Energy Ltd."
   },
@@ -27100,26 +24312,6 @@
     "companyName": "OmniAb, Inc."
   },
   {
-    "ticker": "OACC",
-    "companyName": "Oaktree Acquisition Corp. III Life Sciences"
-  },
-  {
-    "ticker": "OACCU",
-    "companyName": "Oaktree Acquisition Corp. III Life Sciences"
-  },
-  {
-    "ticker": "OACCW",
-    "companyName": "Oaktree Acquisition Corp. III Life Sciences"
-  },
-  {
-    "ticker": "OAK-PA",
-    "companyName": "Brookfield Oaktree Holdings, LLC"
-  },
-  {
-    "ticker": "OAK-PB",
-    "companyName": "Brookfield Oaktree Holdings, LLC"
-  },
-  {
     "ticker": "OAKC",
     "companyName": "Oakworth Capital, Inc."
   },
@@ -27212,22 +24404,6 @@
     "companyName": "Owens Corning"
   },
   {
-    "ticker": "OCAC",
-    "companyName": "Ocean Capital Acquisition Corp"
-  },
-  {
-    "ticker": "OCAC-RI",
-    "companyName": "Ocean Capital Acquisition Corp"
-  },
-  {
-    "ticker": "OCAC-UN",
-    "companyName": "Ocean Capital Acquisition Corp"
-  },
-  {
-    "ticker": "OCAC-WT",
-    "companyName": "Ocean Capital Acquisition Corp"
-  },
-  {
     "ticker": "OCC",
     "companyName": "OPTICAL CABLE CORP"
   },
@@ -27266,14 +24442,6 @@
   {
     "ticker": "OCLN",
     "companyName": "ORIGINCLEAR, INC."
-  },
-  {
-    "ticker": "OCLT",
-    "companyName": "OceanLight Acquisition Corp"
-  },
-  {
-    "ticker": "OCLTU",
-    "companyName": "OceanLight Acquisition Corp"
   },
   {
     "ticker": "OCS",
@@ -27412,18 +24580,6 @@
     "companyName": "ONE Gas, Inc."
   },
   {
-    "ticker": "OHAC",
-    "companyName": "Oceanhawk Acquisition Corp."
-  },
-  {
-    "ticker": "OHACR",
-    "companyName": "Oceanhawk Acquisition Corp."
-  },
-  {
-    "ticker": "OHACU",
-    "companyName": "Oceanhawk Acquisition Corp."
-  },
-  {
     "ticker": "OHCFF",
     "companyName": "Light AI Inc."
   },
@@ -27450,18 +24606,6 @@
   {
     "ticker": "OILU",
     "companyName": "BANK OF MONTREAL /CAN/"
-  },
-  {
-    "ticker": "OIM",
-    "companyName": "OneIM Acquisition Corp."
-  },
-  {
-    "ticker": "OIMAU",
-    "companyName": "OneIM Acquisition Corp."
-  },
-  {
-    "ticker": "OIMAW",
-    "companyName": "OneIM Acquisition Corp."
   },
   {
     "ticker": "OIO",
@@ -27608,18 +24752,6 @@
     "companyName": "BeOne Medicines Ltd."
   },
   {
-    "ticker": "ONCH",
-    "companyName": "1RT Acquisition Corp."
-  },
-  {
-    "ticker": "ONCHU",
-    "companyName": "1RT Acquisition Corp."
-  },
-  {
-    "ticker": "ONCHW",
-    "companyName": "1RT Acquisition Corp."
-  },
-  {
     "ticker": "ONCO",
     "companyName": "Onconetix, Inc."
   },
@@ -27764,18 +24896,6 @@
     "companyName": "RiverNorth/DoubleLine Strategic Opportunity Fund, Inc."
   },
   {
-    "ticker": "OPP-PA",
-    "companyName": "RiverNorth/DoubleLine Strategic Opportunity Fund, Inc."
-  },
-  {
-    "ticker": "OPP-PB",
-    "companyName": "RiverNorth/DoubleLine Strategic Opportunity Fund, Inc."
-  },
-  {
-    "ticker": "OPP-PC",
-    "companyName": "RiverNorth/DoubleLine Strategic Opportunity Fund, Inc."
-  },
-  {
     "ticker": "OPPPF",
     "companyName": "Open House Group Co. Ltd/ADR"
   },
@@ -27841,10 +24961,6 @@
   },
   {
     "ticker": "ORCL",
-    "companyName": "ORACLE CORP"
-  },
-  {
-    "ticker": "ORCL-PD",
     "companyName": "ORACLE CORP"
   },
   {
@@ -27976,18 +25092,6 @@
     "companyName": "OneSpan Inc."
   },
   {
-    "ticker": "OSPR",
-    "companyName": "Osprey Acquisition Corp. III"
-  },
-  {
-    "ticker": "OSPRU",
-    "companyName": "Osprey Acquisition Corp. III"
-  },
-  {
-    "ticker": "OSPRW",
-    "companyName": "Osprey Acquisition Corp. III"
-  },
-  {
     "ticker": "OSRH",
     "companyName": "OSR Health, Inc."
   },
@@ -28016,36 +25120,12 @@
     "companyName": "ONESPAWORLD HOLDINGS Ltd"
   },
   {
-    "ticker": "OTAI",
-    "companyName": "Starlink AI Acquisition Corp"
-  },
-  {
-    "ticker": "OTAI-RI",
-    "companyName": "Starlink AI Acquisition Corp"
-  },
-  {
-    "ticker": "OTAI-UN",
-    "companyName": "Starlink AI Acquisition Corp"
-  },
-  {
     "ticker": "OTEX",
     "companyName": "OPEN TEXT CORP"
   },
   {
     "ticker": "OTF",
     "companyName": "Blue Owl Technology Finance Corp."
-  },
-  {
-    "ticker": "OTGA",
-    "companyName": "OTG Acquisition Corp. I"
-  },
-  {
-    "ticker": "OTGAU",
-    "companyName": "OTG Acquisition Corp. I"
-  },
-  {
-    "ticker": "OTGAW",
-    "companyName": "OTG Acquisition Corp. I"
   },
   {
     "ticker": "OTGLF",
@@ -28192,18 +25272,6 @@
     "companyName": "Oyocar Group Inc."
   },
   {
-    "ticker": "OYSE",
-    "companyName": "Oyster Enterprises II Acquisition Corp"
-  },
-  {
-    "ticker": "OYSER",
-    "companyName": "Oyster Enterprises II Acquisition Corp"
-  },
-  {
-    "ticker": "OYSEU",
-    "companyName": "Oyster Enterprises II Acquisition Corp"
-  },
-  {
     "ticker": "OZ",
     "companyName": "Belpointe PREP, LLC"
   },
@@ -28230,18 +25298,6 @@
   {
     "ticker": "PAA",
     "companyName": "PLAINS ALL AMERICAN PIPELINE LP"
-  },
-  {
-    "ticker": "PAAC",
-    "companyName": "Proem Acquisition Corp. I"
-  },
-  {
-    "ticker": "PAACU",
-    "companyName": "Proem Acquisition Corp. I"
-  },
-  {
-    "ticker": "PAACW",
-    "companyName": "Proem Acquisition Corp. I"
   },
   {
     "ticker": "PAAPU",
@@ -28312,18 +25368,6 @@
     "companyName": "Western Asset Investment Grade Income Fund Inc."
   },
   {
-    "ticker": "PAII",
-    "companyName": "Pyrophyte Acquisition Corp. II"
-  },
-  {
-    "ticker": "PAII-UN",
-    "companyName": "Pyrophyte Acquisition Corp. II"
-  },
-  {
-    "ticker": "PAII-WT",
-    "companyName": "Pyrophyte Acquisition Corp. II"
-  },
-  {
     "ticker": "PAIYY",
     "companyName": "Aesthetic Medical International Holdings Group Ltd"
   },
@@ -28338,18 +25382,6 @@
   {
     "ticker": "PALL",
     "companyName": "abrdn Palladium ETF Trust"
-  },
-  {
-    "ticker": "PALO",
-    "companyName": "PALOMA ACQUISITION CORP I"
-  },
-  {
-    "ticker": "PALOU",
-    "companyName": "PALOMA ACQUISITION CORP I"
-  },
-  {
-    "ticker": "PALOW",
-    "companyName": "PALOMA ACQUISITION CORP I"
   },
   {
     "ticker": "PALX",
@@ -28500,10 +25532,6 @@
     "companyName": "PITNEY BOWES INC /DE/"
   },
   {
-    "ticker": "PBI-PB",
-    "companyName": "PITNEY BOWES INC /DE/"
-  },
-  {
     "ticker": "PBK",
     "companyName": "POWERBANK Corp"
   },
@@ -28568,18 +25596,6 @@
     "companyName": "Powercheck AI Holdings Ltd"
   },
   {
-    "ticker": "PCAP",
-    "companyName": "ProCap Acquisition Corp"
-  },
-  {
-    "ticker": "PCAPU",
-    "companyName": "ProCap Acquisition Corp"
-  },
-  {
-    "ticker": "PCAPW",
-    "companyName": "ProCap Acquisition Corp"
-  },
-  {
     "ticker": "PCAR",
     "companyName": "PACCAR INC"
   },
@@ -28601,42 +25617,6 @@
   },
   {
     "ticker": "PCG",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PA",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PB",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PC",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PD",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PE",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PG",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PH",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PI",
-    "companyName": "PG&E Corp"
-  },
-  {
-    "ticker": "PCG-PX",
     "companyName": "PG&E Corp"
   },
   {
@@ -28800,44 +25780,12 @@
     "companyName": "Pebblebrook Hotel Trust"
   },
   {
-    "ticker": "PEB-PE",
-    "companyName": "Pebblebrook Hotel Trust"
-  },
-  {
-    "ticker": "PEB-PF",
-    "companyName": "Pebblebrook Hotel Trust"
-  },
-  {
-    "ticker": "PEB-PG",
-    "companyName": "Pebblebrook Hotel Trust"
-  },
-  {
-    "ticker": "PEB-PH",
-    "companyName": "Pebblebrook Hotel Trust"
-  },
-  {
     "ticker": "PEBK",
     "companyName": "PEOPLES BANCORP OF NORTH CAROLINA INC"
   },
   {
     "ticker": "PEBO",
     "companyName": "PEOPLES BANCORP INC"
-  },
-  {
-    "ticker": "PECE",
-    "companyName": "Peace Acquisition Corp."
-  },
-  {
-    "ticker": "PECER",
-    "companyName": "Peace Acquisition Corp."
-  },
-  {
-    "ticker": "PECEU",
-    "companyName": "Peace Acquisition Corp."
-  },
-  {
-    "ticker": "PECEW",
-    "companyName": "Peace Acquisition Corp."
   },
   {
     "ticker": "PECO",
@@ -29024,18 +25972,6 @@
     "companyName": "PROCTER & GAMBLE Co"
   },
   {
-    "ticker": "PGAC",
-    "companyName": "PANTAGES CAPITAL ACQUISITION Corp"
-  },
-  {
-    "ticker": "PGACR",
-    "companyName": "PANTAGES CAPITAL ACQUISITION Corp"
-  },
-  {
-    "ticker": "PGACU",
-    "companyName": "PANTAGES CAPITAL ACQUISITION Corp"
-  },
-  {
     "ticker": "PGC",
     "companyName": "PEAPACK GLADSTONE FINANCIAL CORP"
   },
@@ -29090,10 +26026,6 @@
   {
     "ticker": "PHAT",
     "companyName": "Phathom Pharmaceuticals, Inc."
-  },
-  {
-    "ticker": "PHAX",
-    "companyName": "Phalanx Acquisition Corp I"
   },
   {
     "ticker": "PHCI",
@@ -29201,10 +26133,6 @@
   },
   {
     "ticker": "PINE",
-    "companyName": "Alpine Income Property Trust, Inc."
-  },
-  {
-    "ticker": "PINE-PA",
     "companyName": "Alpine Income Property Trust, Inc."
   },
   {
@@ -29332,18 +26260,6 @@
     "companyName": "EDGE COPPER Corp"
   },
   {
-    "ticker": "PLMK",
-    "companyName": "Plum Acquisition Corp, IV"
-  },
-  {
-    "ticker": "PLMKU",
-    "companyName": "Plum Acquisition Corp, IV"
-  },
-  {
-    "ticker": "PLMKW",
-    "companyName": "Plum Acquisition Corp, IV"
-  },
-  {
     "ticker": "PLMR",
     "companyName": "Palomar Holdings, Inc."
   },
@@ -29410,18 +26326,6 @@
   {
     "ticker": "PLUG",
     "companyName": "PLUG POWER INC"
-  },
-  {
-    "ticker": "PLUN",
-    "companyName": "Plutonian Acquisition Corp. II"
-  },
-  {
-    "ticker": "PLUN-RI",
-    "companyName": "Plutonian Acquisition Corp. II"
-  },
-  {
-    "ticker": "PLUN-UN",
-    "companyName": "Plutonian Acquisition Corp. II"
   },
   {
     "ticker": "PLUR",
@@ -29516,30 +26420,6 @@
     "companyName": "PennyMac Mortgage Investment Trust"
   },
   {
-    "ticker": "PMT-PA",
-    "companyName": "PennyMac Mortgage Investment Trust"
-  },
-  {
-    "ticker": "PMT-PB",
-    "companyName": "PennyMac Mortgage Investment Trust"
-  },
-  {
-    "ticker": "PMT-PC",
-    "companyName": "PennyMac Mortgage Investment Trust"
-  },
-  {
-    "ticker": "PMTR",
-    "companyName": "Perimeter Acquisition Corp. I"
-  },
-  {
-    "ticker": "PMTRU",
-    "companyName": "Perimeter Acquisition Corp. I"
-  },
-  {
-    "ticker": "PMTRW",
-    "companyName": "Perimeter Acquisition Corp. I"
-  },
-  {
     "ticker": "PMTS",
     "companyName": "CPI Card Group Inc."
   },
@@ -29556,28 +26436,12 @@
     "companyName": "PennyMac Mortgage Investment Trust"
   },
   {
-    "ticker": "PMVC",
-    "companyName": "PMV Consumer Acquisition Corp."
-  },
-  {
-    "ticker": "PMVCW",
-    "companyName": "PMV Consumer Acquisition Corp."
-  },
-  {
     "ticker": "PMVP",
     "companyName": "PMV Pharmaceuticals, Inc."
   },
   {
     "ticker": "PN",
     "companyName": "PN Smart Energy Ltd"
-  },
-  {
-    "ticker": "PNAQ",
-    "companyName": "Pinnacle Acquisition Corp"
-  },
-  {
-    "ticker": "PNAQ-UN",
-    "companyName": "Pinnacle Acquisition Corp"
   },
   {
     "ticker": "PNBK",
@@ -29597,18 +26461,6 @@
   },
   {
     "ticker": "PNFP",
-    "companyName": "Pinnacle Financial Partners, Inc."
-  },
-  {
-    "ticker": "PNFP-PA",
-    "companyName": "Pinnacle Financial Partners, Inc."
-  },
-  {
-    "ticker": "PNFP-PB",
-    "companyName": "Pinnacle Financial Partners, Inc."
-  },
-  {
-    "ticker": "PNFP-PC",
     "companyName": "Pinnacle Financial Partners, Inc."
   },
   {
@@ -29690,18 +26542,6 @@
   {
     "ticker": "POLA",
     "companyName": "Polar Power, Inc."
-  },
-  {
-    "ticker": "POLE",
-    "companyName": "Andretti Acquisition Corp. II"
-  },
-  {
-    "ticker": "POLEU",
-    "companyName": "Andretti Acquisition Corp. II"
-  },
-  {
-    "ticker": "POLEW",
-    "companyName": "Andretti Acquisition Corp. II"
   },
   {
     "ticker": "POM",
@@ -29912,18 +26752,6 @@
     "companyName": "Primerica, Inc."
   },
   {
-    "ticker": "PRIF-PD",
-    "companyName": "Priority Income Fund, Inc."
-  },
-  {
-    "ticker": "PRIF-PK",
-    "companyName": "Priority Income Fund, Inc."
-  },
-  {
-    "ticker": "PRIF-PL",
-    "companyName": "Priority Income Fund, Inc."
-  },
-  {
     "ticker": "PRIM",
     "companyName": "Primoris Services Corp"
   },
@@ -30084,70 +26912,6 @@
     "companyName": "Public Storage"
   },
   {
-    "ticker": "PSA-PF",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PG",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PH",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PI",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PJ",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PK",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PL",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PM",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PN",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PO",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PP",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PQ",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PR",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PS",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PT",
-    "companyName": "Public Storage"
-  },
-  {
-    "ticker": "PSA-PU",
-    "companyName": "Public Storage"
-  },
-  {
     "ticker": "PSBAF",
     "companyName": "PT Sumber Alfaria Trijaya Tbk/ADR"
   },
@@ -30161,10 +26925,6 @@
   },
   {
     "ticker": "PSEC",
-    "companyName": "PROSPECT CAPITAL CORP"
-  },
-  {
-    "ticker": "PSEC-PA",
     "companyName": "PROSPECT CAPITAL CORP"
   },
   {
@@ -30272,18 +27032,6 @@
     "companyName": "Cohen & Steers Tax-Advantaged Preferred Securities & Income Fund"
   },
   {
-    "ticker": "PTAC",
-    "companyName": "Patriot Acquisition Corp./CI"
-  },
-  {
-    "ticker": "PTACU",
-    "companyName": "Patriot Acquisition Corp./CI"
-  },
-  {
-    "ticker": "PTACW",
-    "companyName": "Patriot Acquisition Corp./CI"
-  },
-  {
     "ticker": "PTAXY",
     "companyName": "Paltac Corporation/ADR"
   },
@@ -30350,18 +27098,6 @@
   {
     "ticker": "PTON",
     "companyName": "PELOTON INTERACTIVE, INC."
-  },
-  {
-    "ticker": "PTOR",
-    "companyName": "Praetorian Acquisition Corp."
-  },
-  {
-    "ticker": "PTORU",
-    "companyName": "Praetorian Acquisition Corp."
-  },
-  {
-    "ticker": "PTORW",
-    "companyName": "Praetorian Acquisition Corp."
   },
   {
     "ticker": "PTOS",
@@ -30468,10 +27204,6 @@
     "companyName": "Power REIT"
   },
   {
-    "ticker": "PW-PA",
-    "companyName": "Power REIT"
-  },
-  {
     "ticker": "PWCM",
     "companyName": "POWERCOMPUTE, INC."
   },
@@ -30544,18 +27276,6 @@
     "companyName": "Qnity Electronics, Inc."
   },
   {
-    "ticker": "QADR",
-    "companyName": "QDRO Acquisition Corp."
-  },
-  {
-    "ticker": "QADRU",
-    "companyName": "QDRO Acquisition Corp."
-  },
-  {
-    "ticker": "QADRW",
-    "companyName": "QDRO Acquisition Corp."
-  },
-  {
     "ticker": "QBTS",
     "companyName": "D-Wave Quantum Inc."
   },
@@ -30578,18 +27298,6 @@
   {
     "ticker": "QDMI",
     "companyName": "QDM International Inc."
-  },
-  {
-    "ticker": "QETA",
-    "companyName": "Quetta Acquisition Corp"
-  },
-  {
-    "ticker": "QETAR",
-    "companyName": "Quetta Acquisition Corp"
-  },
-  {
-    "ticker": "QETAU",
-    "companyName": "Quetta Acquisition Corp"
   },
   {
     "ticker": "QETH",
@@ -30618,14 +27326,6 @@
   {
     "ticker": "QIND",
     "companyName": "Quality Industrial Corp."
-  },
-  {
-    "ticker": "QLEP",
-    "companyName": "Quantum Leap Acquisition Corp"
-  },
-  {
-    "ticker": "QLEP-WT",
-    "companyName": "Quantum Leap Acquisition Corp"
   },
   {
     "ticker": "QLYS",
@@ -30692,18 +27392,6 @@
     "companyName": "Nuveen NASDAQ 100 Dynamic Overwrite Fund"
   },
   {
-    "ticker": "QRED",
-    "companyName": "QuasarEdge Acquisition Corp"
-  },
-  {
-    "ticker": "QRED-RI",
-    "companyName": "QuasarEdge Acquisition Corp"
-  },
-  {
-    "ticker": "QRED-UN",
-    "companyName": "QuasarEdge Acquisition Corp"
-  },
-  {
     "ticker": "QRHC",
     "companyName": "Quest Resource Holding Corp"
   },
@@ -30714,18 +27402,6 @@
   {
     "ticker": "QS",
     "companyName": "QuantumScape Corp"
-  },
-  {
-    "ticker": "QSEA",
-    "companyName": "Quartzsea Acquisition Corp"
-  },
-  {
-    "ticker": "QSEAR",
-    "companyName": "Quartzsea Acquisition Corp"
-  },
-  {
-    "ticker": "QSEAU",
-    "companyName": "Quartzsea Acquisition Corp"
   },
   {
     "ticker": "QSEP",
@@ -30796,18 +27472,6 @@
     "companyName": "QUICKLOGIC Corp"
   },
   {
-    "ticker": "QUMS",
-    "companyName": "Quantumsphere Acquisition Corp"
-  },
-  {
-    "ticker": "QUMSR",
-    "companyName": "Quantumsphere Acquisition Corp"
-  },
-  {
-    "ticker": "QUMSU",
-    "companyName": "Quantumsphere Acquisition Corp"
-  },
-  {
     "ticker": "QURE",
     "companyName": "uniQure N.V."
   },
@@ -30836,10 +27500,6 @@
     "companyName": "QXO, Inc."
   },
   {
-    "ticker": "QXO-PB",
-    "companyName": "QXO, Inc."
-  },
-  {
     "ticker": "QZMRF",
     "companyName": "QUARTZ MOUNTAIN RESOURCES LTD"
   },
@@ -30854,18 +27514,6 @@
   {
     "ticker": "RAASY",
     "companyName": "Cloopen Group Holding Ltd"
-  },
-  {
-    "ticker": "RAC",
-    "companyName": "Rithm Acquisition Corp."
-  },
-  {
-    "ticker": "RAC-UN",
-    "companyName": "Rithm Acquisition Corp."
-  },
-  {
-    "ticker": "RAC-WT",
-    "companyName": "Rithm Acquisition Corp."
   },
   {
     "ticker": "RACC",
@@ -30918,18 +27566,6 @@
   {
     "ticker": "RAND",
     "companyName": "RAND CAPITAL CORP"
-  },
-  {
-    "ticker": "RANG",
-    "companyName": "Range Capital Acquisition Corp."
-  },
-  {
-    "ticker": "RANGR",
-    "companyName": "Range Capital Acquisition Corp."
-  },
-  {
-    "ticker": "RANGU",
-    "companyName": "Range Capital Acquisition Corp."
   },
   {
     "ticker": "RANI",
@@ -31020,14 +27656,6 @@
     "companyName": "Ready Capital Corp"
   },
   {
-    "ticker": "RC-PC",
-    "companyName": "Ready Capital Corp"
-  },
-  {
-    "ticker": "RC-PE",
-    "companyName": "Ready Capital Corp"
-  },
-  {
     "ticker": "RCAT",
     "companyName": "Red Cat Holdings, Inc."
   },
@@ -31096,18 +27724,6 @@
     "companyName": "Rockwool A/S/ADR"
   },
   {
-    "ticker": "RDAC",
-    "companyName": "Rising Dragon Acquisition Corp."
-  },
-  {
-    "ticker": "RDACR",
-    "companyName": "Rising Dragon Acquisition Corp."
-  },
-  {
-    "ticker": "RDACU",
-    "companyName": "Rising Dragon Acquisition Corp."
-  },
-  {
     "ticker": "RDAG",
     "companyName": "Republic Digital Acquisition Co"
   },
@@ -31138,10 +27754,6 @@
   {
     "ticker": "RDEXF",
     "companyName": "RPX Gold Inc."
-  },
-  {
-    "ticker": "RDGA",
-    "companyName": "RIDGEFIELD ACQUISITION CORP"
   },
   {
     "ticker": "RDGL",
@@ -31380,14 +27992,6 @@
     "companyName": "Rexford Industrial Realty, Inc."
   },
   {
-    "ticker": "REXR-PB",
-    "companyName": "Rexford Industrial Realty, Inc."
-  },
-  {
-    "ticker": "REXR-PC",
-    "companyName": "Rexford Industrial Realty, Inc."
-  },
-  {
     "ticker": "REYN",
     "companyName": "Reynolds Consumer Products Inc."
   },
@@ -31398,42 +28002,6 @@
   {
     "ticker": "RF",
     "companyName": "REGIONS FINANCIAL CORP"
-  },
-  {
-    "ticker": "RF-PC",
-    "companyName": "REGIONS FINANCIAL CORP"
-  },
-  {
-    "ticker": "RF-PE",
-    "companyName": "REGIONS FINANCIAL CORP"
-  },
-  {
-    "ticker": "RF-PF",
-    "companyName": "REGIONS FINANCIAL CORP"
-  },
-  {
-    "ticker": "RFAI",
-    "companyName": "RF Acquisition Corp II"
-  },
-  {
-    "ticker": "RFAIR",
-    "companyName": "RF Acquisition Corp II"
-  },
-  {
-    "ticker": "RFAIU",
-    "companyName": "RF Acquisition Corp II"
-  },
-  {
-    "ticker": "RFAM",
-    "companyName": "RF Acquisition Corp III"
-  },
-  {
-    "ticker": "RFAMR",
-    "companyName": "RF Acquisition Corp III"
-  },
-  {
-    "ticker": "RFAMU",
-    "companyName": "RF Acquisition Corp III"
   },
   {
     "ticker": "RFI",
@@ -31568,18 +28136,6 @@
     "companyName": "Ryman Hospitality Properties, Inc."
   },
   {
-    "ticker": "RIBB",
-    "companyName": "Ribbon Acquisition Corp."
-  },
-  {
-    "ticker": "RIBBR",
-    "companyName": "Ribbon Acquisition Corp."
-  },
-  {
-    "ticker": "RIBBU",
-    "companyName": "Ribbon Acquisition Corp."
-  },
-  {
     "ticker": "RICK",
     "companyName": "RCI HOSPITALITY HOLDINGS, INC."
   },
@@ -31644,39 +28200,11 @@
     "companyName": "Rithm Capital Corp."
   },
   {
-    "ticker": "RITM-PA",
-    "companyName": "Rithm Capital Corp."
-  },
-  {
-    "ticker": "RITM-PB",
-    "companyName": "Rithm Capital Corp."
-  },
-  {
-    "ticker": "RITM-PC",
-    "companyName": "Rithm Capital Corp."
-  },
-  {
-    "ticker": "RITM-PD",
-    "companyName": "Rithm Capital Corp."
-  },
-  {
-    "ticker": "RITM-PE",
-    "companyName": "Rithm Capital Corp."
-  },
-  {
-    "ticker": "RITM-PF",
-    "companyName": "Rithm Capital Corp."
-  },
-  {
     "ticker": "RITR",
     "companyName": "Reitar Logtech Holdings Ltd"
   },
   {
     "ticker": "RIV",
-    "companyName": "RIVERNORTH OPPORTUNITIES FUND, INC."
-  },
-  {
-    "ticker": "RIV-PA",
     "companyName": "RIVERNORTH OPPORTUNITIES FUND, INC."
   },
   {
@@ -31761,10 +28289,6 @@
   },
   {
     "ticker": "RLJ",
-    "companyName": "RLJ Lodging Trust"
-  },
-  {
-    "ticker": "RLJ-PA",
     "companyName": "RLJ Lodging Trust"
   },
   {
@@ -31936,18 +28460,6 @@
     "companyName": "Ranger Energy Services, Inc."
   },
   {
-    "ticker": "RNGT",
-    "companyName": "Range Capital Acquisition Corp II"
-  },
-  {
-    "ticker": "RNGTU",
-    "companyName": "Range Capital Acquisition Corp II"
-  },
-  {
-    "ticker": "RNGTW",
-    "companyName": "Range Capital Acquisition Corp II"
-  },
-  {
     "ticker": "RNKGF",
     "companyName": "RENK Group AG/ADR"
   },
@@ -31961,14 +28473,6 @@
   },
   {
     "ticker": "RNR",
-    "companyName": "RENAISSANCERE HOLDINGS LTD"
-  },
-  {
-    "ticker": "RNR-PF",
-    "companyName": "RENAISSANCERE HOLDINGS LTD"
-  },
-  {
-    "ticker": "RNR-PG",
     "companyName": "RENAISSANCERE HOLDINGS LTD"
   },
   {
@@ -32104,10 +28608,6 @@
     "companyName": "Rithm Property Trust Inc."
   },
   {
-    "ticker": "RPT-PC",
-    "companyName": "Rithm Property Trust Inc."
-  },
-  {
     "ticker": "RQI",
     "companyName": "COHEN & STEERS QUALITY INCOME REALTY FUND INC"
   },
@@ -32122,18 +28622,6 @@
   {
     "ticker": "RRC",
     "companyName": "RANGE RESOURCES CORP"
-  },
-  {
-    "ticker": "RREV",
-    "companyName": "RRE Ventures Acquisition Corp."
-  },
-  {
-    "ticker": "RREVU",
-    "companyName": "RRE Ventures Acquisition Corp."
-  },
-  {
-    "ticker": "RREVW",
-    "companyName": "RRE Ventures Acquisition Corp."
   },
   {
     "ticker": "RRGB",
@@ -32214,18 +28702,6 @@
   {
     "ticker": "RSVR",
     "companyName": "Reservoir Media, Inc."
-  },
-  {
-    "ticker": "RTAC",
-    "companyName": "Renatus Tactical Acquisition Corp I"
-  },
-  {
-    "ticker": "RTACU",
-    "companyName": "Renatus Tactical Acquisition Corp I"
-  },
-  {
-    "ticker": "RTACW",
-    "companyName": "Renatus Tactical Acquisition Corp I"
   },
   {
     "ticker": "RTB",
@@ -32376,10 +28852,6 @@
     "companyName": "REDWOOD TRUST INC"
   },
   {
-    "ticker": "RWT-PA",
-    "companyName": "REDWOOD TRUST INC"
-  },
-  {
     "ticker": "RWTN",
     "companyName": "REDWOOD TRUST INC"
   },
@@ -32512,18 +28984,6 @@
     "companyName": "SEABRIDGE GOLD INC"
   },
   {
-    "ticker": "SAAQ",
-    "companyName": "Space Asset Acquisition Corp."
-  },
-  {
-    "ticker": "SAAQU",
-    "companyName": "Space Asset Acquisition Corp."
-  },
-  {
-    "ticker": "SAAQW",
-    "companyName": "Space Asset Acquisition Corp."
-  },
-  {
     "ticker": "SABA",
     "companyName": "Saba Capital Income & Opportunities Fund II"
   },
@@ -32544,23 +29004,7 @@
     "companyName": "SAB Biotherapeutics, Inc."
   },
   {
-    "ticker": "SAC",
-    "companyName": "Safeguard Acquisition Corp."
-  },
-  {
-    "ticker": "SAC-UN",
-    "companyName": "Safeguard Acquisition Corp."
-  },
-  {
-    "ticker": "SAC-WT",
-    "companyName": "Safeguard Acquisition Corp."
-  },
-  {
     "ticker": "SACH",
-    "companyName": "Sachem Capital Corp."
-  },
-  {
-    "ticker": "SACH-PA",
     "companyName": "Sachem Capital Corp."
   },
   {
@@ -32642,14 +29086,6 @@
   {
     "ticker": "SAMG",
     "companyName": "Silvercrest Asset Management Group Inc."
-  },
-  {
-    "ticker": "SAMO",
-    "companyName": "Samos Energy Acquisition Corp"
-  },
-  {
-    "ticker": "SAMO-UN",
-    "companyName": "Samos Energy Acquisition Corp"
   },
   {
     "ticker": "SAN",
@@ -32737,14 +29173,6 @@
   },
   {
     "ticker": "SB",
-    "companyName": "SAFE BULKERS, INC."
-  },
-  {
-    "ticker": "SB-PC",
-    "companyName": "SAFE BULKERS, INC."
-  },
-  {
-    "ticker": "SB-PD",
     "companyName": "SAFE BULKERS, INC."
   },
   {
@@ -32940,22 +29368,6 @@
     "companyName": "B-Scada, Inc."
   },
   {
-    "ticker": "SCE-PG",
-    "companyName": "SOUTHERN CALIFORNIA EDISON Co"
-  },
-  {
-    "ticker": "SCE-PL",
-    "companyName": "SOUTHERN CALIFORNIA EDISON Co"
-  },
-  {
-    "ticker": "SCE-PM",
-    "companyName": "SOUTHERN CALIFORNIA EDISON Co"
-  },
-  {
-    "ticker": "SCE-PN",
-    "companyName": "SOUTHERN CALIFORNIA EDISON Co"
-  },
-  {
     "ticker": "SCGX",
     "companyName": "SAXON CAPITAL GROUP INC"
   },
@@ -32968,32 +29380,12 @@
     "companyName": "SCHWAB CHARLES CORP"
   },
   {
-    "ticker": "SCHW-PD",
-    "companyName": "SCHWAB CHARLES CORP"
-  },
-  {
-    "ticker": "SCHW-PJ",
-    "companyName": "SCHWAB CHARLES CORP"
-  },
-  {
     "ticker": "SCI",
     "companyName": "SERVICE CORP INTERNATIONAL"
   },
   {
     "ticker": "SCIA",
     "companyName": "SCI Engineered Materials, Inc."
-  },
-  {
-    "ticker": "SCII",
-    "companyName": "SC II Acquisition Corp."
-  },
-  {
-    "ticker": "SCIIR",
-    "companyName": "SC II Acquisition Corp."
-  },
-  {
-    "ticker": "SCIIU",
-    "companyName": "SC II Acquisition Corp."
   },
   {
     "ticker": "SCKT",
@@ -33128,18 +29520,6 @@
     "companyName": "Smith Douglas Homes Corp."
   },
   {
-    "ticker": "SDHI",
-    "companyName": "Siddhi Acquisition Corp (Cayman Islands)"
-  },
-  {
-    "ticker": "SDHIR",
-    "companyName": "Siddhi Acquisition Corp (Cayman Islands)"
-  },
-  {
-    "ticker": "SDHIU",
-    "companyName": "Siddhi Acquisition Corp (Cayman Islands)"
-  },
-  {
     "ticker": "SDHY",
     "companyName": "PGIM Short Duration High Yield Opportunities Fund"
   },
@@ -33174,14 +29554,6 @@
   {
     "ticker": "SEAH",
     "companyName": "Seahawk Recycling Holdings, Inc."
-  },
-  {
-    "ticker": "SEAL-PA",
-    "companyName": "Seapeak LLC"
-  },
-  {
-    "ticker": "SEAL-PB",
-    "companyName": "Seapeak LLC"
   },
   {
     "ticker": "SEAT",
@@ -33317,18 +29689,6 @@
   },
   {
     "ticker": "SF",
-    "companyName": "STIFEL FINANCIAL CORP"
-  },
-  {
-    "ticker": "SF-PB",
-    "companyName": "STIFEL FINANCIAL CORP"
-  },
-  {
-    "ticker": "SF-PC",
-    "companyName": "STIFEL FINANCIAL CORP"
-  },
-  {
-    "ticker": "SF-PD",
     "companyName": "STIFEL FINANCIAL CORP"
   },
   {
@@ -33616,14 +29976,6 @@
     "companyName": "Sunstone Hotel Investors, Inc."
   },
   {
-    "ticker": "SHO-PH",
-    "companyName": "Sunstone Hotel Investors, Inc."
-  },
-  {
-    "ticker": "SHO-PI",
-    "companyName": "Sunstone Hotel Investors, Inc."
-  },
-  {
     "ticker": "SHOE",
     "companyName": "SHOE STATION GROUP INC"
   },
@@ -33742,18 +30094,6 @@
   {
     "ticker": "SIM",
     "companyName": "GRUPO SIMEC, S.A.B. de C.V."
-  },
-  {
-    "ticker": "SIMA",
-    "companyName": "SIM Acquisition Corp. I"
-  },
-  {
-    "ticker": "SIMAU",
-    "companyName": "SIM Acquisition Corp. I"
-  },
-  {
-    "ticker": "SIMAW",
-    "companyName": "SIM Acquisition Corp. I"
   },
   {
     "ticker": "SIMO",
@@ -33993,10 +30333,6 @@
   },
   {
     "ticker": "SLG",
-    "companyName": "SL GREEN REALTY CORP"
-  },
-  {
-    "ticker": "SLG-PI",
     "companyName": "SL GREEN REALTY CORP"
   },
   {
@@ -34436,14 +30772,6 @@
     "companyName": "Summit Networks Inc."
   },
   {
-    "ticker": "SNUS-PH",
-    "companyName": "Santander Holdings USA, Inc."
-  },
-  {
-    "ticker": "SNUS-PI",
-    "companyName": "Santander Holdings USA, Inc."
-  },
-  {
     "ticker": "SNWV",
     "companyName": "SANUWAVE Health, Inc."
   },
@@ -34490,18 +30818,6 @@
   {
     "ticker": "SOC",
     "companyName": "Sable Offshore Corp."
-  },
-  {
-    "ticker": "SOCA",
-    "companyName": "Solarius Capital Acquisition Corp."
-  },
-  {
-    "ticker": "SOCAU",
-    "companyName": "Solarius Capital Acquisition Corp."
-  },
-  {
-    "ticker": "SOCAW",
-    "companyName": "Solarius Capital Acquisition Corp."
   },
   {
     "ticker": "SODI",
@@ -34604,18 +30920,6 @@
     "companyName": "AsiaStrategy"
   },
   {
-    "ticker": "SORN",
-    "companyName": "Soren Acquisition Corp."
-  },
-  {
-    "ticker": "SORNU",
-    "companyName": "Soren Acquisition Corp."
-  },
-  {
-    "ticker": "SORNW",
-    "companyName": "Soren Acquisition Corp."
-  },
-  {
     "ticker": "SOS",
     "companyName": "SOS Ltd"
   },
@@ -34626,18 +30930,6 @@
   {
     "ticker": "SOUD",
     "companyName": "Hacker Interstellar Inc."
-  },
-  {
-    "ticker": "SOUL",
-    "companyName": "Soulpower Acquisition Corp."
-  },
-  {
-    "ticker": "SOUL-RI",
-    "companyName": "Soulpower Acquisition Corp."
-  },
-  {
-    "ticker": "SOUL-UN",
-    "companyName": "Soulpower Acquisition Corp."
   },
   {
     "ticker": "SOUN",
@@ -34684,22 +30976,6 @@
     "companyName": "SPECIAL OPPORTUNITIES FUND, INC."
   },
   {
-    "ticker": "SPE-PC",
-    "companyName": "SPECIAL OPPORTUNITIES FUND, INC."
-  },
-  {
-    "ticker": "SPEG",
-    "companyName": "Silver Pegasus Acquisition Corp."
-  },
-  {
-    "ticker": "SPEGR",
-    "companyName": "Silver Pegasus Acquisition Corp."
-  },
-  {
-    "ticker": "SPEGU",
-    "companyName": "Silver Pegasus Acquisition Corp."
-  },
-  {
     "ticker": "SPFI",
     "companyName": "SOUTH PLAINS FINANCIAL, INC."
   },
@@ -34709,10 +30985,6 @@
   },
   {
     "ticker": "SPG",
-    "companyName": "SIMON PROPERTY GROUP INC."
-  },
-  {
-    "ticker": "SPG-PJ",
     "companyName": "SIMON PROPERTY GROUP INC."
   },
   {
@@ -34762,18 +31034,6 @@
   {
     "ticker": "SPIWF",
     "companyName": "SPIE SA/ADR"
-  },
-  {
-    "ticker": "SPKL",
-    "companyName": "Spark I Acquisition Corp"
-  },
-  {
-    "ticker": "SPKLU",
-    "companyName": "Spark I Acquisition Corp"
-  },
-  {
-    "ticker": "SPKLW",
-    "companyName": "Spark I Acquisition Corp"
   },
   {
     "ticker": "SPMA",
@@ -34964,10 +31224,6 @@
     "companyName": "Seritage Growth Properties"
   },
   {
-    "ticker": "SRG-PA",
-    "companyName": "Seritage Growth Properties"
-  },
-  {
     "ticker": "SRGBF",
     "companyName": "SURUGA BANK LTD/ADR/"
   },
@@ -35036,40 +31292,12 @@
     "companyName": "Surrozen, Inc./DE"
   },
   {
-    "ticker": "SSAC",
-    "companyName": "SPACSphere Acquisition Corp."
-  },
-  {
-    "ticker": "SSACR",
-    "companyName": "SPACSphere Acquisition Corp."
-  },
-  {
-    "ticker": "SSACU",
-    "companyName": "SPACSphere Acquisition Corp."
-  },
-  {
-    "ticker": "SSACW",
-    "companyName": "SPACSphere Acquisition Corp."
-  },
-  {
     "ticker": "SSB",
     "companyName": "SouthState Bank Corp"
   },
   {
     "ticker": "SSD",
     "companyName": "Simpson Manufacturing Co., Inc."
-  },
-  {
-    "ticker": "SSEA",
-    "companyName": "STARRY SEA ACQUISITION CORP"
-  },
-  {
-    "ticker": "SSEAR",
-    "companyName": "STARRY SEA ACQUISITION CORP"
-  },
-  {
-    "ticker": "SSEAU",
-    "companyName": "STARRY SEA ACQUISITION CORP"
   },
   {
     "ticker": "SSEBF",
@@ -35412,10 +31640,6 @@
     "companyName": "STATE STREET CORP"
   },
   {
-    "ticker": "STT-PG",
-    "companyName": "STATE STREET CORP"
-  },
-  {
     "ticker": "STTK",
     "companyName": "Shattuck Labs, Inc."
   },
@@ -35484,18 +31708,6 @@
     "companyName": "SUJA LIFE, INC."
   },
   {
-    "ticker": "SUMA",
-    "companyName": "SUMA Acquisition Corp"
-  },
-  {
-    "ticker": "SUMAR",
-    "companyName": "SUMA Acquisition Corp"
-  },
-  {
-    "ticker": "SUMAU",
-    "companyName": "SUMA Acquisition Corp"
-  },
-  {
     "ticker": "SUN",
     "companyName": "Sunoco LP"
   },
@@ -35556,18 +31768,6 @@
     "companyName": "SINOVAC BIOTECH LTD"
   },
   {
-    "ticker": "SVAQ",
-    "companyName": "Silicon Valley Acquisition Corp."
-  },
-  {
-    "ticker": "SVAQU",
-    "companyName": "Silicon Valley Acquisition Corp."
-  },
-  {
-    "ticker": "SVAQW",
-    "companyName": "Silicon Valley Acquisition Corp."
-  },
-  {
     "ticker": "SVAUF",
     "companyName": "StorageVault Canada Inc./ADR"
   },
@@ -35598,18 +31798,6 @@
   {
     "ticker": "SVICY",
     "companyName": "StorageVault Canada Inc./ADR"
-  },
-  {
-    "ticker": "SVIV",
-    "companyName": "Spring Valley Acquisition Corp. IV"
-  },
-  {
-    "ticker": "SVIVU",
-    "companyName": "Spring Valley Acquisition Corp. IV"
-  },
-  {
-    "ticker": "SVIVW",
-    "companyName": "Spring Valley Acquisition Corp. IV"
   },
   {
     "ticker": "SVIX",
@@ -35816,14 +32004,6 @@
     "companyName": "Synchrony Financial"
   },
   {
-    "ticker": "SYF-PA",
-    "companyName": "Synchrony Financial"
-  },
-  {
-    "ticker": "SYF-PB",
-    "companyName": "Synchrony Financial"
-  },
-  {
     "ticker": "SYGCF",
     "companyName": "Sylla Gold Corp."
   },
@@ -35876,27 +32056,7 @@
     "companyName": "SYSCO CORP"
   },
   {
-    "ticker": "SZZL",
-    "companyName": "Sizzle Acquisition Corp. II"
-  },
-  {
-    "ticker": "SZZLR",
-    "companyName": "Sizzle Acquisition Corp. II"
-  },
-  {
-    "ticker": "SZZLU",
-    "companyName": "Sizzle Acquisition Corp. II"
-  },
-  {
     "ticker": "T",
-    "companyName": "AT&T INC."
-  },
-  {
-    "ticker": "T-PA",
-    "companyName": "AT&T INC."
-  },
-  {
-    "ticker": "T-PC",
     "companyName": "AT&T INC."
   },
   {
@@ -35906,30 +32066,6 @@
   {
     "ticker": "TAC",
     "companyName": "TRANSALTA CORP"
-  },
-  {
-    "ticker": "TACH",
-    "companyName": "Titan Acquisition Corp."
-  },
-  {
-    "ticker": "TACHU",
-    "companyName": "Titan Acquisition Corp."
-  },
-  {
-    "ticker": "TACHW",
-    "companyName": "Titan Acquisition Corp."
-  },
-  {
-    "ticker": "TACO",
-    "companyName": "Berto Acquisition Corp."
-  },
-  {
-    "ticker": "TACOU",
-    "companyName": "Berto Acquisition Corp."
-  },
-  {
-    "ticker": "TACOW",
-    "companyName": "Berto Acquisition Corp."
   },
   {
     "ticker": "TACPF",
@@ -36022,18 +32158,6 @@
   {
     "ticker": "TATT",
     "companyName": "TAT TECHNOLOGIES LTD"
-  },
-  {
-    "ticker": "TAVI",
-    "companyName": "Tavia Acquisition Corp."
-  },
-  {
-    "ticker": "TAVIR",
-    "companyName": "Tavia Acquisition Corp."
-  },
-  {
-    "ticker": "TAVIU",
-    "companyName": "Tavia Acquisition Corp."
   },
   {
     "ticker": "TAYD",
@@ -36144,10 +32268,6 @@
     "companyName": "TechCreate Group Ltd."
   },
   {
-    "ticker": "TCGX",
-    "companyName": "TCGX Acquisition Corp."
-  },
-  {
     "ticker": "TCI",
     "companyName": "TRANSCONTINENTAL REALTY INVESTORS INC"
   },
@@ -36212,18 +32332,6 @@
     "companyName": "TORONTO DOMINION BANK"
   },
   {
-    "ticker": "TDAC",
-    "companyName": "Translational Development Acquisition Corp."
-  },
-  {
-    "ticker": "TDACU",
-    "companyName": "Translational Development Acquisition Corp."
-  },
-  {
-    "ticker": "TDACW",
-    "companyName": "Translational Development Acquisition Corp."
-  },
-  {
     "ticker": "TDAY",
     "companyName": "USA TODAY Co., Inc."
   },
@@ -36276,14 +32384,6 @@
     "companyName": "TELEPHONE & DATA SYSTEMS INC /DE/"
   },
   {
-    "ticker": "TDS-PU",
-    "companyName": "TELEPHONE & DATA SYSTEMS INC /DE/"
-  },
-  {
-    "ticker": "TDS-PV",
-    "companyName": "TELEPHONE & DATA SYSTEMS INC /DE/"
-  },
-  {
     "ticker": "TDTH",
     "companyName": "Trident Digital Tech Holdings Ltd"
   },
@@ -36296,28 +32396,12 @@
     "companyName": "TIDEWATER INC"
   },
   {
-    "ticker": "TDWD",
-    "companyName": "Tailwind 2.0 Acquisition Corp."
-  },
-  {
-    "ticker": "TDWDR",
-    "companyName": "Tailwind 2.0 Acquisition Corp."
-  },
-  {
-    "ticker": "TDWDU",
-    "companyName": "Tailwind 2.0 Acquisition Corp."
-  },
-  {
     "ticker": "TDY",
     "companyName": "TELEDYNE TECHNOLOGIES INC"
   },
   {
     "ticker": "TE",
     "companyName": "T1 Energy Inc."
-  },
-  {
-    "ticker": "TEAC",
-    "companyName": "Tidewise Acquisition Corp"
   },
   {
     "ticker": "TEAD",
@@ -36388,14 +32472,6 @@
     "companyName": "TSAKOS ENERGY NAVIGATION LTD"
   },
   {
-    "ticker": "TEN-PE",
-    "companyName": "TSAKOS ENERGY NAVIGATION LTD"
-  },
-  {
-    "ticker": "TEN-PF",
-    "companyName": "TSAKOS ENERGY NAVIGATION LTD"
-  },
-  {
     "ticker": "TENB",
     "companyName": "Tenable Holdings, Inc."
   },
@@ -36412,24 +32488,12 @@
     "companyName": "TERADYNE, INC"
   },
   {
-    "ticker": "TETEF",
-    "companyName": "Technology & Telecommunication Acquisition Corp"
-  },
-  {
     "ticker": "TETH",
     "companyName": "21Shares Ethereum ETF"
   },
   {
     "ticker": "TETOF",
     "companyName": "Tectonic Metals Inc."
-  },
-  {
-    "ticker": "TETUF",
-    "companyName": "Technology & Telecommunication Acquisition Corp"
-  },
-  {
-    "ticker": "TETWF",
-    "companyName": "Technology & Telecommunication Acquisition Corp"
   },
   {
     "ticker": "TEVA",
@@ -36445,18 +32509,6 @@
   },
   {
     "ticker": "TFC",
-    "companyName": "TRUIST FINANCIAL CORP"
-  },
-  {
-    "ticker": "TFC-PI",
-    "companyName": "TRUIST FINANCIAL CORP"
-  },
-  {
-    "ticker": "TFC-PO",
-    "companyName": "TRUIST FINANCIAL CORP"
-  },
-  {
-    "ticker": "TFC-PR",
     "companyName": "TRUIST FINANCIAL CORP"
   },
   {
@@ -36570,18 +32622,6 @@
   {
     "ticker": "THCLY",
     "companyName": "Toho Co., Ltd./ADR"
-  },
-  {
-    "ticker": "THEO",
-    "companyName": "BOA Acquisition Corp. II"
-  },
-  {
-    "ticker": "THEOR",
-    "companyName": "BOA Acquisition Corp. II"
-  },
-  {
-    "ticker": "THEOU",
-    "companyName": "BOA Acquisition Corp. II"
   },
   {
     "ticker": "THFF",
@@ -36792,10 +32832,6 @@
     "companyName": "TINKA RESOURCES Ltd"
   },
   {
-    "ticker": "TLAC",
-    "companyName": "Three Lions Acquisition Corp."
-  },
-  {
     "ticker": "TLF",
     "companyName": "TANDY LEATHER FACTORY INC"
   },
@@ -36938,18 +32974,6 @@
   {
     "ticker": "TMTNY",
     "companyName": "Toromont Industries Ltd./ADR"
-  },
-  {
-    "ticker": "TMTS",
-    "companyName": "Spartacus Acquisition Corp. II"
-  },
-  {
-    "ticker": "TMTSU",
-    "companyName": "Spartacus Acquisition Corp. II"
-  },
-  {
-    "ticker": "TMTSW",
-    "companyName": "Spartacus Acquisition Corp. II"
   },
   {
     "ticker": "TMUS",
@@ -37424,39 +33448,7 @@
     "companyName": "TRIO-TECH INTERNATIONAL"
   },
   {
-    "ticker": "TRTN-PA",
-    "companyName": "Triton International Ltd"
-  },
-  {
-    "ticker": "TRTN-PB",
-    "companyName": "Triton International Ltd"
-  },
-  {
-    "ticker": "TRTN-PC",
-    "companyName": "Triton International Ltd"
-  },
-  {
-    "ticker": "TRTN-PD",
-    "companyName": "Triton International Ltd"
-  },
-  {
-    "ticker": "TRTN-PE",
-    "companyName": "Triton International Ltd"
-  },
-  {
-    "ticker": "TRTN-PF",
-    "companyName": "Triton International Ltd"
-  },
-  {
-    "ticker": "TRTN-PG",
-    "companyName": "Triton International Ltd"
-  },
-  {
     "ticker": "TRTX",
-    "companyName": "TPG RE Finance Trust, Inc."
-  },
-  {
-    "ticker": "TRTX-PC",
     "companyName": "TPG RE Finance Trust, Inc."
   },
   {
@@ -37494,10 +33486,6 @@
   {
     "ticker": "TRX",
     "companyName": "TRX GOLD Corp"
-  },
-  {
-    "ticker": "TRXA",
-    "companyName": "T-REX Acquisition Corp."
   },
   {
     "ticker": "TRXS",
@@ -37708,18 +33696,6 @@
     "companyName": "Texas Ventures Acquisition III Corp"
   },
   {
-    "ticker": "TVAI",
-    "companyName": "Thayer Ventures Acquisition Corp II"
-  },
-  {
-    "ticker": "TVAIR",
-    "companyName": "Thayer Ventures Acquisition Corp II"
-  },
-  {
-    "ticker": "TVAIU",
-    "companyName": "Thayer Ventures Acquisition Corp II"
-  },
-  {
     "ticker": "TVC",
     "companyName": "Tennessee Valley Authority"
   },
@@ -37809,18 +33785,6 @@
   },
   {
     "ticker": "TWO",
-    "companyName": "TWO HARBORS INVESTMENT CORP."
-  },
-  {
-    "ticker": "TWO-PA",
-    "companyName": "TWO HARBORS INVESTMENT CORP."
-  },
-  {
-    "ticker": "TWO-PB",
-    "companyName": "TWO HARBORS INVESTMENT CORP."
-  },
-  {
-    "ticker": "TWO-PC",
     "companyName": "TWO HARBORS INVESTMENT CORP."
   },
   {
@@ -37938,18 +33902,6 @@
   {
     "ticker": "UAA",
     "companyName": "Under Armour, Inc."
-  },
-  {
-    "ticker": "UAC",
-    "companyName": "United Acquisition Corp. I"
-  },
-  {
-    "ticker": "UAC-UN",
-    "companyName": "United Acquisition Corp. I"
-  },
-  {
-    "ticker": "UAC-WT",
-    "companyName": "United Acquisition Corp. I"
   },
   {
     "ticker": "UAL",
@@ -38212,10 +34164,6 @@
     "companyName": "UMH PROPERTIES, INC."
   },
   {
-    "ticker": "UMH-PD",
-    "companyName": "UMH PROPERTIES, INC."
-  },
-  {
     "ticker": "UNB",
     "companyName": "UNION BANKSHARES INC"
   },
@@ -38404,30 +34352,6 @@
     "companyName": "US BANCORP DE"
   },
   {
-    "ticker": "USB-PA",
-    "companyName": "US BANCORP DE"
-  },
-  {
-    "ticker": "USB-PH",
-    "companyName": "US BANCORP DE"
-  },
-  {
-    "ticker": "USB-PP",
-    "companyName": "US BANCORP DE"
-  },
-  {
-    "ticker": "USB-PQ",
-    "companyName": "US BANCORP DE"
-  },
-  {
-    "ticker": "USB-PR",
-    "companyName": "US BANCORP DE"
-  },
-  {
-    "ticker": "USB-PS",
-    "companyName": "US BANCORP DE"
-  },
-  {
     "ticker": "USBC",
     "companyName": "USBC, Inc."
   },
@@ -38596,18 +34520,6 @@
     "companyName": "Uxin Ltd"
   },
   {
-    "ticker": "UYSC",
-    "companyName": "UY Scuti Acquisition Corp."
-  },
-  {
-    "ticker": "UYSCR",
-    "companyName": "UY Scuti Acquisition Corp."
-  },
-  {
-    "ticker": "UYSCU",
-    "companyName": "UY Scuti Acquisition Corp."
-  },
-  {
     "ticker": "UZD",
     "companyName": "ARRAY DIGITAL INFRASTRUCTURE, INC."
   },
@@ -38634,18 +34546,6 @@
   {
     "ticker": "VAC",
     "companyName": "MARRIOTT VACATIONS WORLDWIDE Corp"
-  },
-  {
-    "ticker": "VACI",
-    "companyName": "Viking Acquisition Corp I"
-  },
-  {
-    "ticker": "VACI-UN",
-    "companyName": "Viking Acquisition Corp I"
-  },
-  {
-    "ticker": "VACI-WT",
-    "companyName": "Viking Acquisition Corp I"
   },
   {
     "ticker": "VAL",
@@ -38766,18 +34666,6 @@
   {
     "ticker": "VDTA",
     "companyName": "Vertical Data Inc."
-  },
-  {
-    "ticker": "VECA",
-    "companyName": "Vernal Capital Acquisition Corp."
-  },
-  {
-    "ticker": "VECA-RI",
-    "companyName": "Vernal Capital Acquisition Corp."
-  },
-  {
-    "ticker": "VECA-UN",
-    "companyName": "Vernal Capital Acquisition Corp."
   },
   {
     "ticker": "VECO",
@@ -38950,18 +34838,6 @@
   {
     "ticker": "VIDA",
     "companyName": "VIDA Global Inc."
-  },
-  {
-    "ticker": "VII",
-    "companyName": "Viking Acquisition Corp. II"
-  },
-  {
-    "ticker": "VII-UN",
-    "companyName": "Viking Acquisition Corp. II"
-  },
-  {
-    "ticker": "VII-WT",
-    "companyName": "Viking Acquisition Corp. II"
   },
   {
     "ticker": "VIIQ",
@@ -39204,35 +35080,7 @@
     "companyName": "VANJIA CORP"
   },
   {
-    "ticker": "VNME",
-    "companyName": "Vendome Acquisition Corp I"
-  },
-  {
-    "ticker": "VNMEU",
-    "companyName": "Vendome Acquisition Corp I"
-  },
-  {
-    "ticker": "VNMEW",
-    "companyName": "Vendome Acquisition Corp I"
-  },
-  {
     "ticker": "VNO",
-    "companyName": "VORNADO REALTY TRUST"
-  },
-  {
-    "ticker": "VNO-PL",
-    "companyName": "VORNADO REALTY TRUST"
-  },
-  {
-    "ticker": "VNO-PM",
-    "companyName": "VORNADO REALTY TRUST"
-  },
-  {
-    "ticker": "VNO-PN",
-    "companyName": "VORNADO REALTY TRUST"
-  },
-  {
-    "ticker": "VNO-PO",
     "companyName": "VORNADO REALTY TRUST"
   },
   {
@@ -39289,10 +35137,6 @@
   },
   {
     "ticker": "VOYA",
-    "companyName": "Voya Financial, Inc."
-  },
-  {
-    "ticker": "VOYA-PB",
     "companyName": "Voya Financial, Inc."
   },
   {
@@ -39668,10 +35512,6 @@
     "companyName": "WESTERN ALLIANCE BANCORPORATION"
   },
   {
-    "ticker": "WAL-PA",
-    "companyName": "WESTERN ALLIANCE BANCORPORATION"
-  },
-  {
     "ticker": "WALD",
     "companyName": "Waldencast plc"
   },
@@ -39737,14 +35577,6 @@
   },
   {
     "ticker": "WBS",
-    "companyName": "WEBSTER FINANCIAL CORP"
-  },
-  {
-    "ticker": "WBS-PF",
-    "companyName": "WEBSTER FINANCIAL CORP"
-  },
-  {
-    "ticker": "WBS-PG",
     "companyName": "WEBSTER FINANCIAL CORP"
   },
   {
@@ -39880,18 +35712,6 @@
     "companyName": "West Enclave Merger Corp."
   },
   {
-    "ticker": "WENN",
-    "companyName": "WEN Acquisition Corp"
-  },
-  {
-    "ticker": "WENNU",
-    "companyName": "WEN Acquisition Corp"
-  },
-  {
-    "ticker": "WENNW",
-    "companyName": "WEN Acquisition Corp"
-  },
-  {
     "ticker": "WERN",
     "companyName": "WERNER ENTERPRISES INC"
   },
@@ -39933,30 +35753,6 @@
   },
   {
     "ticker": "WFC",
-    "companyName": "WELLS FARGO & COMPANY/MN"
-  },
-  {
-    "ticker": "WFC-PA",
-    "companyName": "WELLS FARGO & COMPANY/MN"
-  },
-  {
-    "ticker": "WFC-PC",
-    "companyName": "WELLS FARGO & COMPANY/MN"
-  },
-  {
-    "ticker": "WFC-PD",
-    "companyName": "WELLS FARGO & COMPANY/MN"
-  },
-  {
-    "ticker": "WFC-PL",
-    "companyName": "WELLS FARGO & COMPANY/MN"
-  },
-  {
-    "ticker": "WFC-PY",
-    "companyName": "WELLS FARGO & COMPANY/MN"
-  },
-  {
-    "ticker": "WFC-PZ",
     "companyName": "WELLS FARGO & COMPANY/MN"
   },
   {
@@ -40044,10 +35840,6 @@
     "companyName": "WHIRLPOOL CORP /DE/"
   },
   {
-    "ticker": "WHR-PA",
-    "companyName": "WHIRLPOOL CORP /DE/"
-  },
-  {
     "ticker": "WHWK",
     "companyName": "Whitehawk Therapeutics, Inc."
   },
@@ -40074,14 +35866,6 @@
   {
     "ticker": "WINT",
     "companyName": "WINDTREE THERAPEUTICS INC /DE/"
-  },
-  {
-    "ticker": "WINV",
-    "companyName": "WinVest Acquisition Corp."
-  },
-  {
-    "ticker": "WINVR",
-    "companyName": "WinVest Acquisition Corp."
   },
   {
     "ticker": "WIPKF",
@@ -40154,18 +35938,6 @@
   {
     "ticker": "WLGSF",
     "companyName": "WANG & LEE GROUP, Inc."
-  },
-  {
-    "ticker": "WLII",
-    "companyName": "Willow Lane Acquisition Corp. II"
-  },
-  {
-    "ticker": "WLIIU",
-    "companyName": "Willow Lane Acquisition Corp. II"
-  },
-  {
-    "ticker": "WLIIW",
-    "companyName": "Willow Lane Acquisition Corp. II"
   },
   {
     "ticker": "WLK",
@@ -40280,18 +36052,6 @@
     "companyName": "SCWorx Corp."
   },
   {
-    "ticker": "WPAC",
-    "companyName": "White Pearl Acquisition Corp."
-  },
-  {
-    "ticker": "WPAC-RI",
-    "companyName": "White Pearl Acquisition Corp."
-  },
-  {
-    "ticker": "WPAC-UN",
-    "companyName": "White Pearl Acquisition Corp."
-  },
-  {
     "ticker": "WPC",
     "companyName": "W. P. Carey Inc."
   },
@@ -40325,22 +36085,6 @@
   },
   {
     "ticker": "WRB",
-    "companyName": "BERKLEY W R CORP"
-  },
-  {
-    "ticker": "WRB-PE",
-    "companyName": "BERKLEY W R CORP"
-  },
-  {
-    "ticker": "WRB-PF",
-    "companyName": "BERKLEY W R CORP"
-  },
-  {
-    "ticker": "WRB-PG",
-    "companyName": "BERKLEY W R CORP"
-  },
-  {
-    "ticker": "WRB-PH",
     "companyName": "BERKLEY W R CORP"
   },
   {
@@ -40436,18 +36180,6 @@
     "companyName": "WEST PHARMACEUTICAL SERVICES INC"
   },
   {
-    "ticker": "WSTN",
-    "companyName": "Westin Acquisition Corp"
-  },
-  {
-    "ticker": "WSTNR",
-    "companyName": "Westin Acquisition Corp"
-  },
-  {
-    "ticker": "WSTNU",
-    "companyName": "Westin Acquisition Corp"
-  },
-  {
     "ticker": "WSTRF",
     "companyName": "Western Uranium & Vanadium Corp."
   },
@@ -40474,18 +36206,6 @@
   {
     "ticker": "WTFCN",
     "companyName": "WINTRUST FINANCIAL CORP"
-  },
-  {
-    "ticker": "WTG",
-    "companyName": "Wintergreen Acquisition Corp."
-  },
-  {
-    "ticker": "WTGUR",
-    "companyName": "Wintergreen Acquisition Corp."
-  },
-  {
-    "ticker": "WTGUU",
-    "companyName": "Wintergreen Acquisition Corp."
   },
   {
     "ticker": "WTHVF",
@@ -40634,18 +36354,6 @@
   {
     "ticker": "XBPEW",
     "companyName": "XBP Global Holdings, Inc."
-  },
-  {
-    "ticker": "XCBE",
-    "companyName": "X3 Acquisition Corp. Ltd."
-  },
-  {
-    "ticker": "XCBEU",
-    "companyName": "X3 Acquisition Corp. Ltd."
-  },
-  {
-    "ticker": "XCBEW",
-    "companyName": "X3 Acquisition Corp. Ltd."
   },
   {
     "ticker": "XCH",
@@ -40840,28 +36548,8 @@
     "companyName": "Chiron Real Estate Inc."
   },
   {
-    "ticker": "XRN-PA",
-    "companyName": "Chiron Real Estate Inc."
-  },
-  {
-    "ticker": "XRN-PB",
-    "companyName": "Chiron Real Estate Inc."
-  },
-  {
     "ticker": "XRP",
     "companyName": "Bitwise XRP ETF"
-  },
-  {
-    "ticker": "XRPN",
-    "companyName": "Armada Acquisition Corp. II"
-  },
-  {
-    "ticker": "XRPNU",
-    "companyName": "Armada Acquisition Corp. II"
-  },
-  {
-    "ticker": "XRPNW",
-    "companyName": "Armada Acquisition Corp. II"
   },
   {
     "ticker": "XRPZ",
@@ -40894,14 +36582,6 @@
   {
     "ticker": "XSLLW",
     "companyName": "Xsolla SPAC 1"
-  },
-  {
-    "ticker": "XTER",
-    "companyName": "Karman Line Acquisition Corp."
-  },
-  {
-    "ticker": "XTERU",
-    "companyName": "Karman Line Acquisition Corp."
   },
   {
     "ticker": "XTGRF",
@@ -41006,18 +36686,6 @@
   {
     "ticker": "YCS",
     "companyName": "ProShares Trust II"
-  },
-  {
-    "ticker": "YCY",
-    "companyName": "AA Mission Acquisition Corp. II"
-  },
-  {
-    "ticker": "YCY-UN",
-    "companyName": "AA Mission Acquisition Corp. II"
-  },
-  {
-    "ticker": "YCY-WT",
-    "companyName": "AA Mission Acquisition Corp. II"
   },
   {
     "ticker": "YDDL",
@@ -41394,18 +37062,6 @@
   {
     "ticker": "ZKIN",
     "companyName": "ZK International Group Co., Ltd."
-  },
-  {
-    "ticker": "ZKP",
-    "companyName": "Lafayette Digital Acquisition Corp. I"
-  },
-  {
-    "ticker": "ZKPU",
-    "companyName": "Lafayette Digital Acquisition Corp. I"
-  },
-  {
-    "ticker": "ZKPW",
-    "companyName": "Lafayette Digital Acquisition Corp. I"
   },
   {
     "ticker": "ZLAB",

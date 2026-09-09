@@ -18,8 +18,14 @@ if (!res.ok) {
 }
 const raw = await res.json();
 
+// 우선주(-PA, -PD...)와 스팩은 개인 투자자가 "관심종목"으로 볼 일이 없고 검색
+// 노이즈만 늘려서 뺀다. ETF는 그대로 둔다(펀드지만 매매 대상으로 유효).
+const isPreferred = (ticker) => /-P[A-Z]+$/.test(ticker);
+const isSpac = (name) => /acquisition (corp|corporation|company)\b/i.test(name);
+
 const stocks = Object.values(raw)
   .map((row) => ({ ticker: row.ticker, companyName: row.title }))
+  .filter((s) => !isPreferred(s.ticker) && !isSpac(s.companyName))
   .sort((a, b) => a.ticker.localeCompare(b.ticker));
 
 writeFileSync(
