@@ -120,12 +120,12 @@ export default function ReplayTrading({ datasetId, rows }: { datasetId: string; 
             {trades.map((t) => (
               <li key={t.id} className="flex justify-between text-xs text-slate-400">
                 <span>{t.date}</span>
-                <span className={t.type === 'buy' ? 'text-emerald-400' : 'text-red-400'}>
+                <span className={t.type === 'buy' ? 'text-emerald-600' : 'text-red-600'}>
                   {t.type === 'buy' ? '매수' : '매도'} {t.quantity}주
                 </span>
                 <span className="font-mono tabular-nums">{t.price.toLocaleString()}</span>
                 {t.type === 'sell' && profitBySellId.has(t.id) && (
-                  <span className={`font-mono tabular-nums ${profitBySellId.get(t.id)! >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`font-mono tabular-nums ${profitBySellId.get(t.id)! >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                     {profitBySellId.get(t.id)! >= 0 ? '+' : ''}{profitBySellId.get(t.id)!.toLocaleString()}
                   </span>
                 )}
@@ -135,7 +135,7 @@ export default function ReplayTrading({ datasetId, rows }: { datasetId: string; 
         )}
 
         {closedTrades.length > 0 && (
-          <p className={`px-2 text-sm font-medium ${totalProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          <p className={`px-2 text-sm font-medium ${totalProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
             총 손익 {totalProfit >= 0 ? '+' : ''}{totalProfit.toLocaleString()}
           </p>
         )}

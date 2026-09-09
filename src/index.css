@@ -4,26 +4,29 @@
 
 /* 디자인 토큰 리매핑 - 컴포넌트 클래스는 그대로 두고(bg-slate-900, text-cyan-400
    등) @theme 값만 바꿔서 앱 전체 배색을 한 번에 교체한다. "공시 팩트체크
-   다이제스트"라는 정체성에 맞춰 slate는 순중립 zinc에서 잉크빛 차콜로,
-   cyan(기존 유일 액센트)은 관인/브라스 골드로 재정의 - 트레이딩 앱 느낌의
-   네온 시안 대신 "공식 문서에 도장 찍힌" 톤. */
+   다이제스트" 정체성은 유지하되 어두운 배경 대신 종이/서류 느낌의 밝은 배경으로 -
+   숫자가 낮을수록 어두운(글자) 색, 높을수록 밝은(배경) 색이 되도록 다크 테마
+   램프를 그대로 뒤집었다(950↔50, 900↔100, ... 페어) - 그래서 bg-slate-900이
+   여전히 "카드 배경", text-slate-100이 여전히 "본문 글자" 역할을 하되 밝은
+   버전으로 나온다. cyan(브라스 골드 액센트)도 흰 배경에서 대비가 나오게
+   더 짙게 다시 조정. */
 @theme {
   --font-sans: 'Pretendard Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
 
-  --color-slate-50: #f1f2f5;
-  --color-slate-100: #e7e9ee;
-  --color-slate-200: #c9cdd6;
-  --color-slate-300: #9aa0ad;
-  --color-slate-400: #838b9c;
-  --color-slate-500: #626a7a;
-  --color-slate-600: #454c5c;
-  --color-slate-700: #313644;
-  --color-slate-800: #1b1f29;
-  --color-slate-900: #14171f;
-  --color-slate-950: #0b0d12;
+  --color-slate-50: #0d0c08;
+  --color-slate-100: #17150f;
+  --color-slate-200: #262420;
+  --color-slate-300: #3c3934;
+  --color-slate-400: #57534a;
+  --color-slate-500: #6b6759;
+  --color-slate-600: #9c9583;
+  --color-slate-700: #c9c2b0;
+  --color-slate-800: #e7e2d6;
+  --color-slate-900: #ffffff;
+  --color-slate-950: #f7f5ef;
 
-  --color-cyan-400: #d4a24e;
-  --color-cyan-500: #c9a24a;
-  --color-cyan-600: #a9822f;
+  --color-cyan-400: #8a6518;
+  --color-cyan-500: #a67b22;
+  --color-cyan-600: #7a5714;
 }

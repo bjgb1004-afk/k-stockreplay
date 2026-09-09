@@ -39,9 +39,9 @@ const levelDot: Record<ChangeLevel, string> = {
 };
 
 const factStatusStyle: Record<FactStatus, string> = {
-  CONFIRMED: 'text-emerald-400',
-  UNCONFIRMED: 'text-amber-400',
-  CONTRADICTED: 'text-red-400',
+  CONFIRMED: 'text-emerald-600',
+  UNCONFIRMED: 'text-amber-600',
+  CONTRADICTED: 'text-red-600',
   UNKNOWN: 'text-slate-400',
 };
 
@@ -113,7 +113,7 @@ export default function TodayScreen() {
           <p className="text-xs text-slate-500">{data.date}</p>
         </div>
         {!!streak && streak > 1 && (
-          <span className="text-xs bg-orange-500/15 text-orange-400 rounded-full px-2.5 py-1 shrink-0">
+          <span className="text-xs bg-orange-500/15 text-orange-600 rounded-full px-2.5 py-1 shrink-0">
             🔥 {streak}일 연속 방문
           </span>
         )}

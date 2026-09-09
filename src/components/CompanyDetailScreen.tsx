@@ -84,7 +84,7 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
           <button
             onClick={handleToggleWatch}
             className={`text-xs rounded-full px-3 py-1.5 shrink-0 ${
-              watchlistEntry ? 'bg-slate-800 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'
+              watchlistEntry ? 'bg-slate-800 text-slate-300' : 'bg-emerald-500/20 text-emerald-600'
             }`}
           >
             {watchlistEntry ? '관심종목에서 삭제' : '+ 관심종목 추가'}
@@ -100,7 +100,7 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
           </div>
           <ThesisBox ticker={company.ticker} initialThesis={watchlistEntry.thesis ?? ''} />
           {!!daysHeld && daysHeld >= 90 && (
-            <p className="text-xs text-amber-400 mt-2">
+            <p className="text-xs text-amber-600 mt-2">
               ⏳ {daysHeld}일째 보유 중이에요 - 처음 논리가 아직 유효한지 다시 확인해보세요.
             </p>
           )}
@@ -180,13 +180,13 @@ function VoteSection({ ticker }: { ticker: string }) {
 
   return (
     <Section title="📊 Bullish / Bearish 투표">
-      {error && <p className="text-xs text-red-400 mb-2">아직 서버에 설정되지 않았습니다.</p>}
+      {error && <p className="text-xs text-red-600 mb-2">아직 서버에 설정되지 않았습니다.</p>}
       <div className="flex gap-2 mb-3">
         <button
           onClick={() => handleVote('bullish')}
           disabled={busy}
           className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm disabled:opacity-50 ${
-            counts?.myVote === 'bullish' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-900 text-slate-300'
+            counts?.myVote === 'bullish' ? 'bg-emerald-500/20 text-emerald-600' : 'bg-slate-900 text-slate-300'
           }`}
         >
           <TrendingUp size={16} /> Bullish
@@ -195,7 +195,7 @@ function VoteSection({ ticker }: { ticker: string }) {
           onClick={() => handleVote('bearish')}
           disabled={busy}
           className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm disabled:opacity-50 ${
-            counts?.myVote === 'bearish' ? 'bg-red-500/20 text-red-400' : 'bg-slate-900 text-slate-300'
+            counts?.myVote === 'bearish' ? 'bg-red-500/20 text-red-600' : 'bg-slate-900 text-slate-300'
           }`}
         >
           <TrendingDown size={16} /> Bearish

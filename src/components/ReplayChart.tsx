@@ -46,12 +46,12 @@ export default function ReplayChart({
 
     const chart = createChart(container, {
       layout: {
-        background: { type: ColorType.Solid, color: '#0f172a' },
-        textColor: '#cbd5e1',
+        background: { type: ColorType.Solid, color: '#ffffff' },
+        textColor: '#57534a',
       },
       grid: {
-        vertLines: { color: '#1e293b' },
-        horzLines: { color: '#1e293b' },
+        vertLines: { color: '#e7e2d6' },
+        horzLines: { color: '#e7e2d6' },
       },
       autoSize: true,
     });

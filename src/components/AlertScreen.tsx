@@ -44,7 +44,7 @@ export default function AlertScreen() {
                     className={`w-full text-left rounded-lg px-3 py-2.5 ${a.silentSurprise ? 'bg-amber-500/10 border border-amber-500/30' : isRead ? 'bg-slate-900/50' : 'bg-slate-900'}`}
                   >
                     {a.silentSurprise && (
-                      <p className="text-xs text-amber-400 font-medium mb-1">🔕→🔔 오랜만의 소식</p>
+                      <p className="text-xs text-amber-600 font-medium mb-1">🔕→🔔 오랜만의 소식</p>
                     )}
                     <div className="flex items-center gap-2 text-sm">
                       {!isRead && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
@@ -106,12 +106,12 @@ function PushSection() {
               ? '관심종목에 새 소식이 있으면 알려드려요.'
               : '꺼져 있습니다 - 눌러서 켜보세요.'}
         </p>
-        {error && <p className="text-xs text-red-400 mt-0.5">{error}</p>}
+        {error && <p className="text-xs text-red-600 mt-0.5">{error}</p>}
       </div>
       <button
         onClick={handleToggle}
         disabled={busy || support === 'unconfigured'}
-        className={`shrink-0 rounded-full p-2 ${subscribed ? 'bg-slate-800 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'} disabled:opacity-50`}
+        className={`shrink-0 rounded-full p-2 ${subscribed ? 'bg-slate-800 text-slate-300' : 'bg-emerald-500/20 text-emerald-600'} disabled:opacity-50`}
         aria-label={subscribed ? '알림 끄기' : '알림 켜기'}
       >
         {subscribed ? <BellOff size={16} /> : <Bell size={16} />}

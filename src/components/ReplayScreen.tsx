@@ -134,7 +134,7 @@ export default function ReplayScreen() {
                   </span>
                   <ChevronRight size={16} className="text-slate-600 shrink-0 ml-1" />
                 </button>
-                <button onClick={() => handleDelete(d.id)} aria-label={`${d.symbol} 삭제`} className="text-slate-500 hover:text-red-400 shrink-0 p-2">
+                <button onClick={() => handleDelete(d.id)} aria-label={`${d.symbol} 삭제`} className="text-slate-500 hover:text-red-600 shrink-0 p-2">
                   <X size={16} />
                 </button>
               </li>
@@ -196,7 +196,7 @@ function UploadForm({ onDone, onCancel }: { onDone: () => void; onCancel: () => 
           onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
           className="w-full md:max-w-md text-sm text-slate-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-slate-800 file:text-slate-100 file:text-xs"
         />
-        {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
+        {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
         {rows && <p className="text-xs text-slate-500 mt-2">{fileName} · {rows.length}개 행 확인됨</p>}
       </Section>
 

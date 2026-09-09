@@ -165,7 +165,7 @@ export default function WatchlistScreen() {
                     {item.market === 'KR' && prices.has(item.ticker) ? (
                       <p className="text-xs mt-0.5 font-mono tabular-nums">
                         {prices.get(item.ticker)!.close.toLocaleString()}원{' '}
-                        <span className={prices.get(item.ticker)!.changePct >= 0 ? 'text-red-400' : 'text-blue-400'}>
+                        <span className={prices.get(item.ticker)!.changePct >= 0 ? 'text-red-600' : 'text-blue-600'}>
                           {prices.get(item.ticker)!.changePct >= 0 ? '+' : ''}
                           {prices.get(item.ticker)!.changePct.toFixed(2)}%
                         </span>
@@ -181,7 +181,7 @@ export default function WatchlistScreen() {
                 <button
                   onClick={() => handleRemove(item.ticker)}
                   aria-label={`${item.companyName} 삭제`}
-                  className="text-slate-500 hover:text-red-400 shrink-0 p-2"
+                  className="text-slate-500 hover:text-red-600 shrink-0 p-2"
                 >
                   <X size={16} />
                 </button>
