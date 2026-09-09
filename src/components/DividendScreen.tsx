@@ -38,7 +38,7 @@ export default function DividendScreen() {
             아직 쌓인 배당 공시가 없습니다. 앱을 방문할 때마다 오늘자 공시가 로컬에 쌓입니다.
           </p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
             {myDividendNews.map((d) => (
               <li key={d.id} className="bg-slate-900 rounded-lg px-3 py-2">
                 <div className="flex items-center justify-between text-sm">

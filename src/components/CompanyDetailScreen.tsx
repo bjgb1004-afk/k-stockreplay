@@ -19,15 +19,30 @@ const typeLabel: Record<DisclosureRecord['type'], string> = {
   INSIDER: '내부자매매',
 };
 
+interface NewsItem {
+  title: string;
+  link: string;
+  pubDate: string;
+}
+
 export default function CompanyDetailScreen({ company, onBack }: { company: CompanyRef; onBack: () => void }) {
   const [history, setHistory] = useState<DisclosureRecord[]>([]);
   const [watchlistEntry, setWatchlistEntry] = useState<WatchlistItem | null | undefined>(undefined);
+  const [news, setNews] = useState<NewsItem[]>([]);
 
   useEffect(() => {
     // §HISTORY: 서버 스텁이 아니라 방문할 때마다 TodayScreen이 쌓아온 로컬 기록.
     getHistoryForTicker(company.ticker).then(setHistory).catch(() => {});
     refreshWatchlistEntry();
   }, [company.ticker]);
+
+  useEffect(() => {
+    const market = company.market ?? 'KR';
+    fetch(`/api/news?q=${encodeURIComponent(company.companyName)}&market=${market}`)
+      .then((r) => r.json())
+      .then(setNews)
+      .catch(() => setNews([]));
+  }, [company.ticker, company.companyName, company.market]);
 
   function refreshWatchlistEntry() {
     getWatchlist().then((list) => setWatchlistEntry(list.find((w) => w.ticker === company.ticker) ?? null));
@@ -93,6 +108,27 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
       )}
 
       <VoteSection ticker={company.ticker} />
+
+      <Section title="📰 관련 뉴스">
+        {news.length === 0 ? (
+          <p className="text-sm text-slate-500">뉴스를 찾을 수 없습니다.</p>
+        ) : (
+          <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
+            {news.map((n) => (
+              <li key={n.link}>
+                <a
+                  href={n.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-slate-200 hover:text-cyan-400 block truncate"
+                >
+                  {n.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
 
       <Section title="📜 HISTORY">
         {myHistory.length === 0 ? (

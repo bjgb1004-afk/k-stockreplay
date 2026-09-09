@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Play, Pause, SkipBack, SkipForward, RotateCcw } from 'lucide-react';
 import ReplayChart from './ReplayChart';
 import type { MarketDataRow } from '../lib/marketDataNormalize';
+import type { ReplayTrade } from '../lib/replayPosition';
 import { clampCursor, stepForward, stepBackward, isAtEnd } from '../lib/playbackCursor';
 
 // ponytail: 임의 기본값(약 한 달치 거래일 기준) - 데이터셋 맨 앞부터 보여줄 캔들 개수.
@@ -14,9 +15,15 @@ const SPEED_LABEL: Record<Speed, string> = { slow: '느리게', normal: '보통'
 
 export default function ReplayPlayback({
   rows,
+  trades,
+  avgCost,
+  position,
   onCursorChange,
 }: {
   rows: MarketDataRow[];
+  trades?: ReplayTrade[];
+  avgCost?: number;
+  position?: number;
   onCursorChange?: (cursor: number, row: MarketDataRow) => void;
 }) {
   const [cursor, setCursor] = useState(() => clampCursor(INITIAL_REVEAL, rows.length));
@@ -44,9 +51,14 @@ export default function ReplayPlayback({
     return () => clearInterval(id);
   }, [isPlaying, speed, rows.length]);
 
+  // rows.slice()는 매 렌더마다 새 배열을 만든다 - cursor/rows가 그대로인데
+  // 부모가 다른 이유(예: 거래 기록 갱신)로 재렌더될 때도 새 참조가 나가면
+  // ReplayChart가 "한 칸 전진"으로 오인해 리빌 모션이 중간에 끊긴다.
+  const visibleRows = useMemo(() => rows.slice(0, cursor), [rows, cursor]);
+
   if (rows.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[400px] text-slate-500 text-sm">
+      <div className="flex items-center justify-center h-[400px] lg:h-[520px] text-slate-500 text-sm">
         표시할 데이터가 없습니다.
       </div>
     );
@@ -54,7 +66,7 @@ export default function ReplayPlayback({
 
   return (
     <div className="space-y-3">
-      <ReplayChart rows={rows.slice(0, cursor)} />
+      <ReplayChart rows={visibleRows} trades={trades} avgCost={avgCost} position={position} />
 
       <div className="flex flex-wrap items-center gap-2 px-2">
         <button onClick={() => setCursor(stepBackward(cursor))} className="p-2 text-slate-300" aria-label="이전 구간">

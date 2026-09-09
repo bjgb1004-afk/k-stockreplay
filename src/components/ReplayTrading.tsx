@@ -53,89 +53,93 @@ export default function ReplayTrading({ datasetId, rows }: { datasetId: string; 
   }
 
   return (
-    <div className="space-y-3">
-      <ReplayPlayback
-        rows={rows}
-        trades={trades}
-        avgCost={avgCost}
-        position={position}
-        onCursorChange={(cursor, row) => setCurrent({ cursor, row })}
-      />
+    <div className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-[1fr_320px] lg:gap-4 lg:items-start">
+      <div className="space-y-3">
+        <ReplayPlayback
+          rows={rows}
+          trades={trades}
+          avgCost={avgCost}
+          position={position}
+          onCursorChange={(cursor, row) => setCurrent({ cursor, row })}
+        />
 
-      <div className="flex gap-2 px-2 text-xs text-slate-400">
-        <span>잔여 현금 <span className="text-slate-100 tabular-nums">{remainingCash.toLocaleString()}원</span></span>
-        {position > 0 && (
-          <span>· 보유 {position}주 평단 <span className="text-slate-100 tabular-nums">{Math.round(avgCost).toLocaleString()}원</span></span>
+        <div className="flex gap-2 px-2 text-xs text-slate-400">
+          <span>잔여 현금 <span className="text-slate-100 tabular-nums">{remainingCash.toLocaleString()}원</span></span>
+          {position > 0 && (
+            <span>· 보유 {position}주 평단 <span className="text-slate-100 tabular-nums">{Math.round(avgCost).toLocaleString()}원</span></span>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {/* 분할매수 퍼센트 버튼 - 잔여 현금의 n%만큼 살 수 있는 수량을 계산해서 채워준다.
+            바로 매수하지 않고 수량 입력칸만 채우는 이유: 매도 시에도 같은 수량칸을
+            쓰는데, 매도까지 "잔여 현금 기준 %"로 계산하면 의미가 이상해지기 때문 -
+            채워진 수량은 매수/매도 아무 쪽이든 그대로 눌러서 확정한다. */}
+        <div className="flex gap-1 px-2">
+          {[10, 25, 50, 100].map((pct) => (
+            <button
+              key={pct}
+              onClick={() => price > 0 && setQuantity(Math.floor((remainingCash * pct) / 100 / price))}
+              disabled={price <= 0}
+              className="flex-1 text-[11px] py-1 rounded bg-slate-900 text-slate-400 disabled:opacity-30"
+            >
+              {pct}%
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 px-2">
+          <input
+            type="number"
+            min={1}
+            value={quantity}
+            onChange={(e) => setQuantity(Math.max(1, Math.floor(Number(e.target.value) || 1)))}
+            className="w-20 bg-slate-900 border border-slate-800 rounded-lg px-2 py-2 text-sm text-center"
+            aria-label="수량"
+          />
+          <span className="text-xs text-slate-500">주</span>
+          <button
+            onClick={() => trade('buy')}
+            disabled={!canBuy}
+            className="flex-1 bg-emerald-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-30"
+          >
+            매수
+          </button>
+          <button
+            onClick={() => trade('sell')}
+            disabled={!canSell}
+            className="flex-1 bg-red-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-30"
+          >
+            매도
+          </button>
+        </div>
+
+        {trades.length > 0 && (
+          <ul className="px-2 space-y-1 max-h-64 lg:max-h-none overflow-y-auto">
+            {trades.map((t) => (
+              <li key={t.id} className="flex justify-between text-xs text-slate-400">
+                <span>{t.date}</span>
+                <span className={t.type === 'buy' ? 'text-emerald-400' : 'text-red-400'}>
+                  {t.type === 'buy' ? '매수' : '매도'} {t.quantity}주
+                </span>
+                <span className="tabular-nums">{t.price.toLocaleString()}</span>
+                {t.type === 'sell' && profitBySellId.has(t.id) && (
+                  <span className={`tabular-nums ${profitBySellId.get(t.id)! >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {profitBySellId.get(t.id)! >= 0 ? '+' : ''}{profitBySellId.get(t.id)!.toLocaleString()}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {closedTrades.length > 0 && (
+          <p className={`px-2 text-sm font-medium ${totalProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            총 손익 {totalProfit >= 0 ? '+' : ''}{totalProfit.toLocaleString()}
+          </p>
         )}
       </div>
-
-      {/* 분할매수 퍼센트 버튼 - 잔여 현금의 n%만큼 살 수 있는 수량을 계산해서 채워준다.
-          바로 매수하지 않고 수량 입력칸만 채우는 이유: 매도 시에도 같은 수량칸을
-          쓰는데, 매도까지 "잔여 현금 기준 %"로 계산하면 의미가 이상해지기 때문 -
-          채워진 수량은 매수/매도 아무 쪽이든 그대로 눌러서 확정한다. */}
-      <div className="flex gap-1 px-2">
-        {[10, 25, 50, 100].map((pct) => (
-          <button
-            key={pct}
-            onClick={() => price > 0 && setQuantity(Math.floor((remainingCash * pct) / 100 / price))}
-            disabled={price <= 0}
-            className="flex-1 text-[11px] py-1 rounded bg-slate-900 text-slate-400 disabled:opacity-30"
-          >
-            {pct}%
-          </button>
-        ))}
-      </div>
-
-      <div className="flex items-center gap-2 px-2">
-        <input
-          type="number"
-          min={1}
-          value={quantity}
-          onChange={(e) => setQuantity(Math.max(1, Math.floor(Number(e.target.value) || 1)))}
-          className="w-20 bg-slate-900 border border-slate-800 rounded-lg px-2 py-2 text-sm text-center"
-          aria-label="수량"
-        />
-        <span className="text-xs text-slate-500">주</span>
-        <button
-          onClick={() => trade('buy')}
-          disabled={!canBuy}
-          className="flex-1 bg-emerald-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-30"
-        >
-          매수
-        </button>
-        <button
-          onClick={() => trade('sell')}
-          disabled={!canSell}
-          className="flex-1 bg-red-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-30"
-        >
-          매도
-        </button>
-      </div>
-
-      {trades.length > 0 && (
-        <ul className="px-2 space-y-1">
-          {trades.map((t) => (
-            <li key={t.id} className="flex justify-between text-xs text-slate-400">
-              <span>{t.date}</span>
-              <span className={t.type === 'buy' ? 'text-emerald-400' : 'text-red-400'}>
-                {t.type === 'buy' ? '매수' : '매도'} {t.quantity}주
-              </span>
-              <span className="tabular-nums">{t.price.toLocaleString()}</span>
-              {t.type === 'sell' && profitBySellId.has(t.id) && (
-                <span className={`tabular-nums ${profitBySellId.get(t.id)! >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {profitBySellId.get(t.id)! >= 0 ? '+' : ''}{profitBySellId.get(t.id)!.toLocaleString()}
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {closedTrades.length > 0 && (
-        <p className={`px-2 text-sm font-medium ${totalProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-          총 손익 {totalProfit >= 0 ? '+' : ''}{totalProfit.toLocaleString()}
-        </p>
-      )}
     </div>
   );
 }
@@ -160,7 +164,7 @@ function CapitalGate({ onStart }: { onStart: (capital: number) => void }) {
 
   return (
     <Section title="투자금 설정">
-      <div className="space-y-2">
+      <div className="space-y-2 md:max-w-md">
         <input
           type="text"
           inputMode="numeric"

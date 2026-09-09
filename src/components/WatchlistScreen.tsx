@@ -116,10 +116,10 @@ export default function WatchlistScreen() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="종목명/티커 검색 (예: 삼성전자, AAPL)"
-          className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
+          className="w-full md:max-w-md bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
         />
         {suggestions.length > 0 && (
-          <ul className="mt-2 border border-slate-800 rounded-lg divide-y divide-slate-800 overflow-hidden">
+          <ul className="mt-2 md:max-w-md border border-slate-800 rounded-lg divide-y divide-slate-800 overflow-hidden">
             {suggestions.map((s) => (
               <li key={s.ticker}>
                 <button
@@ -144,7 +144,7 @@ export default function WatchlistScreen() {
         {items.length === 0 ? (
           <p className="text-sm text-slate-500">아직 추가한 종목이 없습니다.</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
             {items.map((item) => (
               <li
                 key={item.ticker}

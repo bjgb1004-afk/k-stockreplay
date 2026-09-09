@@ -34,7 +34,7 @@ export default function AlertScreen() {
         ) : alerts.length === 0 ? (
           <p className="text-sm text-slate-500">관심종목에 대한 알림이 아직 없습니다.</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0">
             {alerts.map((a) => {
               const isRead = readIds.has(a.id);
               return (

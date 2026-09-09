@@ -120,13 +120,13 @@ export default function TodayScreen() {
       </header>
 
       <Section title="🆕 오늘 새로 생긴 것">
-        <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-sm">
           <Stat label="새 이벤트" value={data.summary.newEvents} />
           <Stat label="중요 FACT" value={data.summary.importantFacts} />
           <Stat label="배당 이벤트" value={data.summary.dividendEvents} />
           <Stat label="관계 변화" value={data.summary.relationChanges} />
         </div>
-        <ul className="space-y-2">
+        <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 xl:grid-cols-3">
           {shownNewToday.map((item) => (
             <li key={item.id} className="border-b border-slate-800 pb-2">
               <div className="flex items-center justify-between text-sm">
@@ -154,7 +154,7 @@ export default function TodayScreen() {
             아직 관심종목이 없습니다. MY STOCK RADAR 탭에서 추가해보세요.
           </p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-2 sm:space-y-0 lg:grid-cols-3">
             {myRadar.map((stock) => (
               <li key={stock.ticker} className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function TodayScreen() {
       </Section>
 
       <Section title="🔎 오늘의 FACT">
-        <ul className="space-y-2">
+        <ul className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
           {data.factChecks.map((fact) => (
             <li key={fact.question} className="text-sm">
               <p className="text-slate-300">"{fact.question}"</p>

@@ -124,7 +124,7 @@ export default function ReplayScreen() {
         {datasets.length === 0 ? (
           <p className="text-sm text-slate-500">업로드한 데이터가 없습니다.</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
             {datasets.map((d) => (
               <li key={d.id} className="flex items-center justify-between text-sm bg-slate-900 rounded-lg pl-3 pr-1 py-1">
                 <button onClick={() => handleOpen(d)} className="flex-1 flex items-center justify-between text-left py-1.5 min-w-0">
@@ -194,7 +194,7 @@ function UploadForm({ onDone, onCancel }: { onDone: () => void; onCancel: () => 
           type="file"
           accept=".csv,.xlsx,.xls"
           onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-          className="w-full text-sm text-slate-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-slate-800 file:text-slate-100 file:text-xs"
+          className="w-full md:max-w-md text-sm text-slate-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-slate-800 file:text-slate-100 file:text-xs"
         />
         {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
         {rows && <p className="text-xs text-slate-500 mt-2">{fileName} · {rows.length}개 행 확인됨</p>}
@@ -202,7 +202,7 @@ function UploadForm({ onDone, onCancel }: { onDone: () => void; onCancel: () => 
 
       {rows && (
         <Section title="종목 정보">
-          <div className="space-y-2">
+          <div className="space-y-2 md:max-w-md">
             <input
               value={symbol}
               onChange={(e) => setSymbol(e.target.value)}
