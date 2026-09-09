@@ -1,10 +1,10 @@
 import { openDb, withStore } from './db';
 import type { ReplayTrade } from './replayPosition';
 
-export async function startSession(datasetId: string): Promise<string> {
+export async function startSession(datasetId: string, capital: number): Promise<string> {
   const id = crypto.randomUUID();
   await withStore('replay_sessions', 'readwrite', (store) =>
-    store.add({ id, datasetId, createdAt: new Date().toISOString() }),
+    store.add({ id, datasetId, capital, createdAt: new Date().toISOString() }),
   );
   return id;
 }

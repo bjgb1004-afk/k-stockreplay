@@ -21,6 +21,14 @@ import { detectColumnMapping, normalizeRows } from './marketDataNormalize';
   assert.equal(mapping.close, '종가');
 }
 
+// 헤더에 군더더기가 붙은 증권사 포맷 (예: 헥토파이낸스 "일자 / 시간") - 부분 일치로 잡아야 함
+{
+  const mapping = detectColumnMapping(['일자 / 시간', '시가', '고가', '저가', '종가', '거래량', '거래대금']);
+  assert.equal(mapping.date, '일자 / 시간');
+  assert.equal(mapping.close, '종가');
+  assert.equal(mapping.volume, '거래량');
+}
+
 // 알 수 없는 헤더 -> 전부 null
 {
   const mapping = detectColumnMapping(['Col1', 'Col2', 'Col3']);

@@ -36,12 +36,18 @@ const FIELD_LABELS: Record<MarketField, string> = {
   volume: '거래량',
 };
 
+// 정확히 일치("일자")뿐 아니라 증권사마다 붙이는 군더더기("일자 / 시간",
+// "종가(원)")도 잡아야 해서 공백 제거 후 부분 일치로 본다.
+function normalizeHeader(header: string): string {
+  return header.replace(/\s+/g, '').toLowerCase();
+}
+
 export function detectColumnMapping(headers: string[]): ColumnMapping {
   const mapping = { date: null, open: null, high: null, low: null, close: null, volume: null } as ColumnMapping;
 
   for (const field of Object.keys(FIELD_ALIASES) as MarketField[]) {
     const aliases = FIELD_ALIASES[field].map((alias) => alias.toLowerCase());
-    const match = headers.find((header) => aliases.includes(header.trim().toLowerCase()));
+    const match = headers.find((header) => aliases.some((alias) => normalizeHeader(header).includes(alias)));
     mapping[field] = match ?? null;
   }
 
