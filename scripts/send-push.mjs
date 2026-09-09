@@ -33,7 +33,7 @@ if (!subs || subs.length === 0) {
   process.exit(0);
 }
 
-const payload = JSON.stringify({ type: 'today-updated' });
+const payload = JSON.stringify({ type: process.env.PUSH_TYPE || 'today-updated' });
 let sent = 0;
 let pruned = 0;
 

@@ -3,6 +3,7 @@ import { Screen, Section, Stat } from './ui';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { recordVisit } from '../lib/streakDb';
 import { ingestToday, pruneOld, type DisclosureType, type Sentiment } from '../lib/disclosuresDb';
+import { getWeeklyRecapIfDue, markWeeklyRecapShown, type WeeklyRecap } from '../lib/weeklyRecap';
 
 type ChangeLevel = 'RED' | 'ORANGE' | 'GREEN';
 type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
@@ -57,6 +58,7 @@ export default function TodayScreen() {
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [error, setError] = useState(false);
   const [streak, setStreak] = useState<number | null>(null);
+  const [recap, setRecap] = useState<WeeklyRecap | null>(null);
 
   useEffect(() => {
     fetch('/data/today.json')
@@ -72,7 +74,13 @@ export default function TodayScreen() {
       .catch(() => setError(true));
     getWatchlist().then(setWatchlist);
     recordVisit().then(({ currentStreak }) => setStreak(currentStreak));
+    getWeeklyRecapIfDue().then(setRecap);
   }, []);
+
+  function dismissRecap() {
+    markWeeklyRecapShown();
+    setRecap(null);
+  }
 
   // 서버는 유저별 워치리스트를 모른다 (§2-3 로컬 우선 저장) - data.myStockRadar는
   // "오늘 공시 있었던 회사 전체" 목록일 뿐이다. "내 종목 변화"는 로컬 워치리스트가
@@ -118,6 +126,21 @@ export default function TodayScreen() {
           </span>
         )}
       </header>
+
+      {recap && (
+        <div className="mb-6 flex items-start justify-between gap-3 bg-cyan-500/10 border border-cyan-500/25 rounded-lg px-3.5 py-3">
+          <div>
+            <p className="text-sm font-medium text-cyan-600">📬 이번 주 리캡</p>
+            <p className="text-xs text-slate-500 mt-1">
+              워치리스트에 새 소식 {recap.eventCount}건
+              {recap.dividendCount > 0 && ` (배당 이벤트 ${recap.dividendCount}건 포함)`}이 있었습니다.
+            </p>
+          </div>
+          <button onClick={dismissRecap} className="text-slate-400 hover:text-slate-600 text-xs shrink-0">
+            닫기
+          </button>
+        </div>
+      )}
 
       <Section title="🆕 오늘 새로 생긴 것">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-sm">

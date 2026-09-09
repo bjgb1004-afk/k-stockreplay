@@ -9,7 +9,10 @@ self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim(
 
 function getWatchlistTickers() {
   return new Promise((resolve) => {
-    const req = indexedDB.open('kstockreplay', 2);
+    // 버전 인자 없이 연다 - db.ts의 DB_VERSION이 올라갈 때마다 여기 숫자도 같이
+    // 맞춰야 했는데(버전 불일치는 VersionError로 조용히 실패해 워치리스트를 못 읽음),
+    // 버전 없이 열면 그 문제 자체가 없어진다.
+    const req = indexedDB.open('kstockreplay');
     req.onsuccess = () => {
       const db = req.result;
       if (!db.objectStoreNames.contains('watchlist_items')) return resolve([]);
@@ -27,6 +30,24 @@ self.addEventListener('push', (event) => {
     (async () => {
       const tickers = await getWatchlistTickers();
       if (tickers.length === 0) return;
+
+      // 주간 리캡은 서버가 내용을 모른다(§2-3) - 그냥 깨우기만 하고, 실제 요약은
+      // 앱을 열었을 때 로컬 데이터로 계산해서 보여준다(TodayScreen의 WeeklyRecapCard).
+      let payload = {};
+      try {
+        payload = event.data?.json() ?? {};
+      } catch {
+        /* 페이로드 없거나 JSON이 아니면 기존 today-updated로 취급 */
+      }
+      if (payload.type === 'weekly-recap') {
+        await self.registration.showNotification('이번 주 리캡이 도착했어요', {
+          body: '워치리스트에 무슨 일이 있었는지 확인해보세요.',
+          icon: '/favicon.png',
+          badge: '/favicon.png',
+          data: { url: '/' },
+        });
+        return;
+      }
 
       const res = await fetch('/data/today.json');
       if (!res.ok) return;
