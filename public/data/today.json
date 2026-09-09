@@ -1,118 +1,160 @@
 {
-  "date": "2026-08-31",
-  "generatedAt": "2026-08-30T23:57:50.307Z",
+  "date": "2026-09-09",
+  "generatedAt": "2026-09-08T23:43:31.524Z",
   "summary": {
-    "newEvents": 7,
+    "newEvents": 10,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
   "newToday": [
     {
-      "id": "20260831800007",
-      "ticker": "009540",
-      "companyName": "HD한국조선해양",
+      "id": "20260909900005",
+      "ticker": "351320",
+      "companyName": "넥사다이내믹스",
       "type": "DISCLOSURE",
-      "title": "중대재해발생(자회사의 주요경영사항)",
+      "title": "투자판단관련주요경영사항              (경영지배인 선임의 건)",
       "time": "",
       "sentiment": "NEUTRAL",
       "meaning": "공시 원문 확인이 필요합니다."
     },
     {
-      "id": "20260831800003",
-      "ticker": "002020",
-      "companyName": "코오롱",
-      "type": "DISCLOSURE",
-      "title": "중대재해발생(자회사의 주요경영사항)",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "공시 원문 확인이 필요합니다."
-    },
-    {
-      "id": "20260831800002",
-      "ticker": "003070",
-      "companyName": "코오롱글로벌",
-      "type": "DISCLOSURE",
-      "title": "중대재해발생",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "공시 원문 확인이 필요합니다."
-    },
-    {
-      "id": "20260831800001",
-      "ticker": "329180",
-      "companyName": "HD현대중공업",
-      "type": "DISCLOSURE",
-      "title": "중대재해발생",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "공시 원문 확인이 필요합니다."
-    },
-    {
-      "id": "20260831000011",
-      "ticker": "022220",
-      "companyName": "티케이지애강",
-      "type": "DISCLOSURE",
-      "title": "공개매수설명서",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "공시 원문 확인이 필요합니다."
-    },
-    {
-      "id": "20260831000008",
-      "ticker": "022220",
-      "companyName": "티케이지애강",
-      "type": "DISCLOSURE",
-      "title": "공개매수신고서",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "공시 원문 확인이 필요합니다."
-    },
-    {
-      "id": "20260828001963",
-      "ticker": "008600",
-      "companyName": "윌비스",
-      "type": "DISCLOSURE",
-      "title": "주요사항보고서(채권은행등의관리절차중단)",
+      "id": "20260909800012",
+      "ticker": "007570",
+      "companyName": "일양약품",
+      "type": "CONTRACT",
+      "title": "단일판매ㆍ공급계약해지",
       "time": "",
       "sentiment": "NEGATIVE",
-      "meaning": "채권단 관리절차 관련 - 부정적인 신호"
+      "meaning": "공급계약 해지 - 매출 감소 관련 부정적 신호"
+    },
+    {
+      "id": "20260909800003",
+      "ticker": "042660",
+      "companyName": "한화오션",
+      "type": "DISCLOSURE",
+      "title": "투자판단관련주요경영사항",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260909800001",
+      "ticker": "348950",
+      "companyName": "제이알글로벌리츠",
+      "type": "DISCLOSURE",
+      "title": "투자판단관련주요경영사항",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260909000003",
+      "ticker": "224060",
+      "companyName": "더코디",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주요사항보고서(자기전환사채매도결정)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
+    },
+    {
+      "id": "20260909000002",
+      "ticker": "351320",
+      "companyName": "넥사다이내믹스",
+      "type": "DISCLOSURE",
+      "title": "주요사항보고서(유상증자결정)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
+    },
+    {
+      "id": "20260909000001",
+      "ticker": "224060",
+      "companyName": "더코디",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
+    },
+    {
+      "id": "20260908000434",
+      "ticker": "223220",
+      "companyName": "로지스몬",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주요사항보고서(유상증자결정)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
+    },
+    {
+      "id": "20260908000433",
+      "ticker": "247660",
+      "companyName": "나노씨엠에스",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]의결권대리행사권유참고서류",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "공시 원문 확인이 필요합니다."
+    },
+    {
+      "id": "20260908000431",
+      "ticker": "196300",
+      "companyName": "HLB펩",
+      "type": "DISCLOSURE",
+      "title": "주요사항보고서(자기전환사채만기전취득결정)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
     }
   ],
   "myStockRadar": [
     {
-      "ticker": "022220",
-      "companyName": "티케이지애강",
+      "ticker": "351320",
+      "companyName": "넥사다이내믹스",
       "changeCount": 2,
       "level": "ORANGE"
     },
     {
-      "ticker": "002020",
-      "companyName": "코오롱",
+      "ticker": "224060",
+      "companyName": "더코디",
+      "changeCount": 2,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "007570",
+      "companyName": "일양약품",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "009540",
-      "companyName": "HD한국조선해양",
+      "ticker": "042660",
+      "companyName": "한화오션",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "329180",
-      "companyName": "HD현대중공업",
+      "ticker": "348950",
+      "companyName": "제이알글로벌리츠",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "003070",
-      "companyName": "코오롱글로벌",
+      "ticker": "223220",
+      "companyName": "로지스몬",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "008600",
-      "companyName": "윌비스",
+      "ticker": "196300",
+      "companyName": "HLB펩",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "247660",
+      "companyName": "나노씨엠에스",
       "changeCount": 1,
       "level": "ORANGE"
     }
