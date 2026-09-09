@@ -106,7 +106,7 @@ export default function ReplayPlayback({
           className="flex-1 min-w-[80px]"
         />
 
-        <span className="text-xs text-slate-500 tabular-nums">
+        <span className="text-xs text-slate-500 font-mono tabular-nums">
           {cursor} / {rows.length}
         </span>
 

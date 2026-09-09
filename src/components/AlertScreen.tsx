@@ -18,7 +18,7 @@ export default function AlertScreen() {
   return (
     <Screen>
       <header className="mb-6">
-        <h1 className="text-lg font-bold">ALERT</h1>
+        <h1 className="text-xl font-bold font-mono tracking-tight">ALERT</h1>
         <p className="text-xs text-slate-500">
           관심종목 알림함{unreadCount > 0 ? ` · 안 읽음 ${unreadCount}건` : ''}
         </p>
@@ -96,7 +96,7 @@ function PushSection() {
   if (support === 'unsupported') return null;
 
   return (
-    <div className="mb-6 bg-slate-900 rounded-lg px-3 py-2.5 flex items-center justify-between gap-3">
+    <div className="mb-6 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2.5 flex items-center justify-between gap-3">
       <div className="min-w-0">
         <p className="text-sm font-medium">브라우저 알림</p>
         <p className="text-xs text-slate-500 mt-0.5">

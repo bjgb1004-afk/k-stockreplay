@@ -76,8 +76,8 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-lg font-bold">{company.companyName}</h1>
-            <p className="text-xs text-slate-500">{company.ticker}</p>
+            <h1 className="text-xl font-bold tracking-tight">{company.companyName}</h1>
+            <p className="text-xs text-slate-500 font-mono">{company.ticker}</p>
           </div>
         </div>
         {watchlistEntry !== undefined && (
@@ -138,7 +138,7 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
             {myHistory.map((h) => (
               <li key={h.id} className="border-b border-slate-800 pb-2">
                 <div className="flex items-start gap-2 text-sm">
-                  <span className="text-xs text-slate-500 shrink-0 w-20">{h.date}</span>
+                  <span className="text-xs text-slate-500 font-mono shrink-0 w-20">{h.date}</span>
                   <span className="text-xs bg-slate-800 text-slate-300 rounded px-1.5 py-0.5 shrink-0">{typeLabel[h.type]}</span>
                   <span className="text-slate-200">{h.title}</span>
                 </div>
@@ -240,9 +240,9 @@ function ThesisBox({ ticker, initialThesis }: { ticker: string; initialThesis: s
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between bg-slate-900 rounded-lg px-3 py-2">
+    <div className="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-3 py-2">
       <span className="text-slate-500 text-xs">{label}</span>
-      <span className="text-slate-200 text-xs text-right ml-2">{value}</span>
+      <span className="text-slate-200 text-xs font-mono text-right ml-2">{value}</span>
     </div>
   );
 }

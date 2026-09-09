@@ -2,20 +2,28 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ponytail: neutral scale realiased from Tailwind's default slate (blue-tinted)
-   to zinc (true neutral) - single-point fix, no per-component edits needed. */
+/* 디자인 토큰 리매핑 - 컴포넌트 클래스는 그대로 두고(bg-slate-900, text-cyan-400
+   등) @theme 값만 바꿔서 앱 전체 배색을 한 번에 교체한다. "공시 팩트체크
+   다이제스트"라는 정체성에 맞춰 slate는 순중립 zinc에서 잉크빛 차콜로,
+   cyan(기존 유일 액센트)은 관인/브라스 골드로 재정의 - 트레이딩 앱 느낌의
+   네온 시안 대신 "공식 문서에 도장 찍힌" 톤. */
 @theme {
   --font-sans: 'Pretendard Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
 
-  --color-slate-50: #fafafa;
-  --color-slate-100: #f4f4f5;
-  --color-slate-200: #e4e4e7;
-  --color-slate-300: #d4d4d8;
-  --color-slate-400: #a1a1aa;
-  --color-slate-500: #71717a;
-  --color-slate-600: #52525b;
-  --color-slate-700: #3f3f46;
-  --color-slate-800: #27272a;
-  --color-slate-900: #18181b;
-  --color-slate-950: #09090b;
+  --color-slate-50: #f1f2f5;
+  --color-slate-100: #e7e9ee;
+  --color-slate-200: #c9cdd6;
+  --color-slate-300: #9aa0ad;
+  --color-slate-400: #838b9c;
+  --color-slate-500: #626a7a;
+  --color-slate-600: #454c5c;
+  --color-slate-700: #313644;
+  --color-slate-800: #1b1f29;
+  --color-slate-900: #14171f;
+  --color-slate-950: #0b0d12;
+
+  --color-cyan-400: #d4a24e;
+  --color-cyan-500: #c9a24a;
+  --color-cyan-600: #a9822f;
 }

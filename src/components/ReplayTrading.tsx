@@ -64,9 +64,9 @@ export default function ReplayTrading({ datasetId, rows }: { datasetId: string; 
         />
 
         <div className="flex gap-2 px-2 text-xs text-slate-400">
-          <span>잔여 현금 <span className="text-slate-100 tabular-nums">{remainingCash.toLocaleString()}원</span></span>
+          <span>잔여 현금 <span className="text-slate-100 font-mono tabular-nums">{remainingCash.toLocaleString()}원</span></span>
           {position > 0 && (
-            <span>· 보유 {position}주 평단 <span className="text-slate-100 tabular-nums">{Math.round(avgCost).toLocaleString()}원</span></span>
+            <span>· 보유 {position}주 평단 <span className="text-slate-100 font-mono tabular-nums">{Math.round(avgCost).toLocaleString()}원</span></span>
           )}
         </div>
       </div>
@@ -123,9 +123,9 @@ export default function ReplayTrading({ datasetId, rows }: { datasetId: string; 
                 <span className={t.type === 'buy' ? 'text-emerald-400' : 'text-red-400'}>
                   {t.type === 'buy' ? '매수' : '매도'} {t.quantity}주
                 </span>
-                <span className="tabular-nums">{t.price.toLocaleString()}</span>
+                <span className="font-mono tabular-nums">{t.price.toLocaleString()}</span>
                 {t.type === 'sell' && profitBySellId.has(t.id) && (
-                  <span className={`tabular-nums ${profitBySellId.get(t.id)! >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`font-mono tabular-nums ${profitBySellId.get(t.id)! >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                     {profitBySellId.get(t.id)! >= 0 ? '+' : ''}{profitBySellId.get(t.id)!.toLocaleString()}
                   </span>
                 )}

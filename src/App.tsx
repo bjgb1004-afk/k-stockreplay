@@ -34,7 +34,10 @@ export default function App() {
       {/* 데스크탑(md+) 전용 우측 사이드바 - 모바일 하단 탭바를 그대로 늘린 게 아니라
           웹앱다운 상시 내비게이션으로 따로 만든다. */}
       <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:right-0 md:w-52 bg-slate-950 border-l border-slate-800 py-6 px-3 gap-1">
-        <p className="px-3 pb-4 text-sm font-bold text-slate-100">K-STOCKREPLAY</p>
+        <p className="px-3 pb-5 flex items-center gap-2 font-mono text-xs font-semibold tracking-tight text-slate-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
+          K-STOCKREPLAY
+        </p>
         <SideTabButton active={tab === 'today'} label="TODAY" icon={<Newspaper />} onClick={() => setTab('today')} />
         <SideTabButton active={tab === 'watchlist'} label="MY STOCK RADAR" icon={<Star />} onClick={() => setTab('watchlist')} />
         <SideTabButton active={tab === 'dividend'} label="DIVIDEND" icon={<CalendarDays />} onClick={() => setTab('dividend')} />
@@ -78,6 +81,7 @@ function TabButton({
       onClick={onClick}
       className={`relative flex flex-col items-center gap-0.5 py-2 text-[9px] leading-tight text-center px-0.5 ${active ? 'text-cyan-400' : 'text-slate-500'}`}
     >
+      {active && <span className="absolute top-0 inset-x-2 h-0.5 rounded-full bg-cyan-400" />}
       <span className="relative">
         {icon}
         {!!badgeCount && (
@@ -107,7 +111,7 @@ function SideTabButton({
   return (
     <button
       onClick={onClick}
-      className={`relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left ${active ? 'bg-slate-800 text-cyan-400' : 'text-slate-400 hover:text-slate-200'}`}
+      className={`relative flex items-center gap-3 rounded-md pl-3.5 pr-3 py-2.5 text-sm text-left border-l-2 ${active ? 'border-cyan-400 bg-slate-900 text-cyan-400' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'}`}
     >
       <span className="relative [&_svg]:w-[18px] [&_svg]:h-[18px]">
         {icon}

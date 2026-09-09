@@ -24,7 +24,7 @@ export default function DividendScreen() {
   return (
     <Screen>
       <header className="mb-6">
-        <h1 className="text-lg font-bold">DIVIDEND</h1>
+        <h1 className="text-xl font-bold font-mono tracking-tight">DIVIDEND</h1>
         <p className="text-xs text-slate-500">관심종목의 배당 관련 공시</p>
       </header>
 
@@ -40,7 +40,7 @@ export default function DividendScreen() {
         ) : (
           <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
             {myDividendNews.map((d) => (
-              <li key={d.id} className="bg-slate-900 rounded-lg px-3 py-2">
+              <li key={d.id} className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{d.companyName}</span>
                   <span className="text-xs text-slate-500 shrink-0 ml-2">{d.date}</span>

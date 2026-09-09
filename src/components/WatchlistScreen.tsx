@@ -95,7 +95,7 @@ export default function WatchlistScreen() {
     <Screen>
       <header className="mb-6 flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-lg font-bold">MY STOCK RADAR</h1>
+          <h1 className="text-xl font-bold font-mono tracking-tight">MY STOCK RADAR</h1>
           <p className="text-xs text-slate-500">
             {shareMsg ?? `관심종목 ${items.length}개 · 이 기기에만 저장됩니다`}
           </p>
@@ -132,7 +132,7 @@ export default function WatchlistScreen() {
                       {s.market}
                     </span>
                   </span>
-                  <span className="text-slate-500">{s.ticker}</span>
+                  <span className="text-slate-500 font-mono text-xs">{s.ticker}</span>
                 </button>
               </li>
             ))}
@@ -148,7 +148,7 @@ export default function WatchlistScreen() {
             {items.map((item) => (
               <li
                 key={item.ticker}
-                className="flex items-center justify-between text-sm bg-slate-900 rounded-lg pl-3 pr-1 py-1"
+                className="flex items-center justify-between text-sm bg-slate-900 border border-slate-800 rounded-lg pl-3 pr-1 py-1"
               >
                 <button
                   onClick={() => setSelected(item)}
@@ -160,10 +160,10 @@ export default function WatchlistScreen() {
                       <span className={`ml-1.5 text-[10px] rounded px-1 py-0.5 ${item.market === 'US' ? 'bg-cyan-500/15 text-cyan-400' : 'bg-slate-800 text-slate-400'}`}>
                         {item.market}
                       </span>
-                      <span className="text-slate-500 ml-2 text-xs">{item.ticker}</span>
+                      <span className="text-slate-500 ml-2 text-xs font-mono">{item.ticker}</span>
                     </span>
                     {item.market === 'KR' && prices.has(item.ticker) ? (
-                      <p className="text-xs mt-0.5">
+                      <p className="text-xs mt-0.5 font-mono tabular-nums">
                         {prices.get(item.ticker)!.close.toLocaleString()}원{' '}
                         <span className={prices.get(item.ticker)!.changePct >= 0 ? 'text-red-400' : 'text-blue-400'}>
                           {prices.get(item.ticker)!.changePct >= 0 ? '+' : ''}

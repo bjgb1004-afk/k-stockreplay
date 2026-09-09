@@ -109,7 +109,7 @@ export default function TodayScreen() {
     <Screen>
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold">TODAY</h1>
+          <h1 className="text-xl font-bold font-mono tracking-tight">TODAY</h1>
           <p className="text-xs text-slate-500">{data.date}</p>
         </div>
         {!!streak && streak > 1 && (

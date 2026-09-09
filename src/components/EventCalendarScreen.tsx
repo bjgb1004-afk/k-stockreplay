@@ -27,7 +27,7 @@ export default function EventCalendarScreen() {
   return (
     <Screen>
       <header className="mb-6">
-        <h1 className="text-lg font-bold">EVENTS</h1>
+        <h1 className="text-xl font-bold font-mono tracking-tight">EVENTS</h1>
         <p className="text-xs text-slate-500">관심종목의 주주총회 관련 공시</p>
       </header>
 
@@ -43,7 +43,7 @@ export default function EventCalendarScreen() {
         ) : (
           <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
             {myMeetingNews.map((e) => (
-              <li key={e.id} className="bg-slate-900 rounded-lg px-3 py-2">
+              <li key={e.id} className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{e.companyName}</span>
                   <span className="text-xs text-slate-500 shrink-0 ml-2">{e.date}</span>

@@ -55,7 +55,7 @@ export default function ReplayScreen() {
     <Screen>
       <header className="mb-6 flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-lg font-bold">REPLAY</h1>
+          <h1 className="text-xl font-bold font-mono tracking-tight">REPLAY</h1>
           <p className="text-xs text-slate-500">업로드한 파일은 이 기기에만 저장됩니다</p>
         </div>
         <button
@@ -66,7 +66,7 @@ export default function ReplayScreen() {
         </button>
       </header>
 
-      <details className="mb-6 bg-slate-900 rounded-lg px-3 py-2 text-sm text-slate-300 open:pb-3">
+      <details className="mb-6 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 open:pb-3">
         <summary className="cursor-pointer text-slate-100 font-medium py-1">사용법 자세히 보기 (데이터는 어디서 받나요?)</summary>
 
         <div className="mt-3 space-y-4 text-xs text-slate-400">
@@ -126,7 +126,7 @@ export default function ReplayScreen() {
         ) : (
           <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
             {datasets.map((d) => (
-              <li key={d.id} className="flex items-center justify-between text-sm bg-slate-900 rounded-lg pl-3 pr-1 py-1">
+              <li key={d.id} className="flex items-center justify-between text-sm bg-slate-900 border border-slate-800 rounded-lg pl-3 pr-1 py-1">
                 <button onClick={() => handleOpen(d)} className="flex-1 flex items-center justify-between text-left py-1.5 min-w-0">
                   <span className="truncate">
                     <span className="font-medium">{d.symbol}</span>
