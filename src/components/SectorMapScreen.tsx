@@ -38,6 +38,7 @@ export default function SectorMapScreen() {
   const [stocks, setStocks] = useState<StockOption[]>([]);
   const [openSector, setOpenSector] = useState<string | null>(null);
   const [selected, setSelected] = useState<StockOption | null>(null);
+  const [themeId, setThemeId] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/data/sector-map.json').then((r) => r.json()).then(setSectorMap).catch(() => {});
@@ -66,9 +67,7 @@ export default function SectorMapScreen() {
     .map(([name, { code, members }]) => ({ name, code, members }))
     .sort((a, b) => b.members.length - a.members.length);
 
-  // 테마가 하나뿐인 동안은 고를 필요가 없어서 그냥 첫 번째를 보여준다 - 두 번째
-  // 테마가 생기면 그때 선택 UI를 추가한다.
-  const themeMap = themeMaps[0];
+  const themeMap = themeMaps.find((t) => t.id === themeId) ?? themeMaps[0];
 
   return (
     <Screen>
@@ -139,6 +138,21 @@ export default function SectorMapScreen() {
         <p className="text-sm text-slate-500">불러오는 중...</p>
       ) : (
         <Section title={`🔗 ${themeMap.label} 밸류체인`}>
+          {themeMaps.length > 1 && (
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {themeMaps.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setThemeId(t.id)}
+                  className={`text-xs px-2.5 py-1 rounded-full border ${
+                    themeMap.id === t.id ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-600' : 'border-slate-800 text-slate-500'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="space-y-4">
             {themeMap.groups.map((group) => (
               <div key={group.label}>
