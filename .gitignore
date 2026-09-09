@@ -10,6 +10,9 @@ coverage/
 # Supabase CLI local cache
 supabase/.temp/
 
+# Claude Code agent state (worktrees, session config)
+.claude/
+
 # Temporary / Test Files
 test.js
 test.py

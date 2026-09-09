@@ -1,22 +1,24 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Newspaper, Star, CalendarDays, CalendarClock, Bell, History } from 'lucide-react';
+import { Newspaper, Star, CalendarDays, CalendarClock, Bell, History, Factory } from 'lucide-react';
 import TodayScreen from './components/TodayScreen';
 import WatchlistScreen from './components/WatchlistScreen';
 import DividendScreen from './components/DividendScreen';
 import EventCalendarScreen from './components/EventCalendarScreen';
 import AlertScreen from './components/AlertScreen';
 import ReplayScreen from './components/ReplayScreen';
+import SectorMapScreen from './components/SectorMapScreen';
 import { useAlerts } from './lib/useAlerts';
 import { updateAppBadge } from './lib/badge';
 
-// THEME/CHAIN(ThemeTreeScreen, ValueChainScreen)은 실데이터로 연결할 방법이 없어서
-// 라우팅에서 뺐다 - 종목-테마/공급망 관계는 DART 공시로 못 뽑아내는 수작업 편집
-// 데이터라, 그 데이터 소스가 생기기 전까진 화면 파일만 남겨두고 숨긴다.
-type Tab = 'today' | 'watchlist' | 'dividend' | 'events' | 'alerts' | 'replay';
+// VALUE CHAIN(ValueChainScreen)은 여전히 라우팅에서 뺀 상태 - 공급망/계열 관계는
+// DART 공시로 못 뽑아내는 수작업 편집 데이터라, 그 데이터 소스가 생기기 전까진
+// 화면 파일만 남겨두고 숨긴다. SECTOR MAP은 DART KSIC 분류로 기계 생성 가능해서 뺐다.
+type Tab = 'today' | 'watchlist' | 'sector' | 'dividend' | 'events' | 'alerts' | 'replay';
 
 const SCREENS: Record<Tab, ReactNode> = {
   today: <TodayScreen />,
   watchlist: <WatchlistScreen />,
+  sector: <SectorMapScreen />,
   dividend: <DividendScreen />,
   events: <EventCalendarScreen />,
   alerts: <AlertScreen />,
@@ -40,6 +42,7 @@ export default function App() {
         </p>
         <SideTabButton active={tab === 'today'} label="TODAY" icon={<Newspaper />} onClick={() => setTab('today')} />
         <SideTabButton active={tab === 'watchlist'} label="MY STOCK RADAR" icon={<Star />} onClick={() => setTab('watchlist')} />
+        <SideTabButton active={tab === 'sector'} label="SECTOR MAP" icon={<Factory />} onClick={() => setTab('sector')} />
         <SideTabButton active={tab === 'dividend'} label="DIVIDEND" icon={<CalendarDays />} onClick={() => setTab('dividend')} />
         <SideTabButton active={tab === 'events'} label="EVENTS" icon={<CalendarClock />} onClick={() => setTab('events')} />
         <SideTabButton active={tab === 'alerts'} label="ALERT" icon={<Bell />} badgeCount={unreadCount} onClick={() => setTab('alerts')} />
@@ -50,9 +53,10 @@ export default function App() {
 
       {/* 모바일 전용 하단 탭바 */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-slate-950/95 border-t border-slate-800 max-w-md mx-auto overflow-x-auto">
-        <div className="grid grid-cols-6 min-w-[420px]">
+        <div className="grid grid-cols-7 min-w-[480px]">
           <TabButton active={tab === 'today'} label="TODAY" icon={<Newspaper size={16} />} onClick={() => setTab('today')} />
           <TabButton active={tab === 'watchlist'} label="MY STOCK RADAR" icon={<Star size={16} />} onClick={() => setTab('watchlist')} />
+          <TabButton active={tab === 'sector'} label="SECTOR MAP" icon={<Factory size={16} />} onClick={() => setTab('sector')} />
           <TabButton active={tab === 'dividend'} label="DIVIDEND" icon={<CalendarDays size={16} />} onClick={() => setTab('dividend')} />
           <TabButton active={tab === 'events'} label="EVENTS" icon={<CalendarClock size={16} />} onClick={() => setTab('events')} />
           <TabButton active={tab === 'alerts'} label="ALERT" icon={<Bell size={16} />} badgeCount={unreadCount} onClick={() => setTab('alerts')} />
