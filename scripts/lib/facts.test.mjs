@@ -48,5 +48,7 @@ assert.equal(interpret('매출액또는손익구조30%(대규모법인은15%)이
 assert.equal(interpret('소송등의판결ㆍ결정').sentiment, 'MIXED');
 assert.equal(interpret('아무 패턴에도 안 걸리는 제목').sentiment, 'NEUTRAL');
 assert.ok(interpret('아무 패턴에도 안 걸리는 제목').meaning.length > 0);
+assert.equal(interpret('투자판단관련주요경영사항 (경영지배인 선임의 건)').sentiment, 'MIXED');
+assert.match(interpret('투자판단관련주요경영사항').meaning, /포괄 분류명/);
 
 console.log('facts.mjs: all checks passed');

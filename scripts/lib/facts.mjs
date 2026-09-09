@@ -76,6 +76,9 @@ export const INTERPRET_RULES = [
   [/감자\s*결정/, 'MIXED', '감자 결정 - 무상감자는 통상 악재, 재무구조 개선 목적이면 다르게 해석될 수 있음'],
   [/최대주주\s*변경/, 'MIXED', '최대주주 변경 - 경영권 이슈, 배경 확인 필요'],
   [/(대표이사|대표집행임원).*변경/, 'MIXED', '대표이사 변경 - 배경에 따라 호재/악재가 갈림'],
+  // "투자판단관련주요경영사항"은 DART가 정해진 서식이 없는 사안에 붙이는 포괄
+  // 명칭이고, 실제 내용은 괄호 안 부제(예: "경영지배인 선임의 건")에 있다.
+  [/경영지배인.*(선임|해임)/, 'MIXED', '경영지배인(대표이사에 준하는 포괄적 경영권을 위임받는 지배인) 선임/해임 - 지배구조 변화, 배경 확인 필요'],
   [/타법인.*(주식|출자증권).*취득/, 'MIXED', '타법인 지분 취득 - M&A·투자 목적에 따라 다름'],
   [/영업(양수|양도)/, 'MIXED', '영업 양수도 - 사업 구조 변화, 배경 확인 필요'],
   [/(회사\s*)?분할\s*결정/, 'MIXED', '회사 분할 결정 - 목적에 따라 다름'],
@@ -93,11 +96,20 @@ export const INTERPRET_RULES = [
   [/주식매수선택권.*부여/, 'NEUTRAL', '스톡옵션 부여 공시 - 임직원 보상 관련'],
 ];
 
+// "투자판단관련주요경영사항"은 DART가 지정 서식이 없는 온갖 사안에 붙이는 포괄
+// 명칭이라, 이 이름만 있고 괄호 부제가 없으면 제목 자체에 알아낼 정보가 없다.
+// 그런 경우 "확인이 필요합니다"만 던지는 대신, 왜 모호한지(DART의 포괄 분류
+// 명칭이라서)를 알려주고 원문 링크(TodayScreen)로 넘기는 게 정직한 처리다.
+const GENERIC_CATCHALL = /^투자판단관련주요경영사항$/;
+
 export function interpret(reportName) {
   for (const [pattern, sentiment, meaning] of INTERPRET_RULES) {
     if (pattern.test(reportName)) return { sentiment, meaning };
   }
-  return { sentiment: 'NEUTRAL', meaning: '공시 원문 확인이 필요합니다.' };
+  if (GENERIC_CATCHALL.test(reportName)) {
+    return { sentiment: 'NEUTRAL', meaning: 'DART의 포괄 분류명이라 제목만으로는 내용을 알 수 없습니다 - 아래 원문보기로 확인하세요.' };
+  }
+  return { sentiment: 'NEUTRAL', meaning: '제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요.' };
 }
 
 export function levelFor(changeCount) {

@@ -162,9 +162,19 @@ export default function TodayScreen() {
                 <span className="font-mono text-[11px] text-slate-500 shrink-0">{item.time}</span>
               </div>
               <p className="text-sm text-slate-300 mt-1 line-clamp-2">{item.title}</p>
-              <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-800">
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${sentimentDot[item.sentiment]}`} />
-                <p className="text-xs text-slate-500 truncate">{item.meaning}</p>
+              <div className="mt-2 pt-2 border-t border-slate-800">
+                <div className="flex items-start gap-1.5">
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1 ${sentimentDot[item.sentiment]}`} />
+                  <p className="text-xs text-slate-500">{item.meaning}</p>
+                </div>
+                <a
+                  href={`https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${item.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-xs text-cyan-600 hover:underline mt-1.5 pl-3"
+                >
+                  원문보기 →
+                </a>
               </div>
             </li>
           ))}
