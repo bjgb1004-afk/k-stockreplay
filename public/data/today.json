@@ -1,80 +1,14 @@
 {
-  "date": "2026-09-18",
-  "generatedAt": "2026-09-17T23:45:46.935Z",
+  "date": "2026-09-19",
+  "generatedAt": "2026-09-18T23:41:08.446Z",
   "summary": {
-    "newEvents": 4,
+    "newEvents": 0,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
-  "newToday": [
-    {
-      "id": "20260918000001",
-      "ticker": "079940",
-      "companyName": "가비아",
-      "type": "DISCLOSURE",
-      "title": "공개매수결과보고서",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
-    },
-    {
-      "id": "20260917000376",
-      "ticker": "229000",
-      "companyName": "젠큐릭스",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주요사항보고서(영업정지)",
-      "time": "",
-      "sentiment": "NEGATIVE",
-      "meaning": "영업 정지 - 사업 중단 관련, 부정적인 신호"
-    },
-    {
-      "id": "20260917000375",
-      "ticker": "277410",
-      "companyName": "인산가",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주요사항보고서(유상증자결정)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
-    },
-    {
-      "id": "20260917000373",
-      "ticker": "009620",
-      "companyName": "삼보산업",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주요사항보고서(유상증자결정)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
-    }
-  ],
-  "myStockRadar": [
-    {
-      "ticker": "229000",
-      "companyName": "젠큐릭스",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "277410",
-      "companyName": "인산가",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "009620",
-      "companyName": "삼보산업",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "079940",
-      "companyName": "가비아",
-      "changeCount": 1,
-      "level": "ORANGE"
-    }
-  ],
+  "newToday": [],
+  "myStockRadar": [],
   "upcoming": {
     "tomorrow": {
       "dividend": 0,
