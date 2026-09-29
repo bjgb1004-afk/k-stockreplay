@@ -15,6 +15,18 @@ jobs:
     permissions:
       contents: write
     steps:
+      # Supabase 무료 티어는 7일간 DB 요청이 없으면 프로젝트를 정지한다. 푸시는
+      # 새 공시가 있을 때만 나가므로(아래 Notify subscribers) 조용한 주가 이어지면
+      # DB가 그대로 잠든다. 이 select 한 번이 매일 무활동 타이머를 리셋한다.
+      - name: Keep Supabase project awake
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl -sfS "$SUPABASE_URL/rest/v1/push_subscriptions?select=id&limit=1" \
+            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" > /dev/null
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -40,6 +52,7 @@ jobs:
         run: |
           git add public/data/today.json
           git add public/data/prices.json 2>/dev/null || true
+          git add public/data/money-flow.json 2>/dev/null || true
           git diff --staged --quiet && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Commit and push
