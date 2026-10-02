@@ -1,87 +1,17 @@
 {
-  "date": "2026-10-01",
-  "generatedAt": "2026-10-01T00:52:39.137Z",
+  "date": "2026-10-02",
+  "generatedAt": "2026-10-02T01:07:34.347Z",
   "summary": {
-    "newEvents": 23,
+    "newEvents": 12,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
   "newToday": [
     {
-      "id": "20261001900080",
-      "ticker": "490470",
-      "companyName": "세미파이브",
-      "type": "CONTRACT",
-      "title": "단일판매ㆍ공급계약체결",
-      "time": "",
-      "sentiment": "POSITIVE",
-      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
-    },
-    {
-      "id": "20261001900006",
-      "ticker": "439090",
-      "companyName": "마녀공장",
-      "type": "MANAGEMENT_CHANGE",
-      "title": "대표이사변경",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "대표이사 변경 - 배경에 따라 호재/악재가 갈림"
-    },
-    {
-      "id": "20261001900004",
-      "ticker": "900290",
-      "companyName": "GRT",
-      "type": "DISCLOSURE",
-      "title": "매출액또는손익구조30%(대규모법인은15%)이상변동(자회사의 주요경영사항)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "실적(매출/손익) 변동 공시 - 증가인지 감소인지는 원문 확인 필요"
-    },
-    {
-      "id": "20261001900003",
-      "ticker": "900290",
-      "companyName": "GRT",
-      "type": "DISCLOSURE",
-      "title": "매출액또는손익구조30%(대규모법인은15%)이상변동",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "실적(매출/손익) 변동 공시 - 증가인지 감소인지는 원문 확인 필요"
-    },
-    {
-      "id": "20261001900002",
-      "ticker": "072770",
-      "companyName": "멤레이비티",
-      "type": "DISCLOSURE",
-      "title": "주권매매거래정지              (주식의 병합, 분할 등 전자등록 변경, 말소)",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
-    },
-    {
-      "id": "20261001900001",
-      "ticker": "900290",
-      "companyName": "GRT",
-      "type": "DISCLOSURE",
-      "title": "주주총회소집결의",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
-    },
-    {
-      "id": "20261001800079",
-      "ticker": "010120",
-      "companyName": "엘에스일렉트릭",
-      "type": "CONTRACT",
-      "title": "단일판매ㆍ공급계약체결",
-      "time": "",
-      "sentiment": "POSITIVE",
-      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
-    },
-    {
-      "id": "20261001800065",
-      "ticker": "035720",
-      "companyName": "카카오",
+      "id": "20261002800190",
+      "ticker": "005440",
+      "companyName": "현대지에프홀딩스",
       "type": "DISCLOSURE",
       "title": "기업설명회(IR)개최(안내공시)",
       "time": "",
@@ -89,49 +19,29 @@
       "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
     },
     {
-      "id": "20261001800062",
-      "ticker": "010780",
-      "companyName": "아이에스동서",
-      "type": "CONTRACT",
-      "title": "단일판매ㆍ공급계약체결",
-      "time": "",
-      "sentiment": "POSITIVE",
-      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
-    },
-    {
-      "id": "20261001800060",
-      "ticker": "480370",
-      "companyName": "씨케이솔루션",
-      "type": "CONTRACT",
-      "title": "단일판매ㆍ공급계약체결",
-      "time": "",
-      "sentiment": "POSITIVE",
-      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
-    },
-    {
-      "id": "20261001800054",
-      "ticker": "003160",
-      "companyName": "디아이",
-      "type": "CONTRACT",
-      "title": "단일판매ㆍ공급계약체결(자율공시)",
-      "time": "",
-      "sentiment": "POSITIVE",
-      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
-    },
-    {
-      "id": "20261001800051",
-      "ticker": "034220",
-      "companyName": "LG디스플레이",
+      "id": "20261002800184",
+      "ticker": "036460",
+      "companyName": "한국가스공사",
       "type": "DISCLOSURE",
-      "title": "결산실적공시예고(안내공시)",
+      "title": "풍문또는보도에대한해명(미확정)",
       "time": "",
       "sentiment": "NEUTRAL",
       "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
     },
     {
-      "id": "20261001800049",
-      "ticker": "034220",
-      "companyName": "LG디스플레이",
+      "id": "20261002800172",
+      "ticker": "032830",
+      "companyName": "삼성생명",
+      "type": "DISCLOSURE",
+      "title": "풍문또는보도에대한해명(미확정)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
+    },
+    {
+      "id": "20261002800132",
+      "ticker": "161890",
+      "companyName": "한국콜마",
       "type": "DISCLOSURE",
       "title": "기업설명회(IR)개최(안내공시)",
       "time": "",
@@ -139,39 +49,49 @@
       "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
     },
     {
-      "id": "20261001800034",
-      "ticker": "034020",
-      "companyName": "두산에너빌리티",
-      "type": "CONTRACT",
-      "title": "단일판매ㆍ공급계약체결",
-      "time": "",
-      "sentiment": "POSITIVE",
-      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
-    },
-    {
-      "id": "20261001800028",
-      "ticker": "005880",
-      "companyName": "대한해운",
-      "type": "CONTRACT",
-      "title": "단일판매ㆍ공급계약체결",
-      "time": "",
-      "sentiment": "POSITIVE",
-      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
-    },
-    {
-      "id": "20261001800005",
-      "ticker": "000720",
-      "companyName": "현대건설",
+      "id": "20261002800005",
+      "ticker": "055550",
+      "companyName": "신한지주",
       "type": "DISCLOSURE",
-      "title": "[기재정정]중대재해발생",
+      "title": "해외증권거래소등에신고한주요공시사항의국내신고(자회사의 주요경영사항)",
       "time": "",
       "sentiment": "NEUTRAL",
       "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
     },
     {
-      "id": "20261001000014",
-      "ticker": "002900",
-      "companyName": "TYM",
+      "id": "20261002800003",
+      "ticker": "047050",
+      "companyName": "포스코인터내셔널",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]타인에대한채무보증결정",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "채무보증 결정 - 계열사 지원 관련, 배경 확인 필요"
+    },
+    {
+      "id": "20261002800002",
+      "ticker": "103590",
+      "companyName": "일진전기",
+      "type": "CONTRACT",
+      "title": "단일판매ㆍ공급계약체결",
+      "time": "",
+      "sentiment": "POSITIVE",
+      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
+    },
+    {
+      "id": "20261002000045",
+      "ticker": "036810",
+      "companyName": "에프에스티",
+      "type": "INSIDER",
+      "title": "주식등의대량보유상황보고서(일반)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
+    },
+    {
+      "id": "20261002000028",
+      "ticker": "096870",
+      "companyName": "엘디티",
       "type": "INSIDER",
       "title": "임원ㆍ주요주주특정증권등소유상황보고서",
       "time": "",
@@ -179,184 +99,100 @@
       "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
     },
     {
-      "id": "20261001000008",
-      "ticker": "060900",
-      "companyName": "에이전트AI",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주요사항보고서(자기전환사채매도결정)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
-    },
-    {
-      "id": "20261001000005",
-      "ticker": "045520",
-      "companyName": "크린앤사이언스",
-      "type": "DISCLOSURE",
-      "title": "임원ㆍ주요주주특정증권등거래계획보고서",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
-    },
-    {
-      "id": "20260930000878",
-      "ticker": "013720",
-      "companyName": "청보",
-      "type": "DISCLOSURE",
-      "title": "주요사항보고서(전환사채권발행결정)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
-    },
-    {
-      "id": "20260930000877",
-      "ticker": "084180",
-      "companyName": "수성웹툰",
+      "id": "20261002000027",
+      "ticker": "060370",
+      "companyName": "LS마린솔루션",
       "type": "INSIDER",
-      "title": "주식등의대량보유상황보고서(약식)",
+      "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
+    },
+    {
+      "id": "20261001000615",
+      "ticker": "074430",
+      "companyName": "아미노로직스",
+      "type": "INSIDER",
+      "title": "임원ㆍ주요주주특정증권등소유상황보고서 (정정 등 3건)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
+    },
+    {
+      "id": "20261001000612",
+      "ticker": "074430",
+      "companyName": "아미노로직스",
+      "type": "INSIDER",
+      "title": "주식등의대량보유상황보고서(일반)",
       "time": "",
       "sentiment": "MIXED",
       "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
-    },
-    {
-      "id": "20260930000872",
-      "ticker": "413630",
-      "companyName": "씨피시스템",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주요사항보고서(유형자산양수결정)",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
-    },
-    {
-      "id": "20260930000870",
-      "ticker": "032790",
-      "companyName": "엠젠솔루션",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]주요사항보고서(유상증자결정)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
     }
   ],
   "myStockRadar": [
     {
-      "ticker": "900290",
-      "companyName": "GRT",
-      "changeCount": 3,
-      "level": "RED"
-    },
-    {
-      "ticker": "034220",
-      "companyName": "LG디스플레이",
+      "ticker": "074430",
+      "companyName": "아미노로직스",
       "changeCount": 2,
       "level": "ORANGE"
     },
     {
-      "ticker": "010120",
-      "companyName": "엘에스일렉트릭",
+      "ticker": "036460",
+      "companyName": "한국가스공사",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "490470",
-      "companyName": "세미파이브",
+      "ticker": "005440",
+      "companyName": "현대지에프홀딩스",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "010780",
-      "companyName": "아이에스동서",
+      "ticker": "032830",
+      "companyName": "삼성생명",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "480370",
-      "companyName": "씨케이솔루션",
+      "ticker": "161890",
+      "companyName": "한국콜마",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "003160",
-      "companyName": "디아이",
+      "ticker": "103590",
+      "companyName": "일진전기",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "035720",
-      "companyName": "카카오",
+      "ticker": "055550",
+      "companyName": "신한지주",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "034020",
-      "companyName": "두산에너빌리티",
+      "ticker": "047050",
+      "companyName": "포스코인터내셔널",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "005880",
-      "companyName": "대한해운",
+      "ticker": "036810",
+      "companyName": "에프에스티",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "439090",
-      "companyName": "마녀공장",
+      "ticker": "096870",
+      "companyName": "엘디티",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "072770",
-      "companyName": "멤레이비티",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "000720",
-      "companyName": "현대건설",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "060900",
-      "companyName": "에이전트AI",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "013720",
-      "companyName": "청보",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "032790",
-      "companyName": "엠젠솔루션",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "413630",
-      "companyName": "씨피시스템",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "002900",
-      "companyName": "TYM",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "045520",
-      "companyName": "크린앤사이언스",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "084180",
-      "companyName": "수성웹툰",
+      "ticker": "060370",
+      "companyName": "LS마린솔루션",
       "changeCount": 1,
       "level": "ORANGE"
     }
