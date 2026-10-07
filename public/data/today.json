@@ -1,37 +1,17 @@
 {
-  "date": "2026-10-06",
-  "generatedAt": "2026-10-06T01:57:21.032Z",
+  "date": "2026-10-07",
+  "generatedAt": "2026-10-07T01:03:58.260Z",
   "summary": {
-    "newEvents": 29,
+    "newEvents": 27,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
   "newToday": [
     {
-      "id": "20261006900124",
-      "ticker": "032580",
-      "companyName": "피델릭스",
-      "type": "DISCLOSURE",
-      "title": "단기차입금증가결정",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
-    },
-    {
-      "id": "20261006900119",
-      "ticker": "046310",
-      "companyName": "백금T&A",
-      "type": "DISCLOSURE",
-      "title": "본점소재지변경",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
-    },
-    {
-      "id": "20261006900117",
-      "ticker": "030520",
-      "companyName": "한컴",
+      "id": "20261007900068",
+      "ticker": "272110",
+      "companyName": "케이엔제이",
       "type": "DISCLOSURE",
       "title": "기업설명회(IR)개최",
       "time": "",
@@ -39,9 +19,9 @@
       "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
     },
     {
-      "id": "20261006900105",
-      "ticker": "043260",
-      "companyName": "성호전자",
+      "id": "20261007900061",
+      "ticker": "397030",
+      "companyName": "에이프릴바이오",
       "type": "DISCLOSURE",
       "title": "기업설명회(IR)개최",
       "time": "",
@@ -49,29 +29,9 @@
       "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
     },
     {
-      "id": "20261006900101",
-      "ticker": "318060",
-      "companyName": "그래피",
-      "type": "DISCLOSURE",
-      "title": "기업설명회(IR)개최",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
-    },
-    {
-      "id": "20261006900076",
-      "ticker": "367000",
-      "companyName": "플래티어",
-      "type": "DISCLOSURE",
-      "title": "기업설명회(IR)개최",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
-    },
-    {
-      "id": "20261006800096",
-      "ticker": "009150",
-      "companyName": "삼성전기",
+      "id": "20261007800089",
+      "ticker": "084680",
+      "companyName": "이월드",
       "type": "DISCLOSURE",
       "title": "최대주주등소유주식변동신고서",
       "time": "",
@@ -79,9 +39,19 @@
       "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
     },
     {
-      "id": "20261006800094",
-      "ticker": "084870",
-      "companyName": "티비에이치글로벌",
+      "id": "20261007800069",
+      "ticker": "014830",
+      "companyName": "유니드",
+      "type": "DISCLOSURE",
+      "title": "결산실적공시예고(안내공시)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
+    },
+    {
+      "id": "20261007800067",
+      "ticker": "096760",
+      "companyName": "JW홀딩스",
       "type": "DISCLOSURE",
       "title": "최대주주등소유주식변동신고서",
       "time": "",
@@ -89,39 +59,79 @@
       "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
     },
     {
-      "id": "20261006800023",
+      "id": "20261007800052",
+      "ticker": "210980",
+      "companyName": "SK디앤디",
+      "type": "DISCLOSURE",
+      "title": "유상증자신주발행가액(안내공시)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
+    },
+    {
+      "id": "20261007800029",
+      "ticker": "012330",
+      "companyName": "현대모비스",
+      "type": "DISCLOSURE",
+      "title": "기업설명회(IR)개최(안내공시)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
+    },
+    {
+      "id": "20261007600087",
+      "ticker": "336040",
+      "companyName": "타스컴",
+      "type": "DISCLOSURE",
+      "title": "기업설명회(IR)개최결과",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
+    },
+    {
+      "id": "20261007600078",
+      "ticker": "0203K0",
+      "companyName": "송우인포텍",
+      "type": "DISCLOSURE",
+      "title": "기업설명회(IR)개최결과",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
+    },
+    {
+      "id": "20261007600077",
+      "ticker": "403360",
+      "companyName": "라피치",
+      "type": "DISCLOSURE",
+      "title": "기업설명회(IR)개최결과",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
+    },
+    {
+      "id": "20261007600059",
+      "ticker": "456570",
+      "companyName": "아이엠지티",
+      "type": "DISCLOSURE",
+      "title": "기업설명회(IR)개최결과",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
+    },
+    {
+      "id": "20261007600051",
+      "ticker": "318660",
+      "companyName": "타임기술",
+      "type": "DISCLOSURE",
+      "title": "기업설명회(IR)개최결과",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
+    },
+    {
+      "id": "20261007000050",
       "ticker": "042700",
       "companyName": "한미반도체",
-      "type": "CONTRACT",
-      "title": "단일판매ㆍ공급계약체결(자율공시)",
-      "time": "",
-      "sentiment": "POSITIVE",
-      "meaning": "공급계약 체결 - 매출 확대 관련 긍정적 신호(전체 매출 대비 규모는 원문 확인 필요)"
-    },
-    {
-      "id": "20261006000052",
-      "ticker": "035200",
-      "companyName": "프럼파스트",
-      "type": "INSIDER",
-      "title": "임원ㆍ주요주주특정증권등소유상황보고서 (정정 등 2건)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
-    },
-    {
-      "id": "20261006000047",
-      "ticker": "004410",
-      "companyName": "서울식품공업",
-      "type": "INSIDER",
-      "title": "주식등의대량보유상황보고서(일반)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
-    },
-    {
-      "id": "20261006000046",
-      "ticker": "004410",
-      "companyName": "서울식품공업",
       "type": "INSIDER",
       "title": "임원ㆍ주요주주특정증권등소유상황보고서",
       "time": "",
@@ -129,29 +139,9 @@
       "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
     },
     {
-      "id": "20261006000042",
-      "ticker": "486510",
-      "companyName": "글로벌테크놀로지",
-      "type": "INSIDER",
-      "title": "임원ㆍ주요주주특정증권등소유상황보고서 (정정 등 2건)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
-    },
-    {
-      "id": "20261006000041",
-      "ticker": "101670",
-      "companyName": "하이드로리튬",
-      "type": "DISCLOSURE",
-      "title": "[기재정정]의결권대리행사권유참고서류",
-      "time": "",
-      "sentiment": "NEUTRAL",
-      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
-    },
-    {
-      "id": "20261006000040",
-      "ticker": "311390",
-      "companyName": "네오크레마",
+      "id": "20261007000049",
+      "ticker": "067990",
+      "companyName": "도이치모터스",
       "type": "INSIDER",
       "title": "주식등의대량보유상황보고서(일반)",
       "time": "",
@@ -159,9 +149,19 @@
       "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
     },
     {
-      "id": "20261006000038",
-      "ticker": "084870",
-      "companyName": "티비에이치글로벌",
+      "id": "20261007000048",
+      "ticker": "007660",
+      "companyName": "이수페타시스",
+      "type": "INSIDER",
+      "title": "임원ㆍ주요주주특정증권등소유상황보고서 (정정 등 3건)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
+    },
+    {
+      "id": "20261007000044",
+      "ticker": "009830",
+      "companyName": "한화솔루션",
       "type": "INSIDER",
       "title": "임원ㆍ주요주주특정증권등소유상황보고서",
       "time": "",
@@ -169,17 +169,7 @@
       "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
     },
     {
-      "id": "20261006000037",
-      "ticker": "071850",
-      "companyName": "캐스텍코리아",
-      "type": "INSIDER",
-      "title": "[기재정정]주식등의대량보유상황보고서(일반)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
-    },
-    {
-      "id": "20261006000035",
+      "id": "20261007000039",
       "ticker": "017180",
       "companyName": "명문제약",
       "type": "INSIDER",
@@ -189,174 +179,188 @@
       "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
     },
     {
-      "id": "20261006000033",
-      "ticker": "043910",
-      "companyName": "자연과환경",
+      "id": "20261007000036",
+      "ticker": "000720",
+      "companyName": "현대건설",
+      "type": "INSIDER",
+      "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
+    },
+    {
+      "id": "20261007000022",
+      "ticker": "096760",
+      "companyName": "JW홀딩스",
+      "type": "INSIDER",
+      "title": "주식등의대량보유상황보고서(일반)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
+    },
+    {
+      "id": "20261007000006",
+      "ticker": "000360",
+      "companyName": "삼환기업",
       "type": "DISCLOSURE",
-      "title": "[첨부정정]주요사항보고서(회사합병결정)",
+      "title": "감자결정",
       "time": "",
       "sentiment": "MIXED",
-      "meaning": "합병 결정 - 목적/비율에 따라 다름"
+      "meaning": "감자 결정 - 무상감자는 통상 악재, 재무구조 개선 목적이면 다르게 해석될 수 있음"
     },
     {
-      "id": "20261006000028",
-      "ticker": "065130",
-      "companyName": "탑엔지니어링",
-      "type": "INSIDER",
-      "title": "주식등의대량보유상황보고서(일반)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
-    },
-    {
-      "id": "20261006000022",
-      "ticker": "082210",
-      "companyName": "옵트론텍",
-      "type": "INSIDER",
-      "title": "주식등의대량보유상황보고서(일반)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
-    },
-    {
-      "id": "20261006000017",
-      "ticker": "082210",
-      "companyName": "옵트론텍",
-      "type": "INSIDER",
-      "title": "임원ㆍ주요주주특정증권등소유상황보고서",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
-    },
-    {
-      "id": "20261006000014",
-      "ticker": "059090",
-      "companyName": "미코",
-      "type": "INSIDER",
-      "title": "임원ㆍ주요주주특정증권등소유상황보고서",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
-    },
-    {
-      "id": "20261006000013",
-      "ticker": "236810",
-      "companyName": "엔비티",
-      "type": "INSIDER",
-      "title": "임원ㆍ주요주주특정증권등소유상황보고서",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
-    },
-    {
-      "id": "20261006000010",
-      "ticker": "035000",
-      "companyName": "HS애드",
-      "type": "INSIDER",
-      "title": "주식등의대량보유상황보고서(일반)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
-    },
-    {
-      "id": "20261006000008",
-      "ticker": "056080",
-      "companyName": "유진로봇",
-      "type": "INSIDER",
-      "title": "주식등의대량보유상황보고서(일반)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
-    },
-    {
-      "id": "20261006000007",
-      "ticker": "096870",
-      "companyName": "엘디티",
-      "type": "INSIDER",
-      "title": "임원ㆍ주요주주특정증권등소유상황보고서",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
-    },
-    {
-      "id": "20261002000674",
-      "ticker": "109670",
-      "companyName": "씨싸이트",
-      "type": "INSIDER",
-      "title": "주식등의대량보유상황보고서(약식)",
-      "time": "",
-      "sentiment": "MIXED",
-      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
-    },
-    {
-      "id": "20261002000673",
-      "ticker": "043260",
-      "companyName": "성호전자",
+      "id": "20261007000005",
+      "ticker": "000360",
+      "companyName": "삼환기업",
       "type": "DISCLOSURE",
-      "title": "[첨부정정]주요사항보고서(신주인수권부사채권발행결정)",
+      "title": "유상증자결정",
       "time": "",
       "sentiment": "MIXED",
       "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
+    },
+    {
+      "id": "20261007000004",
+      "ticker": "210980",
+      "companyName": "SK디앤디",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주요사항보고서(유상증자결정)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
+    },
+    {
+      "id": "20261006000465",
+      "ticker": "332570",
+      "companyName": "PS일렉트로닉스",
+      "type": "INSIDER",
+      "title": "주식등의대량보유상황보고서(일반)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
+    },
+    {
+      "id": "20261006000464",
+      "ticker": "900340",
+      "companyName": "윙입푸드",
+      "type": "INSIDER",
+      "title": "[기재정정]임원ㆍ주요주주특정증권등소유상황보고서",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "임원ㆍ주요주주 지분 변동 보고 - 매수/매도 여부ㆍ수량은 원문 확인 필요, 내부자 동향 신호"
+    },
+    {
+      "id": "20261006000463",
+      "ticker": "224060",
+      "companyName": "더코디",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주요사항보고서(전환사채권발행결정) (정정 등 2건)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "자금조달(증자/CB/BW) 결정 - 주식 물량 증가로 단기 악재일 수 있으나 조달 목적에 따라 다름"
+    },
+    {
+      "id": "20261006000461",
+      "ticker": "002720",
+      "companyName": "국제약품",
+      "type": "INSIDER",
+      "title": "주식등의대량보유상황보고서(일반)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
+    },
+    {
+      "id": "20261006000460",
+      "ticker": "263810",
+      "companyName": "상신전자",
+      "type": "INSIDER",
+      "title": "주식등의대량보유상황보고서(일반)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "5% 이상 대량보유 상황 보고 - 지분 확대/축소 여부는 원문 확인 필요"
     }
   ],
   "myStockRadar": [
     {
-      "ticker": "043260",
-      "companyName": "성호전자",
+      "ticker": "096760",
+      "companyName": "JW홀딩스",
       "changeCount": 2,
       "level": "ORANGE"
     },
     {
-      "ticker": "084870",
-      "companyName": "티비에이치글로벌",
+      "ticker": "210980",
+      "companyName": "SK디앤디",
       "changeCount": 2,
       "level": "ORANGE"
     },
     {
-      "ticker": "004410",
-      "companyName": "서울식품공업",
+      "ticker": "000360",
+      "companyName": "삼환기업",
       "changeCount": 2,
       "level": "ORANGE"
     },
     {
-      "ticker": "082210",
-      "companyName": "옵트론텍",
-      "changeCount": 2,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "032580",
-      "companyName": "피델릭스",
+      "ticker": "084680",
+      "companyName": "이월드",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "046310",
-      "companyName": "백금T&A",
+      "ticker": "336040",
+      "companyName": "타스컴",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "030520",
-      "companyName": "한컴",
+      "ticker": "397030",
+      "companyName": "에이프릴바이오",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "318060",
-      "companyName": "그래피",
+      "ticker": "0203K0",
+      "companyName": "송우인포텍",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "009150",
-      "companyName": "삼성전기",
+      "ticker": "403360",
+      "companyName": "라피치",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "367000",
-      "companyName": "플래티어",
+      "ticker": "014830",
+      "companyName": "유니드",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "272110",
+      "companyName": "케이엔제이",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "456570",
+      "companyName": "아이엠지티",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "318660",
+      "companyName": "타임기술",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "012330",
+      "companyName": "현대모비스",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "224060",
+      "companyName": "더코디",
       "changeCount": 1,
       "level": "ORANGE"
     },
@@ -367,38 +371,20 @@
       "level": "ORANGE"
     },
     {
-      "ticker": "043910",
-      "companyName": "자연과환경",
+      "ticker": "067990",
+      "companyName": "도이치모터스",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "035200",
-      "companyName": "프럼파스트",
+      "ticker": "007660",
+      "companyName": "이수페타시스",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "486510",
-      "companyName": "글로벌테크놀로지",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "101670",
-      "companyName": "하이드로리튬",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "311390",
-      "companyName": "네오크레마",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "071850",
-      "companyName": "캐스텍코리아",
+      "ticker": "009830",
+      "companyName": "한화솔루션",
       "changeCount": 1,
       "level": "ORANGE"
     },
@@ -409,44 +395,32 @@
       "level": "ORANGE"
     },
     {
-      "ticker": "065130",
-      "companyName": "탑엔지니어링",
+      "ticker": "000720",
+      "companyName": "현대건설",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "059090",
-      "companyName": "미코",
+      "ticker": "332570",
+      "companyName": "PS일렉트로닉스",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "236810",
-      "companyName": "엔비티",
+      "ticker": "002720",
+      "companyName": "국제약품",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "035000",
-      "companyName": "HS애드",
+      "ticker": "263810",
+      "companyName": "상신전자",
       "changeCount": 1,
       "level": "ORANGE"
     },
     {
-      "ticker": "056080",
-      "companyName": "유진로봇",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "096870",
-      "companyName": "엘디티",
-      "changeCount": 1,
-      "level": "ORANGE"
-    },
-    {
-      "ticker": "109670",
-      "companyName": "씨싸이트",
+      "ticker": "900340",
+      "companyName": "윙입푸드",
       "changeCount": 1,
       "level": "ORANGE"
     }
