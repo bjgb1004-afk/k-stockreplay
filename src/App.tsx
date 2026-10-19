@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Newspaper, Star, CalendarClock, Bell, History, Factory, Search } from 'lucide-react';
+import { Newspaper, Star, CalendarClock, Landmark, Bell, History, Factory, Search } from 'lucide-react';
 import TodayScreen from './components/TodayScreen';
 import WatchlistScreen from './components/WatchlistScreen';
 import EventsScreen from './components/EventsScreen';
+import BigMoneyScreen from './components/BigMoneyScreen';
 import AlertScreen from './components/AlertScreen';
 import ReplayScreen from './components/ReplayScreen';
 import SectorMapScreen from './components/SectorMapScreen';
@@ -13,9 +14,9 @@ import { getWatchlist, type WatchlistItem } from './lib/watchlistDb';
 // VALUE CHAIN(ValueChainScreen)은 여전히 라우팅에서 뺀 상태 - 공급망/계열 관계는
 // DART 공시로 못 뽑아내는 수작업 편집 데이터라, 그 데이터 소스가 생기기 전까진
 // 화면 파일만 남겨두고 숨긴다. SECTOR MAP은 DART KSIC 분류로 기계 생성 가능해서 뺐다.
-type Tab = 'today' | 'watchlist' | 'sector' | 'events' | 'alerts' | 'replay';
+type Tab = 'today' | 'watchlist' | 'sector' | 'whales' | 'events' | 'alerts' | 'replay';
 
-const TAB_IDS: Tab[] = ['today', 'watchlist', 'sector', 'events', 'alerts', 'replay'];
+const TAB_IDS: Tab[] = ['today', 'watchlist', 'sector', 'whales', 'events', 'alerts', 'replay'];
 
 function initialTab(): Tab {
   const rawHash = window.location.hash.slice(1);
@@ -62,6 +63,7 @@ export default function App() {
     today: <TodayScreen />,
     watchlist: <WatchlistScreen initialQuery={query} />,
     sector: <SectorMapScreen />,
+    whales: <BigMoneyScreen />,
     events: <EventsScreen />,
     alerts: <AlertScreen />,
     replay: <ReplayScreen />,
@@ -108,6 +110,7 @@ export default function App() {
           <SideTabButton active={tab === 'today'} ko="오늘" en="TODAY" icon={<Newspaper />} onClick={() => go('today')} />
           <SideTabButton active={tab === 'watchlist'} ko="관심종목" en="MY STOCK RADAR" icon={<Star />} onClick={() => go('watchlist')} />
           <SideTabButton active={tab === 'sector'} ko="업종 지도" en="SECTOR MAP" icon={<Factory />} onClick={() => go('sector')} />
+          <SideTabButton active={tab === 'whales'} ko="큰손 따라보기" en="BIG MONEY" icon={<Landmark />} onClick={() => go('whales')} />
           <SideTabButton active={tab === 'events'} ko="배당·이벤트" en="EVENTS" icon={<CalendarClock />} onClick={() => go('events')} />
           <SideTabButton active={tab === 'alerts'} ko="알림" en="ALERT" icon={<Bell />} badgeCount={unreadCount} onClick={() => go('alerts')} />
           <SideTabButton active={tab === 'replay'} ko="리플레이" en="REPLAY" icon={<History />} onClick={() => go('replay')} />
@@ -123,10 +126,11 @@ export default function App() {
 
       {/* 모바일 전용 하단 탭바 */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 bg-slate-900 border-t border-slate-800 overflow-x-auto no-scrollbar">
-        <div className="grid grid-cols-6">
+        <div className="grid grid-cols-7">
           <TabButton active={tab === 'today'} label="오늘" icon={<Newspaper />} onClick={() => go('today')} />
           <TabButton active={tab === 'watchlist'} label="관심" icon={<Star />} onClick={() => go('watchlist')} />
           <TabButton active={tab === 'sector'} label="업종" icon={<Factory />} onClick={() => go('sector')} />
+          <TabButton active={tab === 'whales'} label="큰손" icon={<Landmark />} onClick={() => go('whales')} />
           <TabButton active={tab === 'events'} label="배당·이벤트" icon={<CalendarClock />} onClick={() => go('events')} />
           <TabButton active={tab === 'alerts'} label="알림" icon={<Bell />} badgeCount={unreadCount} onClick={() => go('alerts')} />
           <TabButton active={tab === 'replay'} label="리플레이" icon={<History />} onClick={() => go('replay')} />

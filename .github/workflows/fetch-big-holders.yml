@@ -1,0 +1,51 @@
+name: Fetch big holders
+
+on:
+  schedule:
+    # 매주 일요일 18:00 KST (09:00 UTC). 대량보유(국내)는 회사별로 ~2,500회 호출해서
+    # DART 호출 간격 제한상 30분 안팎 걸리고, 13F(해외)는 분기 단위라 주 1회면 충분하다.
+    - cron: '0 9 * * 0'
+  workflow_dispatch: {}
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Self-check parsers
+        run: node scripts/big-holders.selfcheck.mjs
+
+      # 한쪽이 실패해도 다른 쪽 결과는 살린다 (실패 시 스크립트가 기존 파일을 건드리지 않는다).
+      - name: Fetch KR major-stock holders (DART)
+        continue-on-error: true
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+        run: node scripts/fetch-big-holders.mjs
+
+      - name: Fetch US 13F holdings (SEC EDGAR)
+        continue-on-error: true
+        run: node scripts/fetch-13f.mjs
+
+      - name: Check for changes
+        id: diff
+        run: |
+          git add public/data/big-holders-kr.json 2>/dev/null || true
+          git add public/data/big-holders-us.json 2>/dev/null || true
+          git diff --staged --quiet && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update big holders data"
+          git pull --rebase
+          git push
