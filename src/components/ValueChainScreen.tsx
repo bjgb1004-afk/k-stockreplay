@@ -38,7 +38,7 @@ export default function ValueChainScreen() {
         <p className="text-xs text-slate-500">잘 알려진 공급망 · 계열 관계만 표시</p>
       </header>
 
-      <Section title="🔗 기업 관계">
+      <Section title="기업 관계">
         {edges.length === 0 ? (
           <p className="text-sm text-slate-500">불러오는 중...</p>
         ) : (
@@ -48,7 +48,7 @@ export default function ValueChainScreen() {
               const to = companyByTicker.get(edge.to);
               if (!from || !to) return null;
               return (
-                <li key={i} className="bg-slate-900 rounded-lg px-3 py-2.5">
+                <li key={i} className="bg-slate-900 rounded-md px-3 py-2.5">
                   <div className="flex items-center gap-2 text-sm">
                     <CompanyChip company={from} onClick={() => setSelected(from)} />
                     <ArrowRight size={14} className="text-slate-600 shrink-0" />

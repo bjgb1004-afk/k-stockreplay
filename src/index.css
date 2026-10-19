@@ -2,31 +2,226 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* 디자인 토큰 리매핑 - 컴포넌트 클래스는 그대로 두고(bg-slate-900, text-cyan-400
-   등) @theme 값만 바꿔서 앱 전체 배색을 한 번에 교체한다. "공시 팩트체크
-   다이제스트" 정체성은 유지하되 어두운 배경 대신 종이/서류 느낌의 밝은 배경으로 -
-   숫자가 낮을수록 어두운(글자) 색, 높을수록 밝은(배경) 색이 되도록 다크 테마
-   램프를 그대로 뒤집었다(950↔50, 900↔100, ... 페어) - 그래서 bg-slate-900이
-   여전히 "카드 배경", text-slate-100이 여전히 "본문 글자" 역할을 하되 밝은
-   버전으로 나온다. cyan(브라스 골드 액센트)도 흰 배경에서 대비가 나오게
-   더 짙게 다시 조정. */
-@theme {
-  --font-sans: 'Pretendard Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+/* ============================================================
+   디자인 토큰 (리디자인 2026-10)
+   증권사 HTS처럼 촘촘하되 여백으로 신뢰감을 주는 배색.
+   - 브랜드: 네이비(#0B3D91) — 금융 서비스의 기본 신뢰색
+   - 등락: 국내 관례대로 상승 빨강 / 하락 파랑
+   - 표면: 흰 패널 + 연회색 배경 + 얇은 구분선
 
-  --color-slate-50: #0d0c08;
-  --color-slate-100: #17150f;
-  --color-slate-200: #262420;
-  --color-slate-300: #3c3934;
-  --color-slate-400: #57534a;
-  --color-slate-500: #6b6759;
-  --color-slate-600: #9c9583;
-  --color-slate-700: #c9c2b0;
-  --color-slate-800: #e7e2d6;
-  --color-slate-900: #ffffff;
-  --color-slate-950: #f7f5ef;
+   컴포넌트 클래스(bg-slate-900, text-slate-500 ...)는 그대로 두고
+   @theme 값만 바꿔 앱 전체 배색을 한 번에 교체한다. 다크 테마 램프를
+   그대로 뒤집어 둔 구조라 숫자가 낮을수록 글자색, 높을수록 배경색이다.
+     slate-950 = 페이지 배경 / slate-900 = 패널 / slate-800 = 구분선
+     slate-100 = 본문 글자 / slate-500 = 보조 라벨
+   값은 CSS 변수로 한 단계 거쳐서 OS 다크모드일 때 자동으로 뒤집힌다.
+   ============================================================ */
+:root {
+  color-scheme: light;
+  --c-950: #f3f5f8; /* 페이지 배경 */
+  --c-900: #ffffff; /* 패널 표면 */
+  --c-800: #e1e6ee; /* 구분선 · 옅은 채움 */
+  --c-700: #c9d1dd; /* 진한 구분선 */
+  --c-600: #98a3b5;
+  --c-500: #7c8798; /* 보조 라벨 */
+  --c-400: #5c6b80;
+  --c-300: #4a5568; /* 본문 보조 */
+  --c-200: #1b2740; /* 소제목 */
+  --c-100: #111a2b; /* 본문 */
+  --c-50: #0b1220;
 
-  --color-cyan-400: #8a6518;
-  --color-cyan-500: #a67b22;
-  --color-cyan-600: #7a5714;
+  --c-brand: #0b3d91;
+  --c-brand-strong: #082e6f;
+  --c-brand-soft: #e8eef9;
+
+  --c-up: #d0263a;
+  --c-up-strong: #b81f31;
+  --c-down: #1a5fd6;
+  --c-ok: #18794e;
+  --c-ok-strong: #156843;
+  --c-warn: #d99e2b;
+  --c-warn-strong: #b7791f;
+  --c-accent: #e07b39;
+  --c-accent-strong: #c2410c;
+
+  --shadow-panel: 0 1px 2px rgba(17, 26, 43, 0.06);
 }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --c-950: #0b1220;
+    --c-900: #111a2b;
+    --c-800: #1f2a3d;
+    --c-700: #2c3a52;
+    --c-600: #5c6a80;
+    --c-500: #738097;
+    --c-400: #94a0b4;
+    --c-300: #a9b3c4;
+    --c-200: #d5ddea;
+    --c-100: #e6ebf3;
+    --c-50: #f2f5fa;
+
+    --c-brand: #5b8def;
+    --c-brand-strong: #7fa8f5;
+    --c-brand-soft: #16264a;
+
+    --c-up: #ff5a6a;
+    --c-up-strong: #ff7b87;
+    --c-down: #4c8dff;
+    --c-ok: #3cc283;
+    --c-ok-strong: #5bd49a;
+    --c-warn: #e3a93c;
+    --c-warn-strong: #eebb5c;
+    --c-accent: #f0904e;
+    --c-accent-strong: #f5a872;
+
+    --shadow-panel: none;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --c-950: #0b1220;
+  --c-900: #111a2b;
+  --c-800: #1f2a3d;
+  --c-700: #2c3a52;
+  --c-600: #5c6a80;
+  --c-500: #738097;
+  --c-400: #94a0b4;
+  --c-300: #a9b3c4;
+  --c-200: #d5ddea;
+  --c-100: #e6ebf3;
+  --c-50: #f2f5fa;
+
+  --c-brand: #5b8def;
+  --c-brand-strong: #7fa8f5;
+  --c-brand-soft: #16264a;
+
+  --c-up: #ff5a6a;
+  --c-up-strong: #ff7b87;
+  --c-down: #4c8dff;
+  --c-ok: #3cc283;
+  --c-ok-strong: #5bd49a;
+  --c-warn: #e3a93c;
+  --c-warn-strong: #eebb5c;
+  --c-accent: #f0904e;
+  --c-accent-strong: #f5a872;
+
+  --shadow-panel: none;
+}
+
+@theme {
+  --font-sans: 'IBM Plex Sans KR', 'Pretendard Variable', 'Apple SD Gothic Neo', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+
+  --color-slate-50: var(--c-50);
+  --color-slate-100: var(--c-100);
+  --color-slate-200: var(--c-200);
+  --color-slate-300: var(--c-300);
+  --color-slate-400: var(--c-400);
+  --color-slate-500: var(--c-500);
+  --color-slate-600: var(--c-600);
+  --color-slate-700: var(--c-700);
+  --color-slate-800: var(--c-800);
+  --color-slate-900: var(--c-900);
+  --color-slate-950: var(--c-950);
+
+  /* 브랜드 액센트 (기존 cyan-* 클래스를 그대로 재사용) */
+  --color-cyan-400: var(--c-brand);
+  --color-cyan-500: var(--c-brand);
+  --color-cyan-600: var(--c-brand-strong);
+
+  /* 등락 · 상태 */
+  --color-red-500: var(--c-up);
+  --color-red-600: var(--c-up-strong);
+  --color-blue-500: var(--c-down);
+  --color-blue-600: var(--c-down);
+  --color-emerald-500: var(--c-ok);
+  --color-emerald-600: var(--c-ok-strong);
+  --color-amber-500: var(--c-warn);
+  --color-amber-600: var(--c-warn-strong);
+  --color-orange-500: var(--c-accent);
+  --color-orange-600: var(--c-accent-strong);
+}
+
+html {
+  background: var(--c-950);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 숫자는 항상 자리수가 흔들리지 않게 */
+.font-mono,
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* 패널: 흰 표면 + 얇은 선 + 아주 옅은 그림자 */
+.panel {
+  background: var(--c-900);
+  border: 1px solid var(--c-800);
+  border-radius: 6px;
+  box-shadow: var(--shadow-panel);
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-brand);
+  outline-offset: 2px;
+}
+
+/* 스크롤바를 숨겨야 하는 가로 스크롤 영역(티커 등) */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* 요약 지표: 한 패널 안에 칸막이로 나뉜 가로 스트립 (시안 .stats) */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.stat-cell {
+  padding: 14px 16px;
+  border-left: 1px solid var(--c-800);
+}
+.stat-cell:first-child {
+  border-left: 0;
+}
+@media (max-width: 639px) {
+  .stat-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .stat-cell:nth-child(3) {
+    border-left: 0;
+  }
+  .stat-cell:nth-child(n + 3) {
+    border-top: 1px solid var(--c-800);
+  }
+}
+
+/* 시안의 표: 머리글 옅은 배경, 숫자 우측 정렬, 첫 열만 좌측 정렬 */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  font-size: 11.5px; font-weight: 500; color: var(--c-500); text-align: right;
+  padding: 8px 12px; border-bottom: 1px solid var(--c-800); white-space: nowrap; background: var(--c-950);
+}
+.data-table td { padding: 10px 12px; border-bottom: 1px solid var(--c-800); text-align: right; white-space: nowrap; }
+.data-table th:first-child, .data-table td:first-child { text-align: left; }
+.data-table tbody tr:last-child td { border-bottom: 0; }
+.data-table tbody tr:hover { background: var(--c-950); }

@@ -93,7 +93,7 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
       </header>
 
       {watchedSince && watchlistEntry && (
-        <Section title="🛂 COMPANY PASSPORT">
+        <Section title="COMPANY PASSPORT">
           <div className="space-y-2 text-sm mb-3">
             <Row label="관심종목 등록일" value={watchedSince} />
             <Row label="보유 기간" value={`${daysHeld}일째`} />
@@ -109,7 +109,7 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
 
       <VoteSection ticker={company.ticker} />
 
-      <Section title="📰 관련 뉴스">
+      <Section title="관련 뉴스">
         {news.length === 0 ? (
           <p className="text-sm text-slate-500">뉴스를 찾을 수 없습니다.</p>
         ) : (
@@ -130,7 +130,7 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
         )}
       </Section>
 
-      <Section title="📜 HISTORY">
+      <Section title="HISTORY">
         {myHistory.length === 0 ? (
           <p className="text-sm text-slate-500">아직 기록된 히스토리가 없습니다.</p>
         ) : (
@@ -179,13 +179,13 @@ function VoteSection({ ticker }: { ticker: string }) {
   const bullishPct = total > 0 ? Math.round(((counts?.bullish ?? 0) / total) * 100) : 50;
 
   return (
-    <Section title="📊 Bullish / Bearish 투표">
+    <Section title="Bullish / Bearish 투표">
       {error && <p className="text-xs text-red-600 mb-2">아직 서버에 설정되지 않았습니다.</p>}
       <div className="flex gap-2 mb-3">
         <button
           onClick={() => handleVote('bullish')}
           disabled={busy}
-          className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm disabled:opacity-50 ${
+          className={`flex-1 flex items-center justify-center gap-1.5 rounded-md py-2 text-sm disabled:opacity-50 ${
             counts?.myVote === 'bullish' ? 'bg-emerald-500/20 text-emerald-600' : 'bg-slate-900 text-slate-300'
           }`}
         >
@@ -194,7 +194,7 @@ function VoteSection({ ticker }: { ticker: string }) {
         <button
           onClick={() => handleVote('bearish')}
           disabled={busy}
-          className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm disabled:opacity-50 ${
+          className={`flex-1 flex items-center justify-center gap-1.5 rounded-md py-2 text-sm disabled:opacity-50 ${
             counts?.myVote === 'bearish' ? 'bg-red-500/20 text-red-600' : 'bg-slate-900 text-slate-300'
           }`}
         >
@@ -232,7 +232,7 @@ function ThesisBox({ ticker, initialThesis }: { ticker: string; initialThesis: s
         onBlur={() => text !== initialThesis && updateThesis(ticker, text)}
         placeholder="예: 반도체 업황 반등 기대, 신사업 진출 기대..."
         rows={2}
-        className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600 resize-none"
+        className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600 resize-none"
       />
     </div>
   );
@@ -240,7 +240,7 @@ function ThesisBox({ ticker, initialThesis }: { ticker: string; initialThesis: s
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-3 py-2">
+    <div className="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-md px-3 py-2">
       <span className="text-slate-500 text-xs">{label}</span>
       <span className="text-slate-200 text-xs font-mono text-right ml-2">{value}</span>
     </div>

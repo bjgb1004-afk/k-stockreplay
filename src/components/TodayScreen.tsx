@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Screen, Section, Stat } from './ui';
+import { Screen, Stat, StatStrip, Panel, PageHeader, TableWrap, Chip } from './ui';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { recordVisit } from '../lib/streakDb';
 import { ingestToday, pruneOld, type DisclosureType, type Sentiment } from '../lib/disclosuresDb';
@@ -60,6 +60,7 @@ export default function TodayScreen() {
   const [streak, setStreak] = useState<number | null>(null);
   const [recap, setRecap] = useState<WeeklyRecap | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [prices, setPrices] = useState<Map<string, { close: number; changePct: number }>>(new Map());
 
   useEffect(() => {
     fetch('/data/today.json')
@@ -74,6 +75,10 @@ export default function TodayScreen() {
       })
       .catch(() => setError(true));
     getWatchlist().then(setWatchlist);
+    fetch('/data/prices.json')
+      .then((r) => r.json())
+      .then((rows: { ticker: string; close: number; changePct: number }[]) => setPrices(new Map(rows.map((r) => [r.ticker, r]))))
+      .catch(() => {}); // 시세 파일이 아직 없으면 시세 열만 비워둔다.
     recordVisit().then(({ currentStreak }) => setStreak(currentStreak));
     getWeeklyRecapIfDue().then(setRecap);
   }, []);
@@ -118,136 +123,174 @@ export default function TodayScreen() {
     );
   }
 
+  const typeChip: Record<DisclosureType, { tone: 'div' | 'agm' | 'earn' | 'rel' | 'dis'; label: string }> = {
+    DISCLOSURE: { tone: 'dis', label: '공시' },
+    CONTRACT: { tone: 'agm', label: '계약' },
+    DIVIDEND: { tone: 'div', label: '배당' },
+    MANAGEMENT_CHANGE: { tone: 'rel', label: '관계변화' },
+    INSIDER: { tone: 'earn', label: '내부자' },
+  };
+  const sevBar: Record<Sentiment, string> = {
+    POSITIVE: 'bg-emerald-500',
+    NEGATIVE: 'bg-red-500',
+    MIXED: 'bg-amber-500',
+    NEUTRAL: 'bg-slate-700',
+  };
+  const eventsByTicker = new Map<string, DisclosureType>();
+  for (const item of data.newToday) if (!eventsByTicker.has(item.ticker)) eventsByTicker.set(item.ticker, item.type);
+
   return (
     <Screen>
-      <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold font-mono tracking-tight">TODAY</h1>
-          <p className="text-xs text-slate-500">{data.date}</p>
-        </div>
-        {!!streak && streak > 1 && (
-          <span className="text-xs bg-orange-500/15 text-orange-600 rounded-full px-2.5 py-1 shrink-0">
-            🔥 {streak}일 연속 방문
-          </span>
-        )}
-      </header>
+      <PageHeader
+        en="TODAY"
+        title="오늘"
+        sub={`${data.date} · 관심종목 ${watchlist.length}개 기준`}
+        right={
+          !!streak && streak > 1 ? (
+            <span className="text-xs bg-orange-500/15 text-orange-600 rounded px-2.5 py-1">{streak}일 연속 방문</span>
+          ) : undefined
+        }
+      />
 
       {recap && (
-        <div className="mb-6 flex items-start justify-between gap-3 bg-cyan-500/10 border border-cyan-500/25 rounded-lg px-3.5 py-3">
+        <div className="mb-4 flex items-start justify-between gap-3 bg-cyan-500/10 border border-cyan-500/25 rounded-md px-4 py-3">
           <div>
-            <p className="text-sm font-medium text-cyan-600">📬 이번 주 리캡</p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-sm font-medium text-cyan-600">이번 주 리캡</p>
+            <p className="text-xs text-slate-300 mt-1">
               워치리스트에 새 소식 {recap.eventCount}건
               {recap.dividendCount > 0 && ` (배당 이벤트 ${recap.dividendCount}건 포함)`}이 있었습니다.
             </p>
           </div>
-          <button onClick={dismissRecap} className="text-slate-400 hover:text-slate-600 text-xs shrink-0">
+          <button onClick={dismissRecap} className="text-slate-500 hover:text-slate-300 text-xs shrink-0">
             닫기
           </button>
         </div>
       )}
 
-      <Section title="🆕 오늘 새로 생긴 것">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-sm">
-          <Stat label="새 이벤트" value={data.summary.newEvents} />
-          <Stat label="중요 FACT" value={data.summary.importantFacts} />
-          <Stat label="배당 이벤트" value={data.summary.dividendEvents} />
-          <Stat label="관계 변화" value={data.summary.relationChanges} />
+      <StatStrip>
+        <Stat label="새 공시" value={data.summary.newEvents} />
+        <Stat label="중요 FACT" value={data.summary.importantFacts} />
+        <Stat label="배당 이벤트" value={data.summary.dividendEvents} />
+        <Stat label="지분·관계 변화" value={data.summary.relationChanges} />
+      </StatStrip>
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-4">
+        <Panel title="내 관심종목" meta="전일 종가 기준">
+          {myRadar.length === 0 ? (
+            <p className="px-4 py-6 text-sm text-slate-500">아직 관심종목이 없습니다. 관심종목 메뉴에서 추가해보세요.</p>
+          ) : (
+            <TableWrap>
+              <thead>
+                <tr>
+                  <th>종목</th>
+                  <th>현재가</th>
+                  <th>등락률</th>
+                  <th>오늘 변화</th>
+                </tr>
+              </thead>
+              <tbody>
+                {myRadar.map((stock) => {
+                  const price = prices.get(stock.ticker);
+                  const type = eventsByTicker.get(stock.ticker);
+                  return (
+                    <tr key={stock.ticker}>
+                      <td>
+                        <b className="block font-semibold">{stock.companyName}</b>
+                        <small className="font-mono text-[11px] text-slate-500">{stock.ticker}</small>
+                      </td>
+                      <td className="font-mono">{price ? price.close.toLocaleString('ko-KR') : '—'}</td>
+                      <td className={`font-mono ${!price || price.changePct === 0 ? 'text-slate-500' : price.changePct > 0 ? 'text-red-600' : 'text-blue-600'}`}>
+                        {price ? `${price.changePct > 0 ? '▲ ' : price.changePct < 0 ? '▼ ' : ''}${Math.abs(price.changePct).toFixed(2)}%` : '—'}
+                      </td>
+                      <td>
+                        {stock.changeCount > 0 ? (
+                          <Chip tone={type ? typeChip[type].tone : 'dis'}>{type ? typeChip[type].label : '공시'} {stock.changeCount}건</Chip>
+                        ) : (
+                          <span className="text-slate-500">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </TableWrap>
+          )}
+        </Panel>
+
+        <div className="grid gap-4 content-start">
+          <Panel title="다가오는 일정" meta="이번 주">
+            <ul className="divide-y divide-slate-800 text-sm">
+              <li className="flex items-center justify-between px-4 py-3">
+                <span className="text-slate-300">내일</span>
+                <span>
+                  배당 <b className="font-mono">{data.upcoming.tomorrow.dividend}</b> · 주총{' '}
+                  <b className="font-mono">{data.upcoming.tomorrow.shareholderMeeting}</b>
+                </span>
+              </li>
+              <li className="flex items-center justify-between px-4 py-3">
+                <span className="text-slate-300">이번주</span>
+                <span>
+                  실적 <b className="font-mono">{data.upcoming.thisWeek.earnings}</b> · 배당{' '}
+                  <b className="font-mono">{data.upcoming.thisWeek.dividend}</b>
+                </span>
+              </li>
+            </ul>
+          </Panel>
+          <Panel title="오늘의 FACT" meta="공시 기반 확인">
+            {data.factChecks.length === 0 ? (
+              <p className="px-4 py-4 text-sm text-slate-500">오늘 확인할 FACT가 없습니다.</p>
+            ) : (
+              <ul className="divide-y divide-slate-800">
+                {data.factChecks.map((fact) => (
+                  <li key={fact.question} className="px-4 py-3 text-sm">
+                    <p className="text-slate-100">"{fact.question}"</p>
+                    <p className={`text-xs mt-1 ${factStatusStyle[fact.status]}`}>{factStatusLabel[fact.status]}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
         </div>
-        <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+      </div>
+
+      <Panel title="오늘 새로 생긴 공시" meta={`시장 전체 ${data.newToday.length}건 · 출처 DART`}>
+        <ul className="divide-y divide-slate-800">
           {visibleNewToday.map((item) => (
-            <li key={item.id} className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2.5">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-semibold text-slate-100 truncate min-w-0">{item.companyName}</p>
-                <span className="font-mono text-[11px] text-slate-500 shrink-0">{item.time}</span>
+            <li
+              key={item.id}
+              className="grid grid-cols-[4px_minmax(0,1fr)_auto] sm:grid-cols-[4px_52px_minmax(0,1fr)_auto] gap-3 items-start px-4 py-3"
+            >
+              <span className={`self-stretch rounded-sm ${sevBar[item.sentiment]}`} />
+              <time className="hidden sm:block font-mono text-xs text-slate-500 pt-px">{item.time || '—'}</time>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-slate-100 line-clamp-2">
+                  {item.companyName} · {item.title}
+                </p>
+                <p className="text-xs text-slate-300 mt-0.5 flex items-center gap-2 flex-wrap">
+                  <Chip tone={typeChip[item.type].tone}>{typeChip[item.type].label}</Chip>
+                  {item.meaning}
+                </p>
               </div>
-              <p className="text-sm text-slate-300 mt-1 line-clamp-2">{item.title}</p>
-              <div className="mt-2 pt-2 border-t border-slate-800">
-                <div className="flex items-start gap-1.5">
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1 ${sentimentDot[item.sentiment]}`} />
-                  <p className="text-xs text-slate-500">{item.meaning}</p>
-                </div>
-                <a
-                  href={`https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${item.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block text-xs text-cyan-600 hover:underline mt-1.5 pl-3"
-                >
-                  원문보기 →
-                </a>
-              </div>
+              <a
+                href={`https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${item.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-500 border-b border-dotted border-slate-500 hover:text-slate-300 whitespace-nowrap"
+              >
+                DART 원문
+              </a>
             </li>
           ))}
         </ul>
         {shownNewToday.length > COLLAPSED_COUNT && (
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="w-full text-center text-xs text-slate-500 hover:text-slate-300 mt-3 py-1.5"
+            className="w-full text-center text-xs text-slate-500 hover:text-slate-300 py-2.5 border-t border-slate-800"
           >
             {expanded ? '접기' : `${shownNewToday.length - COLLAPSED_COUNT}건 더 보기`}
           </button>
         )}
-        {data.newToday.length > shownNewToday.length && (
-          <p className="text-xs text-slate-600 mt-2">
-            시장 전체 {data.newToday.length}건 중 최신 {shownNewToday.length}건 표시 중 (내 관심종목 변화는 아래에서 빠짐없이 확인 가능)
-          </p>
-        )}
-      </Section>
-
-      <Section title="🔴 내 종목 변화">
-        {myRadar.length === 0 ? (
-          <p className="text-sm text-slate-500">
-            아직 관심종목이 없습니다. MY STOCK RADAR 탭에서 추가해보세요.
-          </p>
-        ) : (
-          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {myRadar.map((stock) => (
-              <li
-                key={stock.ticker}
-                className="flex items-center justify-between gap-2 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm"
-              >
-                <span className="flex items-center gap-2 min-w-0">
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${levelDot[stock.level]}`} />
-                  <span className="truncate">{stock.companyName}</span>
-                </span>
-                <span className="text-slate-500 text-xs shrink-0">
-                  {stock.changeCount > 0 ? `${stock.changeCount}건 변화` : '변화 없음'}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Section>
-
-      <Section title="📅 앞으로의 투자 일정">
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2.5">
-            <p className="text-slate-500 text-[11px] uppercase tracking-wider">내일</p>
-            <p className="mt-0.5 text-slate-100">
-              배당 <span className="font-mono font-semibold">{data.upcoming.tomorrow.dividend}</span> · 주총{' '}
-              <span className="font-mono font-semibold">{data.upcoming.tomorrow.shareholderMeeting}</span>
-            </p>
-          </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2.5">
-            <p className="text-slate-500 text-[11px] uppercase tracking-wider">이번주</p>
-            <p className="mt-0.5 text-slate-100">
-              실적 <span className="font-mono font-semibold">{data.upcoming.thisWeek.earnings}</span> · 배당{' '}
-              <span className="font-mono font-semibold">{data.upcoming.thisWeek.dividend}</span>
-            </p>
-          </div>
-        </div>
-      </Section>
-
-      <Section title="🔎 오늘의 FACT">
-        <ul className="grid gap-2.5 sm:grid-cols-2">
-          {data.factChecks.map((fact) => (
-            <li key={fact.question} className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2.5 text-sm">
-              <p className="text-slate-300">"{fact.question}"</p>
-              <p className={`text-xs mt-1 ${factStatusStyle[fact.status]}`}>{factStatusLabel[fact.status]}</p>
-            </li>
-          ))}
-        </ul>
-      </Section>
+      </Panel>
     </Screen>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Upload, X, ChevronRight, ArrowLeft } from 'lucide-react';
-import { Screen, Section } from './ui';
+import { Screen, Section, PageHeader } from './ui';
 import { parseSpreadsheetFile } from '../lib/marketDataParse';
 import { detectColumnMapping, normalizeRows, type MarketDataRow } from '../lib/marketDataNormalize';
 import { saveDataset, listDatasets, getMarketData, deleteDataset, type Dataset } from '../lib/marketDataStore';
@@ -53,20 +53,21 @@ export default function ReplayScreen() {
 
   return (
     <Screen>
-      <header className="mb-6 flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold font-mono tracking-tight">REPLAY</h1>
-          <p className="text-xs text-slate-500">업로드한 파일은 이 기기에만 저장됩니다</p>
-        </div>
-        <button
-          onClick={() => setView({ kind: 'upload' })}
-          className="shrink-0 flex items-center gap-1 text-xs bg-slate-800 text-slate-100 rounded-lg px-3 py-2"
-        >
-          <Upload size={14} /> 업로드
-        </button>
-      </header>
+      <PageHeader
+        en="REPLAY"
+        title="리플레이"
+        sub="업로드한 파일은 이 기기에만 저장됩니다"
+        right={
+          <button
+            onClick={() => setView({ kind: 'upload' })}
+            className="inline-flex items-center gap-1.5 text-[13px] bg-cyan-500 text-white font-semibold rounded-md h-8 px-3"
+          >
+            <Upload size={14} /> 업로드
+          </button>
+        }
+      />
 
-      <details className="mb-6 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 open:pb-3">
+      <details className="mb-6 panel px-4 py-2 text-sm text-slate-300 open:pb-4">
         <summary className="cursor-pointer text-slate-100 font-medium py-1">사용법 자세히 보기 (데이터는 어디서 받나요?)</summary>
 
         <div className="mt-3 space-y-4 text-xs text-slate-400">
@@ -124,9 +125,9 @@ export default function ReplayScreen() {
         {datasets.length === 0 ? (
           <p className="text-sm text-slate-500">업로드한 데이터가 없습니다.</p>
         ) : (
-          <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-2 md:space-y-0 xl:grid-cols-3">
+          <ul className="panel divide-y divide-slate-800 overflow-hidden">
             {datasets.map((d) => (
-              <li key={d.id} className="flex items-center justify-between text-sm bg-slate-900 border border-slate-800 rounded-lg pl-3 pr-1 py-1">
+              <li key={d.id} className="flex items-center justify-between text-sm pl-4 pr-2 py-1 hover:bg-slate-950">
                 <button onClick={() => handleOpen(d)} className="flex-1 flex items-center justify-between text-left py-1.5 min-w-0">
                   <span className="truncate">
                     <span className="font-medium">{d.symbol}</span>
@@ -194,7 +195,7 @@ function UploadForm({ onDone, onCancel }: { onDone: () => void; onCancel: () => 
           type="file"
           accept=".csv,.xlsx,.xls"
           onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-          className="w-full md:max-w-md text-sm text-slate-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-slate-800 file:text-slate-100 file:text-xs"
+          className="w-full md:max-w-md text-sm text-slate-300 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-slate-800 file:text-slate-100 file:text-xs"
         />
         {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
         {rows && <p className="text-xs text-slate-500 mt-2">{fileName} · {rows.length}개 행 확인됨</p>}
@@ -207,19 +208,19 @@ function UploadForm({ onDone, onCancel }: { onDone: () => void; onCancel: () => 
               value={symbol}
               onChange={(e) => setSymbol(e.target.value)}
               placeholder="종목명 또는 코드 (예: 삼성전자)"
-              className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
+              className="w-full bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
             />
             <select
               value={market}
               onChange={(e) => setMarket(e.target.value as (typeof MARKETS)[number])}
-              className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm"
+              className="w-full bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-sm"
             >
               {MARKETS.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
             <button
               onClick={handleSave}
               disabled={!symbol.trim() || saving}
-              className="w-full bg-slate-100 text-slate-950 rounded-lg py-2 text-sm font-medium disabled:opacity-40"
+              className="w-full bg-cyan-500 text-white rounded-md py-2 text-sm font-medium disabled:opacity-40"
             >
               {saving ? '저장 중...' : '저장'}
             </button>

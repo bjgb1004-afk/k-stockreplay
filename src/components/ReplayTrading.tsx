@@ -95,21 +95,21 @@ export default function ReplayTrading({ datasetId, rows }: { datasetId: string; 
             min={1}
             value={quantity}
             onChange={(e) => setQuantity(Math.max(1, Math.floor(Number(e.target.value) || 1)))}
-            className="w-20 bg-slate-900 border border-slate-800 rounded-lg px-2 py-2 text-sm text-center"
+            className="w-20 bg-slate-900 border border-slate-800 rounded-md px-2 py-2 text-sm text-center"
             aria-label="수량"
           />
           <span className="text-xs text-slate-500">주</span>
           <button
             onClick={() => trade('buy')}
             disabled={!canBuy}
-            className="flex-1 bg-emerald-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-30"
+            className="flex-1 bg-emerald-600 text-white rounded-md py-2 text-sm font-medium disabled:opacity-30"
           >
             매수
           </button>
           <button
             onClick={() => trade('sell')}
             disabled={!canSell}
-            className="flex-1 bg-red-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-30"
+            className="flex-1 bg-red-600 text-white rounded-md py-2 text-sm font-medium disabled:opacity-30"
           >
             매도
           </button>
@@ -171,13 +171,13 @@ function CapitalGate({ onStart }: { onStart: (capital: number) => void }) {
           value={capital.toLocaleString()}
           onChange={(e) => setCapital(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
           placeholder="투자금 (원)"
-          className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
+          className="w-full bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-600"
         />
         <p className="text-xs text-slate-500">{toKoreanUnit(capital)}</p>
         <button
           onClick={() => valid && onStart(capital)}
           disabled={!valid}
-          className="w-full bg-slate-100 text-slate-950 rounded-lg py-2 text-sm font-medium disabled:opacity-40"
+          className="w-full bg-cyan-500 text-white rounded-md py-2 text-sm font-medium disabled:opacity-40"
         >
           시작
         </button>
