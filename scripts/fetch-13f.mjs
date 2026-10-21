@@ -30,7 +30,9 @@ export const INVESTORS = [
   { id: 'greenlight', name: '그린라이트 캐피털', cik: '1079114', match: /GREENLIGHT/i },
 ];
 
-const tag = (block, name) => new RegExp(`<(?:\\w+:)?${name}>\\s*([^<]*?)\\s*<`, 'i').exec(block)?.[1];
+const decode = (t) =>
+  t?.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'");
+const tag = (block, name) => decode(new RegExp(`<(?:\\w+:)?${name}>\\s*([^<]*?)\\s*<`, 'i').exec(block)?.[1]);
 
 // 정보표 XML -> 롱 주식 포지션 행. 옵션(putCall)과 채권(PRN)은 제외한다.
 export function parseInfoTable(xml) {

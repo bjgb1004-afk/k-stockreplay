@@ -194,7 +194,8 @@ interface PriceRow {
   changePct: number;
 }
 
-/** 관심종목 시세 티커 - 실제 수집된 prices.json만 쓰고, 없으면 안내만 띄운다. */
+/** 지수 + 관심종목 시세 티커 - 실제 수집된 indices.json/prices.json만 쓰고,
+ *  둘 다 없으면 "지수 데이터 준비 중"만 띄운다. */
 function Ticker() {
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [prices, setPrices] = useState<Map<string, PriceRow>>(new Map());
@@ -233,7 +234,7 @@ function Ticker() {
         })}
         {indices.length > 0 && rows.length > 0 && <span className="text-slate-700">|</span>}
         {rows.length === 0 && indices.length > 0 ? null : rows.length === 0 ? (
-          <span className="text-slate-500">관심종목을 추가하면 여기에 시세가 표시됩니다.</span>
+          <span className="text-slate-500">지수 데이터 준비 중</span>
         ) : (
           rows.map(({ item, price }) => {
             const up = price!.changePct > 0;

@@ -41,11 +41,14 @@ jobs:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: node scripts/fetch-facts.mjs
 
+      # 실패해도 공시 수집/커밋은 계속 가야 하지만, 조용히 넘어가면 상단 지수 티커가
+      # 왜 빈지 알 수 없다. continue-on-error(초록 체크로 숨김) 대신 ::warning:: 으로
+      # 실행 요약에 노란 경고를 남긴다.
       - name: Fetch KR closing prices
-        continue-on-error: true
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
-        run: node scripts/fetch-prices.mjs
+        run: |
+          node scripts/fetch-prices.mjs || echo "::warning title=KR 시세 수집 실패 (exit $?)::fetch-prices.mjs 실패 - prices.json/indices.json/money-flow.json이 갱신되지 않아 상단 지수 티커와 관심종목 시세가 빈 채로 남는다. DATA_GO_KR_KEY 시크릿 등록 여부와 data.go.kr 서비스 신청 상태(주식시세정보 + 지수시세정보)를 확인할 것."
 
       - name: Check for changes
         id: diff

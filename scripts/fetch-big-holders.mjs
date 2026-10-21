@@ -139,11 +139,14 @@ async function main() {
   const rows = [];
   let ok = 0;
   let failed = 0;
+  const statusCount = {}; // 진단용: DART status 코드별 건수
+  const httpCount = {}; // 진단용: HTTP 실패 코드별 건수
   for (const corp of corpToTicker.keys()) {
     try {
       const res = await fetch(`https://opendart.fss.or.kr/api/majorstock.json?crtfc_key=${apiKey}&corp_code=${corp}`, { headers });
       if (res.ok) {
         const body = await res.json();
+        statusCount[body.status] = (statusCount[body.status] ?? 0) + 1;
         if (body.status === '000' && Array.isArray(body.list)) {
           rows.push(...body.list);
           ok++;
@@ -153,6 +156,7 @@ async function main() {
         }
         // 013 = 조회된 데이터 없음 (대량보유 보고가 한 번도 없는 회사). 정상이다.
       } else {
+        httpCount[res.status] = (httpCount[res.status] ?? 0) + 1;
         failed++;
       }
     } catch (e) {
@@ -161,6 +165,11 @@ async function main() {
     }
     await sleep(REQUEST_INTERVAL_MS);
   }
+
+  console.log(`DART status counts: ${JSON.stringify(statusCount)}; HTTP failures: ${JSON.stringify(httpCount)}; report rows: ${rows.length}`);
+  const reporters = new Map();
+  for (const r of rows) reporters.set(r.repror, (reporters.get(r.repror) ?? 0) + 1);
+  console.log('Top reporters:', JSON.stringify([...reporters].sort((a, b) => b[1] - a[1]).slice(0, 15)));
 
   // 요청 대부분이 실패한 실행(차단·장애)은 결과를 신뢰할 수 없으니 기존 파일을 지키고 끝낸다.
   if (failed > corpToTicker.size * 0.2) {

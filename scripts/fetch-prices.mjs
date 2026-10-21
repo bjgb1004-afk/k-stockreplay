@@ -106,13 +106,19 @@ function kstDateMinus(daysAgo) {
   return kst.toISOString().slice(0, 10).replace(/-/g, '');
 }
 
+// data.go.kr 키는 %2F 처럼 이미 인코딩된 채 발급되기도 한다. URLSearchParams가 다시 인코딩하므로 먼저 디코딩한다.
+function serviceKey() {
+  const k = process.env.DATA_GO_KR_KEY ?? '';
+  try { return decodeURIComponent(k); } catch { return k; }
+}
+
 async function fetchForDate(basDt) {
   const rows = [];
   let page = 1;
   for (;;) {
-    const url = new URL('https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo');
+    const url = new URL('https://apis.data.go.kr/1160100/GetStockSecuritiesInfoService_V2/getStockPriceInfo_V2');
     // Note: data.go.kr keys are sometimes issued already percent-encoded; URLSearchParams may double-encode them.
-    url.searchParams.set('serviceKey', process.env.DATA_GO_KR_KEY);
+    url.searchParams.set('serviceKey', serviceKey());
     url.searchParams.set('resultType', 'json');
     url.searchParams.set('basDt', basDt);
     url.searchParams.set('numOfRows', '1000');
@@ -133,12 +139,23 @@ async function fetchForDate(basDt) {
   return rows;
 }
 
+// 지수 응답 한 줄 -> 화면용 행. data.go.kr 주가지수시세의 종가=clpr, 등락률=fltRt
+// (공공데이터포털 "금융위원회_지수시세정보" 명세 확인). 숫자가 "2,598.37"처럼 콤마를
+// 달고 오면 Number()가 NaN이 되어 티커에 NaN%가 찍히므로 콤마를 떼고 파싱한다.
+export function mapIndexRow(item) {
+  const num = (v) => Number(String(v ?? '').replace(/,/g, '').trim());
+  const close = num(item.clpr);
+  const changePct = num(item.fltRt);
+  if (!Number.isFinite(close)) throw new Error(`index row has unusable clpr: ${JSON.stringify(item.clpr)}`);
+  return { name: item.idxNm, close, changePct: Number.isFinite(changePct) ? changePct : 0 };
+}
+
 // 코스피/코스닥 지수 - 상단 티커용. 실패해도 종목 시세 수집을 막지 않도록 호출부에서 try/catch.
 async function fetchIndices(basDt) {
   const out = [];
   for (const idxNm of ['코스피', '코스닥']) {
-    const url = new URL('https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService/getStockMarketIndex');
-    url.searchParams.set('serviceKey', process.env.DATA_GO_KR_KEY);
+    const url = new URL('https://apis.data.go.kr/1160100/GetMarketIndexInfoService_V2/getStockMarketIndex_V2');
+    url.searchParams.set('serviceKey', serviceKey());
     url.searchParams.set('resultType', 'json');
     url.searchParams.set('basDt', basDt);
     url.searchParams.set('idxNm', idxNm);
@@ -146,10 +163,24 @@ async function fetchIndices(basDt) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`index request failed: ${res.status}`);
     const body = await res.json();
+
+    // 지수시세정보는 주식시세정보와 별개 서비스다. 키가 이 쪽에 신청되지 않았으면
+    // data.go.kr은 200 + 에러 봉투(OpenAPI_ServiceResponse)를 주는데, 예전 코드는
+    // item이 없다고 보고 조용히 넘어가서 indices.json이 아예 안 만들어졌다.
+    const fault = body.OpenAPI_ServiceResponse?.cmmMsgHeader;
+    if (fault) throw new Error(`index request rejected: ${fault.errMsg} (${fault.returnAuthMsg})`);
+    const header = body.response?.header;
+    if (header?.resultCode !== '00' && header?.resultCode !== '03') {
+      throw new Error(`index request failed: ${header?.resultCode} ${header?.resultMsg}`);
+    }
+
     const raw = body.response?.body?.items?.item;
     const item = Array.isArray(raw) ? raw[0] : raw;
-    if (!item) continue;
-    out.push({ name: idxNm, close: Number(item.clpr), changePct: Number(item.fltRt) });
+    if (!item) {
+      console.log(`::warning title=지수 ${idxNm} 0건::basDt=${basDt}, idxNm=${idxNm} 조회 결과가 없다. 지수명 표기가 바뀌었는지 확인할 것.`);
+      continue;
+    }
+    out.push(mapIndexRow(item));
   }
   return out;
 }
@@ -187,9 +218,12 @@ async function main() {
     if (indices.length > 0) {
       writeFileSync(new URL('../public/data/indices.json', import.meta.url), JSON.stringify(indices) + '\n');
       console.log(`Wrote ${indices.length} market indices to public/data/indices.json`);
+    } else {
+      console.log('::warning title=지수 데이터 없음::indices.json을 쓰지 않았다 - 상단 지수 티커가 빈 채로 남는다.');
     }
   } catch (e) {
-    console.warn('Index fetch skipped:', e.message);
+    // 종목 시세는 이미 저장됐으니 여기서 죽이진 않되, 실행 요약에서 보이게 남긴다.
+    console.log(`::warning title=지수 수집 실패::${e.message} - 상단 지수 티커가 빈 채로 남는다.`);
   }
 
   const day = aggregateMoneyFlow(rows, {
