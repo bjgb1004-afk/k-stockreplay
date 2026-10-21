@@ -6,6 +6,14 @@ on:
     # DART 호출 간격 제한상 30분 안팎 걸리고, 13F(해외)는 분기 단위라 주 1회면 충분하다.
     - cron: '0 9 * * 0'
   workflow_dispatch: {}
+  # 수집 스크립트나 이 워크플로를 고쳐서 푸시하면 바로 한 번 돌려 결과를 확인한다.
+  # (데이터 JSON만 바뀌는 봇 커밋은 경로가 달라 다시 트리거되지 않는다.)
+  push:
+    paths:
+      - 'scripts/fetch-big-holders.mjs'
+      - 'scripts/fetch-13f.mjs'
+      - 'scripts/big-holders.selfcheck.mjs'
+      - '.github/workflows/fetch-big-holders.yml'
 
 jobs:
   fetch:
