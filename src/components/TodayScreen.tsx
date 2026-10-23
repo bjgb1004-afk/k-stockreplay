@@ -7,6 +7,7 @@ import { getWeeklyRecapIfDue, markWeeklyRecapShown, type WeeklyRecap } from '../
 
 type ChangeLevel = 'RED' | 'ORANGE' | 'GREEN';
 type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
+type FeedTab = 'new' | 'fact' | 'dividend' | 'relation';
 
 interface TodayData {
   date: string;
@@ -53,6 +54,20 @@ const factStatusLabel: Record<FactStatus, string> = {
   UNKNOWN: '⚪ UNKNOWN',
 };
 
+const feedTitle: Record<FeedTab, string> = {
+  new: '오늘 새로 생긴 공시',
+  fact: '오늘의 중요 FACT',
+  dividend: '오늘의 배당 이벤트',
+  relation: '오늘의 지분·관계 변화',
+};
+
+const feedEmpty: Record<FeedTab, string> = {
+  new: '오늘 새로 올라온 공시가 없습니다.',
+  fact: '호재·악재로 읽힌 공시가 없습니다.',
+  dividend: '오늘 올라온 배당 공시가 없습니다.',
+  relation: '오늘 올라온 지분·관계 변화 공시가 없습니다.',
+};
+
 export default function TodayScreen() {
   const [data, setData] = useState<TodayData | null>(null);
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
@@ -60,6 +75,7 @@ export default function TodayScreen() {
   const [streak, setStreak] = useState<number | null>(null);
   const [recap, setRecap] = useState<WeeklyRecap | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [feedTab, setFeedTab] = useState<FeedTab>('new');
   const [prices, setPrices] = useState<Map<string, { close: number; changePct: number }>>(new Map());
 
   useEffect(() => {
@@ -83,6 +99,11 @@ export default function TodayScreen() {
     getWeeklyRecapIfDue().then(setRecap);
   }, []);
 
+  function selectTab(tab: FeedTab) {
+    setFeedTab(tab);
+    setExpanded(false);
+  }
+
   function dismissRecap() {
     markWeeklyRecapShown();
     setRecap(null);
@@ -98,10 +119,26 @@ export default function TodayScreen() {
       .sort((a, b) => b.changeCount - a.changeCount);
   }, [data, watchlist]);
 
+  // 요약 카드 4개 = 아래 목록의 필터. 서버 summary는 중요 FACT·지분 변화가 항상 0이라
+  // (파서 미구현) 카드 숫자와 목록이 어긋나지 않도록 화면에서 같은 기준으로 센다.
+  //  - 중요 FACT: 공시 의미가 호재/악재/혼재로 읽힌 것 (중립 제외)
+  //  - 배당 이벤트: 배당 공시
+  //  - 지분·관계 변화: 경영·관계 변경 + 내부자(임원·주요주주) 지분 공시
+  const feeds = useMemo(() => {
+    const all = data?.newToday ?? [];
+    return {
+      new: all,
+      fact: all.filter((e) => e.sentiment !== 'NEUTRAL'),
+      dividend: all.filter((e) => e.type === 'DIVIDEND'),
+      relation: all.filter((e) => e.type === 'MANAGEMENT_CHANGE' || e.type === 'INSIDER'),
+    };
+  }, [data]);
+
   // today.json은 로컬 히스토리 적재를 위해 오늘자 전체를 담고 있어서(위 ingestToday),
   // 화면에 그걸 다 뿌리면 스크롤이 끝없어진다 - 표시만 앞쪽 60개로 자른다.
   const DISPLAY_LIMIT = 60;
-  const shownNewToday = data?.newToday.slice(0, DISPLAY_LIMIT) ?? [];
+  const activeFeed = feeds[feedTab];
+  const shownNewToday = activeFeed.slice(0, DISPLAY_LIMIT);
   // 60개를 한 번에 펼치면 그 자체로 지저분해 보여서, 처음엔 한 화면 분량만 보여주고
   // 나머지는 눌러야 나오게 한다.
   const COLLAPSED_COUNT = 9;
@@ -168,10 +205,10 @@ export default function TodayScreen() {
       )}
 
       <StatStrip>
-        <Stat label="새 공시" value={data.summary.newEvents} />
-        <Stat label="중요 FACT" value={data.summary.importantFacts} />
-        <Stat label="배당 이벤트" value={data.summary.dividendEvents} />
-        <Stat label="지분·관계 변화" value={data.summary.relationChanges} />
+        <Stat label="새 공시" value={feeds.new.length} active={feedTab === 'new'} onClick={() => selectTab('new')} />
+        <Stat label="중요 FACT" value={feeds.fact.length} active={feedTab === 'fact'} onClick={() => selectTab('fact')} />
+        <Stat label="배당 이벤트" value={feeds.dividend.length} active={feedTab === 'dividend'} onClick={() => selectTab('dividend')} />
+        <Stat label="지분·관계 변화" value={feeds.relation.length} active={feedTab === 'relation'} onClick={() => selectTab('relation')} />
       </StatStrip>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-4">
@@ -253,7 +290,8 @@ export default function TodayScreen() {
         </div>
       </div>
 
-      <Panel title="오늘 새로 생긴 공시" meta={`시장 전체 ${data.newToday.length}건 · 출처 DART`}>
+      <Panel title={feedTitle[feedTab]} meta={`시장 전체 ${activeFeed.length}건 · 출처 DART`}>
+        {activeFeed.length === 0 && <p className="px-4 py-6 text-sm text-slate-500">{feedEmpty[feedTab]}</p>}
         <ul className="divide-y divide-slate-800">
           {visibleNewToday.map((item) => (
             <li

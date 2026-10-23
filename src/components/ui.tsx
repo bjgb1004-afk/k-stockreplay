@@ -19,12 +19,28 @@ export function Section({ title, children }: { title: string; children: ReactNod
 }
 
 /** 요약 지표 칸. StatStrip 안에 나란히 넣는다. */
-export function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="stat-cell">
+export function Stat({
+  label,
+  value,
+  active,
+  onClick,
+}: {
+  label: string;
+  value: number;
+  active?: boolean;
+  onClick?: () => void;
+}) {
+  const body = (
+    <>
       <p className="text-slate-300 text-xs">{label}</p>
       <p className="font-mono text-[26px] font-bold leading-tight text-slate-100 mt-0.5">{value}</p>
-    </div>
+    </>
+  );
+  if (!onClick) return <div className="stat-cell">{body}</div>;
+  return (
+    <button type="button" onClick={onClick} aria-pressed={!!active} className={`stat-cell stat-btn text-left${active ? ' is-active' : ''}`}>
+      {body}
+    </button>
   );
 }
 
