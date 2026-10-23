@@ -8,6 +8,11 @@ import { getWeeklyRecapIfDue, markWeeklyRecapShown, type WeeklyRecap } from '../
 type ChangeLevel = 'RED' | 'ORANGE' | 'GREEN';
 type FactStatus = 'CONFIRMED' | 'UNCONFIRMED' | 'CONTRADICTED' | 'UNKNOWN';
 type FeedTab = 'new' | 'fact' | 'dividend' | 'relation';
+interface HeatRow {
+  name: string;
+  v: number;
+  c: number;
+}
 
 interface TodayData {
   date: string;
@@ -76,6 +81,7 @@ export default function TodayScreen() {
   const [recap, setRecap] = useState<WeeklyRecap | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [feedTab, setFeedTab] = useState<FeedTab>('new');
+  const [sectorHeat, setSectorHeat] = useState<{ date: string; rows: HeatRow[] } | null>(null);
   const [prices, setPrices] = useState<Map<string, { close: number; changePct: number }>>(new Map());
 
   useEffect(() => {
@@ -90,6 +96,23 @@ export default function TodayScreen() {
         pruneOld();
       })
       .catch(() => setError(true));
+    // 업종 등락 패널: 거래대금 상위 업종 6개. 파일이 아직 없으면 패널 자체를 숨긴다.
+    Promise.all([
+      fetch('/data/money-flow.json').then((r) => r.json()),
+      fetch('/data/sector-map.json').then((r) => r.json()),
+    ])
+      .then(([flow, sectorMap]: [{ days?: { date: string; sectors: Record<string, { v: number; c: number }> }[] }, Record<string, { code: string; name: string }>]) => {
+        const latest = flow.days?.[0];
+        if (!latest) return;
+        const nameByCode = new Map<string, string>();
+        for (const t of Object.keys(sectorMap)) nameByCode.set(sectorMap[t].code, sectorMap[t].name);
+        const rows = Object.entries(latest.sectors)
+          .map(([code, v]) => ({ name: nameByCode.get(code) ?? code, v: v.v, c: v.c }))
+          .sort((a, b) => b.v - a.v)
+          .slice(0, 6);
+        if (rows.length > 0) setSectorHeat({ date: latest.date, rows });
+      })
+      .catch(() => {});
     getWatchlist().then(setWatchlist);
     fetch('/data/prices.json')
       .then((r) => r.json())
@@ -173,6 +196,13 @@ export default function TodayScreen() {
     MIXED: 'bg-amber-500',
     NEUTRAL: 'bg-slate-700',
   };
+  // 서버가 주는 건 일정 "개수"뿐이라 날짜 칸에는 내일/이번주만 쓰고, 0건인 항목은 감춘다.
+  const upcomingRows: { when: string; label: string; tone: 'div' | 'agm' | 'earn'; count: number }[] = [
+    { when: '내일', label: '배당', tone: 'div' as const, count: data.upcoming.tomorrow.dividend },
+    { when: '내일', label: '주총', tone: 'agm' as const, count: data.upcoming.tomorrow.shareholderMeeting },
+    { when: '이번주', label: '실적', tone: 'earn' as const, count: data.upcoming.thisWeek.earnings },
+    { when: '이번주', label: '배당', tone: 'div' as const, count: data.upcoming.thisWeek.dividend },
+  ].filter((r) => r.count > 0);
   const eventsByTicker = new Map<string, DisclosureType>();
   for (const item of data.newToday) if (!eventsByTicker.has(item.ticker)) eventsByTicker.set(item.ticker, item.type);
 
@@ -254,42 +284,28 @@ export default function TodayScreen() {
           )}
         </Panel>
 
-        <div className="grid gap-4 content-start">
-          <Panel title="다가오는 일정" meta="이번 주">
-            <ul className="divide-y divide-slate-800 text-sm">
-              <li className="flex items-center justify-between px-4 py-3">
-                <span className="text-slate-300">내일</span>
-                <span>
-                  배당 <b className="font-mono">{data.upcoming.tomorrow.dividend}</b> · 주총{' '}
-                  <b className="font-mono">{data.upcoming.tomorrow.shareholderMeeting}</b>
-                </span>
-              </li>
-              <li className="flex items-center justify-between px-4 py-3">
-                <span className="text-slate-300">이번주</span>
-                <span>
-                  실적 <b className="font-mono">{data.upcoming.thisWeek.earnings}</b> · 배당{' '}
-                  <b className="font-mono">{data.upcoming.thisWeek.dividend}</b>
-                </span>
-              </li>
+        <Panel title="다가오는 일정" meta="이번 주">
+          {upcomingRows.length === 0 ? (
+            <p className="px-4 py-6 text-sm text-slate-500">이번 주 예정된 일정이 없습니다.</p>
+          ) : (
+            <ul className="divide-y divide-slate-800">
+              {upcomingRows.map((row) => (
+                <li key={row.when + row.label} className="grid grid-cols-[48px_minmax(0,1fr)] gap-3 px-4 py-2.5 items-center">
+                  <div className="text-center border border-slate-800 rounded px-1 py-1 leading-tight">
+                    <b className="block text-[13px]">{row.when}</b>
+                  </div>
+                  <div className="flex items-center gap-2 text-[13px]">
+                    <Chip tone={row.tone}>{row.label}</Chip>
+                    <span className="font-mono">{row.count}건</span>
+                  </div>
+                </li>
+              ))}
             </ul>
-          </Panel>
-          <Panel title="오늘의 FACT" meta="공시 기반 확인">
-            {data.factChecks.length === 0 ? (
-              <p className="px-4 py-4 text-sm text-slate-500">오늘 확인할 FACT가 없습니다.</p>
-            ) : (
-              <ul className="divide-y divide-slate-800">
-                {data.factChecks.map((fact) => (
-                  <li key={fact.question} className="px-4 py-3 text-sm">
-                    <p className="text-slate-100">"{fact.question}"</p>
-                    <p className={`text-xs mt-1 ${factStatusStyle[fact.status]}`}>{factStatusLabel[fact.status]}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Panel>
-        </div>
+          )}
+        </Panel>
       </div>
 
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
       <Panel title={feedTitle[feedTab]} meta={`시장 전체 ${activeFeed.length}건 · 출처 DART`}>
         {activeFeed.length === 0 && <p className="px-4 py-6 text-sm text-slate-500">{feedEmpty[feedTab]}</p>}
         <ul className="divide-y divide-slate-800">
@@ -329,6 +345,45 @@ export default function TodayScreen() {
           </button>
         )}
       </Panel>
+
+        <div className="grid gap-4 content-start">
+          {sectorHeat && (
+            <Panel title="업종 등락" meta={`${sectorHeat.date} 종가 · 거래대금 상위 6`}>
+              <div className="grid grid-cols-2 gap-1.5 p-3">
+                {sectorHeat.rows.map((r) => {
+                  const a = Math.min(0.9, 0.14 + Math.abs(r.c) * 0.2);
+                  const rgb = r.c > 0 ? '220,38,38' : r.c < 0 ? '37,99,235' : '120,130,150';
+                  return (
+                    <div
+                      key={r.name}
+                      style={{ background: `rgba(${rgb},${a})` }}
+                      className={`rounded-md px-2.5 py-2 min-h-[64px] flex flex-col justify-between ${a > 0.5 ? 'text-white' : 'text-slate-100'}`}
+                    >
+                      <span className="text-[12px] font-medium leading-tight line-clamp-2">{r.name}</span>
+                      <span className="font-mono text-[12px]">
+                        {r.c > 0 ? '+' : ''}
+                        {r.c.toFixed(2)}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </Panel>
+          )}
+          {data.factChecks.length > 0 && (
+            <Panel title="오늘의 FACT" meta="공시 기반 확인">
+              <ul className="divide-y divide-slate-800">
+                {data.factChecks.map((fact) => (
+                  <li key={fact.question} className="px-4 py-3 text-sm">
+                    <p className="text-slate-100">"{fact.question}"</p>
+                    <p className={`text-xs mt-1 ${factStatusStyle[fact.status]}`}>{factStatusLabel[fact.status]}</p>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          )}
+        </div>
+      </div>
     </Screen>
   );
 }
