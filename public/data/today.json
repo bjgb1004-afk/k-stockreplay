@@ -1,13 +1,43 @@
 {
   "date": "2026-10-26",
-  "generatedAt": "2026-10-25T15:01:40.354Z",
+  "generatedAt": "2026-10-25T23:38:27.348Z",
   "summary": {
-    "newEvents": 1,
+    "newEvents": 4,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
   "newToday": [
+    {
+      "id": "20261026800048",
+      "ticker": "178920",
+      "companyName": "PI첨단소재",
+      "type": "DISCLOSURE",
+      "title": "기업설명회(IR)개최(안내공시) (정정 등 2건)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "IR(기업설명회) 개최 안내 - 행정성 공시"
+    },
+    {
+      "id": "20261026800005",
+      "ticker": "020560",
+      "companyName": "아시아나항공",
+      "type": "DISCLOSURE",
+      "title": "소송등의판결ㆍ결정(일정금액이상의청구)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "소송 판결/결정 공시 - 승소인지 패소인지는 원문 확인 필요"
+    },
+    {
+      "id": "20261023000493",
+      "ticker": "006370",
+      "companyName": "대구백화점",
+      "type": "DISCLOSURE",
+      "title": "[기재정정]주요사항보고서(유형자산양도결정)",
+      "time": "",
+      "sentiment": "NEUTRAL",
+      "meaning": "제목만으로는 내용을 특정하기 어렵습니다 - 아래 원문보기로 확인하세요."
+    },
     {
       "id": "20261023000491",
       "ticker": "070300",
@@ -20,6 +50,24 @@
     }
   ],
   "myStockRadar": [
+    {
+      "ticker": "178920",
+      "companyName": "PI첨단소재",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "020560",
+      "companyName": "아시아나항공",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
+    {
+      "ticker": "006370",
+      "companyName": "대구백화점",
+      "changeCount": 1,
+      "level": "ORANGE"
+    },
     {
       "ticker": "070300",
       "companyName": "퀀텀레일",
