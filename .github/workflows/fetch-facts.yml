@@ -6,7 +6,12 @@ on:
     - cron: '0 22 * * *'
     # 06:00 KST 매주 월요일 (일요일 21:00 UTC) - 주간 리캡 wake-up 푸시
     - cron: '0 21 * * 0'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      recap:
+        description: "주간 리캡 푸시도 보낼까 (끄면 공시·시세 수집만)"
+        type: boolean
+        default: false
 
 jobs:
   fetch:
@@ -68,8 +73,9 @@ jobs:
           git push
 
       # 새 소식이 있을 때만 wake-up 푸시 발송 (§2-3) - 변화 없으면 조용히 넘어간다.
+      # 수동 실행(workflow_dispatch)은 수집 점검/백필용이므로 구독자를 깨우지 않는다.
       - name: Notify subscribers
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.diff.outputs.changed == 'true' && github.event_name == 'schedule'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -78,7 +84,7 @@ jobs:
         run: node scripts/send-push.mjs
 
   weekly-recap:
-    if: github.event.schedule == '0 21 * * 0' || github.event_name == 'workflow_dispatch'
+    if: github.event.schedule == '0 21 * * 0' || inputs.recap
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
