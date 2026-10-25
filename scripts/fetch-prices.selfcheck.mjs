@@ -7,7 +7,7 @@
 // Usage: node scripts/fetch-prices.selfcheck.mjs
 
 import assert from 'node:assert/strict';
-import { mapRow, mapIndexRow, mergePriceHistory } from './fetch-prices.mjs';
+import { mapRow, mapIndexRow, mergePriceHistory, fetchWithRetry } from './fetch-prices.mjs';
 
 const result = mapRow({ srtnCd: '005930', clpr: '71000', fltRt: '1.23' }, '2026-08-31');
 assert.equal(result.ticker, '005930'); // exact match, no "A" prefix, no padding change
@@ -42,5 +42,54 @@ assert.deepEqual(h.dates, ['2026-10-19', '2026-10-20', '2026-10-21']);
 assert.deepEqual(h.close.A, [90, 100, 120]);
 // keep 상한: 오래된 날부터 버린다
 assert.deepEqual(mergePriceHistory(h, '2026-10-22', [{ srtnCd: 'A', clpr: '1' }], 2).dates, ['2026-10-21', '2026-10-22']);
+
+// 재시도: apis.data.go.kr 연결이 한 번 끊겨도(2026-10-25 ConnectTimeoutError로 하루치 유실)
+// 그날 수집이 통째로 날아가지 않아야 한다. 네트워크·대기 없이 주입구로 루프만 돌린다.
+const quiet = { sleep: async () => {}, log: () => {} };
+
+// 한 번 끊겼다 복구되면 결과를 돌려준다
+let calls = 0;
+let res = await fetchWithRetry('u', {
+  ...quiet,
+  fetchImpl: async () => {
+    calls++;
+    if (calls === 1) throw new Error('ConnectTimeoutError');
+    return { status: 200, ok: true };
+  },
+});
+assert.equal(res.status, 200);
+assert.equal(calls, 2); // 첫 시도 실패 + 재시도 성공
+
+// 5xx도 일시 장애로 보고 다시 걸어본다
+calls = 0;
+res = await fetchWithRetry('u', {
+  ...quiet,
+  fetchImpl: async () => (++calls < 3 ? { status: 503 } : { status: 200, ok: true }),
+});
+assert.equal(res.status, 200);
+assert.equal(calls, 3);
+
+// 4xx는 키·파라미터 문제다. 재시도해도 같은 답이니 한 번만 부르고 그대로 넘긴다
+calls = 0;
+res = await fetchWithRetry('u', { ...quiet, fetchImpl: async () => (calls++, { status: 401, ok: false }) });
+assert.equal(res.status, 401);
+assert.equal(calls, 1);
+
+// 계속 실패하면 tries번만 시도하고 마지막 에러를 올린다 (워크플로가 ::warning::으로 잡는다)
+calls = 0;
+await assert.rejects(
+  fetchWithRetry('u', { ...quiet, tries: 3, fetchImpl: async () => { calls++; throw new Error('boom'); } }),
+  /boom/,
+);
+assert.equal(calls, 3);
+
+// 대기는 2초, 4초로 늘어난다 (서버가 숨 돌릴 틈을 준다)
+const waits = [];
+await assert.rejects(fetchWithRetry('u', {
+  log: () => {},
+  sleep: async (ms) => void waits.push(ms),
+  fetchImpl: async () => { throw new Error('x'); },
+}));
+assert.deepEqual(waits, [2000, 4000]);
 
 console.log('OK: fetch-prices selfcheck passed');

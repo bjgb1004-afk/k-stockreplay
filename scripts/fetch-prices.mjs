@@ -145,6 +145,27 @@ function daysBetween(usedDate, back) {
   return Math.round((kstToday - used) / 86_400_000) + back;
 }
 
+// apis.data.go.kr은 간헐적으로 연결을 끊는다 - 2026-10-25 자동 실행은 ConnectTimeoutError
+// 하나로 그날 수집이 통째로 빠졌다. 하루 한 번만 도는 수집이라 다음 기회가 24시간 뒤이므로
+// 일시적 실패는 여기서 삼킨다. 5xx/429는 서버 쪽 일시 장애라 다시 걸어보고, 4xx는 키·파라미터
+// 문제라 재시도해도 같은 답이 오니 그대로 올린다.
+// fetchImpl/sleep/log는 selfcheck가 네트워크·대기 없이 이 루프를 돌리기 위한 주입구다.
+export async function fetchWithRetry(url, opts = {}) {
+  const { tries = 3, fetchImpl = fetch, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), log = console.log } = opts;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetchImpl(url);
+      if (res.status >= 500 || res.status === 429) throw new Error(`HTTP ${res.status}`);
+      return res;
+    } catch (e) {
+      if (attempt >= tries) throw e;
+      const wait = 2000 * attempt;
+      log(`data.go.kr 요청 실패 (${attempt}/${tries}): ${e.message} - ${wait / 1000}초 후 재시도`);
+      await sleep(wait);
+    }
+  }
+}
+
 async function fetchForDate(basDt) {
   const rows = [];
   let page = 1;
@@ -157,7 +178,7 @@ async function fetchForDate(basDt) {
     url.searchParams.set('numOfRows', '1000');
     url.searchParams.set('pageNo', String(page));
 
-    const res = await fetch(url);
+    const res = await fetchWithRetry(url);
     if (!res.ok) throw new Error(`data.go.kr request failed: ${res.status}`);
     const body = await res.json();
     const header = body.response?.header;
@@ -193,7 +214,7 @@ async function fetchIndices(basDt) {
     url.searchParams.set('basDt', basDt);
     url.searchParams.set('idxNm', idxNm);
     url.searchParams.set('numOfRows', '1');
-    const res = await fetch(url);
+    const res = await fetchWithRetry(url);
     if (!res.ok) throw new Error(`index request failed: ${res.status}`);
     const body = await res.json();
 
