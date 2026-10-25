@@ -60,6 +60,7 @@ jobs:
         run: |
           git add public/data/today.json
           git add public/data/prices.json 2>/dev/null || true
+          git add public/data/price-history.json 2>/dev/null || true
           git add public/data/money-flow.json 2>/dev/null || true
           git add public/data/indices.json 2>/dev/null || true
           git diff --staged --quiet && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
