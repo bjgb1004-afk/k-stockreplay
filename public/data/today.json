@@ -1,14 +1,32 @@
 {
-  "date": "2026-10-25",
-  "generatedAt": "2026-10-25T14:52:56.663Z",
+  "date": "2026-10-26",
+  "generatedAt": "2026-10-25T15:01:40.354Z",
   "summary": {
-    "newEvents": 0,
+    "newEvents": 1,
     "importantFacts": 0,
     "dividendEvents": 0,
     "relationChanges": 0
   },
-  "newToday": [],
-  "myStockRadar": [],
+  "newToday": [
+    {
+      "id": "20261023000491",
+      "ticker": "070300",
+      "companyName": "퀀텀레일",
+      "type": "DISCLOSURE",
+      "title": "주요사항보고서(감자결정)",
+      "time": "",
+      "sentiment": "MIXED",
+      "meaning": "감자 결정 - 무상감자는 통상 악재, 재무구조 개선 목적이면 다르게 해석될 수 있음"
+    }
+  ],
+  "myStockRadar": [
+    {
+      "ticker": "070300",
+      "companyName": "퀀텀레일",
+      "changeCount": 1,
+      "level": "ORANGE"
+    }
+  ],
   "upcoming": {
     "tomorrow": {
       "dividend": 0,
