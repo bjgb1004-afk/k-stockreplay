@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { X, Share2 } from 'lucide-react';
-import { Screen, Section, Panel, PageHeader, TableWrap, Chip } from './ui';
+import { Screen, Section, Panel, PageHeader, TableWrap, Chip, Spark } from './ui';
+import { loadPriceHistory, type PriceHistory } from '../lib/priceHistory';
 import { addToWatchlist, getWatchlist, removeFromWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { shareReport } from '../lib/share';
 import CompanyDetailScreen from './CompanyDetailScreen';
@@ -15,6 +16,7 @@ interface PriceInfo {
   ticker: string;
   close: number;
   changePct: number;
+  amount?: number | null;
   date: string;
 }
 
@@ -27,6 +29,7 @@ export default function WatchlistScreen({ initialQuery = '' }: { initialQuery?: 
   const [shareMsg, setShareMsg] = useState<string | null>(null);
   const [todayCount, setTodayCount] = useState<Map<string, number>>(new Map());
   const [prices, setPrices] = useState<Map<string, PriceInfo>>(new Map());
+  const [history, setHistory] = useState<PriceHistory | null>(null);
 
   useEffect(() => {
     getWatchlist().then((list) => setItems(list.sort((a, b) => b.updated_at.localeCompare(a.updated_at))));
@@ -43,6 +46,7 @@ export default function WatchlistScreen({ initialQuery = '' }: { initialQuery?: 
       .then((r) => r.json())
       .then((rows: PriceInfo[]) => setPrices(new Map(rows.map((r) => [r.ticker, r]))))
       .catch(() => {});
+    loadPriceHistory().then(setHistory);
   }, []);
 
   useEffect(() => {
@@ -165,6 +169,8 @@ export default function WatchlistScreen({ initialQuery = '' }: { initialQuery?: 
                 <th>종목</th>
                 <th>현재가</th>
                 <th>등락률</th>
+                <th>거래대금(억)</th>
+                <th>20일 추이</th>
                 <th>오늘 변화</th>
                 <th aria-label="삭제" />
               </tr>
@@ -185,6 +191,10 @@ export default function WatchlistScreen({ initialQuery = '' }: { initialQuery?: 
                     <td className="font-mono">{price ? price.close.toLocaleString('ko-KR') : '—'}</td>
                     <td className={`font-mono ${!price || price.changePct === 0 ? 'text-slate-500' : price.changePct > 0 ? 'text-red-600' : 'text-blue-600'}`}>
                       {price ? `${price.changePct > 0 ? '▲ ' : price.changePct < 0 ? '▼ ' : ''}${Math.abs(price.changePct).toFixed(2)}%` : item.market === 'US' ? '미지원' : '—'}
+                    </td>
+                    <td className="font-mono">{price?.amount != null ? price.amount.toLocaleString('ko-KR') : '—'}</td>
+                    <td>
+                      <Spark values={history?.close[item.ticker]} />
                     </td>
                     <td>{n > 0 ? <Chip tone="dis">공시 {n}건</Chip> : <span className="text-slate-500">—</span>}</td>
                     <td className="w-10">

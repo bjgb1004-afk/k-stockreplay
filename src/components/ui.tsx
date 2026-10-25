@@ -98,3 +98,25 @@ export function PageHeader({ en, title, sub, right }: { en: string; title: strin
 export function TableWrap({ children }: { children: ReactNode }) {
   return <div className="overflow-x-auto"><table className="data-table">{children}</table></div>;
 }
+
+/** 20일 추이 미니 그래프. 처음 대비 마지막이 오르면 빨강, 내리면 파랑 (국내 관례). 점이 2개 미만이면 '—'. */
+export function Spark({ values }: { values: (number | null)[] | undefined }) {
+  const pts = (values ?? []).filter((v): v is number => typeof v === 'number');
+  if (pts.length < 2) return <span className="text-slate-500">—</span>;
+  const w = 88;
+  const h = 26;
+  const min = Math.min(...pts);
+  const max = Math.max(...pts);
+  const xy = pts.map((v, i) => [(i * w) / (pts.length - 1), h - 2 - ((v - min) / (max - min || 1)) * (h - 4)] as const);
+  const line = xy.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+  const delta = pts[pts.length - 1] - pts[0];
+  const tone = delta > 0 ? 'text-red-600' : delta < 0 ? 'text-blue-600' : 'text-slate-500';
+  const last = xy[xy.length - 1];
+  return (
+    <svg className={tone} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={`최근 ${pts.length}거래일 추이`}>
+      <path d={`${line} L${w} ${h} L0 ${h}Z`} fill="currentColor" opacity=".08" />
+      <path d={line} fill="none" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx={last[0]} cy={last[1]} r="2" fill="currentColor" />
+    </svg>
+  );
+}

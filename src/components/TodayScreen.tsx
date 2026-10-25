@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Screen, Stat, StatStrip, Panel, PageHeader, TableWrap, Chip } from './ui';
+import { Screen, Stat, StatStrip, Panel, PageHeader, TableWrap, Chip, Spark } from './ui';
+import { loadPriceHistory, type PriceHistory } from '../lib/priceHistory';
 import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
 import { recordVisit } from '../lib/streakDb';
 import { ingestToday, pruneOld, type DisclosureType, type Sentiment } from '../lib/disclosuresDb';
@@ -82,7 +83,8 @@ export default function TodayScreen() {
   const [expanded, setExpanded] = useState(false);
   const [feedTab, setFeedTab] = useState<FeedTab>('new');
   const [sectorHeat, setSectorHeat] = useState<{ date: string; rows: HeatRow[] } | null>(null);
-  const [prices, setPrices] = useState<Map<string, { close: number; changePct: number }>>(new Map());
+  const [prices, setPrices] = useState<Map<string, { close: number; changePct: number; amount?: number | null }>>(new Map());
+  const [history, setHistory] = useState<PriceHistory | null>(null);
 
   useEffect(() => {
     fetch('/data/today.json')
@@ -116,8 +118,9 @@ export default function TodayScreen() {
     getWatchlist().then(setWatchlist);
     fetch('/data/prices.json')
       .then((r) => r.json())
-      .then((rows: { ticker: string; close: number; changePct: number }[]) => setPrices(new Map(rows.map((r) => [r.ticker, r]))))
+      .then((rows: { ticker: string; close: number; changePct: number; amount?: number | null }[]) => setPrices(new Map(rows.map((r) => [r.ticker, r]))))
       .catch(() => {}); // 시세 파일이 아직 없으면 시세 열만 비워둔다.
+    loadPriceHistory().then(setHistory);
     recordVisit().then(({ currentStreak }) => setStreak(currentStreak));
     getWeeklyRecapIfDue().then(setRecap);
   }, []);
@@ -252,6 +255,8 @@ export default function TodayScreen() {
                   <th>종목</th>
                   <th>현재가</th>
                   <th>등락률</th>
+                  <th>거래대금(억)</th>
+                  <th>20일 추이</th>
                   <th>오늘 변화</th>
                 </tr>
               </thead>
@@ -268,6 +273,10 @@ export default function TodayScreen() {
                       <td className="font-mono">{price ? price.close.toLocaleString('ko-KR') : '—'}</td>
                       <td className={`font-mono ${!price || price.changePct === 0 ? 'text-slate-500' : price.changePct > 0 ? 'text-red-600' : 'text-blue-600'}`}>
                         {price ? `${price.changePct > 0 ? '▲ ' : price.changePct < 0 ? '▼ ' : ''}${Math.abs(price.changePct).toFixed(2)}%` : '—'}
+                      </td>
+                      <td className="font-mono">{price?.amount != null ? price.amount.toLocaleString('ko-KR') : '—'}</td>
+                      <td>
+                        <Spark values={history?.close[stock.ticker]} />
                       </td>
                       <td>
                         {stock.changeCount > 0 ? (

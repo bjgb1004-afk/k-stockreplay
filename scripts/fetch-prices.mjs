@@ -8,6 +8,7 @@
 //
 // Usage: DATA_GO_KR_KEY=xxx node scripts/fetch-prices.mjs
 
+import { pathToFileURL } from 'node:url';
 import { readFileSync, writeFileSync } from 'node:fs';
 
 // row -> PriceInfo. Pulled out as a pure function so its join-key assumption
@@ -19,8 +20,33 @@ export function mapRow(r, dateStr) {
     ticker: r.srtnCd,
     close: Number(r.clpr),
     changePct: Number(r.fltRt),
+    // 거래대금(trPrc, 원) -> 억원 정수. 값이 없거나 이상하면 null (화면은 '—'로 그린다).
+    amount: Number.isFinite(Number(r.trPrc)) && Number(r.trPrc) > 0 ? Math.round(Number(r.trPrc) / 1e8) : null,
     date: dateStr,
   };
+}
+
+// 종목별 최근 N거래일 종가. 화면의 20일 추이용.
+// 형식: { dates: [오래된 -> 최신], close: { ticker: [종가|null, ...] } } - dates와 같은 길이로 맞춘다.
+// dates 중 그 종목 데이터가 없는 날(신규상장 등)은 null.
+export function mergePriceHistory(prev, dateStr, rows, keep = 20) {
+  const prevDates = prev?.dates ?? [];
+  const prevClose = prev?.close ?? {};
+  const dates = [...new Set([...prevDates, dateStr])].sort().slice(-keep);
+  const todayClose = new Map();
+  for (const r of rows) {
+    const close = Number(r.clpr);
+    if (r.srtnCd && Number.isFinite(close) && close > 0) todayClose.set(r.srtnCd, close);
+  }
+  const close = {};
+  for (const ticker of new Set([...Object.keys(prevClose), ...todayClose.keys()])) {
+    close[ticker] = dates.map((d) => {
+      if (d === dateStr) return todayClose.get(ticker) ?? null;
+      const i = prevDates.indexOf(d);
+      return i >= 0 ? (prevClose[ticker]?.[i] ?? null) : null;
+    });
+  }
+  return { dates, close };
 }
 
 // Turnover (trPrc) per group, in 억원. Kept as a pure function so money-flow.selfcheck.mjs
@@ -110,6 +136,13 @@ function kstDateMinus(daysAgo) {
 function serviceKey() {
   const k = process.env.DATA_GO_KR_KEY ?? '';
   try { return decodeURIComponent(k); } catch { return k; }
+}
+
+// usedDate(YYYYMMDD) 기준 back일 전을 kstDateMinus(오늘 기준 일수)에 맞는 숫자로 바꿔준다.
+function daysBetween(usedDate, back) {
+  const used = Date.UTC(+usedDate.slice(0, 4), +usedDate.slice(4, 6) - 1, +usedDate.slice(6, 8));
+  const kstToday = Date.UTC(...new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10).split('-').map((v, i) => (i === 1 ? +v - 1 : +v)));
+  return Math.round((kstToday - used) / 86_400_000) + back;
 }
 
 async function fetchForDate(basDt) {
@@ -210,8 +243,37 @@ async function main() {
   const dateStr = `${usedDate.slice(0, 4)}-${usedDate.slice(4, 6)}-${usedDate.slice(6, 8)}`;
   const prices = rows.map((r) => mapRow(r, dateStr));
 
-  writeFileSync(new URL('../public/data/prices.json', import.meta.url), JSON.stringify(prices, null, 2) + '\n');
+  writeFileSync(new URL('../public/data/prices.json', import.meta.url), JSON.stringify(prices) + '\n');
   console.log(`Wrote ${prices.length} KR closing prices (as of ${usedDate}) to public/data/prices.json`);
+
+  // 20일 추이: 처음 도는 날엔 과거 거래일을 거슬러 올라가며 채우고(주말·공휴일은 응답이 비어 건너뜀),
+  // 이후엔 하루치만 더한다. 실패해도 오늘 시세는 이미 저장됐으니 경고만 남긴다.
+  try {
+    let history = readJson('../public/data/price-history.json', null);
+    const want = 20;
+    const have = new Set(history?.dates ?? []);
+    have.add(dateStr);
+    for (let back = 1; back <= 45 && have.size < want; back++) {
+      const basDt = kstDateMinus(daysBetween(usedDate, back));
+      const d = `${basDt.slice(0, 4)}-${basDt.slice(4, 6)}-${basDt.slice(6, 8)}`;
+      if (have.has(d)) continue;
+      const past = await fetchForDate(basDt);
+      if (!past || past.length === 0) continue; // 휴장일
+      history = mergePriceHistory(history, d, past, want);
+      have.add(d);
+    }
+    history = mergePriceHistory(history, dateStr, rows, want);
+    // 오늘 시세에 없는 종목(상장폐지 등)은 버려서 파일이 계속 부풀지 않게 한다.
+    const live = new Set(prices.map((p) => p.ticker));
+    history.close = Object.fromEntries(Object.entries(history.close).filter(([t]) => live.has(t)));
+    writeFileSync(new URL('../public/data/price-history.json', import.meta.url), JSON.stringify(history) + '\n');
+    console.log(`Wrote price history: ${history.dates.length} days x ${Object.keys(history.close).length} tickers`);
+    if (history.dates.length < want) {
+      console.log(`::warning title=20일 추이 데이터 부족::거래일 ${history.dates.length}/${want}일만 모았다 - 추이 그래프가 짧게 나온다.`);
+    }
+  } catch (e) {
+    console.log(`::warning title=가격 기록 수집 실패::${e.message} - 20일 추이 그래프가 갱신되지 않는다.`);
+  }
 
   try {
     const indices = await fetchIndices(usedDate);
@@ -241,6 +303,6 @@ async function main() {
 
 // Only run when executed directly (`node scripts/fetch-prices.mjs`) - not when
 // imported, e.g. by fetch-prices.selfcheck.mjs pulling in mapRow.
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   await main();
 }
