@@ -111,6 +111,25 @@ export function aggregateMoneyFlow(rows, { sectorMap, themeMaps, date }) {
   return { date, total: Math.round(total / 1e8), themes, sectors };
 }
 
+// latest(YYYY-MM-DD)부터 거꾸로, 기록(have)에 없는 평일 목록. 기록이 keep일로 차 있으면
+// 그 가장 오래된 날보다 앞은 볼 필요가 없다. 최대 40일(달력) 전까지만 본다.
+export function missingTradingDays(latest, have, keep = 20) {
+  const haveSet = new Set(have);
+  const kept = [...haveSet].sort().slice(-keep);
+  const floor = kept.length >= keep ? kept[0] : null;
+  const out = [];
+  const d = new Date(`${latest}T00:00:00Z`);
+  for (let i = 0; i < 40; i++) {
+    d.setUTCDate(d.getUTCDate() - 1);
+    const day = d.getUTCDay();
+    if (day === 0 || day === 6) continue;
+    const iso = d.toISOString().slice(0, 10);
+    if (floor && iso < floor) break;
+    if (!haveSet.has(iso)) out.push(iso);
+  }
+  return out;
+}
+
 // 같은 날짜를 다시 받으면 덮어쓴다 (워크플로 재실행/수동 트리거 대비).
 export function mergeHistory(prev, day, keepDays = 20) {
   const days = [day, ...(prev?.days ?? []).filter((d) => d.date !== day.date)]
@@ -267,23 +286,33 @@ async function main() {
   writeFileSync(new URL('../public/data/prices.json', import.meta.url), JSON.stringify(prices) + '\n');
   console.log(`Wrote ${prices.length} KR closing prices (as of ${usedDate}) to public/data/prices.json`);
 
-  // 20일 추이: 처음 도는 날엔 과거 거래일을 거슬러 올라가며 채우고(주말·공휴일은 응답이 비어 건너뜀),
-  // 이후엔 하루치만 더한다. 실패해도 오늘 시세는 이미 저장됐으니 경고만 남긴다.
+  // 20일 추이 + 자금흐름 히트맵: 최근 20거래일 안에 빠진 날짜가 있으면 그날 시세를 다시 받아 채운다.
+  // 예전엔 기록이 20일로 차면 더 이상 거슬러 올라가지 않아서, 한 번 수집에 실패한 날
+  // (2026-10-25 타임아웃 등)이 영영 빈 채로 남았다. 평일만 보고, 공휴일은 응답이 비어 건너뛴다.
+  const sectorMap = readJson('../public/data/sector-map.json', {});
+  const themeMaps = readJson('../public/data/theme-maps.json', []);
+  let flowHistory = readJson('../public/data/money-flow.json', null);
   try {
     let history = readJson('../public/data/price-history.json', null);
     const want = 20;
-    const have = new Set(history?.dates ?? []);
-    have.add(dateStr);
-    for (let back = 1; back <= 45 && have.size < want; back++) {
-      const basDt = kstDateMinus(daysBetween(usedDate, back));
-      const d = `${basDt.slice(0, 4)}-${basDt.slice(4, 6)}-${basDt.slice(6, 8)}`;
-      if (have.has(d)) continue;
-      const past = await fetchForDate(basDt);
+    history = mergePriceHistory(history, dateStr, rows, want);
+    const flowDates = new Set((flowHistory?.days ?? []).map((d) => d.date));
+    let fetched = 0;
+    for (const d of missingTradingDays(dateStr, history.dates, want)) {
+      if (fetched >= 15) break; // 하루 호출량 상한 - 남은 빈칸은 다음 실행이 채운다.
+      const past = await fetchForDate(d.replace(/-/g, ''));
+      fetched++;
       if (!past || past.length === 0) continue; // 휴장일
       history = mergePriceHistory(history, d, past, want);
-      have.add(d);
+      if (!flowDates.has(d)) {
+        try {
+          flowHistory = mergeHistory(flowHistory, aggregateMoneyFlow(past, { sectorMap, themeMaps, date: d }));
+        } catch {
+          // 그날 거래대금이 비어 있으면 히트맵만 건너뛴다.
+        }
+      }
+      console.log(`Backfilled ${d}`);
     }
-    history = mergePriceHistory(history, dateStr, rows, want);
     // 오늘 시세에 없는 종목(상장폐지 등)은 버려서 파일이 계속 부풀지 않게 한다.
     const live = new Set(prices.map((p) => p.ticker));
     history.close = Object.fromEntries(Object.entries(history.close).filter(([t]) => live.has(t)));
@@ -309,12 +338,8 @@ async function main() {
     console.log(`::warning title=지수 수집 실패::${e.message} - 상단 지수 티커가 빈 채로 남는다.`);
   }
 
-  const day = aggregateMoneyFlow(rows, {
-    sectorMap: readJson('../public/data/sector-map.json', {}),
-    themeMaps: readJson('../public/data/theme-maps.json', []),
-    date: dateStr,
-  });
-  const history = mergeHistory(readJson('../public/data/money-flow.json', null), day);
+  const day = aggregateMoneyFlow(rows, { sectorMap, themeMaps, date: dateStr });
+  const history = mergeHistory(flowHistory, day);
   writeFileSync(new URL('../public/data/money-flow.json', import.meta.url), JSON.stringify(history) + '\n');
   console.log(
     `Wrote money flow for ${dateStr}: ${day.total}억 across ${Object.keys(day.themes).length} themes / ` +

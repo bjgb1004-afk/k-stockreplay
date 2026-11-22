@@ -1,0 +1,36 @@
+name: Fetch KR prices (afternoon)
+
+# 금융위원회 시세 API는 "기준일 다음 영업일 오후 1시 이후"에 데이터가 올라온다.
+# 아침 7시 수집(fetch-facts.yml)만으로는 항상 이틀 전 시세가 잡혀서, 평일 14:30 KST에
+# 한 번 더 돌려 전 거래일 시세·20일 추이·업종 히트맵을 채운다. 공시 수집과 푸시는 하지 않는다.
+on:
+  schedule:
+    - cron: '30 5 * * 1-5'
+  workflow_dispatch: {}
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch KR closing prices
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: node scripts/fetch-prices.mjs
+
+      - name: Commit and push
+        run: |
+          git add public/data/prices.json public/data/price-history.json public/data/money-flow.json public/data/indices.json 2>/dev/null || true
+          if git diff --staged --quiet; then echo "no changes"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update KR prices ($(date -u +%Y-%m-%d))"
+          git pull --rebase
+          git push
