@@ -32,6 +32,9 @@ function createUnconfiguredClient() {
   return { from: () => chainable } as any;
 }
 
+// 리플레이 방(실시간)은 설정이 없으면 혼자 모드로만 돈다.
+export const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+
 export const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)
   : createUnconfiguredClient();

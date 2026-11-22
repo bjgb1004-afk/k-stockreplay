@@ -5,8 +5,13 @@ import { parseSpreadsheetFile } from '../lib/marketDataParse';
 import { detectColumnMapping, normalizeRows, type MarketDataRow } from '../lib/marketDataNormalize';
 import { saveDataset, listDatasets, getMarketData, deleteDataset, type Dataset } from '../lib/marketDataStore';
 import ReplayTrading from './ReplayTrading';
+import { ReplayRoomLobby, ReplayRoomView } from './ReplayRoom';
 
-type View = { kind: 'list' } | { kind: 'upload' } | { kind: 'play'; dataset: Dataset; rows: MarketDataRow[] };
+type View =
+  | { kind: 'list' }
+  | { kind: 'upload' }
+  | { kind: 'play'; dataset: Dataset; rows: MarketDataRow[] }
+  | { kind: 'room'; room: number | 'solo'; name: string };
 
 const MARKETS = ['코스피', '코스닥'] as const;
 
@@ -47,6 +52,14 @@ export default function ReplayScreen() {
     );
   }
 
+  if (view.kind === 'room') {
+    return (
+      <Screen>
+        <ReplayRoomView room={view.room} name={view.name} onExit={() => setView({ kind: 'list' })} />
+      </Screen>
+    );
+  }
+
   if (view.kind === 'upload') {
     return <UploadForm onDone={() => { refresh(); setView({ kind: 'list' }); }} onCancel={() => setView({ kind: 'list' })} />;
   }
@@ -56,7 +69,7 @@ export default function ReplayScreen() {
       <PageHeader
         en="REPLAY"
         title="리플레이"
-        sub="업로드한 파일은 이 기기에만 저장됩니다"
+        sub="여럿이 겨루는 리플레이 방 · 내 파일로 하는 개인 리플레이 (업로드한 파일은 이 기기에만 저장)"
         right={
           <button
             onClick={() => setView({ kind: 'upload' })}
@@ -66,6 +79,10 @@ export default function ReplayScreen() {
           </button>
         }
       />
+
+      <div className="mb-6">
+        <ReplayRoomLobby onEnter={(room, name) => setView({ kind: 'room', room, name })} />
+      </div>
 
       <details className="mb-6 panel px-4 py-2 text-sm text-slate-300 open:pb-4">
         <summary className="cursor-pointer text-slate-100 font-medium py-1">사용법 자세히 보기 (데이터는 어디서 받나요?)</summary>
