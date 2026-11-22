@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { X, Share2 } from 'lucide-react';
 import { Screen, Section, Panel, PageHeader, TableWrap, Chip, Spark } from './ui';
 import { loadPriceHistory, type PriceHistory } from '../lib/priceHistory';
-import { addToWatchlist, getWatchlist, removeFromWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+import { addToWatchlist, getWatchlist, notifyWatchlistChanged, onWatchlistChanged, removeFromWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+import QuickStart from './QuickStart';
 import { shareReport } from '../lib/share';
 import CompanyDetailScreen from './CompanyDetailScreen';
 
@@ -47,6 +48,7 @@ export default function WatchlistScreen({ initialQuery = '' }: { initialQuery?: 
       .then((rows: PriceInfo[]) => setPrices(new Map(rows.map((r) => [r.ticker, r]))))
       .catch(() => {});
     loadPriceHistory().then(setHistory);
+    return onWatchlistChanged(() => getWatchlist().then((list) => setItems(list.sort((a, b) => b.updated_at.localeCompare(a.updated_at)))));
   }, []);
 
   useEffect(() => {
@@ -77,6 +79,7 @@ export default function WatchlistScreen({ initialQuery = '' }: { initialQuery?: 
   async function handleAdd(stock: StockOption) {
     await addToWatchlist(stock.ticker, stock.companyName, stock.market);
     setItems(await getWatchlist());
+    notifyWatchlistChanged();
     setQuery('');
     // D1 온보딩(§6-12): 추가하자마자 바로 상세(COMPANY PASSPORT + HISTORY)로
     // 이동해서 최근 히스토리를 바로 보여준다 - 목록에 남겨두고 따로 찾게 하지 않는다.
@@ -86,6 +89,7 @@ export default function WatchlistScreen({ initialQuery = '' }: { initialQuery?: 
   async function handleRemove(ticker: string) {
     await removeFromWatchlist(ticker);
     setItems(await getWatchlist());
+    notifyWatchlistChanged();
   }
 
   async function handleShare() {
@@ -161,7 +165,7 @@ export default function WatchlistScreen({ initialQuery = '' }: { initialQuery?: 
 
       <Panel title="추적 중인 종목" meta={`${items.length}개`}>
         {items.length === 0 ? (
-          <p className="px-4 py-6 text-sm text-slate-500">아직 추가한 종목이 없습니다. 위 검색창에서 종목을 추가해보세요.</p>
+          <QuickStart />
         ) : (
           <TableWrap>
             <thead>

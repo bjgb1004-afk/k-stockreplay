@@ -9,7 +9,7 @@ import ReplayScreen from './components/ReplayScreen';
 import SectorMapScreen from './components/SectorMapScreen';
 import { useAlerts } from './lib/useAlerts';
 import { updateAppBadge } from './lib/badge';
-import { getWatchlist, type WatchlistItem } from './lib/watchlistDb';
+import { getWatchlist, onWatchlistChanged, type WatchlistItem } from './lib/watchlistDb';
 
 // VALUE CHAIN(ValueChainScreen)은 여전히 라우팅에서 뺀 상태 - 공급망/계열 관계는
 // DART 공시로 못 뽑아내는 수작업 편집 데이터라, 그 데이터 소스가 생기기 전까진
@@ -203,6 +203,7 @@ function Ticker() {
 
   useEffect(() => {
     getWatchlist().then(setItems).catch(() => {});
+    const off = onWatchlistChanged(() => getWatchlist().then(setItems).catch(() => {}));
     fetch('/data/prices.json')
       .then((r) => r.json())
       .then((rows: PriceRow[]) => setPrices(new Map(rows.map((r) => [r.ticker, r]))))
@@ -211,6 +212,7 @@ function Ticker() {
       .then((r) => r.json())
       .then(setIndices)
       .catch(() => {});
+    return off;
   }, []);
 
   const rows = items.map((i) => ({ item: i, price: prices.get(i.ticker) })).filter((r) => r.price);

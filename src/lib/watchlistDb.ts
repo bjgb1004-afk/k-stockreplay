@@ -46,3 +46,15 @@ export async function updateThesis(ticker: string, thesis: string): Promise<void
 export function removeFromWatchlist(ticker: string): Promise<undefined> {
   return withStore(STORE, 'readwrite', (store) => store.delete(ticker));
 }
+
+// 관심종목이 바뀌었을 때 다른 화면(오늘·배당·알림·상단 티커)이 다시 읽도록 알리는 신호.
+export const WATCHLIST_CHANGED = 'watchlist-changed';
+
+export function notifyWatchlistChanged(): void {
+  window.dispatchEvent(new Event(WATCHLIST_CHANGED));
+}
+
+export function onWatchlistChanged(handler: () => void): () => void {
+  window.addEventListener(WATCHLIST_CHANGED, handler);
+  return () => window.removeEventListener(WATCHLIST_CHANGED, handler);
+}

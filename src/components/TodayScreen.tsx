@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Screen, Stat, StatStrip, Panel, PageHeader, TableWrap, Chip, Spark } from './ui';
 import { loadPriceHistory, type PriceHistory } from '../lib/priceHistory';
-import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+import { getWatchlist, onWatchlistChanged, type WatchlistItem } from '../lib/watchlistDb';
+import QuickStart from './QuickStart';
 import { recordVisit } from '../lib/streakDb';
 import { ingestToday, pruneOld, type DisclosureType, type Sentiment } from '../lib/disclosuresDb';
 import { getWeeklyRecapIfDue, markWeeklyRecapShown, type WeeklyRecap } from '../lib/weeklyRecap';
@@ -74,6 +75,13 @@ const feedEmpty: Record<FeedTab, string> = {
   relation: '오늘 올라온 지분·관계 변화 공시가 없습니다.',
 };
 
+// 토·일요일은 공시가 거의 없어 "0건"이 고장처럼 보인다 - 이유를 알려준다.
+function isMarketHoliday(date: string): boolean {
+  const day = new Date(`${date}T00:00:00+09:00`).getUTCDay();
+  // KST 자정은 UTC 전날 15시라 getUTCDay가 하루 밀린다 → 금(5)/토(6)가 KST 토/일.
+  return day === 5 || day === 6;
+}
+
 export default function TodayScreen() {
   const [data, setData] = useState<TodayData | null>(null);
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
@@ -124,6 +132,8 @@ export default function TodayScreen() {
     recordVisit().then(({ currentStreak }) => setStreak(currentStreak));
     getWeeklyRecapIfDue().then(setRecap);
   }, []);
+
+  useEffect(() => onWatchlistChanged(() => getWatchlist().then(setWatchlist)), []);
 
   function selectTab(tab: FeedTab) {
     setFeedTab(tab);
@@ -245,9 +255,9 @@ export default function TodayScreen() {
       </StatStrip>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-4">
-        <Panel title="내 관심종목" meta="전일 종가 기준">
+        <Panel title={myRadar.length === 0 ? '오늘의 주도주' : '내 관심종목'} meta="전일 종가 기준">
           {myRadar.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-slate-500">아직 관심종목이 없습니다. 관심종목 메뉴에서 추가해보세요.</p>
+            <QuickStart />
           ) : (
             <TableWrap>
               <thead>
@@ -316,7 +326,11 @@ export default function TodayScreen() {
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
       <Panel title={feedTitle[feedTab]} meta={`시장 전체 ${activeFeed.length}건 · 출처 DART`}>
-        {activeFeed.length === 0 && <p className="px-4 py-6 text-sm text-slate-500">{feedEmpty[feedTab]}</p>}
+        {activeFeed.length === 0 && (
+          <p className="px-4 py-6 text-sm text-slate-500">
+            {isMarketHoliday(data.date) ? '오늘은 주말(휴장일)이라 새 공시가 없습니다. 다음 거래일 아침에 갱신됩니다.' : feedEmpty[feedTab]}
+          </p>
+        )}
         <ul className="divide-y divide-slate-800">
           {visibleNewToday.map((item) => (
             <li

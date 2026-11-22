@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Screen, Panel, PageHeader } from './ui';
 import { pushSupport, getExistingSubscription, subscribeToPush, unsubscribeFromPush, type PushSupport } from '../lib/push';
 import { useAlerts, type EventType } from '../lib/useAlerts';
+import QuickStart from './QuickStart';
 
 const typeLabel: Record<EventType, string> = {
   DISCLOSURE: '공시',
@@ -26,9 +27,7 @@ export default function AlertScreen() {
 
       <Panel title="알림함" meta={`${alerts.length}건`}>
         {watchlist.length === 0 ? (
-          <p className="px-4 py-6 text-sm text-slate-500">
-            아직 관심종목이 없습니다. 관심종목 메뉴에서 추가해보세요.
-          </p>
+          <QuickStart limit={6} />
         ) : alerts.length === 0 ? (
           <p className="px-4 py-6 text-sm text-slate-500">관심종목에 대한 알림이 아직 없습니다.</p>
         ) : (

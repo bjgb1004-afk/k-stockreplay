@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Screen, Panel, Chip, PageHeader, TableWrap } from './ui';
-import { getWatchlist, type WatchlistItem } from '../lib/watchlistDb';
+import { getWatchlist, onWatchlistChanged, type WatchlistItem } from '../lib/watchlistDb';
+import QuickStart from './QuickStart';
 import { getAllHistory, type DisclosureRecord } from '../lib/disclosuresDb';
 
 // 실적발표 일정은 아직 없다 - 별도 실적 캘린더 phase가 필요하다.
@@ -18,6 +19,7 @@ export default function EventsScreen() {
   useEffect(() => {
     getAllHistory().then(setHistory);
     getWatchlist().then(setWatchlist);
+    return onWatchlistChanged(() => getWatchlist().then(setWatchlist));
   }, []);
 
   const rows = useMemo(() => {
@@ -66,7 +68,7 @@ export default function EventsScreen() {
 
       <Panel title="배당·주총 공시" meta={`${shown.length}건`}>
         {watchlist.length === 0 ? (
-          <p className="px-4 py-6 text-sm text-slate-500">아직 관심종목이 없습니다. 관심종목 메뉴에서 추가해보세요.</p>
+          <QuickStart limit={6} />
         ) : shown.length === 0 ? (
           <p className="px-4 py-6 text-sm text-slate-500">
             아직 쌓인 공시가 없습니다. 앱을 방문할 때마다 오늘자 공시가 로컬에 쌓입니다.

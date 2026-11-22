@@ -73,7 +73,11 @@ export default function BigMoneyScreen() {
   const [us, setUs] = useState<UsData | null | undefined>(undefined);
 
   useEffect(() => {
-    loadJson<KrData>('/data/big-holders-kr.json').then(setKr);
+    // 국내 데이터가 아직 없으면 빈 화면 대신 해외(13F) 탭을 먼저 보여준다.
+    loadJson<KrData>('/data/big-holders-kr.json').then((d) => {
+      setKr(d);
+      if (!d) setTab('us');
+    });
     loadJson<UsData>('/data/big-holders-us.json').then(setUs);
   }, []);
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getWatchlist, type WatchlistItem } from './watchlistDb';
+import { getWatchlist, onWatchlistChanged, type WatchlistItem } from './watchlistDb';
 import { getReadIds, markRead as markReadInDb } from './alertsDb';
 import { getAllHistory, type DisclosureRecord, type DisclosureType } from './disclosuresDb';
 
@@ -52,6 +52,7 @@ export function useAlerts() {
     getAllHistory().then(setHistoryEntries).catch(() => {});
     getWatchlist().then(setWatchlist);
     getReadIds().then(setReadIds);
+    return onWatchlistChanged(() => getWatchlist().then(setWatchlist));
   }, []);
 
   // today.json(방금 fetch)과 로컬 disclosures 스토어(과거에 쌓아둔 것) 둘 다 오늘
