@@ -34,6 +34,7 @@ export default function ReplayChart({
   const volumeRef = useRef<ISeriesApi<'Histogram'> | null>(null);
   const markersRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null);
   const avgCostLineRef = useRef<IPriceLine | null>(null);
+  const avgCostLabelRef = useRef<HTMLDivElement>(null);
   const maSeriesRef = useRef<Map<number, ISeriesApi<'Line'>>>(new Map());
   const hasFitRef = useRef(false);
   const prevLenRef = useRef(0);
@@ -199,6 +200,8 @@ export default function ReplayChart({
   }, [rows, enabledMA]);
 
   // 보유 중일 때만 평단가 가로선을 보여주고, 청산되면 지운다.
+  // 네이티브 라벨(title/axisLabelVisible)은 항상 오른쪽 가격축 옆에만 뜨므로 끄고,
+  // 왼쪽 끝에는 아래 effect에서 직접 그린 배지(avgCostLabelRef)를 따로 띄운다.
   useEffect(() => {
     const candleSeries = candleRef.current;
     if (!candleSeries) return;
@@ -219,10 +222,48 @@ export default function ReplayChart({
         color: AVG_COST_COLOR,
         lineWidth: 1,
         lineStyle: 2,
-        axisLabelVisible: true,
-        title: '평단가',
+        axisLabelVisible: false,
+        title: '',
       });
     }
+  }, [avgCost, position]);
+
+  // 평단가 라벨을 차트 왼쪽 끝에 고정 - lightweight-charts는 가격선 라벨을
+  // 왼쪽에 띄우는 옵션이 없어서 좌표를 직접 계산해 DOM으로 그린다. 폴링 대신
+  // 라이브러리가 제공하는 이벤트(데이터 갱신·시간축 이동)와 높이 변화에만 반응한다.
+  useEffect(() => {
+    const chart = chartRef.current;
+    const candleSeries = candleRef.current;
+    const label = avgCostLabelRef.current;
+    const container = containerRef.current;
+    if (!chart || !candleSeries || !label || !container) return;
+
+    const update = () => {
+      if (!position || position <= 0 || !avgCost) {
+        label.style.display = 'none';
+        return;
+      }
+      const y = candleSeries.priceToCoordinate(avgCost);
+      if (y === null) {
+        label.style.display = 'none';
+        return;
+      }
+      label.style.display = 'block';
+      label.style.top = `${y}px`;
+      label.textContent = `평단가 ${Math.round(avgCost).toLocaleString('ko-KR')}`;
+    };
+
+    update();
+    candleSeries.subscribeDataChanged(update);
+    chart.timeScale().subscribeVisibleTimeRangeChange(update);
+    const ro = new ResizeObserver(update);
+    ro.observe(container);
+
+    return () => {
+      candleSeries.unsubscribeDataChanged(update);
+      chart.timeScale().unsubscribeVisibleTimeRangeChange(update);
+      ro.disconnect();
+    };
   }, [avgCost, position]);
 
   if (rows.length === 0) {
@@ -258,7 +299,14 @@ export default function ReplayChart({
           </button>
         ))}
       </div>
-      <div ref={containerRef} className="w-full h-[400px] lg:h-[520px]" />
+      <div className="relative">
+        <div ref={containerRef} className="w-full h-[400px] lg:h-[520px]" />
+        <div
+          ref={avgCostLabelRef}
+          style={{ display: 'none', backgroundColor: AVG_COST_COLOR }}
+          className="pointer-events-none absolute left-0 z-10 -translate-y-1/2 rounded-r px-1.5 py-0.5 text-[11px] font-semibold text-slate-950 whitespace-nowrap"
+        />
+      </div>
     </div>
   );
 }

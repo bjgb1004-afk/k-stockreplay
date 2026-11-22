@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Screen, Section } from './ui';
 import { addToWatchlist, getWatchlist, removeFromWatchlist, updateThesis, type WatchlistItem } from '../lib/watchlistDb';
-import { getVoteCounts, castVote, type Vote, type VoteCounts } from '../lib/votes';
 import { getHistoryForTicker, type DisclosureRecord } from '../lib/disclosuresDb';
 
 interface CompanyRef {
@@ -107,8 +106,6 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
         </Section>
       )}
 
-      <VoteSection ticker={company.ticker} />
-
       <Section title="관련 뉴스">
         {news.length === 0 ? (
           <p className="text-sm text-slate-500">뉴스를 찾을 수 없습니다.</p>
@@ -149,69 +146,6 @@ export default function CompanyDetailScreen({ company, onBack }: { company: Comp
         )}
       </Section>
     </Screen>
-  );
-}
-
-function VoteSection({ ticker }: { ticker: string }) {
-  const [counts, setCounts] = useState<VoteCounts | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    setCounts(null);
-    setError(false);
-    getVoteCounts(ticker).then(setCounts);
-  }, [ticker]);
-
-  async function handleVote(vote: Vote) {
-    setBusy(true);
-    try {
-      await castVote(ticker, vote);
-      setCounts(await getVoteCounts(ticker));
-    } catch {
-      setError(true);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  const total = (counts?.bullish ?? 0) + (counts?.bearish ?? 0);
-  const bullishPct = total > 0 ? Math.round(((counts?.bullish ?? 0) / total) * 100) : 50;
-
-  return (
-    <Section title="Bullish / Bearish 투표">
-      {error && <p className="text-xs text-red-600 mb-2">아직 서버에 설정되지 않았습니다.</p>}
-      <div className="flex gap-2 mb-3">
-        <button
-          onClick={() => handleVote('bullish')}
-          disabled={busy}
-          className={`flex-1 flex items-center justify-center gap-1.5 rounded-md py-2 text-sm disabled:opacity-50 ${
-            counts?.myVote === 'bullish' ? 'bg-emerald-500/20 text-emerald-600' : 'bg-slate-900 text-slate-300'
-          }`}
-        >
-          <TrendingUp size={16} /> Bullish
-        </button>
-        <button
-          onClick={() => handleVote('bearish')}
-          disabled={busy}
-          className={`flex-1 flex items-center justify-center gap-1.5 rounded-md py-2 text-sm disabled:opacity-50 ${
-            counts?.myVote === 'bearish' ? 'bg-red-500/20 text-red-600' : 'bg-slate-900 text-slate-300'
-          }`}
-        >
-          <TrendingDown size={16} /> Bearish
-        </button>
-      </div>
-      {total > 0 && (
-        <div>
-          <div className="h-1.5 rounded-full bg-red-500/30 overflow-hidden">
-            <div className="h-full bg-emerald-500" style={{ width: `${bullishPct}%` }} />
-          </div>
-          <p className="text-xs text-slate-500 mt-1.5">
-            Bullish {bullishPct}% · 총 {total}표
-          </p>
-        </div>
-      )}
-    </Section>
   );
 }
 

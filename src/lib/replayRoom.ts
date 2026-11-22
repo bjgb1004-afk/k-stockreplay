@@ -7,7 +7,7 @@ import { generateChart } from './syntheticChart';
 // Supabase Realtime의 Broadcast(진행 신호·점수)와 Presence(누가 방에 있나)만 쓰고 DB 테이블은 안 쓴다.
 //
 // 무료 한도(동시접속 200, 초당 메시지 100, Presence 초당 20)를 넘지 않게:
-//  - 방 정원 20명, 방은 ROOM_COUNT개 → 최대 200명
+//  - 방 정원 20명, 방은 ROOM_COUNT개 → 최대 20명
 //  - 진행 신호는 방장 1명만 2초에 1번, 점수는 매매할 때 + 10초에 1번
 //  - Presence는 입장·퇴장 때만 (점수를 presence로 보내지 않는다)
 //  - 탭을 숨긴 채 1분이 지나면 연결을 끊는다
@@ -16,10 +16,10 @@ import { generateChart } from './syntheticChart';
 // 차트는 실제 시세가 아니라 가상 차트다 (syntheticChart.ts 참고 - 실제 시세는 재배포 금지 라이선스).
 // 방장이 시드만 보내면 모두가 같은 차트를 만든다.
 
-export const ROOM_COUNT = 10;
+export const ROOM_COUNT = 1;
 export const ROOM_CAPACITY = 20;
 export const WARMUP = 120; // 시작할 때 이미 보여주는 봉 수
-export const PLAY_CANDLES = 60; // 한 판 동안 새로 열리는 봉 수
+export const PLAY_CANDLES = 150; // 한 판 동안 새로 열리는 봉 수 (2초 틱 × 150 = 5분)
 export const TICK_MS = 2000;
 export const RESULT_MS = 12000;
 export const START_CASH = 10_000_000;

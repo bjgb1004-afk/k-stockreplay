@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, Users, Trophy, User } from 'lucide-react';
 import { Panel } from './ui';
 import ReplayChart from './ReplayChart';
@@ -6,11 +6,11 @@ import { supabaseConfigured } from '../lib/supabase';
 import {
   useReplayRoom,
   equityReturn,
-  ROOM_COUNT,
   ROOM_CAPACITY,
   PLAY_CANDLES,
   WARMUP,
   START_CASH,
+  RESULT_MS,
 } from '../lib/replayRoom';
 
 const NAME_KEY = 'kstockreplay_room_name';
@@ -32,13 +32,19 @@ export function RoomGuide({ defaultOpen = false }: { defaultOpen?: boolean }) {
       <summary className="cursor-pointer font-medium text-slate-100 py-0.5">리플레이 방 이용 안내</summary>
       <ul className="mt-2 space-y-1.5 list-disc list-inside">
         <li>
-          <b className="text-slate-100">방 정원은 {ROOM_CAPACITY}명</b>이고 방은 {ROOM_COUNT}개입니다. 방이 가득 차면 다른 방을 고르거나 혼자 연습할 수 있습니다.
+          <b className="text-slate-100">왜 효과가 있나:</b> 과거 차트를 봉 하나씩 다시 열어보며 연습하는 이 방식은 &lsquo;바 리플레이(Bar Replay)&rsquo;라는 이름으로
+          트레이딩뷰 같은 실제 거래 플랫폼과 프롭 트레이딩 회사의 신입 교육에서도 쓰는 방법입니다. 같은 틀로 반복하고, 판이 끝나면 바로 수익률을 보여주는
+          두 가지가 핵심인데, 심리학자 Anders Ericsson이 1993년부터 연구한 &lsquo;의도적 연습&rsquo; 이론에서 실력이 빠르게 늘려면 꼭 필요하다고 보는 조건입니다.
+          다만 수익률 자체보다 매번 같은 기준으로 판단했는지가 더 중요합니다.
+        </li>
+        <li>
+          <b className="text-slate-100">방 정원은 {ROOM_CAPACITY}명</b>입니다. 방이 가득 차면 혼자 연습할 수 있습니다.
         </li>
         <li>
           <b className="text-amber-600">다른 탭으로 옮기거나 화면을 1분 이상 숨겨 두면 자동으로 방에서 나가집니다.</b> 기다리는 다른 분들께 자리를 돌려드리기 위해서입니다.
           돌아오면 &lsquo;다시 입장&rsquo; 버튼으로 바로 들어갈 수 있고, 그 판의 계좌는 초기화될 수 있습니다.
         </li>
-        <li>한 판은 이미 보이는 {WARMUP}개 봉 뒤로 새 봉 {PLAY_CANDLES}개가 2초마다 열립니다 (약 2분). 끝나면 순위를 보여주고 12초 뒤 다음 판이 시작됩니다.</li>
+        <li>한 판은 이미 보이는 {WARMUP}개 봉 뒤로 새 봉 {PLAY_CANDLES}개가 2초마다 열립니다 (약 5분). 끝나면 순위를 보여주고 12초 뒤 다음 판이 시작됩니다.</li>
         <li>매수·매도는 지금 보이는 마지막 봉의 종가로 체결되고 수수료와 세금은 없습니다. 판마다 1,000만 원으로 다시 시작합니다.</li>
         <li>
           <b className="text-slate-100">차트는 실제 종목이 아닌 가상 차트입니다.</b> 실제 시세처럼 오르내리도록 만든 연습용이며, 특정 종목이나 실제 가격과 관계가 없습니다.
@@ -65,10 +71,11 @@ export function ReplayRoomLobby({ onEnter }: { onEnter: (room: number | 'solo', 
   }
 
   return (
-    <Panel title="리플레이 방 · 여럿이 같은 차트로 겨루기" meta={`방당 ${ROOM_CAPACITY}명 · 한 판 약 2분`}>
+    <Panel title="리플레이 방 · 여럿이 같은 차트로 겨루기" meta={`정원 ${ROOM_CAPACITY}명 · 한 판 약 5분`}>
       <div className="p-4 space-y-3">
         <p className="text-[13px] text-slate-300">
           방에 들어온 모두가 같은 가상 차트를 보고, 2초마다 한 봉씩 열립니다. 가상 자금 1,000만 원으로 사고팔아 수익률 순위를 겨룹니다.
+          실제 프롭 트레이딩 교육에서 쓰는 &lsquo;바 리플레이&rsquo; 연습법과 같은 방식입니다.
         </p>
         <>
             <label className="flex items-center gap-2 text-[13px]">
@@ -80,18 +87,13 @@ export function ReplayRoomLobby({ onEnter }: { onEnter: (room: number | 'solo', 
                 className="w-40 h-8 bg-slate-900 border border-slate-800 rounded-md px-2.5 focus:outline-none focus:border-cyan-600"
               />
             </label>
-            <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
-              {Array.from({ length: ROOM_COUNT }, (_, i) => i + 1).map((room) => (
-                <button
-                  key={room}
-                  onClick={() => enter(room)}
-                  disabled={!supabaseConfigured}
-                  className="h-10 rounded-md border border-slate-700 text-[13px] font-semibold hover:bg-cyan-500 hover:text-white hover:border-cyan-500 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-inherit"
-                >
-                  {room}번 방
-                </button>
-              ))}
-            </div>
+            <button
+              onClick={() => enter(1)}
+              disabled={!supabaseConfigured}
+              className="h-10 px-4 rounded-md border border-slate-700 text-[13px] font-semibold hover:bg-cyan-500 hover:text-white hover:border-cyan-500 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-inherit"
+            >
+              입장하기
+            </button>
             <button onClick={() => enter('solo')} className="inline-flex items-center gap-1.5 text-[13px] text-slate-400 hover:text-slate-100">
               <User size={14} /> 혼자 연습하기
             </button>
@@ -129,10 +131,32 @@ export function ReplayRoomView({
   const myRet = equityReturn(g.account, g.price);
   const left = g.state ? PLAY_CANDLES - g.state.idx : PLAY_CANDLES;
 
+  // 판 종료 카운트다운: 결과 화면에 머무는 동안 0.5초마다 다시 계산한다 (서버 왕복 없이 로컬 시계만 사용).
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (g.state?.phase !== 'result') return;
+    const t = window.setInterval(() => setNow(Date.now()), 500);
+    return () => window.clearInterval(t);
+  }, [g.state?.phase]);
+  const resultLeftMs = g.state?.phase === 'result' ? Math.max(0, RESULT_MS - (now - g.state.at)) : 0;
+
+  // 새 판 시작 플래시: gameId가 바뀌는 순간(= 이전 판에서 이번 판으로 넘어올 때) 잠깐 띄운다.
+  const prevGameIdRef = useRef<string | undefined>(undefined);
+  const [justStarted, setJustStarted] = useState(false);
+  useEffect(() => {
+    const id = g.state?.gameId;
+    if (id && prevGameIdRef.current && prevGameIdRef.current !== id) {
+      setJustStarted(true);
+      const t = window.setTimeout(() => setJustStarted(false), 1500);
+      return () => window.clearTimeout(t);
+    }
+    prevGameIdRef.current = id;
+  }, [g.state?.gameId]);
+
   if (g.status === 'full' || g.status === 'error' || g.status === 'paused') {
     const msg =
       g.status === 'full'
-        ? `${room}번 방이 가득 찼어요 (정원 ${ROOM_CAPACITY}명).`
+        ? `방이 가득 찼어요 (정원 ${ROOM_CAPACITY}명).`
         : g.status === 'paused'
           ? '화면을 오래 비워 두어 방에서 나왔어요.'
           : '지금은 실시간 서버에 접속이 어려워요 (접속자가 많거나 연결 오류).';
@@ -149,7 +173,7 @@ export function ReplayRoomView({
             혼자 이어서 하기
           </button>
           <button onClick={onExit} className="h-9 px-3 rounded-md border border-slate-700 text-[13px]">
-            다른 방 고르기
+            나가기
           </button>
         </div>
       </div>
@@ -163,7 +187,7 @@ export function ReplayRoomView({
           <ArrowLeft size={18} />
         </button>
         <div className="min-w-0">
-          <h1 className="text-base font-bold">{g.status === 'solo' ? '혼자 연습' : `${room}번 방`}</h1>
+          <h1 className="text-base font-bold">{g.status === 'solo' ? '혼자 연습' : '리플레이 방'}</h1>
           <p className="text-xs text-slate-500 flex items-center gap-1">
             <Users size={12} /> {g.players.length}명{g.status === 'connecting' && ' · 접속 중...'}
             {g.isHost && g.status !== 'solo' && ' · 내가 진행 중'}
@@ -180,13 +204,28 @@ export function ReplayRoomView({
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] items-start">
         <div className="panel overflow-hidden min-w-0">
           <div className="flex items-center gap-3 px-4 py-2.5 border-b border-slate-800 text-[13px]">
-            <span className="font-mono">{g.state?.phase === 'play' ? `남은 봉 ${left}` : '결과 발표 · 곧 다음 판'}</span>
+            <span className="font-mono">
+              {g.state?.phase === 'play' ? `남은 봉 ${left}` : `🏁 이번 판 종료 · 다음 판 시작까지 ${Math.ceil(resultLeftMs / 1000)}초`}
+            </span>
             <div className="flex-1 h-1.5 rounded bg-slate-800 overflow-hidden">
-              <div className="h-full bg-cyan-500 transition-all" style={{ width: `${((g.state?.idx ?? 0) / PLAY_CANDLES) * 100}%` }} />
+              <div
+                className="h-full bg-cyan-500 transition-all"
+                style={{
+                  width:
+                    g.state?.phase === 'play'
+                      ? `${((g.state?.idx ?? 0) / PLAY_CANDLES) * 100}%`
+                      : `${(resultLeftMs / RESULT_MS) * 100}%`,
+                }}
+              />
             </div>
             <span className="font-mono">{g.price ? g.price.toLocaleString('ko-KR') : '—'}</span>
           </div>
-          <div className="p-2">
+          <div className="p-2 relative">
+            {justStarted && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/70 pointer-events-none">
+                <p className="text-2xl font-bold text-cyan-400">▶ 새 게임 시작!</p>
+              </div>
+            )}
             {visible.length > 0 ? (
               <ReplayChart rows={visible} avgCost={g.account.shares > 0 ? g.account.avgCost : undefined} position={g.account.shares} />
             ) : (
