@@ -8,7 +8,7 @@ import { generateChart } from './syntheticChart';
 //
 // 무료 한도(동시접속 200, 초당 메시지 100, Presence 초당 20)를 넘지 않게:
 //  - 방 정원 20명, 방은 ROOM_COUNT개 → 최대 20명
-//  - 진행 신호는 방장 1명만 2초에 1번, 점수는 매매할 때 + 10초에 1번
+//  - 진행 신호는 방장 1명만 3초에 1번, 점수는 매매할 때 + 15초에 1번
 //  - Presence는 입장·퇴장 때만 (점수를 presence로 보내지 않는다)
 //  - 탭을 숨긴 채 1분이 지나면 연결을 끊는다
 // 연결이 안 되면(설정 없음·한도 초과·오류) 같은 게임을 혼자 모드로 이어서 할 수 있다.
@@ -19,8 +19,8 @@ import { generateChart } from './syntheticChart';
 export const ROOM_COUNT = 1;
 export const ROOM_CAPACITY = 20;
 export const WARMUP = 120; // 시작할 때 이미 보여주는 봉 수
-export const PLAY_CANDLES = 150; // 한 판 동안 새로 열리는 봉 수 (2초 틱 × 150 = 5분)
-export const TICK_MS = 2000;
+export const PLAY_CANDLES = 100; // 한 판 동안 새로 열리는 봉 수 (3초 틱 × 100 = 5분)
+export const TICK_MS = 3000;
 export const RESULT_MS = 12000;
 export const START_CASH = 10_000_000;
 const SCORE_EVERY_TICKS = 5;
@@ -215,7 +215,7 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
     };
   }, [roomId, solo, myId, name, epoch]);
 
-  // 방장: 2초마다 진행 신호. 방장이 바뀌면 마지막으로 받은 상태에서 이어간다.
+  // 방장: 3초마다 진행 신호. 방장이 바뀌면 마지막으로 받은 상태에서 이어간다.
   useEffect(() => {
     if (roomId === null || !isHost || !(status === 'joined' || status === 'solo')) return;
     if (!stateRef.current) {

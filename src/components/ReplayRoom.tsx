@@ -44,7 +44,7 @@ export function RoomGuide({ defaultOpen = false }: { defaultOpen?: boolean }) {
           <b className="text-amber-600">다른 탭으로 옮기거나 화면을 1분 이상 숨겨 두면 자동으로 방에서 나가집니다.</b> 기다리는 다른 분들께 자리를 돌려드리기 위해서입니다.
           돌아오면 &lsquo;다시 입장&rsquo; 버튼으로 바로 들어갈 수 있고, 그 판의 계좌는 초기화될 수 있습니다.
         </li>
-        <li>한 판은 이미 보이는 {WARMUP}개 봉 뒤로 새 봉 {PLAY_CANDLES}개가 2초마다 열립니다 (약 5분). 끝나면 순위를 보여주고 12초 뒤 다음 판이 시작됩니다.</li>
+        <li>한 판은 이미 보이는 {WARMUP}개 봉 뒤로 새 봉 {PLAY_CANDLES}개가 3초마다 열립니다 (약 5분). 끝나면 순위를 보여주고 12초 뒤 다음 판이 시작됩니다.</li>
         <li>매수·매도는 지금 보이는 마지막 봉의 종가로 체결되고 수수료와 세금은 없습니다. 판마다 1,000만 원으로 다시 시작합니다.</li>
         <li>
           <b className="text-slate-100">차트는 실제 종목이 아닌 가상 차트입니다.</b> 실제 시세처럼 오르내리도록 만든 연습용이며, 특정 종목이나 실제 가격과 관계가 없습니다.
@@ -74,7 +74,7 @@ export function ReplayRoomLobby({ onEnter }: { onEnter: (room: number | 'solo', 
     <Panel title="리플레이 방 · 여럿이 같은 차트로 겨루기" meta={`정원 ${ROOM_CAPACITY}명 · 한 판 약 5분`}>
       <div className="p-4 space-y-3">
         <p className="text-[13px] text-slate-300">
-          방에 들어온 모두가 같은 가상 차트를 보고, 2초마다 한 봉씩 열립니다. 가상 자금 1,000만 원으로 사고팔아 수익률 순위를 겨룹니다.
+          방에 들어온 모두가 같은 가상 차트를 보고, 3초마다 한 봉씩 열립니다. 가상 자금 1,000만 원으로 사고팔아 수익률 순위를 겨룹니다.
           실제 프롭 트레이딩 교육에서 쓰는 &lsquo;바 리플레이&rsquo; 연습법과 같은 방식입니다.
         </p>
         <>
