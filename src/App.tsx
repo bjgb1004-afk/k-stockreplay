@@ -115,7 +115,7 @@ export default function App() {
           <SideTabButton active={tab === 'alerts'} ko="알림" en="ALERT" icon={<Bell />} badgeCount={unreadCount} onClick={() => go('alerts')} />
           <SideTabButton active={tab === 'replay'} ko="리플레이" en="REPLAY" icon={<History />} onClick={() => go('replay')} />
           <p className="mt-auto pt-3 px-3 border-t border-slate-800 text-[11px] leading-relaxed text-slate-500">
-            데이터 출처: DART 전자공시
+            데이터 출처: DART 전자공시 · 시세 금융위원회(원천 한국거래소) · SEC EDGAR · 미국 하원 사무처
             <br />
             투자 판단의 책임은 본인에게 있습니다.
           </p>

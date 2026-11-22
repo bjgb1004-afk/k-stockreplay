@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Users, Trophy, User } from 'lucide-react';
 import { Panel } from './ui';
 import ReplayChart from './ReplayChart';
@@ -9,8 +9,8 @@ import {
   ROOM_COUNT,
   ROOM_CAPACITY,
   PLAY_CANDLES,
+  WARMUP,
   START_CASH,
-  type PackInfo,
 } from '../lib/replayRoom';
 
 const NAME_KEY = 'kstockreplay_room_name';
@@ -25,17 +25,34 @@ function defaultName() {
   return `개미${Math.floor(1000 + Math.random() * 9000)}`;
 }
 
+/** 리플레이 방 이용 안내 (규칙·자동 퇴장·차트 안내). 입구와 방 안에서 함께 쓴다. */
+export function RoomGuide({ defaultOpen = false }: { defaultOpen?: boolean }) {
+  return (
+    <details open={defaultOpen} className="rounded-md border border-slate-800 bg-slate-950 px-3 py-2 text-[12.5px] text-slate-300 open:pb-3">
+      <summary className="cursor-pointer font-medium text-slate-100 py-0.5">리플레이 방 이용 안내</summary>
+      <ul className="mt-2 space-y-1.5 list-disc list-inside">
+        <li>
+          <b className="text-slate-100">방 정원은 {ROOM_CAPACITY}명</b>이고 방은 {ROOM_COUNT}개입니다. 방이 가득 차면 다른 방을 고르거나 혼자 연습할 수 있습니다.
+        </li>
+        <li>
+          <b className="text-amber-600">다른 탭으로 옮기거나 화면을 1분 이상 숨겨 두면 자동으로 방에서 나가집니다.</b> 기다리는 다른 분들께 자리를 돌려드리기 위해서입니다.
+          돌아오면 &lsquo;다시 입장&rsquo; 버튼으로 바로 들어갈 수 있고, 그 판의 계좌는 초기화될 수 있습니다.
+        </li>
+        <li>한 판은 이미 보이는 {WARMUP}개 봉 뒤로 새 봉 {PLAY_CANDLES}개가 2초마다 열립니다 (약 2분). 끝나면 순위를 보여주고 12초 뒤 다음 판이 시작됩니다.</li>
+        <li>매수·매도는 지금 보이는 마지막 봉의 종가로 체결되고 수수료와 세금은 없습니다. 판마다 1,000만 원으로 다시 시작합니다.</li>
+        <li>
+          <b className="text-slate-100">차트는 실제 종목이 아닌 가상 차트입니다.</b> 실제 시세처럼 오르내리도록 만든 연습용이며, 특정 종목이나 실제 가격과 관계가 없습니다.
+        </li>
+        <li>실시간 접속자가 많거나 연결이 불안정하면 &lsquo;혼자 이어서 하기&rsquo;로 같은 게임을 계속할 수 있습니다.</li>
+        <li>닉네임은 이 기기에만 저장되고, 게임 기록은 서버에 남지 않습니다. 상금이나 경품은 없는 모의 게임이며 투자 권유가 아닙니다.</li>
+      </ul>
+    </details>
+  );
+}
+
 /** 리플레이 목록 화면 위에 붙는 "여럿이 하기" 입구 */
 export function ReplayRoomLobby({ onEnter }: { onEnter: (room: number | 'solo', name: string) => void }) {
-  const [packs, setPacks] = useState<PackInfo[] | null>(null);
   const [name, setName] = useState(defaultName);
-
-  useEffect(() => {
-    fetch('/data/replay/index.json')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => setPacks(d?.packs ?? []))
-      .catch(() => setPacks([]));
-  }, []);
 
   function enter(room: number | 'solo') {
     const n = name.trim().slice(0, 12) || defaultName();
@@ -47,18 +64,13 @@ export function ReplayRoomLobby({ onEnter }: { onEnter: (room: number | 'solo', 
     onEnter(room, n);
   }
 
-  const ready = !!packs && packs.length > 0;
-
   return (
     <Panel title="리플레이 방 · 여럿이 같은 차트로 겨루기" meta={`방당 ${ROOM_CAPACITY}명 · 한 판 약 2분`}>
       <div className="p-4 space-y-3">
         <p className="text-[13px] text-slate-300">
-          종목 이름을 가린 과거 차트가 2초마다 한 봉씩 열립니다. 가상 자금 1,000만 원으로 사고팔아 수익률 순위를 겨루고, 판이 끝나면 종목이 공개됩니다.
+          방에 들어온 모두가 같은 가상 차트를 보고, 2초마다 한 봉씩 열립니다. 가상 자금 1,000만 원으로 사고팔아 수익률 순위를 겨룹니다.
         </p>
-        {!ready ? (
-          <p className="text-sm text-slate-500">{packs === null ? '불러오는 중...' : '방에서 쓸 차트 데이터를 준비 중입니다. 첫 수집이 끝나면 열립니다.'}</p>
-        ) : (
-          <>
+        <>
             <label className="flex items-center gap-2 text-[13px]">
               <span className="text-slate-400 shrink-0">닉네임</span>
               <input
@@ -84,8 +96,8 @@ export function ReplayRoomLobby({ onEnter }: { onEnter: (room: number | 'solo', 
               <User size={14} /> 혼자 연습하기
             </button>
             {!supabaseConfigured && <p className="text-xs text-amber-600">실시간 서버가 연결되지 않아 지금은 혼자 연습만 할 수 있습니다.</p>}
-          </>
-        )}
+        </>
+        <RoomGuide />
       </div>
     </Panel>
   );
@@ -101,23 +113,19 @@ export function ReplayRoomView({
   name: string;
   onExit: () => void;
 }) {
-  const [packs, setPacks] = useState<PackInfo[]>([]);
   const [forceSolo, setForceSolo] = useState(room === 'solo');
   const [roomKey, setRoomKey] = useState(0); // '다시 입장'용
 
-  useEffect(() => {
-    fetch('/data/replay/index.json')
-      .then((r) => r.json())
-      .then((d) => setPacks(d.packs ?? []))
-      .catch(() => setPacks([]));
-  }, []);
-
   const roomId = room === 'solo' ? 0 : room;
-  const g = useReplayRoom(packs.length ? roomId : null, name, packs, forceSolo, roomKey);
+  const g = useReplayRoom(roomId, name, forceSolo, roomKey);
 
   const visible = g.rows && g.state ? g.rows.slice(0, g.state.start + g.state.idx) : [];
-  const pack = packs.find((p) => p.ticker === g.state?.ticker);
   const reveal = g.state?.phase === 'result';
+  // 비교 기준: 판 시작 때 사서 끝까지 들고 있었다면
+  const holdRet =
+    g.rows && g.state && g.rows[g.state.start - 1] && g.price
+      ? Math.round(((g.price - g.rows[g.state.start - 1].close) / g.rows[g.state.start - 1].close) * 10000) / 100
+      : null;
   const myRet = equityReturn(g.account, g.price);
   const left = g.state ? PLAY_CANDLES - g.state.idx : PLAY_CANDLES;
 
@@ -162,8 +170,10 @@ export function ReplayRoomView({
           </p>
         </div>
         <div className="ml-auto text-right">
-          <p className="text-xs text-slate-500">{reveal ? '이번 판 종목' : '종목'}</p>
-          <p className="font-semibold">{reveal && pack ? `${pack.name} (${pack.ticker})` : '??? (판이 끝나면 공개)'}</p>
+          <p className="text-xs text-slate-500">가상 차트</p>
+          <p className="font-semibold">
+            {reveal && holdRet !== null ? `그냥 들고 있었다면 ${holdRet > 0 ? '+' : ''}${holdRet.toFixed(2)}%` : '실제 종목이 아닌 연습용 차트'}
+          </p>
         </div>
       </header>
 
@@ -254,7 +264,10 @@ export function ReplayRoomView({
               </ol>
             )}
           </Panel>
-          <p className="text-[11px] text-slate-500">과거 실제 시세로 하는 모의 게임이며 투자 권유가 아닙니다.</p>
+          {g.status !== 'solo' && (
+            <p className="text-[11px] text-amber-600">화면을 1분 이상 숨기면 자동으로 방에서 나가집니다.</p>
+          )}
+          <RoomGuide />
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase, supabaseConfigured } from './supabase';
 import type { MarketDataRow } from './marketDataNormalize';
+import { generateChart } from './syntheticChart';
 
 // 리플레이 방: 여러 명이 같은 과거 차트를 같은 속도로 보며 가상매매하고 수익률 순위를 겨룬다.
 // Supabase Realtime의 Broadcast(진행 신호·점수)와 Presence(누가 방에 있나)만 쓰고 DB 테이블은 안 쓴다.
@@ -11,6 +12,9 @@ import type { MarketDataRow } from './marketDataNormalize';
 //  - Presence는 입장·퇴장 때만 (점수를 presence로 보내지 않는다)
 //  - 탭을 숨긴 채 1분이 지나면 연결을 끊는다
 // 연결이 안 되면(설정 없음·한도 초과·오류) 같은 게임을 혼자 모드로 이어서 할 수 있다.
+//
+// 차트는 실제 시세가 아니라 가상 차트다 (syntheticChart.ts 참고 - 실제 시세는 재배포 금지 라이선스).
+// 방장이 시드만 보내면 모두가 같은 차트를 만든다.
 
 export const ROOM_COUNT = 10;
 export const ROOM_CAPACITY = 20;
@@ -22,15 +26,9 @@ export const START_CASH = 10_000_000;
 const SCORE_EVERY_TICKS = 5;
 const HIDDEN_LIMIT_MS = 60_000;
 
-export interface PackInfo {
-  ticker: string;
-  name: string;
-  rows: number;
-}
-
 export interface GameState {
   gameId: string;
-  ticker: string;
+  seed: string; // 가상 차트 시드 - 모두가 이 값으로 같은 차트를 만든다
   start: number; // rows 배열에서 이 판이 시작하는 위치 (이 앞 WARMUP개를 미리 보여준다)
   idx: number; // 0..PLAY_CANDLES
   phase: 'play' | 'result';
@@ -56,23 +54,20 @@ function randomId() {
   return crypto.randomUUID().slice(0, 8);
 }
 
-export function pickNewGame(packs: PackInfo[], prev?: GameState | null): GameState | null {
-  const usable = packs.filter((p) => p.rows >= WARMUP + PLAY_CANDLES + 1 && p.ticker !== prev?.ticker);
-  const list = usable.length ? usable : packs.filter((p) => p.rows >= WARMUP + PLAY_CANDLES + 1);
-  if (list.length === 0) return null;
-  const pack = list[Math.floor(Math.random() * list.length)];
-  const maxStart = pack.rows - PLAY_CANDLES - 1;
-  const start = WARMUP + Math.floor(Math.random() * Math.max(1, maxStart - WARMUP + 1));
-  return { gameId: randomId(), ticker: pack.ticker, start, idx: 0, phase: 'play', at: Date.now() };
+export const CHART_LEN = WARMUP + PLAY_CANDLES;
+
+export function pickNewGame(): GameState {
+  const gameId = randomId();
+  return { gameId, seed: `${gameId}-${Math.floor(Math.random() * 1e9)}`, start: WARMUP, idx: 0, phase: 'play', at: Date.now() };
 }
 
 // 다음 상태: 봉을 하나 더 열거나, 다 열었으면 결과 화면, 결과 시간이 지나면 새 판.
-export function advance(state: GameState, packs: PackInfo[], now = Date.now()): GameState | null {
+export function advance(state: GameState, now = Date.now()): GameState {
   if (state.phase === 'play') {
     if (state.idx < PLAY_CANDLES) return { ...state, idx: state.idx + 1, at: now };
     return { ...state, phase: 'result', at: now };
   }
-  if (now - state.at >= RESULT_MS) return pickNewGame(packs, state);
+  if (now - state.at >= RESULT_MS) return pickNewGame();
   return state;
 }
 
@@ -115,19 +110,8 @@ export function equityReturn(acc: Account, price: number): number {
   return Math.round(((equity - START_CASH) / START_CASH) * 10000) / 100;
 }
 
-const packCache = new Map<string, Promise<MarketDataRow[]>>();
-export function loadPack(ticker: string): Promise<MarketDataRow[]> {
-  if (!packCache.has(ticker)) {
-    packCache.set(
-      ticker,
-      fetch(`/data/replay/${ticker}.json`).then((r) => (r.ok ? r.json() : Promise.reject(new Error('pack missing'))))
-    );
-  }
-  return packCache.get(ticker)!;
-}
-
 /** 방 하나(또는 혼자 모드)의 게임 진행. roomId가 null이면 아무것도 안 한다. */
-export function useReplayRoom(roomId: number | null, name: string, packs: PackInfo[], forceSolo: boolean, epoch = 0) {
+export function useReplayRoom(roomId: number | null, name: string, forceSolo: boolean, epoch = 0) {
   const myId = useMemo(() => randomId(), []);
   const [status, setStatus] = useState<ConnStatus>('idle');
   const [players, setPlayers] = useState<Player[]>([]);
@@ -141,12 +125,10 @@ export function useReplayRoom(roomId: number | null, name: string, packs: PackIn
   const playersRef = useRef<Player[]>([]);
   const accountRef = useRef(account);
   const rowsRef = useRef<MarketDataRow[] | null>(null);
-  const packsRef = useRef(packs);
   stateRef.current = state;
   playersRef.current = players;
   accountRef.current = account;
   rowsRef.current = rows;
-  packsRef.current = packs;
 
   const solo = forceSolo || !supabaseConfigured;
   const isHost = solo || pickHost(players) === myId;
@@ -166,22 +148,15 @@ export function useReplayRoom(roomId: number | null, name: string, packs: PackIn
     channelRef.current?.send({ type: 'broadcast', event: 'score', payload: score });
   }, [myId, name, priceNow]);
 
-  // 새 판이 시작되면 계좌·점수 초기화, 차트 데이터 불러오기
+  // 새 판이 시작되면 계좌·점수 초기화, 시드로 가상 차트 만들기
   const gameId = state?.gameId;
-  const ticker = state?.ticker;
+  const seed = state?.seed;
   useEffect(() => {
-    if (!gameId || !ticker) return;
+    if (!gameId || !seed) return;
     setAccount({ cash: START_CASH, shares: 0, avgCost: 0 });
     setScores((m) => new Map([...m].filter(([, s]) => s.gameId === gameId)));
-    setRows(null);
-    let alive = true;
-    loadPack(ticker)
-      .then((r) => alive && setRows(r))
-      .catch(() => alive && setRows([]));
-    return () => {
-      alive = false;
-    };
-  }, [gameId, ticker]);
+    setRows(generateChart(seed, CHART_LEN));
+  }, [gameId, seed]);
 
   // 접속 / 혼자 모드
   useEffect(() => {
@@ -244,24 +219,21 @@ export function useReplayRoom(roomId: number | null, name: string, packs: PackIn
   useEffect(() => {
     if (roomId === null || !isHost || !(status === 'joined' || status === 'solo')) return;
     if (!stateRef.current) {
-      const s = pickNewGame(packsRef.current);
-      if (s) {
-        setState(s);
-        channelRef.current?.send({ type: 'broadcast', event: 'state', payload: s });
-      }
+      const s = pickNewGame();
+      setState(s);
+      channelRef.current?.send({ type: 'broadcast', event: 'state', payload: s });
     }
     const t = window.setInterval(() => {
       const cur = stateRef.current;
       if (!cur) return;
       // 차트 데이터가 아직 안 왔으면 기다린다 (봉이 안 보이는 채로 진행되지 않게).
       if (cur.phase === 'play' && !rowsRef.current) return;
-      const next = advance(cur, packsRef.current);
-      if (!next) return;
+      const next = advance(cur);
       if (next !== cur) setState(next);
       channelRef.current?.send({ type: 'broadcast', event: 'state', payload: next });
     }, TICK_MS);
     return () => window.clearInterval(t);
-  }, [roomId, isHost, status, packs.length]);
+  }, [roomId, isHost, status]);
 
   // 점수: 10초마다 한 번 (봉 5개마다)
   const idx = state?.idx ?? 0;
