@@ -51,7 +51,27 @@ interface UsData {
   investors: UsInvestor[];
 }
 
-type Tab = 'kr' | 'us';
+type Tab = 'kr' | 'us' | 'congress';
+
+interface CongressTrade {
+  ticker: string;
+  type: 'buy' | 'sell' | 'exchange' | 'other';
+  txDate: string | null;
+  amount: string;
+}
+interface CongressFiling {
+  name: string;
+  state: string;
+  filed: string;
+  docId: string;
+  url: string;
+  trades: CongressTrade[];
+}
+interface CongressData {
+  updated: string;
+  filings: CongressFiling[];
+  top: { ticker: string; buyers: number; sellers: number }[];
+}
 
 async function loadJson<T>(path: string): Promise<T | null> {
   try {
@@ -64,6 +84,8 @@ async function loadJson<T>(path: string): Promise<T | null> {
 }
 
 const NOTICE_KR = '공시 기준 정보이며 실제 매매 시점보다 늦게 공개됩니다. 특정 종목의 매수·매도를 권유하는 것이 아닙니다.';
+const NOTICE_CONGRESS =
+  '미국 하원의원의 주식 거래 신고(STOCK Act)입니다. 거래 후 최대 45일 뒤에 신고되고 금액은 구간으로만 공개됩니다. 본인·배우자·자녀 명의 거래가 섞여 있습니다. 투자 권유가 아닙니다.';
 const NOTICE_US =
   '13F는 분기 말 보유 현황을 최대 45일 뒤에 공개합니다. 정확한 매매일과 가격은 알 수 없고, 미국 상장 주식의 롱 포지션만 포함됩니다. 투자 권유가 아닙니다.';
 
@@ -71,6 +93,7 @@ export default function BigMoneyScreen() {
   const [tab, setTab] = useState<Tab>('kr');
   const [kr, setKr] = useState<KrData | null | undefined>(undefined);
   const [us, setUs] = useState<UsData | null | undefined>(undefined);
+  const [congress, setCongress] = useState<CongressData | null | undefined>(undefined);
 
   useEffect(() => {
     // 국내 데이터가 아직 없으면 빈 화면 대신 해외(13F) 탭을 먼저 보여준다.
@@ -79,20 +102,28 @@ export default function BigMoneyScreen() {
       if (!d) setTab('us');
     });
     loadJson<UsData>('/data/big-holders-us.json').then(setUs);
+    loadJson<CongressData>('/data/congress-us.json').then(setCongress);
   }, []);
 
   return (
     <Screen>
       <PageHeader
-        en={tab === 'kr' ? 'BIG MONEY' : 'BIG MONEY · 13F'}
+        en={tab === 'kr' ? 'BIG MONEY' : tab === 'us' ? 'BIG MONEY · 13F' : 'BIG MONEY · CONGRESS'}
         title="큰손 따라보기"
-        sub={tab === 'kr' ? '공시로 확인되는 대형 투자자의 보유 현황과 변동' : '미국 SEC 13F 공시로 보는 유명 투자자의 분기별 보유 종목'}
+        sub={
+          tab === 'kr'
+            ? '공시로 확인되는 대형 투자자의 보유 현황과 변동'
+            : tab === 'us'
+              ? '미국 SEC 13F 공시로 보는 유명 투자자의 분기별 보유 종목'
+              : '미국 하원의원이 신고한 주식 매수·매도'
+        }
         right={
-          <div className="inline-flex" role="tablist" aria-label="국내 또는 해외">
+          <div className="inline-flex" role="tablist" aria-label="큰손 종류">
             {(
               [
                 ['kr', '국내'],
                 ['us', '해외'],
+                ['congress', '미국 의원'],
               ] as const
             ).map(([id, label]) => (
               <button
@@ -112,10 +143,10 @@ export default function BigMoneyScreen() {
       />
 
       <p className="mb-4 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[13px] leading-relaxed text-amber-700">
-        {tab === 'kr' ? NOTICE_KR : NOTICE_US}
+        {tab === 'kr' ? NOTICE_KR : tab === 'us' ? NOTICE_US : NOTICE_CONGRESS}
       </p>
 
-      {tab === 'kr' ? <KrView data={kr} /> : <UsView data={us} />}
+      {tab === 'kr' ? <KrView data={kr} /> : tab === 'us' ? <UsView data={us} /> : <CongressView data={congress} />}
     </Screen>
   );
 }
@@ -355,6 +386,100 @@ function UsView({ data }: { data: UsData | null | undefined }) {
           </TableWrap>
         </Panel>
       </div>
+    </div>
+  );
+}
+
+// ---- 미국 의원 ----
+
+const TRADE_LABEL: Record<CongressTrade['type'], { text: string; cls: string }> = {
+  buy: { text: '매수', cls: 'text-red-600' },
+  sell: { text: '매도', cls: 'text-blue-600' },
+  exchange: { text: '교환', cls: 'text-slate-400' },
+  other: { text: '기타', cls: 'text-slate-400' },
+};
+
+function CongressView({ data }: { data: CongressData | null | undefined }) {
+  const [only, setOnly] = useState<string | null>(null);
+  if (data === undefined) return <Empty loading />;
+  if (!data || data.filings.length === 0) return <Empty loading={false} />;
+
+  const rows = data.filings
+    .flatMap((f) =>
+      f.trades.length
+        ? f.trades.map((t, i) => ({ key: `${f.docId}-${i}`, f, t }))
+        : [{ key: f.docId, f, t: null as CongressTrade | null }]
+    )
+    .filter((r) => !only || r.t?.ticker === only);
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] items-start">
+      <Panel title="의원들이 많이 거래한 종목" meta={`최근 신고 ${data.filings.length}건`}>
+        {data.top.length === 0 ? (
+          <p className="px-4 py-6 text-sm text-slate-500">종목을 읽어낸 신고가 아직 없습니다.</p>
+        ) : (
+          <ul className="divide-y divide-slate-800">
+            {data.top.map((t) => (
+              <li key={t.ticker}>
+                <button
+                  onClick={() => setOnly(only === t.ticker ? null : t.ticker)}
+                  aria-pressed={only === t.ticker}
+                  className={`w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-slate-950 ${only === t.ticker ? 'bg-cyan-500/10' : ''}`}
+                >
+                  <b className="font-mono text-[13px]">{t.ticker}</b>
+                  <span className="text-xs">
+                    <span className="text-red-600">매수 {t.buyers}명</span>
+                    <span className="text-slate-600"> · </span>
+                    <span className="text-blue-600">매도 {t.sellers}명</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Panel>
+
+      <Panel title={only ? `${only} 거래 신고` : '최근 거래 신고'} meta={`${data.updated} 갱신 · 출처 미국 하원 사무처`}>
+        <TableWrap>
+          <thead>
+            <tr>
+              <th>의원</th>
+              <th>종목</th>
+              <th>구분</th>
+              <th>거래일</th>
+              <th>금액 구간</th>
+              <th>신고일</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.slice(0, 120).map(({ key, f, t }) => (
+              <tr key={key}>
+                <td className="text-left">
+                  <b className="block font-semibold">{f.name}</b>
+                  <small className="font-mono text-[11px] text-slate-500">{f.state}</small>
+                </td>
+                <td className="font-mono">{t?.ticker ?? '—'}</td>
+                <td className={t ? TRADE_LABEL[t.type].cls : 'text-slate-500'}>{t ? TRADE_LABEL[t.type].text : '—'}</td>
+                <td className="font-mono">{t?.txDate ?? '—'}</td>
+                <td className="font-mono text-xs">
+                  {t ? (
+                    t.amount
+                  ) : (
+                    <a href={f.url} target="_blank" rel="noopener noreferrer" className="text-slate-500 border-b border-dotted border-slate-500">
+                      원문 확인
+                    </a>
+                  )}
+                </td>
+                <td className="font-mono">
+                  <a href={f.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    {f.filed}
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </TableWrap>
+      </Panel>
     </div>
   );
 }

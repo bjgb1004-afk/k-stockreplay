@@ -1,0 +1,43 @@
+name: Fetch US congress trades
+
+# 미국 하원의원 주식 거래 신고(PTR) - 하원 사무처 무료 공개 자료. 매일 08:30 KST.
+on:
+  schedule:
+    - cron: '30 23 * * *'
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'scripts/fetch-congress.mjs'
+      - '.github/workflows/fetch-congress.yml'
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pdftotext
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
+      - name: Self-check parser
+        run: node scripts/congress.selfcheck.mjs
+
+      - name: Fetch House PTR filings
+        run: node scripts/fetch-congress.mjs
+
+      - name: Commit and push
+        run: |
+          git add public/data/congress-us.json
+          if git diff --staged --quiet; then echo "no changes"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update congress trades ($(date -u +%Y-%m-%d))"
+          git pull --rebase
+          git push
