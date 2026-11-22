@@ -23,11 +23,12 @@ export const INVESTORS = [
   { id: 'berkshire', name: '버크셔 해서웨이', cik: '1067983', match: /BERKSHIRE HATHAWAY/i },
   { id: 'daily-journal', name: '데일리 저널', note: '찰리 멍거가 2023년까지 의장을 맡은 회사', cik: '783412', match: /DAILY JOURNAL/i },
   { id: 'pershing', name: '퍼싱 스퀘어', cik: '1336528', match: /PERSHING SQUARE/i },
-  { id: 'scion', name: '사이언 애셋 매니지먼트', cik: '1649339', match: /SCION/i },
+  { id: 'scion', name: '사이언 애셋 매니지먼트', note: '마이클 버리 운용사 - 2025년 말 투자자문 등록을 해지해 이후 13F를 내지 않는다', cik: '1649339', match: /SCION/i },
   { id: 'bridgewater', name: '브리지워터 어소시에이츠', cik: '1350694', match: /BRIDGEWATER/i },
   { id: 'soros', name: '소로스 펀드 매니지먼트', cik: '1029160', match: /SOROS/i },
   { id: 'third-point', name: '서드 포인트', cik: '1040273', match: /THIRD POINT/i },
-  { id: 'greenlight', name: '그린라이트 캐피털', cik: '1079114', match: /GREENLIGHT/i },
+  // 그린라이트는 2024년부터 13F를 이 CIK(1489933)로 제출한다. 예전 CIK 1079114는 2023년 4분기가 마지막이다.
+  { id: 'greenlight', name: '그린라이트 캐피털', cik: '1489933', match: /GREENLIGHT|DME CAPITAL/i },
 ];
 
 const decode = (t) =>

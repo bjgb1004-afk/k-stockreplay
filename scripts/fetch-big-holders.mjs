@@ -38,9 +38,15 @@ export function toNumber(value) {
   return Number.isFinite(n) ? n : null;
 }
 
-function toIsoDate(yyyymmdd) {
-  const s = String(yyyymmdd ?? '');
-  return /^\d{8}$/.test(s) ? `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}` : null;
+// majorstock.json의 rcept_dt는 "2026-11-14"(하이픈) 형식으로 온다. 예전엔 8자리 숫자만 받아서
+// 2026-11-15 실행에서 22,953건을 읽고도 전부 날짜 불일치로 버려져 "No institutional holders"로
+// 끝났다. 두 형식 모두 받는다.
+export function toIsoDate(value) {
+  const s = String(value ?? '').trim();
+  if (/^\d{8}$/.test(s)) return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  if (/^\d{4}\.\d{2}\.\d{2}$/.test(s)) return s.replace(/\./g, '-');
+  return null;
 }
 
 // rows: majorstock.json의 list 항목들 (여러 회사가 섞여 있어도 된다).

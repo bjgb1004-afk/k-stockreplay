@@ -115,3 +115,17 @@ const picked = pick13F(subs);
 assert.deepEqual(picked.map((p) => p.accession), ['b', 'd']); // 정정(/A)·타 양식 제외, 기간 최신순
 
 console.log('big-holders selfcheck passed');
+
+// rcept_dt 하이픈 형식 회귀 방지 (2026-11-15 실행에서 전부 버려진 원인)
+{
+  const { toIsoDate, collectByHolder } = await import('./fetch-big-holders.mjs');
+  if (toIsoDate('2026-11-14') !== '2026-11-14' || toIsoDate('20261114') !== '2026-11-14' || toIsoDate('') !== null) {
+    throw new Error('toIsoDate format handling broken');
+  }
+  const m = collectByHolder(
+    [{ corp_code: 'c1', corp_name: '테스트', repror: '국민연금공단', stkrt: '7.01', stkrt_irds: '1.00', rcept_dt: '2026-11-14', rcept_no: '1' }],
+    new Map([['c1', '000001']])
+  );
+  if (!m.get('국민연금공단')?.get('000001')) throw new Error('hyphen rcept_dt row was dropped');
+  console.log('big-holders rcept_dt format check passed');
+}
