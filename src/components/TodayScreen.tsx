@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Screen, Stat, StatStrip, Panel, PageHeader, TableWrap, Chip, Spark } from './ui';
 import { loadPriceHistory, type PriceHistory } from '../lib/priceHistory';
 import { getWatchlist, onWatchlistChanged, type WatchlistItem } from '../lib/watchlistDb';
@@ -93,6 +93,7 @@ export default function TodayScreen() {
   const [sectorHeat, setSectorHeat] = useState<{ date: string; rows: HeatRow[] } | null>(null);
   const [prices, setPrices] = useState<Map<string, { close: number; changePct: number; amount?: number | null }>>(new Map());
   const [history, setHistory] = useState<PriceHistory | null>(null);
+  const feedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch('/data/today.json')
@@ -138,6 +139,8 @@ export default function TodayScreen() {
   function selectTab(tab: FeedTab) {
     setFeedTab(tab);
     setExpanded(false);
+    // 카드를 누르면 바뀌는 목록은 화면 아래에 있어서 매번 직접 스크롤해야 했다 - 바로 데려간다.
+    feedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function dismissRecap() {
@@ -324,7 +327,7 @@ export default function TodayScreen() {
         </Panel>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <div ref={feedRef} className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] scroll-mt-[100px]">
       <Panel title={feedTitle[feedTab]} meta={`시장 전체 ${activeFeed.length}건 · 출처 DART`}>
         {activeFeed.length === 0 && (
           <p className="px-4 py-6 text-sm text-slate-500">

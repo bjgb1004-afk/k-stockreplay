@@ -73,6 +73,9 @@ export default function ReplayChart({
       priceFormat: { type: 'volume' },
     });
     volumeSeries.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+    // 캔들 축의 기본 하단 여백은 10%뿐이라 거래량 띠(하단 20%)와 겹친다 - 급락해서
+    // 가격이 바닥에 깔리는 구간이면 캔들이 거래량 막대 위로 올라탄다. 25%로 띄워 둔다.
+    candleSeries.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0.25 } });
 
     chartRef.current = chart;
     candleRef.current = candleSeries;
