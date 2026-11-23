@@ -5,6 +5,7 @@ import ReplayChart from './ReplayChart';
 import { supabaseConfigured } from '../lib/supabase';
 import {
   useReplayRoom,
+  useLobbyCounts,
   equityReturn,
   ROOM_CAPACITY,
   PLAY_CANDLES,
@@ -59,6 +60,7 @@ export function RoomGuide({ defaultOpen = false }: { defaultOpen?: boolean }) {
 /** 리플레이 목록 화면 위에 붙는 "여럿이 하기" 입구 */
 export function ReplayRoomLobby({ onEnter }: { onEnter: (room: number | 'solo', name: string) => void }) {
   const [name, setName] = useState(defaultName);
+  const counts = useLobbyCounts(); // 지금 단체방·혼자 연습에 몇 명 있는지
 
   function enter(room: number | 'solo') {
     const n = name.trim().slice(0, 12) || defaultName();
@@ -92,10 +94,10 @@ export function ReplayRoomLobby({ onEnter }: { onEnter: (room: number | 'solo', 
               disabled={!supabaseConfigured}
               className="h-10 px-4 rounded-md border border-slate-700 text-[13px] font-semibold hover:bg-cyan-500 hover:text-white hover:border-cyan-500 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-inherit"
             >
-              입장하기
+              입장하기{supabaseConfigured && ` · 지금 ${counts.room}명`}
             </button>
             <button onClick={() => enter('solo')} className="inline-flex items-center gap-1.5 text-[13px] text-slate-400 hover:text-slate-100">
-              <User size={14} /> 혼자 연습하기
+              <User size={14} /> 혼자 연습하기{supabaseConfigured && ` · 지금 ${counts.solo}명`}
             </button>
             {!supabaseConfigured && <p className="text-xs text-amber-600">실시간 서버가 연결되지 않아 지금은 혼자 연습만 할 수 있습니다.</p>}
         </>
@@ -189,7 +191,8 @@ export function ReplayRoomView({
         <div className="min-w-0">
           <h1 className="text-base font-bold">{g.status === 'solo' ? '혼자 연습' : '리플레이 방'}</h1>
           <p className="text-xs text-slate-500 flex items-center gap-1">
-            <Users size={12} /> {g.players.length}명{g.status === 'connecting' && ' · 접속 중...'}
+            <Users size={12} /> {g.status === 'solo' ? `지금 혼자 연습 중 ${g.players.length}명` : `${g.players.length}명`}
+            {g.status === 'connecting' && ' · 접속 중...'}
             {g.isHost && g.status !== 'solo' && ' · 내가 진행 중'}
           </p>
         </div>

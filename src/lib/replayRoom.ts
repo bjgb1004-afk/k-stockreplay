@@ -56,6 +56,16 @@ function randomId() {
 
 export const CHART_LEN = WARMUP + PLAY_CANDLES;
 
+export const SOLO_TOPIC = 'replay-solo'; // 혼자 연습 중인 사람 수만 세는 채널 (presence만, 신호 없음)
+export const roomTopic = (id: number) => `replay-room-${id}`;
+
+type PresenceChannel = ReturnType<typeof supabase.channel>;
+
+function presenceList(ch: PresenceChannel): Player[] {
+  const raw = ch.presenceState() as Record<string, Player[]>;
+  return Object.values(raw).map((arr) => arr[0]).filter(Boolean);
+}
+
 export function pickNewGame(): GameState {
   const gameId = randomId();
   return { gameId, seed: `${gameId}-${Math.floor(Math.random() * 1e9)}`, start: WARMUP, idx: 0, phase: 'play', at: Date.now() };
@@ -166,17 +176,27 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
     setState(null);
     if (solo) {
       setStatus('solo');
-      setPlayers([{ id: myId, name, joinedAt: Date.now() }]);
-      return;
+      const me: Player = { id: myId, name, joinedAt: Date.now() };
+      setPlayers([me]);
+      if (!supabaseConfigured) return;
+      // 혼자 연습도 "지금 몇 명이 연습 중인지"는 보여준다. presence만 쓰고 진행 신호·점수는 주고받지 않는다
+      // (channelRef에 넣지 않으므로 sendScore가 이 채널로 나가지 않는다).
+      const soloCh = supabase.channel(SOLO_TOPIC, { config: { presence: { key: myId } } });
+      soloCh.on('presence', { event: 'sync' }, () => setPlayers(presenceList(soloCh)));
+      soloCh.subscribe((st) => {
+        if (st === 'SUBSCRIBED') soloCh.track(me);
+      });
+      return () => {
+        soloCh.unsubscribe();
+      };
     }
     setStatus('connecting');
     const joinedAt = Date.now();
-    const ch = supabase.channel(`replay-room-${roomId}`, { config: { presence: { key: myId }, broadcast: { self: false } } });
+    const ch = supabase.channel(roomTopic(roomId), { config: { presence: { key: myId }, broadcast: { self: false } } });
     channelRef.current = ch;
 
     ch.on('presence', { event: 'sync' }, () => {
-      const raw = ch.presenceState() as Record<string, Player[]>;
-      const list = Object.values(raw).map((arr) => arr[0]).filter(Boolean);
+      const list = presenceList(ch);
       setPlayers(list);
       if (isOverCapacity(list, myId)) {
         setStatus('full');
@@ -285,4 +305,23 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
   }, [scores, players, state?.gameId, solo]);
 
   return { myId, status, players, state, rows, account, price: priceNow(), isHost, leaderboard, doTrade };
+}
+
+/** 로비용: 지금 단체방·혼자 연습에 각각 몇 명 있는지. 보기만 하고 자리를 차지하지 않는다(track 안 함). */
+export function useLobbyCounts() {
+  const [counts, setCounts] = useState({ room: 0, solo: 0 });
+  useEffect(() => {
+    if (!supabaseConfigured) return;
+    const chans = ([['room', roomTopic(1)], ['solo', SOLO_TOPIC]] as const).map(([key, topic]) => {
+      const ch = supabase.channel(topic);
+      ch.on('presence', { event: 'sync' }, () =>
+        setCounts((c) => ({ ...c, [key]: Object.keys(ch.presenceState()).length }))
+      ).subscribe();
+      return ch;
+    });
+    return () => {
+      chans.forEach((ch) => ch.unsubscribe());
+    };
+  }, []);
+  return counts;
 }
