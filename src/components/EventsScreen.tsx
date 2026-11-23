@@ -91,7 +91,7 @@ export default function EventsScreen() {
                     <small className="block font-mono text-[11px] text-slate-500">{h.ticker}</small>
                   </td>
                   <td>{kind === 'div' ? <Chip tone="div">배당</Chip> : <Chip tone="agm">주총</Chip>}</td>
-                  <td className="whitespace-normal text-left max-w-[26rem]">{h.title}</td>
+                  <td className="whitespace-normal! text-left max-w-[26rem]">{h.title}</td>
                   <td className="font-mono">{h.date}</td>
                 </tr>
               ))}

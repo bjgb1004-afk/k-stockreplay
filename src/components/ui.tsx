@@ -59,7 +59,7 @@ const chipTone = {
 /** 이벤트 종류 라벨 칩 */
 export function Chip({ tone, children }: { tone: keyof typeof chipTone; children: ReactNode }) {
   return (
-    <span className={`inline-flex items-center rounded px-1.5 py-px text-[11px] font-semibold whitespace-nowrap ${chipTone[tone]}`}>
+    <span className={`inline-flex items-center rounded px-1.5 py-px text-[11px] font-semibold max-w-full ${chipTone[tone]}`}>
       {children}
     </span>
   );

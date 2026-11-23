@@ -233,6 +233,8 @@ body {
   font-size: 11.5px; font-weight: 500; color: var(--c-500); text-align: right;
   padding: 8px 12px; border-bottom: 1px solid var(--c-800); white-space: nowrap; background: var(--c-950);
 }
+/* 주의: 이 파일의 규칙들은 Tailwind 레이어 밖이라 유틸리티 클래스를 항상 이긴다.
+   표 칸에서 줄바꿈이나 정렬을 바꾸려면 `whitespace-normal!`처럼 !를 붙여야 먹는다. */
 .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--c-800); text-align: right; white-space: nowrap; }
 .data-table th:first-child, .data-table td:first-child { text-align: left; }
 .data-table tbody tr:last-child td { border-bottom: 0; }

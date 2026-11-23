@@ -250,8 +250,11 @@ function KrView({ data }: { data: KrData | null | undefined }) {
                   <td className={`font-mono ${h.delta === null || h.delta === 0 ? 'text-slate-500' : h.delta > 0 ? 'text-red-600' : 'text-blue-600'}`}>
                     {h.delta === null ? '-' : h.delta === 0 ? '변동 없음' : `${h.delta > 0 ? '▲' : '▼'} ${Math.abs(h.delta).toFixed(2)}%p`}
                   </td>
-                  <td className="whitespace-normal text-left">
-                    {h.exited ? <Chip tone="dis">5% 미만(정리)</Chip> : h.reason ? <Chip tone="agm">{h.reason}</Chip> : '-'}
+                  <td className="whitespace-normal! text-left">
+                    {/* 공시 원문 사유는 최장 225자까지 온다 - 폭을 묶어 두지 않으면 한 줄로 뻗어 뒤 칸(보고일)을 화면 밖으로 밀어낸다. */}
+                    <span className="block max-w-[240px]">
+                      {h.exited ? <Chip tone="dis">5% 미만(정리)</Chip> : h.reason ? <Chip tone="agm">{h.reason}</Chip> : '-'}
+                    </span>
                   </td>
                   <td className="font-mono">{h.date}</td>
                 </tr>
@@ -370,7 +373,7 @@ function UsView({ data }: { data: UsData | null | undefined }) {
                         <span className="font-mono text-xs w-12 text-right">{w.toFixed(1)}%</span>
                       </div>
                     </td>
-                    <td className="whitespace-normal text-left">
+                    <td className="whitespace-normal! text-left">
                       <Chip tone={s.tone}>{s.text}</Chip>
                       {h.changePct !== null && h.status !== 'new' && h.status !== 'sold' && h.status !== 'same' && (
                         <span className="ml-1.5 font-mono text-xs text-slate-500">
