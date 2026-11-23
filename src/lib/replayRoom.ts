@@ -22,6 +22,9 @@ export const WARMUP = 120; // 시작할 때 이미 보여주는 봉 수
 export const PLAY_CANDLES = 100; // 한 판 동안 새로 열리는 봉 수 (3초 틱 × 100 = 5분)
 export const TICK_MS = 3000;
 export const RESULT_MS = 12000;
+// 방장이 이 시간 동안 진행 신호를 안 보내면 죽은 것으로 보고 다음 사람이 이어받는다.
+// (탭 종료·절전·네트워크 끊김 때 서버에 접속 흔적만 남아 방 전체가 멈추는 걸 막는다.)
+export const HOST_TIMEOUT_MS = 9000;
 export const START_CASH = 10_000_000;
 const SCORE_EVERY_TICKS = 5;
 const HIDDEN_LIMIT_MS = 60_000;
@@ -33,6 +36,7 @@ export interface GameState {
   idx: number; // 0..PLAY_CANDLES
   phase: 'play' | 'result';
   at: number; // 방장이 이 상태를 보낸 시각
+  host?: string; // 이 신호를 보낸 방장의 id (둘이 동시에 진행하는 충돌을 가려내는 데 쓴다)
 }
 
 export interface Player {
@@ -140,8 +144,19 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
   accountRef.current = account;
   rowsRef.current = rows;
 
+  // 신호가 끊긴 방장 후보들(유령). 로컬 판단이지만 모두가 같은 침묵을 보므로 같은 결론에 도달한다.
+  const [silent, setSilent] = useState<string[]>([]);
+  // 끊겼던 방장이 돌아와 둘이 동시에 진행하면 차트가 엎치락뒤치락한다 - 한쪽이 물러난다.
+  const [standDownTo, setStandDownTo] = useState<string | null>(null);
+  const lastSignalRef = useRef(0);
+  const silentRef = useRef<string[]>([]);
+  silentRef.current = silent;
+
   const solo = forceSolo || !supabaseConfigured;
-  const isHost = solo || pickHost(players) === myId;
+  const hostId = pickHost(players.filter((p) => !silent.includes(p.id)));
+  const isHost = solo || (hostId === myId && !standDownTo);
+  const isHostRef = useRef(isHost);
+  isHostRef.current = isHost;
 
   const priceNow = useCallback(() => {
     const s = stateRef.current;
@@ -174,6 +189,8 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
     setPlayers([]);
     setScores(new Map());
     setState(null);
+    setSilent([]);
+    setStandDownTo(null);
     if (solo) {
       setStatus('solo');
       const me: Player = { id: myId, name, joinedAt: Date.now() };
@@ -206,14 +223,18 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
     });
     ch.on('broadcast', { event: 'state' }, ({ payload }) => {
       const s = payload as GameState;
+      lastSignalRef.current = Date.now();
+      // broadcast self:false라 내 신호는 나한테 안 온다 = 이 신호는 무조건 남이 보낸 것.
+      // 내가 진행 중인데 남도 진행 중이면(끊겼다 돌아온 방장 등) 내가 물러난다.
+      if (isHostRef.current && s.host && s.host !== myId) setStandDownTo(s.host);
       // 뒤늦게 온 옛 신호는 무시한다.
       const cur = stateRef.current;
       if (cur && cur.gameId === s.gameId && cur.idx > s.idx && cur.phase === s.phase) return;
       setState(s);
     });
     ch.on('broadcast', { event: 'hello' }, () => {
-      if (pickHost(playersRef.current) === myId && stateRef.current) {
-        ch.send({ type: 'broadcast', event: 'state', payload: stateRef.current });
+      if (isHostRef.current && stateRef.current) {
+        ch.send({ type: 'broadcast', event: 'state', payload: { ...stateRef.current, host: myId } });
       }
     });
     ch.on('broadcast', { event: 'score' }, ({ payload }) => {
@@ -223,6 +244,7 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
     ch.subscribe(async (st) => {
       if (st === 'SUBSCRIBED') {
         await ch.track({ id: myId, name, joinedAt });
+        lastSignalRef.current = Date.now(); // 인수인계 시계 시작
         setStatus((s) => (s === 'full' ? s : 'joined'));
         ch.send({ type: 'broadcast', event: 'hello', payload: {} });
       } else if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT') {
@@ -238,10 +260,14 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
   // 방장: 3초마다 진행 신호. 방장이 바뀌면 마지막으로 받은 상태에서 이어간다.
   useEffect(() => {
     if (roomId === null || !isHost || !(status === 'joined' || status === 'solo')) return;
+    const broadcast = (s: GameState) => {
+      lastSignalRef.current = Date.now();
+      channelRef.current?.send({ type: 'broadcast', event: 'state', payload: { ...s, host: myId } });
+    };
     if (!stateRef.current) {
       const s = pickNewGame();
       setState(s);
-      channelRef.current?.send({ type: 'broadcast', event: 'state', payload: s });
+      broadcast(s);
     }
     const t = window.setInterval(() => {
       const cur = stateRef.current;
@@ -250,10 +276,25 @@ export function useReplayRoom(roomId: number | null, name: string, forceSolo: bo
       if (cur.phase === 'play' && !rowsRef.current) return;
       const next = advance(cur);
       if (next !== cur) setState(next);
-      channelRef.current?.send({ type: 'broadcast', event: 'state', payload: next });
+      broadcast(next);
     }, TICK_MS);
     return () => window.clearInterval(t);
-  }, [roomId, isHost, status]);
+  }, [roomId, isHost, status, myId]);
+
+  // 방장 감시: 신호가 HOST_TIMEOUT_MS 넘게 끊기면 그 방장을 유령으로 보고 다음 사람이 이어받는다.
+  // 내가 물러나 있던 상태라면(상대도 조용해졌다면) 내가 다시 맡는다.
+  useEffect(() => {
+    if (roomId === null || solo || status !== 'joined') return;
+    const t = window.setInterval(() => {
+      if (Date.now() - lastSignalRef.current < HOST_TIMEOUT_MS) return;
+      lastSignalRef.current = Date.now(); // 다음 후보에게도 같은 시간을 준다
+      if (standDownTo) return setStandDownTo(null);
+      const cur = pickHost(playersRef.current.filter((p) => !silentRef.current.includes(p.id)));
+      if (!cur || cur === myId) return;
+      setSilent((list) => (list.includes(cur) ? list : [...list, cur]));
+    }, TICK_MS);
+    return () => window.clearInterval(t);
+  }, [roomId, solo, status, myId, standDownTo]);
 
   // 점수: 10초마다 한 번 (봉 5개마다)
   const idx = state?.idx ?? 0;
