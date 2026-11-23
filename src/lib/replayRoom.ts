@@ -313,7 +313,9 @@ export function useLobbyCounts() {
   useEffect(() => {
     if (!supabaseConfigured) return;
     const chans = ([['room', roomTopic(1)], ['solo', SOLO_TOPIC]] as const).map(([key, topic]) => {
-      const ch = supabase.channel(topic);
+      // presence.enabled를 켜야 track 하지 않는 구독자도 presence 상태를 받는다
+      // (기본값으로는 빈 객체만 와서 0명으로 보였다 - 실측 확인). 구경꾼 자신은 집계에 안 잡힌다.
+      const ch = supabase.channel(topic, { config: { presence: { key: `lobby-${key}`, enabled: true } } });
       ch.on('presence', { event: 'sync' }, () =>
         setCounts((c) => ({ ...c, [key]: Object.keys(ch.presenceState()).length }))
       ).subscribe();
