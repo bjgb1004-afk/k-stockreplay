@@ -1,6 +1,29 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Screen, Panel, Chip, PageHeader, TableWrap } from './ui';
 
+// 공시 원문 사유는 짧게는 6자, 길게는 225자까지 온다. 긴 걸 그대로 두면 표가 세로로 늘어지고
+// 짧게 자르면 휴대폰에서 나머지를 볼 방법이 없어서, 접어 두고 눌러서 펼치게 한다.
+const REASON_SHORT = 22; // 이보다 길면 접는다
+
+function ReasonCell({ text }: { text: string }) {
+  if (text.length <= REASON_SHORT) return <Chip tone="agm">{text}</Chip>;
+  return (
+    // 행 전체에 종목 선택 클릭이 걸려 있어서, 펼치기 클릭이 거기까지 번지지 않게 막는다.
+    <details className="group inline-block align-top" onClick={(e) => e.stopPropagation()}>
+      <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
+        <Chip tone="agm">
+          <span className="truncate max-w-[150px]">{text}</span>
+          <span className="ml-1 shrink-0 whitespace-nowrap opacity-70 group-open:hidden">펼치기</span>
+          <span className="ml-1 shrink-0 whitespace-nowrap opacity-70 hidden group-open:inline">접기</span>
+        </Chip>
+      </summary>
+      <p className="mt-1 rounded border border-slate-800 bg-slate-950 px-2 py-1.5 text-[11.5px] leading-relaxed text-slate-300 whitespace-pre-line">
+        {text}
+      </p>
+    </details>
+  );
+}
+
 // 큰손 따라보기 - 국내(DART 대량보유상황보고)와 해외(SEC 13F). 두 파일 모두 GitHub Actions가
 // 주 1회 만든 정적 JSON이다. 파일이 아직 없으면(첫 수집 전) 안내 문구만 보여준다.
 
@@ -253,7 +276,7 @@ function KrView({ data }: { data: KrData | null | undefined }) {
                   <td className="whitespace-normal! text-left">
                     {/* 공시 원문 사유는 최장 225자까지 온다 - 폭을 묶어 두지 않으면 한 줄로 뻗어 뒤 칸(보고일)을 화면 밖으로 밀어낸다. */}
                     <span className="block max-w-[240px]">
-                      {h.exited ? <Chip tone="dis">5% 미만(정리)</Chip> : h.reason ? <Chip tone="agm">{h.reason}</Chip> : '-'}
+                      {h.exited ? <Chip tone="dis">5% 미만(정리)</Chip> : h.reason ? <ReasonCell text={h.reason} /> : '-'}
                     </span>
                   </td>
                   <td className="font-mono">{h.date}</td>
