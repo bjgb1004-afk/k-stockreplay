@@ -163,6 +163,10 @@ body {
 
 /* 패널: 흰 표면 + 얇은 선 + 아주 옅은 그림자 */
 .panel {
+  /* grid/flex 안에서 자식(넓은 표 등)의 min-content 폭만큼 패널이 벌어져
+     페이지 전체가 가로로 밀리던 문제. 표는 자기 overflow-x-auto 안에서
+     스크롤해야 한다. */
+  min-width: 0;
   background: var(--c-900);
   border: 1px solid var(--c-800);
   border-radius: 6px;
@@ -239,3 +243,15 @@ body {
 .data-table th:first-child, .data-table td:first-child { text-align: left; }
 .data-table tbody tr:last-child td { border-bottom: 0; }
 .data-table tbody tr:hover { background: var(--c-950); }
+
+/* iOS Safari는 글자 16px 미만인 입력창에 포커스하면 페이지를 자동 확대한다.
+   확대되면 position:fixed 하단 탭바가 보이는 영역 밖으로 밀려 사라진다.
+   user-scalable=no로 막으면 손가락 확대까지 못 하게 되니(접근성) 글자를
+   키워서 해결한다. 데스크탑은 기존 크기 유지. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
