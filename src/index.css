@@ -286,6 +286,13 @@ body {
   .data-table td[data-label*="변화"] {
     grid-column: 1 / -1;
   }
+  /* 줄바꿈은 글이 긴 칸에만 허용한다. 모든 칸에 풀어 주면 "▲ 2.00%p"처럼
+     공백이 든 값까지 두 줄로 쪼개져 카드가 쓸데없이 높아진다. */
+  .data-table td[data-label*="사유"],
+  .data-table td[data-label*="제목"],
+  .data-table td[data-label*="변화"] {
+    white-space: normal;
+  }
   .data-table tbody tr:last-child {
     border-bottom: 0;
   }
@@ -297,7 +304,6 @@ body {
     padding: 2px 0;
     border-bottom: 0;
     text-align: right;
-    white-space: normal;
   }
   .data-table td::before {
     content: attr(data-label);
