@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 
 /** 화면 본문 컨테이너 - 바깥 셸(App.tsx)이 내비게이션과 폭을 잡으므로
@@ -94,9 +95,32 @@ export function PageHeader({ en, title, sub, right }: { en: string; title: strin
   );
 }
 
-/** 표를 가로 스크롤 영역으로 감싼다. */
+/** 표를 감싼다. 폰에서는 index.css가 이 표를 종목당 한 칸짜리 카드로 바꾼다.
+    칸이 5~7개인 표가 390px 화면에 안 들어가 가로로 밀어야 했고, 밀고 나면
+    어느 종목의 숫자인지 알 수 없었다. 카드에는 숫자 앞에 항목 이름이 붙어야
+    하는데, 표마다 칸 구성이 달라 화면 8곳을 각각 고치는 대신 여기서 헤더
+    글자를 읽어 data-label로 넣어 둔다. */
 export function TableWrap({ children }: { children: ReactNode }) {
-  return <div className="overflow-x-auto"><table className="data-table">{children}</table></div>;
+  const ref = useRef<HTMLTableElement>(null);
+  useEffect(() => {
+    const table = ref.current;
+    if (!table) return;
+    const labels = [...table.querySelectorAll('thead th')].map((th) => th.textContent?.trim() ?? '');
+    table.querySelectorAll('tbody tr').forEach((tr) => {
+      // colspan으로 한 칸만 쓰는 안내 행("아직 없습니다" 등)은 라벨을 붙이지 않는다.
+      if (tr.children.length !== labels.length) return;
+      [...tr.children].forEach((td, i) => {
+        if (labels[i]) td.setAttribute('data-label', labels[i]);
+      });
+    });
+  });
+  return (
+    <div className="overflow-x-auto">
+      <table ref={ref} className="data-table">
+        {children}
+      </table>
+    </div>
+  );
 }
 
 /** 20일 추이 미니 그래프. 처음 대비 마지막이 오르면 빨강, 내리면 파랑 (국내 관례). 점이 2개 미만이면 '—'. */
