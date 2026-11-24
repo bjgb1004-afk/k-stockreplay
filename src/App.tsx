@@ -121,17 +121,24 @@ export default function App() {
           </p>
         </aside>
 
-        <main className="min-w-0 pb-20 md:pb-0">{screens[tab]}</main>
+        <main className="min-w-0 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">{screens[tab]}</main>
       </div>
 
       {/* 모바일 전용 하단 탭바 */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 bg-slate-900 border-t border-slate-800 overflow-x-auto no-scrollbar">
+      {/* 모바일 하단 탭바. overflow-x-auto를 쓰면 화면보다 넓어진 탭줄이 가로로 밀리고,
+          iOS에서 스크롤 중 고정 요소가 깜빡이며 사라지는 원인이 된다 - 라벨을 줄여 7칸이
+          화면에 다 들어가게 하고 가로 스크롤을 없앴다. transform-gpu는 스크롤 중 이 막대를
+          자기 레이어에 묶어 두기 위한 것. */}
+      <nav
+        className="md:hidden fixed bottom-0 inset-x-0 z-20 bg-slate-900 border-t border-slate-800 transform-gpu"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
         <div className="grid grid-cols-7">
           <TabButton active={tab === 'today'} label="오늘" icon={<Newspaper />} onClick={() => go('today')} />
           <TabButton active={tab === 'watchlist'} label="관심" icon={<Star />} onClick={() => go('watchlist')} />
           <TabButton active={tab === 'sector'} label="업종" icon={<Factory />} onClick={() => go('sector')} />
           <TabButton active={tab === 'whales'} label="큰손" icon={<Landmark />} onClick={() => go('whales')} />
-          <TabButton active={tab === 'events'} label="배당·이벤트" icon={<CalendarClock />} onClick={() => go('events')} />
+          <TabButton active={tab === 'events'} label="배당" icon={<CalendarClock />} onClick={() => go('events')} />
           <TabButton active={tab === 'alerts'} label="알림" icon={<Bell />} badgeCount={unreadCount} onClick={() => go('alerts')} />
           <TabButton active={tab === 'replay'} label="리플레이" icon={<History />} onClick={() => go('replay')} />
         </div>
